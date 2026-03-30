@@ -62,7 +62,7 @@ class _LoginViewState extends State<_LoginView> {
           Expanded(
             flex: 2,
             child: Container(
-              color: Theme.of(context).colorScheme.primary,
+              color: Theme.of(context).primaryColor,
               child: Image.asset('assets/images/logo.png', width: 400),
             ),
           ),
@@ -81,56 +81,81 @@ class _LoginViewState extends State<_LoginView> {
                     child: Form(
                       key: _formKey,
                       child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
+                        mainAxisAlignment: MainAxisAlignment.center,
                         children: [
-                          const SizedBox(height: 32),
-                          if (state.errorMessage != null) ...[
-                            Text(
-                              state.errorMessage!,
-                              style: TextStyle(color: Theme.of(context).colorScheme.error),
-                              textAlign: TextAlign.center,
-                            ),
-                            const SizedBox(height: 16),
-                          ],
-                          Expanded(
-                            child: TextFormField(
-                              controller: _emailController,
-                              decoration: const InputDecoration(
-                                labelText: 'Email',
-                                border: OutlineInputBorder(),
+
+                          /// title
+                          Column(
+                            children: [
+                              Text(
+                                'Welcome to Travel Matrix',
+                                style: Theme.of(context).textTheme.headlineLarge,
                               ),
-                              validator: (v) => v!.isEmpty ? 'Enter email' : null,
-                            ),
+                              const SizedBox(height: 32),
+                              Text(
+                                  'Please login to continue',
+                                style: Theme.of(context).textTheme.bodyLarge,
+                              )
+                            ],
                           ),
-                          const SizedBox(height: 16),
-                          Expanded(
-                            child: TextFormField(
-                              controller: _passwordController,
-                              decoration: const InputDecoration(
-                                labelText: 'Password',
-                                border: OutlineInputBorder(),
+
+                          /// inputs
+                          Column(
+                            children: [
+                              const SizedBox(height: 32),
+                              if (state.errorMessage != null) ...[
+                                Text(
+                                  state.errorMessage!,
+                                  style: TextStyle(color: Theme.of(context).colorScheme.error),
+                                  textAlign: TextAlign.center,
+                                ),
+                                const SizedBox(height: 16),
+                              ],
+                              SizedBox(
+                                height: 50,
+                                child: TextFormField(
+                                  controller: _emailController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Email',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  validator: (v) => v!.isEmpty ? 'Enter email' : null,
+                                ),
                               ),
-                              obscureText: true,
-                              validator: (v) => v!.isEmpty ? 'Enter password' : null,
-                            ),
-                          ),
-                          const SizedBox(height: 32),
-                          SizedBox(
-                            height: 50,
-                            child: ElevatedButton(
-                              onPressed: state.isLoading ? null : _handleLogin,
-                              style: ElevatedButton.styleFrom(
-                                backgroundColor: Theme.of(context).colorScheme.secondary,
-                                foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                              const SizedBox(height: 16),
+                              SizedBox(
+                                height: 50,
+                                child: TextFormField(
+                                  controller: _passwordController,
+                                  decoration: const InputDecoration(
+                                    labelText: 'Password',
+                                    border: OutlineInputBorder(),
+                                  ),
+                                  obscureText: true,
+                                  validator: (v) => v!.isEmpty ? 'Enter password' : null,
+                                ),
                               ),
-                              child: state.isLoading
-                                  ? const CircularProgressIndicator()
-                                  : const Text(
-                                'LOGIN AS AGENT',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                              const SizedBox(height: 32),
+                              SizedBox(
+                                height: 50,
+                                child: ElevatedButton(
+                                  onPressed: state.isLoading ? null : _handleLogin,
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                                    foregroundColor: Theme.of(context).colorScheme.onSecondary,
+                                  ),
+                                  child: state.isLoading
+                                      ? const CircularProgressIndicator()
+                                      : const Text(
+                                    'LOGIN AS AGENT',
+                                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                  ),
+                                ),
                               ),
-                            ),
-                          ),
+                            ],
+                          )
+
+
                         ],
                       ),
                     ),

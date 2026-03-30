@@ -19,6 +19,7 @@ class TravelMatrixApp extends StatelessWidget {
           return MaterialApp(
             title: 'Travel Matrix',
             theme: AppTheme.lightTheme,
+            debugShowCheckedModeBanner: false,
             darkTheme: AppTheme.darkTheme,
             themeMode: settingsController.themeMode,
             home: const GateSplash(),
