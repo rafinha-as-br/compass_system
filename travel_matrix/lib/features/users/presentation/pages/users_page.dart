@@ -4,6 +4,14 @@ import 'package:mock_repository/mock_repository.dart';
 import 'package:travel_matrix/core/services/compass_service.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 
+
+/*
+* Todo: Tabela precisa ocupar todo o comprimento
+* Todo: Retirar Status/id e ROLE
+* Todo: Retirar Actions e colocar para apenas clicar na tela e abrir uma tela de um usuário específico
+*
+* */
+
 class UsersState {
   final bool isLoading;
   final List<User> users;

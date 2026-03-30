@@ -13,6 +13,7 @@ class DashboardPage extends StatelessWidget {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+
             // Welcome Banner
             Container(
               width: double.infinity,
@@ -92,7 +93,7 @@ class DashboardPage extends StatelessWidget {
                     child: DataTable(
                       headingTextStyle: const TextStyle(color: TravelAppColors.textSecondary, fontWeight: FontWeight.w600, fontSize: 12),
                       columnSpacing: 60,
-                      horizontalMargin: 24,
+                      horizontalMargin: 35,
                       columns: const [
                         DataColumn(label: Text('CLIENT NAME')),
                         DataColumn(label: Text('DESTINATION')),

@@ -36,19 +36,22 @@ class _HomePageState extends State<HomePage> {
             color: TravelAppColors.surface,
             child: Column(
               children: [
+
                 // Header / Logo
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
                   child: Row(
                     children: [
+
                       Container(
-                        width: 40,
-                        height: 40,
                         decoration: BoxDecoration(
-                          color: TravelAppColors.primary,
+                          color: TravelAppColors.primary.withAlpha(240),
                           borderRadius: BorderRadius.circular(8),
                         ),
-                        child: const Icon(Icons.navigation, color: TravelAppColors.accentGoldLight),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset('assets/images/logo_small.png', width: 50),
+                        ),
                       ),
                       const SizedBox(width: 12),
                       const Column(
@@ -61,6 +64,8 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
+
+
                 // Navigation Links
                 Expanded(
                   child: ListView(
@@ -118,6 +123,8 @@ class _HomePageState extends State<HomePage> {
                     ],
                   ),
                 ),
+
+
                 // Footer Links & User Profile
                 Padding(
                   padding: const EdgeInsets.all(24.0),
@@ -208,14 +215,3 @@ class _HomePageState extends State<HomePage> {
     );
   }
 }
-
-/*
-* IconButton(
-            tooltip: 'User Account & Settings',
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              Navigator.push(context, MaterialPageRoute(builder: (_) => const AccountPage()));
-            },
-          ),
-*
-* */

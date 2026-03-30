@@ -63,7 +63,10 @@ class _LoginViewState extends State<_LoginView> {
             flex: 2,
             child: Container(
               color: Theme.of(context).primaryColor,
-              child: Image.asset('assets/images/logo.png', width: 400),
+              child: Padding(
+                padding: const EdgeInsets.all(230),
+                child: Image.asset('assets/images/logo.png', width: 400),
+              ),
             ),
           ),
 
