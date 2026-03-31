@@ -1,0 +1,9 @@
+
+## for ai context
+/contexts
+
+## fake api for testing
+/fake_api
+
+## for flutter context
+.idea/
