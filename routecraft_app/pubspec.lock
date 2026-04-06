@@ -195,7 +195,7 @@ packages:
   mock_repository:
     dependency: "direct main"
     description:
-      path: "../mock_repository"
+      path: "../fake_api"
       relative: true
     source: path
     version: "1.0.0"

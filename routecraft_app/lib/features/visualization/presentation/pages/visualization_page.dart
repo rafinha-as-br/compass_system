@@ -26,60 +26,49 @@ class _VisualizationView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Routes & Itineraries'),
+        title: const Text('My Travels'),
       ),
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
           : ListView(
               padding: const EdgeInsets.all(16),
               children: [
-                const Text('Your Routes (Drafts)', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                if (state.routes.isEmpty)
-                  const Text('No routes created yet.\n')
+                if (state.travels.isEmpty)
+                  const Center(
+                    child: Padding(
+                      padding: EdgeInsets.all(32.0),
+                      child: Text('No travels created yet.'),
+                    ),
+                  )
                 else
-                  ...state.routes.map((r) => _buildRouteCard(context, r)),
-                  
-                const Divider(height: 32),
-                
-                const Text('Your Itineraries', style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold)),
-                const SizedBox(height: 8),
-                if (state.itineraries.isEmpty)
-                  const Text('No itineraries from agents yet.\n')
-                else
-                  ...state.itineraries.map((i) => _buildItineraryCard(context, i)),
+                  ...state.travels.map((t) => _buildTravelCard(context, t)),
               ],
             ),
     );
   }
 
-  Widget _buildRouteCard(BuildContext context, RoutePlan route) {
+  Widget _buildTravelCard(BuildContext context, Travel travel) {
     return Card(
       elevation: 2,
       margin: const EdgeInsets.symmetric(vertical: 8),
       child: ListTile(
-        leading: Icon(Icons.map, color: Theme.of(context).primaryColor),
-        title: Text(route.tripName, style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('${route.startLocation} ➔ ${route.destination}'),
-        trailing: const Chip(
-          label: Text('DRAFT', style: TextStyle(fontSize: 10)),
-          backgroundColor: Colors.orange,
+        leading: Icon(
+          travel.hasItinerary ? Icons.flight_takeoff : Icons.map,
+          color: travel.hasItinerary ? Colors.green : Theme.of(context).primaryColor,
         ),
-      ),
-    );
-  }
-
-  Widget _buildItineraryCard(BuildContext context, Itinerary itinerary) {
-    return Card(
-      elevation: 2,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      child: ListTile(
-        leading: const Icon(Icons.flight_takeoff, color: Colors.green), 
-        title: Text('Itinerary: ${itinerary.id}', style: const TextStyle(fontWeight: FontWeight.bold)),
-        subtitle: Text('${itinerary.listOfStops.length} stops scheduled.'),
-        trailing: const Chip(
-          label: Text('READY', style: TextStyle(fontSize: 10, color: Colors.white)),
-          backgroundColor: Colors.green,
+        title: Text(
+          travel.travelName,
+          style: const TextStyle(fontWeight: FontWeight.bold),
+        ),
+        subtitle: Text(
+          '${travel.routePlan.startLocation} ➔ ${travel.routePlan.destination}',
+        ),
+        trailing: Chip(
+          label: Text(
+            travel.hasItinerary ? 'ITINERARY READY' : 'ROUTE ONLY',
+            style: const TextStyle(fontSize: 10, color: Colors.white),
+          ),
+          backgroundColor: travel.hasItinerary ? Colors.green : Colors.orange,
         ),
       ),
     );
