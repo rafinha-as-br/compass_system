@@ -23,10 +23,11 @@ class TravelViewPage extends StatelessWidget {
             icon: const Icon(Icons.arrow_back),
             onPressed: () => Navigator.of(context).pop(),
           ),
-          bottom: const TabBar(
+          bottom:  TabBar(
+            automaticIndicatorColorAdjustment: true,
             tabs: [
-              Tab(icon: Icon(Icons.map), text: 'Route'),
-              Tab(icon: Icon(Icons.list_alt), text: 'Itinerary'),
+              Tab(icon: Icon(Icons.map, color: Theme.of(context).colorScheme.onPrimary,), text: 'Route'),
+              Tab(icon: Icon(Icons.list_alt, color: Theme.of(context).colorScheme.onPrimary,), text: 'Itinerary'),
             ],
           ),
         ),

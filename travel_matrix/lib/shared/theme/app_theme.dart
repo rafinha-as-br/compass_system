@@ -51,6 +51,11 @@ class AppTheme {
         foregroundColor: TravelAppColors.textOnPrimary,
         elevation: 0,
       ),
+      tabBarTheme: TabBarThemeData(
+        labelColor: TravelAppColors.primary,
+        unselectedLabelColor: TravelAppColors.textSecondary,
+        labelStyle: TextStyle(color: TravelAppColors.textOnPrimary)
+      )
     );
   }
 
