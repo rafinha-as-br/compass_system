@@ -17,7 +17,7 @@ class _GateSplashState extends State<GateSplash> {
 
   Future<void> _checkAppStatus() async {
     // Artificial delay for splash screen
-    await Future.delayed(const Duration(seconds: 1));
+    await Future.delayed(const Duration(seconds: 2));
     
     if (mounted) {
       Navigator.pushReplacement(
@@ -34,24 +34,26 @@ class _GateSplashState extends State<GateSplash> {
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Icon(
-              Icons.dashboard, 
-              size: 80, 
-              color: Theme.of(context).colorScheme.onPrimary,
-            ),
-            const SizedBox(height: 24),
-            Text(
-              'Travel Matrix App',
-              style: TextStyle(
-                fontSize: 32,
-                fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onPrimary,
-              ),
-            ),
-            const SizedBox(height: 48),
-            CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.onPrimary,
+
+            /// logo
+            Image.asset('assets/images/logo.png', width: 700),
+            Column(
+              children: [
+                Text(
+                  'Travel Matrix App',
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onPrimary,
+                  ),
+                ),
+                const SizedBox(height: 48),
+                CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ],
             ),
           ],
         ),

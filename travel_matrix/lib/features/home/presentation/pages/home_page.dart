@@ -1,18 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 
-import '../../../../app/controllers/settings_controller.dart';
-import '../../../../app/gates/gate_auth.dart';
-import '../../../../core/services/auth_service.dart';
-import '../../../travels/presentation/pages/travels_dashboard_page.dart';
-import '../../../users/presentation/pages/users_dashboard_page.dart';
-import 'main_dashboard_page.dart';
+import 'package:travel_matrix/features/account/presentation/pages/account_page.dart';
+import 'package:travel_matrix/features/travels/presentation/pages/travels_dashboard_page.dart';
+import 'package:travel_matrix/features/users/presentation/pages/users_dashboard_page.dart';
+import 'package:travel_matrix/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 
-
-/// Root container after authentication.
-/// Contains a persistent Sidebar (NavigationRail) for switching between
-/// Main Dashboard, Users Dashboard, and Travels Dashboard.
-/// Each tab has its own nested Navigator for independent navigation stacks.
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
 
@@ -23,164 +16,200 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   int _selectedIndex = 0;
 
-  // Global keys for each nested Navigator to preserve state
-  final List<GlobalKey<NavigatorState>> _navigatorKeys = [
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
-    GlobalKey<NavigatorState>(),
+  final List<Widget> _pages = const [
+    DashboardPage(),
+    TravelsDashboardPage(),
+    UsersDashboardPage()
   ];
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
+      backgroundColor: TravelAppColors.background,
       body: Row(
         children: [
-          // ─── Sidebar Navigation ─────────────────────────────────────
-          NavigationRail(
-            selectedIndex: _selectedIndex,
-            onDestinationSelected: (int index) {
-              if (_selectedIndex == index) {
-                // Pop to root of current tab if already selected
-                _navigatorKeys[index].currentState?.popUntil(
-                  (route) => route.isFirst,
-                );
-              } else {
-                setState(() => _selectedIndex = index);
-              }
-            },
-            extended: false,
-            labelType: NavigationRailLabelType.all,
-            backgroundColor: theme.colorScheme.primary,
-            selectedIconTheme: IconThemeData(
-              color: theme.colorScheme.secondary,
-            ),
-            unselectedIconTheme: IconThemeData(
-              color: theme.colorScheme.onPrimary.withValues(alpha: 0.6),
-            ),
-            selectedLabelTextStyle: TextStyle(
-              color: theme.colorScheme.secondary,
-              fontWeight: FontWeight.w600,
-              fontSize: 11,
-            ),
-            unselectedLabelTextStyle: TextStyle(
-              color: theme.colorScheme.onPrimary.withValues(alpha: 0.6),
-              fontSize: 11,
-            ),
-            indicatorColor: theme.colorScheme.secondary.withValues(alpha: 0.15),
-            leading: Padding(
-              padding: const EdgeInsets.symmetric(vertical: 16),
-              child: Icon(
-                Icons.grid_view_rounded,
-                size: 32,
-                color: theme.colorScheme.secondary,
-              ),
-            ),
-            trailing: Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  IconButton(
-                    tooltip: 'Toggle Theme',
-                    icon: Icon(
-                      Icons.brightness_6,
-                      color: theme.colorScheme.onPrimary.withValues(alpha: 0.6),
-                    ),
-                    onPressed: () {
-                      context.read<SettingsController>().toggleTheme();
-                    },
-                  ),
-                  IconButton(
-                    tooltip: 'Log Out',
-                    icon: Icon(
-                      Icons.logout,
-                      color: theme.colorScheme.onPrimary.withValues(alpha: 0.6),
-                    ),
-                    onPressed: () async {
-                      await AuthService.instance.clearToken();
-                      if (mounted) {
-                        Navigator.of(context).pushAndRemoveUntil(
-                          MaterialPageRoute(
-                              builder: (context) => const GateAuth()),
-                          (Route<dynamic> route) => false,
-                        );
-                      }
-                    },
-                  ),
-                  const SizedBox(height: 16),
-                ],
-              ),
-            ),
-            destinations: const [
-              NavigationRailDestination(
-                icon: Icon(Icons.dashboard_outlined),
-                selectedIcon: Icon(Icons.dashboard),
-                label: Text('Dashboard'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.people_outline),
-                selectedIcon: Icon(Icons.people),
-                label: Text('Users'),
-              ),
-              NavigationRailDestination(
-                icon: Icon(Icons.flight_takeoff_outlined),
-                selectedIcon: Icon(Icons.flight_takeoff),
-                label: Text('Travels'),
-              ),
-            ],
-          ),
-          VerticalDivider(
-            thickness: 1,
-            width: 1,
-            color: theme.dividerColor,
-          ),
-          // ─── Main Content with nested navigation ────────────────────
-          Expanded(
-            child: IndexedStack(
-              index: _selectedIndex,
+          // Sidebar Wrapper
+          Container(
+            width: 250,
+            color: TravelAppColors.surface,
+            child: Column(
               children: [
-                _NestedNavigator(
-                  navigatorKey: _navigatorKeys[0],
-                  child: const MainDashboardPage(),
+
+                // Header / Logo
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
+                  child: Row(
+                    children: [
+
+                      Container(
+                        decoration: BoxDecoration(
+                          color: TravelAppColors.primary.withAlpha(240),
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        child: Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: Image.asset('assets/images/logo_small.png', width: 50),
+                        ),
+                      ),
+                      const SizedBox(width: 12),
+                      const Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text('Travel Matrix', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18, color: TravelAppColors.primary)),
+                          Text('THE DIGITAL CONCIERGE', style: TextStyle(fontSize: 8, color: TravelAppColors.textSecondary, letterSpacing: 1.2)),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
-                _NestedNavigator(
-                  navigatorKey: _navigatorKeys[1],
-                  child: const UsersDashboardPage(),
+
+
+                // Navigation Links
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                    children: [
+                      _buildNavItem(
+                        icon: Icons.dashboard,
+                        label: 'Dashboard',
+                        isSelected: _selectedIndex == 0,
+                        onTap: () => setState(() => _selectedIndex = 0),
+                      ),
+                      const SizedBox(height: 8),
+                      // Booking Accordion
+                      Theme(
+                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
+                        child: ExpansionTile(
+                          iconColor: TravelAppColors.textSecondary,
+                          collapsedIconColor: TravelAppColors.textSecondary,
+                          leading: Icon(Icons.calendar_month, color: (_selectedIndex == 1 || _selectedIndex == 2) ? TravelAppColors.primary : TravelAppColors.textSecondary),
+                          title: Text('Booking', style: TextStyle(color: (_selectedIndex == 1 || _selectedIndex == 2) ? TravelAppColors.primary : TravelAppColors.textPrimary, fontWeight: FontWeight.w600)),
+                          initiallyExpanded: _selectedIndex == 1 || _selectedIndex == 2,
+                          tilePadding: const EdgeInsets.symmetric(horizontal: 16),
+                          children: [
+                            _buildSubNavItem(
+                              label: 'Client Routes',
+                              isSelected: _selectedIndex == 1,
+                              onTap: () => setState(() => _selectedIndex = 1),
+                            ),
+                            _buildSubNavItem(
+                              label: 'Itineraries',
+                              isSelected: _selectedIndex == 2,
+                              onTap: () => setState(() => _selectedIndex = 2),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      _buildNavItem(
+                        icon: Icons.people,
+                        label: 'Users',
+                        isSelected: _selectedIndex == 3,
+                        onTap: () => setState(() => _selectedIndex = 3),
+                      ),
+                      const SizedBox(height: 24),
+                      const Divider(color: TravelAppColors.divider),
+                      const SizedBox(height: 24),
+                      _buildNavItem(
+                        icon: Icons.settings,
+                        label: 'Settings',
+                        isSelected: false,
+                        onTap: () {
+                           Navigator.push(context, MaterialPageRoute(builder: (_) => const AccountPage()));
+                        },
+                      ),
+                    ],
+                  ),
                 ),
-                _NestedNavigator(
-                  navigatorKey: _navigatorKeys[2],
-                  child: const TravelsDashboardPage(),
-                ),
+
+
+                // Footer Links & User Profile
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: Column(
+                    children: [
+                      _buildSimpleLink(Icons.help_outline, 'Support'),
+                      const SizedBox(height: 16),
+                      _buildSimpleLink(Icons.logout, 'Logout'),
+                      const SizedBox(height: 24),
+                      const Divider(color: TravelAppColors.divider),
+                      const SizedBox(height: 24),
+                      Row(
+                        children: [
+                          const CircleAvatar(
+                            radius: 20,
+                            backgroundColor: TravelAppColors.primaryLight,
+                            child: Icon(Icons.person, color: TravelAppColors.surface),
+                          ),
+                          const SizedBox(width: 12),
+                          Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              const Text('Agent Alex', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 14, color: TravelAppColors.primary)),
+                              Text('Premium Tier', style: TextStyle(fontSize: 12, color: TravelAppColors.textSecondary)),
+                            ],
+                          ),
+                        ],
+                      )
+                    ],
+                  ),
+                )
               ],
             ),
+          ),
+          Container(width: 1, color: TravelAppColors.divider),
+          // Main Content
+          Expanded(
+            child: _pages[_selectedIndex],
           ),
         ],
       ),
     );
   }
-}
 
-/// Wraps page content in its own Navigator for nested navigation.
-/// Intercepts system back button to pop the nested stack first.
-class _NestedNavigator extends StatelessWidget {
-  final GlobalKey<NavigatorState> navigatorKey;
-  final Widget child;
+  Widget _buildNavItem({required IconData icon, required String label, required bool isSelected, VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        decoration: BoxDecoration(
+          color: isSelected ? TravelAppColors.background : Colors.transparent,
+          borderRadius: BorderRadius.circular(8),
+          border: isSelected ? const Border(left: BorderSide(color: TravelAppColors.accentGold, width: 4)) : null,
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: isSelected ? TravelAppColors.primary : TravelAppColors.textSecondary, size: 22),
+            const SizedBox(width: 16),
+            Text(label, style: TextStyle(color: isSelected ? TravelAppColors.primary : TravelAppColors.textPrimary, fontWeight: isSelected ? FontWeight.bold : FontWeight.w600)),
+          ],
+        ),
+      ),
+    );
+  }
 
-  const _NestedNavigator({
-    required this.navigatorKey,
-    required this.child,
-  });
+  Widget _buildSubNavItem({required String label, required bool isSelected, VoidCallback? onTap}) {
+    return InkWell(
+      onTap: onTap,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 54, vertical: 10),
+        alignment: Alignment.centerLeft,
+        child: Text(label, style: TextStyle(color: isSelected ? TravelAppColors.primary : TravelAppColors.textSecondary, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500)),
+      ),
+    );
+  }
 
-  @override
-  Widget build(BuildContext context) {
-    return Navigator(
-      key: navigatorKey,
-      onGenerateRoute: (settings) {
-        return MaterialPageRoute(
-          builder: (_) => child,
-        );
-      },
+  Widget _buildSimpleLink(IconData icon, String label) {
+    return InkWell(
+      onTap: () {},
+      child: Row(
+        children: [
+          Icon(icon, color: TravelAppColors.textSecondary, size: 20),
+          const SizedBox(width: 16),
+          Text(label, style: const TextStyle(color: TravelAppColors.textSecondary, fontWeight: FontWeight.w500)),
+        ],
+      ),
     );
   }
 }
