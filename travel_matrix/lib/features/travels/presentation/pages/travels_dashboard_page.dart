@@ -6,6 +6,7 @@ import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/travel_creation_page.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/travel_view_page.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 /// Travels Dashboard Tab — lists all travels with state indicator.
 class TravelsDashboardPage extends StatelessWidget {
@@ -121,13 +122,13 @@ class _TravelsDashboardView extends StatelessWidget {
             const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
           backgroundColor: travel.hasItinerary
-              ? const Color(0xFF2E7D5B).withValues(alpha: 0.15)
-              : const Color(0xFFC08A2E).withValues(alpha: 0.15),
+              ? TravelAppColors.success.withValues(alpha: 0.15)
+              : TravelAppColors.warning.withValues(alpha: 0.15),
           child: Icon(
             travel.hasItinerary ? Icons.check : Icons.map,
             color: travel.hasItinerary
-                ? const Color(0xFF2E7D5B)
-                : const Color(0xFFC08A2E),
+                ? TravelAppColors.success
+                : TravelAppColors.warning,
           ),
         ),
         title: Text(
@@ -147,8 +148,8 @@ class _TravelsDashboardView extends StatelessWidget {
                   horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
                 color: travel.hasItinerary
-                    ? const Color(0xFF2E7D5B).withValues(alpha: 0.1)
-                    : const Color(0xFFC08A2E).withValues(alpha: 0.1),
+                    ? TravelAppColors.success.withValues(alpha: 0.1)
+                    : TravelAppColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
@@ -157,8 +158,8 @@ class _TravelsDashboardView extends StatelessWidget {
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
                   color: travel.hasItinerary
-                      ? const Color(0xFF2E7D5B)
-                      : const Color(0xFFC08A2E),
+                      ? TravelAppColors.success
+                      : TravelAppColors.warning,
                 ),
               ),
             ),
