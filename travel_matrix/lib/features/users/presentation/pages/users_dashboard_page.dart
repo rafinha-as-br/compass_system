@@ -6,6 +6,7 @@ import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/view_user_page.dart';
 import 'package:travel_matrix/features/users/presentation/pages/create_user_page.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 /// Users Dashboard Tab — lists all Client users with status indicators.
 class UsersDashboardPage extends StatelessWidget {
@@ -143,8 +144,8 @@ class _UsersDashboardView extends StatelessWidget {
                       horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                     color: user.isActive
-                        ? const Color(0xFF2E7D5B).withValues(alpha: 0.1)
-                        : const Color(0xFFB23A3A).withValues(alpha: 0.1),
+                        ? TravelAppColors.success.withValues(alpha: 0.1)
+                        : TravelAppColors.error.withValues(alpha: 0.1),
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: Text(
@@ -153,8 +154,8 @@ class _UsersDashboardView extends StatelessWidget {
                       fontSize: 12,
                       fontWeight: FontWeight.w600,
                       color: user.isActive
-                          ? const Color(0xFF2E7D5B)
-                          : const Color(0xFFB23A3A),
+                          ? TravelAppColors.success
+                          : TravelAppColors.error,
                     ),
                   ),
                 ),

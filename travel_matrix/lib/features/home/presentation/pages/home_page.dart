@@ -18,8 +18,9 @@ class _HomePageState extends State<HomePage> {
 
   final List<Widget> _pages = const [
     DashboardPage(),
-    TravelsDashboardPage(),
-    UsersDashboardPage()
+    TravelsDashboardPage(), // Index 1: Client Routes
+    TravelsDashboardPage(), // Index 2: Itineraries (same page for now)
+    UsersDashboardPage()    // Index 3: Users
   ];
 
   @override
