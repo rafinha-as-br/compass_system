@@ -120,11 +120,11 @@ class _RouteCreationView extends StatelessWidget {
               children: [
                 Wrap(
                   spacing: 8.0,
-                  children: controller.interests.map((i) => Chip(label: Text(i))).toList(),
+                  children: controller.interestPoints.map((i) => Chip(label: Text(i.name))).toList(),
                 ),
                 TextButton.icon(
                   onPressed: () {
-                    controller.addInterest('Culture & History');
+                    controller.addInterestPoint('Culture & History', 'Historical sites');
                   },
                   icon: const Icon(Icons.add),
                   label: const Text('Add Culture Interest (Debug)'),

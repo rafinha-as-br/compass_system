@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:mock_repository/mock_repository.dart';
 import 'package:routecraft_app/core/services/compass_service.dart';
 import 'package:routecraft_app/core/services/local_db_service.dart';
+import 'package:routecraft_app/core/services/auth_service.dart';
 
 class RouteCreationState {
   final int currentStep;
@@ -41,8 +42,7 @@ class RouteCreationController extends ChangeNotifier {
   final destinationController = TextEditingController();
   DateTime? startDate;
   DateTime? endDate;
-  final List<String> interests = [];
-  final List<InterestPoint> pointsOfInterest = [];
+  final List<InterestPoint> interestPoints = [];
 
   void nextStep() {
     if (_state.currentStep < 2) {
@@ -58,8 +58,12 @@ class RouteCreationController extends ChangeNotifier {
     }
   }
 
-  void addInterest(String interest) {
-    interests.add(interest);
+  void addInterestPoint(String name, String description) {
+    interestPoints.add(InterestPoint(
+      id: 'poi_${DateTime.now().millisecondsSinceEpoch}',
+      name: name,
+      description: description,
+    ));
     notifyListeners();
   }
 
@@ -69,22 +73,30 @@ class RouteCreationController extends ChangeNotifier {
 
     try {
       final newRoute = RoutePlan(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
-        clientId: 'client_1', // Mocked client ID
-        tripName: tripNameController.text.isEmpty ? 'My Trip' : tripNameController.text,
         startDate: startDate ?? DateTime.now(),
         endDate: endDate ?? DateTime.now().add(const Duration(days: 7)),
         startLocation: startLocationController.text,
         destination: destinationController.text,
-        interestsList: interests,
-        pointsOfInterest: pointsOfInterest,
+        interestsList: interestPoints,
       );
 
-      // Save locally
-      await LocalDbService.instance.saveRouteLocally(newRoute);
+      final localId = DateTime.now().millisecondsSinceEpoch.toString();
 
-      // Send to server (mock API)
-      await CompassService.instance.createRoute(newRoute);
+      // Save locally
+      await LocalDbService.instance.saveRouteLocally(localId, newRoute);
+
+      // Send to server as a Travel (mock API)
+      final token = await AuthService.instance.getToken();
+      if (token != null) {
+        await CompassService.instance.createTravel(token, {
+          'clientId': 'client_1', // Will be resolved from logged-in user
+          'agentId': 'agent_1',
+          'travelName': tripNameController.text.isEmpty
+              ? 'My Trip'
+              : tripNameController.text,
+          'routePlan': newRoute.toMap(),
+        });
+      }
 
       _state = _state.copyWith(isSubmitting: false, isSuccess: true);
       notifyListeners();

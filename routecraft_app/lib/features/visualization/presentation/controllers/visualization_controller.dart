@@ -1,17 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:mock_repository/mock_repository.dart';
 import 'package:routecraft_app/core/services/compass_service.dart';
-import 'package:routecraft_app/core/services/local_db_service.dart';
+import 'package:routecraft_app/core/services/auth_service.dart';
 
 class VisualizationState {
   final bool isLoading;
-  final List<RoutePlan> routes;
-  final List<Itinerary> itineraries;
+  final List<Travel> travels;
 
   const VisualizationState({
     this.isLoading = true,
-    this.routes = const [],
-    this.itineraries = const [],
+    this.travels = const [],
   });
 }
 
@@ -28,21 +26,28 @@ class VisualizationController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      // Fetch routes locally first
-      final localRoutes = await LocalDbService.instance.getLocalRoutes();
-      final serverRoutes = await CompassService.instance.getRoutes(); // Assuming wrapper exists
-      
-      // Merge unique routes (very basic strategy for MVP)
-      final allRoutes = <String, RoutePlan>{};
-      for (var r in serverRoutes) { allRoutes[r.id] = r; }
-      for (var r in localRoutes) { allRoutes[r.id] = r; }
+      final token = await AuthService.instance.getToken();
+      if (token == null) {
+        _state = const VisualizationState(isLoading: false);
+        notifyListeners();
+        return;
+      }
 
-      final itineraries = await CompassService.instance.getItineraries();
+      // Fetch travels for client from the API
+      final response =
+          await CompassService.instance.getTravelsForClient(token, 'client_1');
+
+      final List<Travel> travels = [];
+      if (response['status'] == 'success') {
+        final data = response['data'] as List<dynamic>;
+        for (var item in data) {
+          travels.add(Travel.fromJson(item as Map<String, dynamic>));
+        }
+      }
 
       _state = VisualizationState(
         isLoading: false,
-        routes: allRoutes.values.toList(),
-        itineraries: itineraries,
+        travels: travels,
       );
       notifyListeners();
     } catch (e) {

@@ -18,6 +18,7 @@ class RouteCraftApp extends StatelessWidget {
         builder: (context, settingsController, _) {
           return MaterialApp(
             title: 'RouteCraft',
+            debugShowCheckedModeBanner: false,
             theme: AppTheme.lightTheme,
             darkTheme: AppTheme.darkTheme,
             themeMode: settingsController.themeMode,

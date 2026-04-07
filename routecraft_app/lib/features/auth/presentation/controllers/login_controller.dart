@@ -32,18 +32,20 @@ class LoginController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final user = await CompassService.instance.login(email, password);
+      final response = await CompassService.instance.login(email, password);
       
-      if (user != null) {
-        // Here we simulate getting a token from the backend
-        await AuthService.instance.saveToken('dummy_token_${user.id}');
+      if (response['status'] == 'success') {
+        final data = response['data'] as Map<String, dynamic>;
+        final token = data['token'] as String;
+
+        await AuthService.instance.saveToken(token);
         _state = _state.copyWith(isLoading: false);
         notifyListeners();
         return true;
       } else {
         _state = _state.copyWith(
           isLoading: false,
-          errorMessage: 'Invalid credentials. Please try again.',
+          errorMessage: response['message'] as String? ?? 'Invalid credentials. Please try again.',
         );
         notifyListeners();
         return false;

@@ -35,14 +35,19 @@ class _GateSplashState extends State<GateSplash> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(
-              Icons.explore, 
-              size: 80, 
-              color: Theme.of(context).colorScheme.onPrimary,
+
+            /// logo
+            Expanded(
+              flex: 2,
+              child: Container(
+                color: Color(0xFF081C2C),
+                child: Image.asset('assets/images/logo.png', width: 400),
+              ),
             ),
+
             const SizedBox(height: 24),
             Text(
-              'RouteCraft',
+              'RouteCraft App',
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,

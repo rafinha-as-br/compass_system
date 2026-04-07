@@ -17,7 +17,7 @@ class LoginState {
   }) {
     return LoginState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: errorMessage,
     );
   }
 }
@@ -32,18 +32,34 @@ class LoginController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final user = await CompassService.instance.login(email, password);
-      
-      if (user != null) {
-        // Here we simulate getting a token from the backend
-        await AuthService.instance.saveToken('dummy_token_matrix_${user.id}');
+      final response =
+          await CompassService.instance.login(email, password);
+
+      if (response['status'] == 'success') {
+        final data = response['data'] as Map<String, dynamic>;
+        final userType = data['userType'] as String;
+        final token = data['token'] as String;
+
+        // Travel Matrix is only for Travel Agents
+        if (userType != 'travel_agent') {
+          _state = _state.copyWith(
+            isLoading: false,
+            errorMessage:
+                'Access denied. Only Travel Agents can access Travel Matrix.',
+          );
+          notifyListeners();
+          return false;
+        }
+
+        await AuthService.instance.saveToken(token);
         _state = _state.copyWith(isLoading: false);
         notifyListeners();
         return true;
       } else {
         _state = _state.copyWith(
           isLoading: false,
-          errorMessage: 'Invalid credentials. Please try again.',
+          errorMessage: response['message'] as String? ??
+              'Invalid credentials. Please try again.',
         );
         notifyListeners();
         return false;
