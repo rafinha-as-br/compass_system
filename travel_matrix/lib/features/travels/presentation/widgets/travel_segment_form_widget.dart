@@ -21,7 +21,6 @@ class TravelSegmentFormWidget extends StatefulWidget {
 
 class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
   late final TextEditingController _titleCtrl;
-  late final TextEditingController _nameCtrl;
   late final TextEditingController _startPointCtrl;
   late final TextEditingController _finishPointCtrl;
   late DateTime _startDate;
@@ -51,7 +50,6 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
   void initState() {
     super.initState();
     _titleCtrl = TextEditingController(text: widget.segment.title);
-    _nameCtrl = TextEditingController(text: widget.segment.name);
     _startPointCtrl = TextEditingController(text: widget.segment.startPoint);
     _finishPointCtrl = TextEditingController(text: widget.segment.finishPoint);
     _startDate = widget.segment.startDate;
@@ -109,7 +107,6 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.segment.id != widget.segment.id) {
       _titleCtrl.text = widget.segment.title;
-      _nameCtrl.text = widget.segment.name;
       _startPointCtrl.text = widget.segment.startPoint;
       _finishPointCtrl.text = widget.segment.finishPoint;
       _startDate = widget.segment.startDate;
@@ -122,7 +119,6 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
   @override
   void dispose() {
     _titleCtrl.dispose();
-    _nameCtrl.dispose();
     _startPointCtrl.dispose();
     _finishPointCtrl.dispose();
     _flightNumberCtrl.dispose();
@@ -196,7 +192,6 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
       startDate: _startDate,
       finishDate: _finishDate,
       travelSegmentId: widget.segment.travelSegmentId,
-      name: _nameCtrl.text,
       transport: _buildTransport(),
       startPoint: _startPointCtrl.text,
       finishPoint: _finishPointCtrl.text,
@@ -244,14 +239,6 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
           onChanged: (_) => _emitChange(),
         ),
         const SizedBox(height: 12),
-        TextField(
-          controller: _nameCtrl,
-          decoration: const InputDecoration(
-            labelText: 'Segment Name',
-            border: OutlineInputBorder(),
-          ),
-          onChanged: (_) => _emitChange(),
-        ),
         const SizedBox(height: 12),
         Row(
           children: [

@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
-import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/interest_points_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/step_type_selector.dart';
@@ -120,7 +119,6 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
             name: '',
             description: '',
             experiences: [],
-            isCompleted: false,
           );
         case StepType.hosting:
           _steps[_selectedStepIndex] = Hosting(
@@ -140,7 +138,6 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
             startDate: current.startDate,
             finishDate: current.finishDate,
             travelSegmentId: 'seg_${now.millisecondsSinceEpoch}',
-            name: '',
             transport: Airplane(
               id: 'transport_${now.millisecondsSinceEpoch}',
               flightNumber: '',
@@ -299,44 +296,31 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
           const SizedBox(width: 16),
         ],
       ),
-      body: Column(
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          BreadcrumbBar(items: [
-            'Travels Dashboard',
-            'Travel View',
-            widget.travel.hasItinerary
-                ? 'Edit Itinerary'
-                : 'Create Itinerary',
-          ]),
+          // ─── Left: Interest Points ──────────────────────
+          InterestPointsPanel(
+            interestPoints: route.interestsList,
+            checkedIds: _checkedInterestPointIds,
+            onToggle: _toggleInterestPoint,
+          ),
+          VerticalDivider(
+              width: 1, color: theme.dividerColor),
+          // ─── Center: Step Workflow ───────────────────────
           Expanded(
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // ─── Left: Interest Points ──────────────────────
-                InterestPointsPanel(
-                  interestPoints: route.interestsList,
-                  checkedIds: _checkedInterestPointIds,
-                  onToggle: _toggleInterestPoint,
-                ),
-                VerticalDivider(
-                    width: 1, color: theme.dividerColor),
-                // ─── Center: Step Workflow ───────────────────────
-                Expanded(
-                  child: _buildCenterPanel(theme),
-                ),
-                VerticalDivider(
-                    width: 1, color: theme.dividerColor),
-                // ─── Right: Steps List ──────────────────────────
-                StepsListPanel(
-                  steps: _steps,
-                  selectedIndex: _selectedStepIndex,
-                  onSelect: _selectStep,
-                  onReorder: _reorderSteps,
-                  onDelete: _deleteStep,
-                  onAddStep: _addStep,
-                ),
-              ],
-            ),
+            child: _buildCenterPanel(theme),
+          ),
+          VerticalDivider(
+              width: 1, color: theme.dividerColor),
+          // ─── Right: Steps List ──────────────────────────
+          StepsListPanel(
+            steps: _steps,
+            selectedIndex: _selectedStepIndex,
+            onSelect: _selectStep,
+            onReorder: _reorderSteps,
+            onDelete: _deleteStep,
+            onAddStep: _addStep,
           ),
         ],
       ),
@@ -356,7 +340,7 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           // ─── Navigation bar ─────────────────────────────────
-          _buildStepperNavigation(theme),
+          _buildStepperNavigation(theme, step),
           const SizedBox(height: 24),
           // ─── Step form ──────────────────────────────────────
           _buildStepForm(step),
@@ -398,7 +382,7 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
     );
   }
 
-  Widget _buildStepperNavigation(ThemeData theme) {
+  Widget _buildStepperNavigation(ThemeData theme, ItineraryStep step) {
     final isFirst = _selectedStepIndex == 0;
     final isLast = _selectedStepIndex == _steps.length - 1;
 
@@ -411,7 +395,7 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
           tooltip: 'Previous Step',
         ),
         Text(
-          'Step ${_selectedStepIndex + 1} of ${_steps.length}',
+          'Step - ${step.title}',
           style: theme.textTheme.titleSmall
               ?.copyWith(fontWeight: FontWeight.w600),
         ),

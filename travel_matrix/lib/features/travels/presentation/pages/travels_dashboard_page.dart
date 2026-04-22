@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
-import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/travel_creation_page.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/travel_view_page.dart';
@@ -30,81 +29,73 @@ class _TravelsDashboardView extends StatelessWidget {
     final state = controller.state;
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const BreadcrumbBar(items: ['Travels Dashboard']),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'All Travels',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'All Travels',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ChangeNotifierProvider.value(
+                        value: controller,
+                        child: const TravelCreationPage(),
                       ),
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ChangeNotifierProvider.value(
-                              value: controller,
-                              child: const TravelCreationPage(),
-                            ),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.add),
-                      label: const Text('Create Travel'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.secondary,
-                        foregroundColor: theme.colorScheme.onSecondary,
-                      ),
-                    ),
-                  ],
+                  );
+                },
+                icon: const Icon(Icons.add),
+                label: const Text('Create Travel'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondary,
+                  foregroundColor: theme.colorScheme.onSecondary,
                 ),
-                const SizedBox(height: 16),
-                if (state.errorMessage != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      state.errorMessage!,
-                      style: TextStyle(color: theme.colorScheme.error),
-                    ),
-                  ),
-                Expanded(
-                  child: state.isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : state.travels.isEmpty
-                          ? Center(
-                              child: Text(
-                                'No travels created yet.',
-                                style: TextStyle(
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
-                                ),
-                              ),
-                            )
-                          : ListView.builder(
-                              itemCount: state.travels.length,
-                              itemBuilder: (context, index) {
-                                final travel = state.travels[index];
-                                return _buildTravelCard(
-                                    context, travel, controller);
-                              },
-                            ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
-      ],
+          const SizedBox(height: 16),
+          if (state.errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                state.errorMessage!,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+            ),
+          Expanded(
+            child: state.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : state.travels.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No travels created yet.',
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
+                          ),
+                        ),
+                      )
+                    : ListView.builder(
+                        itemCount: state.travels.length,
+                        itemBuilder: (context, index) {
+                          final travel = state.travels[index];
+                          return _buildTravelCard(
+                              context, travel, controller);
+                        },
+                      ),
+          ),
+        ],
+      ),
     );
   }
 
@@ -113,7 +104,6 @@ class _TravelsDashboardView extends StatelessWidget {
     Travel travel,
     TravelsController controller,
   ) {
-    final theme = Theme.of(context);
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),

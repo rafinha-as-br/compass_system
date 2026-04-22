@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 
 /// User creation form page.
@@ -70,134 +69,119 @@ class _CreateUserPageState extends State<CreateUserPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Column(
-        children: [
-          const BreadcrumbBar(
-              items: ['Users Dashboard', 'Create User']),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 500),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          'New Client User',
-                          style: theme.textTheme.titleLarge
-                              ?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        const SizedBox(height: 24),
-                        TextFormField(
-                          controller: _nameCtrl,
-                          decoration:
-                              const InputDecoration(labelText: 'Full Name', border: OutlineInputBorder()),
-                          validator: (v) =>
-                              v!.isEmpty ? 'Name is required' : null,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _cpfCtrl,
-                          decoration:
-                              const InputDecoration(labelText: 'CPF', border: OutlineInputBorder()),
-                          validator: (v) =>
-                              v!.isEmpty ? 'CPF is required' : null,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _emailCtrl,
-                          decoration:
-                              const InputDecoration(labelText: 'Email', border: OutlineInputBorder()),
-                          validator: (v) =>
-                              v!.isEmpty ? 'Email is required' : null,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _phoneCtrl,
-                          decoration:
-                              const InputDecoration(labelText: 'Phone Number', border: OutlineInputBorder()),
-                          validator: (v) =>
-                              v!.isEmpty ? 'Phone is required' : null,
-                        ),
-                        const SizedBox(height: 16),
-                        TextFormField(
-                          controller: _passwordCtrl,
-                          decoration:
-                              const InputDecoration(labelText: 'Initial Password', border: OutlineInputBorder()),
-                          obscureText: true,
-                          validator: (v) =>
-                              v!.isEmpty ? 'Password is required' : null,
-                        ),
-                        const SizedBox(height: 16),
-                        DropdownButtonFormField<String>(
-                          value: _sex,
-                          decoration:
-                              const InputDecoration(labelText: 'Sex', border: OutlineInputBorder()),
-                          items: const [
-                            DropdownMenuItem(
-                                value: 'M', child: Text('Male')),
-                            DropdownMenuItem(
-                                value: 'F', child: Text('Female')),
-                            DropdownMenuItem(
-                                value: 'O', child: Text('Other')),
-                          ],
-                          onChanged: (v) =>
-                              setState(() => _sex = v ?? 'M'),
-                        ),
-                        const SizedBox(height: 16),
-                        ListTile(
-                          contentPadding: EdgeInsets.zero,
-                          title: const Text('Birth Date'),
-                          subtitle: Text(
-                            '${_birthDate.day}/${_birthDate.month}/${_birthDate.year}',
-                          ),
-                          trailing: IconButton(
-                            icon: const Icon(Icons.calendar_today),
-                            onPressed: () async {
-                              final picked = await showDatePicker(
-                                context: context,
-                                initialDate: _birthDate,
-                                firstDate: DateTime(1920),
-                                lastDate: DateTime.now(),
-                              );
-                              if (picked != null) {
-                                setState(() => _birthDate = picked);
-                              }
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 32),
-                        SizedBox(
-                          height: 48,
-                          child: ElevatedButton(
-                            onPressed: _isSubmitting ? null : _submit,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor:
-                                  theme.colorScheme.secondary,
-                              foregroundColor:
-                                  theme.colorScheme.onSecondary,
-                            ),
-                            child: _isSubmitting
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                        strokeWidth: 2),
-                                  )
-                                : const Text('CREATE USER'),
-                          ),
-                        ),
-                      ],
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 500),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    'New Client User',
+                    style: theme.textTheme.titleLarge
+                        ?.copyWith(fontWeight: FontWeight.bold),
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: _nameCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'Full Name', border: OutlineInputBorder()),
+                    validator: (v) =>
+                        v!.isEmpty ? 'Name is required' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _cpfCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'CPF', border: OutlineInputBorder()),
+                    validator: (v) =>
+                        v!.isEmpty ? 'CPF is required' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _emailCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'Email', border: OutlineInputBorder()),
+                    validator: (v) =>
+                        v!.isEmpty ? 'Email is required' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _phoneCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'Phone Number', border: OutlineInputBorder()),
+                    validator: (v) =>
+                        v!.isEmpty ? 'Phone is required' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    controller: _passwordCtrl,
+                    decoration: const InputDecoration(
+                        labelText: 'Initial Password', border: OutlineInputBorder()),
+                    obscureText: true,
+                    validator: (v) =>
+                        v!.isEmpty ? 'Password is required' : null,
+                  ),
+                  const SizedBox(height: 16),
+                  DropdownButtonFormField<String>(
+                    value: _sex,
+                    decoration: const InputDecoration(
+                        labelText: 'Sex', border: OutlineInputBorder()),
+                    items: const [
+                      DropdownMenuItem(value: 'M', child: Text('Male')),
+                      DropdownMenuItem(value: 'F', child: Text('Female')),
+                      DropdownMenuItem(value: 'O', child: Text('Other')),
+                    ],
+                    onChanged: (v) => setState(() => _sex = v ?? 'M'),
+                  ),
+                  const SizedBox(height: 16),
+                  ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: const Text('Birth Date'),
+                    subtitle: Text(
+                      '${_birthDate.day}/${_birthDate.month}/${_birthDate.year}',
+                    ),
+                    trailing: IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () async {
+                        final picked = await showDatePicker(
+                          context: context,
+                          initialDate: _birthDate,
+                          firstDate: DateTime(1920),
+                          lastDate: DateTime.now(),
+                        );
+                        if (picked != null) {
+                          setState(() => _birthDate = picked);
+                        }
+                      },
                     ),
                   ),
-                ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: _isSubmitting ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.secondary,
+                        foregroundColor: theme.colorScheme.onSecondary,
+                      ),
+                      child: _isSubmitting
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : const Text('CREATE USER'),
+                    ),
+                  ),
+                ],
               ),
             ),
           ),
-        ],
+        ),
       ),
     );
   }

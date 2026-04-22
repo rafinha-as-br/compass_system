@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
-import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/core/services/auth_service.dart';
 import 'package:travel_matrix/core/services/compass_service.dart';
@@ -128,279 +127,270 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
           onPressed: () => Navigator.of(context).pop(),
         ),
       ),
-      body: Column(
-        children: [
-          const BreadcrumbBar(
-            items: ['Travels Dashboard', 'Create Travel'],
-          ),
-          Expanded(
-            child: _isLoadingClients
-                ? const Center(child: CircularProgressIndicator())
-                : SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Center(
-                      child: ConstrainedBox(
-                        constraints:
-                            const BoxConstraints(maxWidth: 600),
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            crossAxisAlignment:
-                                CrossAxisAlignment.stretch,
-                            children: [
-                              Text('Step 1: Create Route',
-                                  style: theme.textTheme.titleLarge
-                                      ?.copyWith(
-                                          fontWeight:
-                                              FontWeight.bold)),
-                              const SizedBox(height: 8),
-                              Text(
-                                'Define the route first. An itinerary can be created after.',
-                                style: TextStyle(
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
-                                ),
-                              ),
-                              const SizedBox(height: 24),
-                              TextFormField(
-                                controller: _travelNameCtrl,
-                                decoration: const InputDecoration(
-                                    labelText: 'Travel Name',
-                                    border: OutlineInputBorder()),
-                                validator: (v) => v!.isEmpty
-                                    ? 'Travel name is required'
-                                    : null,
-                              ),
-                              const SizedBox(height: 16),
-                              DropdownButtonFormField<String>(
-                                value: _selectedClientId.isEmpty
-                                    ? null
-                                    : _selectedClientId,
-                                decoration: const InputDecoration(
-                                    labelText: 'Client',
-                                    border: OutlineInputBorder()),
-                                items: _clients
-                                    .map((c) =>
-                                        DropdownMenuItem(
-                                          value: c.id,
-                                          child:
-                                              Text(c.name),
-                                        ))
-                                    .toList(),
-                                onChanged: (v) => setState(
-                                    () => _selectedClientId =
-                                        v ?? ''),
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller:
-                                          _startLocationCtrl,
-                                      decoration:
-                                          const InputDecoration(
-                                              labelText:
-                                                  'Start Location',
-                                              border:
-                                                  OutlineInputBorder()),
-                                      validator: (v) => v!.isEmpty
-                                          ? 'Required'
-                                          : null,
-                                    ),
-                                  ),
-                                  const SizedBox(width: 16),
-                                  Expanded(
-                                    child: TextFormField(
-                                      controller:
-                                          _destinationCtrl,
-                                      decoration:
-                                          const InputDecoration(
-                                              labelText:
-                                                  'Destination',
-                                              border:
-                                                  OutlineInputBorder()),
-                                      validator: (v) => v!.isEmpty
-                                          ? 'Required'
-                                          : null,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 16),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: ListTile(
-                                      contentPadding:
-                                          EdgeInsets.zero,
-                                      title: const Text(
-                                          'Start Date'),
-                                      subtitle: Text(
-                                          '${_startDate.day}/${_startDate.month}/${_startDate.year}'),
-                                      trailing: IconButton(
-                                        icon: const Icon(
-                                            Icons
-                                                .calendar_today),
-                                        onPressed: () async {
-                                          final picked =
-                                              await showDatePicker(
-                                            context: context,
-                                            initialDate:
-                                                _startDate,
-                                            firstDate:
-                                                DateTime.now(),
-                                            lastDate:
-                                                DateTime(2030),
-                                          );
-                                          if (picked != null) {
-                                            setState(() =>
-                                                _startDate =
-                                                    picked);
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: ListTile(
-                                      contentPadding:
-                                          EdgeInsets.zero,
-                                      title:
-                                          const Text('End Date'),
-                                      subtitle: Text(
-                                          '${_endDate.day}/${_endDate.month}/${_endDate.year}'),
-                                      trailing: IconButton(
-                                        icon: const Icon(
-                                            Icons
-                                                .calendar_today),
-                                        onPressed: () async {
-                                          final picked =
-                                              await showDatePicker(
-                                            context: context,
-                                            initialDate:
-                                                _endDate,
-                                            firstDate:
-                                                DateTime.now(),
-                                            lastDate:
-                                                DateTime(2030),
-                                          );
-                                          if (picked != null) {
-                                            setState(() =>
-                                                _endDate =
-                                                    picked);
-                                          }
-                                        },
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 24),
-                              const Divider(),
-                              const SizedBox(height: 16),
-                              Text('Interest Points',
-                                  style: theme.textTheme
-                                      .titleMedium
-                                      ?.copyWith(
-                                          fontWeight:
-                                              FontWeight.w600)),
-                              const SizedBox(height: 8),
-                              Row(
-                                children: [
-                                  Expanded(
-                                    child: TextField(
-                                      controller: _poiNameCtrl,
-                                      decoration:
-                                          const InputDecoration(
-                                              labelText:
-                                                  'Point Name',
-                                              border:
-                                                  OutlineInputBorder()),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: TextField(
-                                      controller: _poiDescCtrl,
-                                      decoration:
-                                          const InputDecoration(
-                                              labelText:
-                                                  'Description',
-                                              border:
-                                                  OutlineInputBorder()),
-                                    ),
-                                  ),
-                                  const SizedBox(width: 8),
-                                  IconButton(
-                                    onPressed:
-                                        _addInterestPoint,
-                                    icon:
-                                        const Icon(Icons.add_circle),
-                                    color: theme
-                                        .colorScheme.secondary,
-                                  ),
-                                ],
-                              ),
-                              const SizedBox(height: 8),
-                              ..._interestPoints.map(
-                                (p) => Card(
-                                  child: ListTile(
-                                    leading: const Icon(
-                                        Icons.place),
-                                    title: Text(p.name),
-                                    subtitle:
-                                        Text(p.description),
-                                    trailing: IconButton(
-                                      icon: const Icon(
-                                          Icons.close,
-                                          size: 18),
-                                      onPressed: () {
-                                        setState(() =>
-                                            _interestPoints
-                                                .remove(p));
-                                      },
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              const SizedBox(height: 32),
-                              SizedBox(
-                                height: 48,
-                                child: ElevatedButton(
-                                  onPressed: _isSubmitting
-                                      ? null
-                                      : _submit,
-                                  style:
-                                      ElevatedButton.styleFrom(
-                                    backgroundColor: theme
-                                        .colorScheme.secondary,
-                                    foregroundColor: theme
-                                        .colorScheme
-                                        .onSecondary,
-                                  ),
-                                  child: _isSubmitting
-                                      ? const SizedBox(
-                                          width: 20,
-                                          height: 20,
-                                          child:
-                                              CircularProgressIndicator(
-                                                  strokeWidth:
-                                                      2),
-                                        )
-                                      : const Text(
-                                          'CREATE TRAVEL'),
-                                ),
-                              ),
-                            ],
+      body: _isLoadingClients
+          ? const Center(child: CircularProgressIndicator())
+          : SingleChildScrollView(
+              padding: const EdgeInsets.all(24),
+              child: Center(
+                child: ConstrainedBox(
+                  constraints:
+                      const BoxConstraints(maxWidth: 600),
+                  child: Form(
+                    key: _formKey,
+                    child: Column(
+                      crossAxisAlignment:
+                          CrossAxisAlignment.stretch,
+                      children: [
+                        Text('Step 1: Create Route',
+                            style: theme.textTheme.titleLarge
+                                ?.copyWith(
+                                    fontWeight:
+                                        FontWeight.bold)),
+                        const SizedBox(height: 8),
+                        Text(
+                          'Define the route first. An itinerary can be created after.',
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
                           ),
                         ),
-                      ),
+                        const SizedBox(height: 24),
+                        TextFormField(
+                          controller: _travelNameCtrl,
+                          decoration: const InputDecoration(
+                              labelText: 'Travel Name',
+                              border: OutlineInputBorder()),
+                          validator: (v) => v!.isEmpty
+                              ? 'Travel name is required'
+                              : null,
+                        ),
+                        const SizedBox(height: 16),
+                        DropdownButtonFormField<String>(
+                          value: _selectedClientId.isEmpty
+                              ? null
+                              : _selectedClientId,
+                          decoration: const InputDecoration(
+                              labelText: 'Client',
+                              border: OutlineInputBorder()),
+                          items: _clients
+                              .map((c) =>
+                                  DropdownMenuItem(
+                                    value: c.id,
+                                    child:
+                                        Text(c.name),
+                                  ))
+                              .toList(),
+                          onChanged: (v) => setState(
+                              () => _selectedClientId =
+                                  v ?? ''),
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextFormField(
+                                controller:
+                                    _startLocationCtrl,
+                                decoration:
+                                    const InputDecoration(
+                                        labelText:
+                                            'Start Location',
+                                        border:
+                                            OutlineInputBorder()),
+                                validator: (v) => v!.isEmpty
+                                    ? 'Required'
+                                    : null,
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: TextFormField(
+                                controller:
+                                    _destinationCtrl,
+                                decoration:
+                                    const InputDecoration(
+                                        labelText:
+                                            'Destination',
+                                        border:
+                                            OutlineInputBorder()),
+                                validator: (v) => v!.isEmpty
+                                    ? 'Required'
+                                    : null,
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 16),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: ListTile(
+                                contentPadding:
+                                    EdgeInsets.zero,
+                                title: const Text(
+                                    'Start Date'),
+                                subtitle: Text(
+                                    '${_startDate.day}/${_startDate.month}/${_startDate.year}'),
+                                trailing: IconButton(
+                                  icon: const Icon(
+                                      Icons
+                                          .calendar_today),
+                                  onPressed: () async {
+                                    final picked =
+                                        await showDatePicker(
+                                      context: context,
+                                      initialDate:
+                                          _startDate,
+                                      firstDate:
+                                          DateTime.now(),
+                                      lastDate:
+                                          DateTime(2030),
+                                    );
+                                    if (picked != null) {
+                                      setState(() =>
+                                          _startDate =
+                                              picked);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                            Expanded(
+                              child: ListTile(
+                                contentPadding:
+                                    EdgeInsets.zero,
+                                title:
+                                    const Text('End Date'),
+                                subtitle: Text(
+                                    '${_endDate.day}/${_endDate.month}/${_endDate.year}'),
+                                trailing: IconButton(
+                                  icon: const Icon(
+                                      Icons
+                                          .calendar_today),
+                                  onPressed: () async {
+                                    final picked =
+                                        await showDatePicker(
+                                      context: context,
+                                      initialDate:
+                                          _endDate,
+                                      firstDate:
+                                          DateTime.now(),
+                                      lastDate:
+                                          DateTime(2030),
+                                    );
+                                    if (picked != null) {
+                                      setState(() =>
+                                          _endDate =
+                                              picked);
+                                    }
+                                  },
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 24),
+                        const Divider(),
+                        const SizedBox(height: 16),
+                        Text('Interest Points',
+                            style: theme.textTheme
+                                .titleMedium
+                                ?.copyWith(
+                                    fontWeight:
+                                        FontWeight.w600)),
+                        const SizedBox(height: 8),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: TextField(
+                                controller: _poiNameCtrl,
+                                decoration:
+                                    const InputDecoration(
+                                        labelText:
+                                            'Point Name',
+                                        border:
+                                            OutlineInputBorder()),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            Expanded(
+                              child: TextField(
+                                controller: _poiDescCtrl,
+                                decoration:
+                                    const InputDecoration(
+                                        labelText:
+                                            'Description',
+                                        border:
+                                            OutlineInputBorder()),
+                              ),
+                            ),
+                            const SizedBox(width: 8),
+                            IconButton(
+                              onPressed:
+                                  _addInterestPoint,
+                              icon:
+                                  const Icon(Icons.add_circle),
+                              color: theme
+                                  .colorScheme.secondary,
+                            ),
+                          ],
+                        ),
+                        const SizedBox(height: 8),
+                        ..._interestPoints.map(
+                          (p) => Card(
+                            child: ListTile(
+                              leading: const Icon(
+                                  Icons.place),
+                              title: Text(p.name),
+                              subtitle:
+                                  Text(p.description),
+                              trailing: IconButton(
+                                icon: const Icon(
+                                    Icons.close,
+                                    size: 18),
+                                onPressed: () {
+                                  setState(() =>
+                                      _interestPoints
+                                          .remove(p));
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        const SizedBox(height: 32),
+                        SizedBox(
+                          height: 48,
+                          child: ElevatedButton(
+                            onPressed: _isSubmitting
+                                ? null
+                                : _submit,
+                            style:
+                                ElevatedButton.styleFrom(
+                              backgroundColor: theme
+                                  .colorScheme.secondary,
+                              foregroundColor: theme
+                                  .colorScheme
+                                  .onSecondary,
+                            ),
+                            child: _isSubmitting
+                                ? const SizedBox(
+                                    width: 20,
+                                    height: 20,
+                                    child:
+                                        CircularProgressIndicator(
+                                            strokeWidth:
+                                                2),
+                                  )
+                                : const Text(
+                                    'CREATE TRAVEL'),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-          ),
-        ],
-      ),
+                ),
+              ),
+            ),
     );
   }
 }

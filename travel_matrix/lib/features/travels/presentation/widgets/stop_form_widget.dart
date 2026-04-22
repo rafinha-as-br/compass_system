@@ -72,7 +72,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
       name: _nameCtrl.text,
       description: _descCtrl.text,
       experiences: List.from(_experiences),
-      isCompleted: widget.stop.isCompleted,
+      finished: widget.stop.finished,
     ));
   }
 

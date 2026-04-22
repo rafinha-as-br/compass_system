@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
-import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/itinerary/itinerary_timeline.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/itinerary_creation_page.dart';
 
 /// Travel View Page — divided into Route View and Itinerary View tabs.
@@ -31,18 +31,25 @@ class TravelViewPage extends StatelessWidget {
             ],
           ),
         ),
-        body: Column(
-          children: [
-            const BreadcrumbBar(
-                items: ['Travels Dashboard', 'Travel View']),
-            Expanded(
-              child: TabBarView(
-                children: [
-                  _RouteViewTab(travel: travel),
-                  _ItineraryViewTab(travel: travel),
-                ],
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () {
+            final controller = context.read<TravelsController>();
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (_) => ChangeNotifierProvider.value(
+                  value: controller,
+                  child: ItineraryCreationPage(travel: travel),
+                ),
               ),
-            ),
+            );
+          },
+          icon: const Icon(Icons.add_road),
+          label: const Text('Edit Itinerary'),
+        ),
+        body: TabBarView(
+          children: [
+            _RouteViewTab(travel: travel),
+            _ItineraryViewTab(travel: travel),
           ],
         ),
       ),
@@ -62,56 +69,51 @@ class _RouteViewTab extends StatelessWidget {
     final theme = Theme.of(context);
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text('Route Details',
-                  style: theme.textTheme.titleLarge
-                      ?.copyWith(fontWeight: FontWeight.bold)),
-              const SizedBox(height: 24),
-              _infoTile(theme, Icons.location_on, 'From',
-                  route.startLocation),
-              _infoTile(theme, Icons.flag, 'To', route.destination),
-              _infoTile(
-                theme,
-                Icons.calendar_today,
-                'Start Date',
-                '${route.startDate.day}/${route.startDate.month}/${route.startDate.year}',
-              ),
-              _infoTile(
-                theme,
-                Icons.event,
-                'End Date',
-                '${route.endDate.day}/${route.endDate.month}/${route.endDate.year}',
-              ),
-              const SizedBox(height: 24),
-              Text('Interest Points (${route.interestsList.length})',
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              if (route.interestsList.isEmpty)
-                const Text('No interest points defined.')
-              else
-                ...route.interestsList.map(
-                  (poi) => Card(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    child: ListTile(
-                      leading: Icon(Icons.place,
-                          color: theme.colorScheme.secondary),
-                      title: Text(poi.name,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600)),
-                      subtitle: Text(poi.description),
-                    ),
-                  ),
-                ),
-            ],
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Route Details',
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 24),
+          _infoTile(theme, Icons.location_on, 'From',
+              route.startLocation),
+          _infoTile(theme, Icons.flag, 'To', route.destination),
+          _infoTile(
+            theme,
+            Icons.calendar_today,
+            'Start Date',
+            '${route.startDate.day}/${route.startDate.month}/${route.startDate.year}',
           ),
-        ),
+          _infoTile(
+            theme,
+            Icons.event,
+            'End Date',
+            '${route.endDate.day}/${route.endDate.month}/${route.endDate.year}',
+          ),
+          const SizedBox(height: 24),
+          Text('Interest Points (${route.interestsList.length})',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          if (route.interestsList.isEmpty)
+            const Text('No interest points defined.')
+          else
+            ...route.interestsList.map(
+              (poi) => Card(
+                margin: const EdgeInsets.symmetric(vertical: 4),
+                child: ListTile(
+                  leading: Icon(Icons.place,
+                      color: theme.colorScheme.secondary),
+                  title: Text(poi.name,
+                      style: const TextStyle(
+                          fontWeight: FontWeight.w600)),
+                  subtitle: Text(poi.description),
+                ),
+              ),
+            ),
+        ],
       ),
     );
   }
@@ -192,108 +194,29 @@ class _ItineraryViewTab extends StatelessWidget {
     final itinerary = travel.itinerary!;
 
     return SingleChildScrollView(
-      padding: const EdgeInsets.all(24),
-      child: Center(
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(maxWidth: 600),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Text('Itinerary Details',
-                      style: theme.textTheme.titleLarge
-                          ?.copyWith(fontWeight: FontWeight.bold)),
-                  TextButton.icon(
-                    onPressed: () {
-                      final controller = context.read<TravelsController>();
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => ChangeNotifierProvider.value(
-                            value: controller,
-                            child: ItineraryCreationPage(travel: travel),
-                          ),
-                        ),
-                      );
-                    },
-                    icon: const Icon(Icons.edit, size: 18),
-                    label: const Text('Edit'),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              Text('Agent: ${itinerary.responsibleAgentName}',
-                  style: TextStyle(
-                      color: theme.colorScheme.onSurface
-                          .withValues(alpha: 0.6))),
-              const SizedBox(height: 24),
-              // Unified Itinerary Timeline
-              Text('Itinerary Timeline (${itinerary.itinerarySteps.length} steps)',
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 12),
-              if (itinerary.itinerarySteps.isEmpty)
-                const Text('The itinerary is empty.')
-              else
-                ...itinerary.itinerarySteps.asMap().entries.map(
-                  (entry) {
-                    final i = entry.key;
-                    final step = entry.value;
-                    return _buildStepTile(context, theme, i, step);
-                  },
-                ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _buildStepTile(
-      BuildContext context, ThemeData theme, int index, ItineraryStep step) {
-    IconData icon = Icons.help_outline;
-    String title = step.title.isNotEmpty ? step.title : 'Step ${index + 1}';
-    String subtitle = '';
-    Widget? trailing;
-
-    if (step is Stop) {
-      icon = Icons.place;
-      subtitle = step.name;
-      if (step.description.isNotEmpty) {
-        subtitle += ' - ${step.description}';
-      }
-      trailing = step.isCompleted
-          ? const Icon(Icons.check_circle, color: Color(0xFF2E7D5B))
-          : const Icon(Icons.radio_button_unchecked);
-    } else if (step is Hosting) {
-      icon = Icons.hotel;
-      subtitle = '${step.name}\n${step.address}';
-    } else if (step is TravelSegment) {
-      icon = Icons.flight;
-      subtitle = '${step.name}\n${step.startPoint} → ${step.finishPoint}';
-    } else if (step is PlaceholderStep) {
-      icon = Icons.edit_note;
-      subtitle = 'Draft Step';
-    }
-
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      child: ListTile(
-        leading: CircleAvatar(
-          radius: 18,
-          backgroundColor: theme.colorScheme.primary,
-          child: Icon(
-            icon,
-            size: 18,
-            color: theme.colorScheme.onPrimary,
-          ),
-        ),
-        title: Text(title,
-            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
-        subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
-        trailing: trailing,
-        isThreeLine: subtitle.contains('\n'),
+      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text('Itinerary Details',
+              style: theme.textTheme.titleLarge
+                  ?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 8),
+          Text('Agent: ${itinerary.responsibleAgentName}',
+              style: TextStyle(
+                  color: theme.colorScheme.onSurface
+                      .withValues(alpha: 0.6))),
+          const SizedBox(height: 24),
+          // Unified Itinerary Timeline
+          Text('Itinerary Timeline (${itinerary.itinerarySteps.length} steps)',
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 12),
+          if (itinerary.itinerarySteps.isEmpty)
+            const Text('The itinerary is empty.')
+          else
+            ItineraryTimeline(steps: itinerary.itinerarySteps),
+        ],
       ),
     );
   }
