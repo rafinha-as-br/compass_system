@@ -4,11 +4,17 @@ import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/interest_points_panel.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/step_type_selector.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/stop_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/hosting_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/travel_segment_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/steps_list_panel.dart';
 
 /// Itinerary Creation Page with three-column layout:
-/// Left: interest points from route
-/// Center: step workflow with stop form
-/// Right: list of created stops
+/// Left: interest points from route (with checklist)
+/// Center: stepper workflow for the selected step
+/// Right: list of itinerary steps
 class ItineraryCreationPage extends StatefulWidget {
   final Travel travel;
 
@@ -20,97 +26,206 @@ class ItineraryCreationPage extends StatefulWidget {
 }
 
 class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
-  final List<ItineraryStop> _stops = [];
-  int _selectedStopIndex = -1;
+  final List<ItineraryStep> _steps = [];
+  int _selectedStepIndex = -1;
   bool _isSubmitting = false;
-
-  // Form controllers for each stop
-  final _stopNameCtrl = TextEditingController();
-  final _stopDescCtrl = TextEditingController();
-  final _experienceCtrl = TextEditingController();
-  final List<String> _currentExperiences = [];
-
-  // Hosting
-  final List<Hosting> _accommodations = [];
-  final _hostingNameCtrl = TextEditingController();
-  final _hostingAddressCtrl = TextEditingController();
+  final Set<String> _checkedInterestPointIds = {};
 
   @override
   void initState() {
     super.initState();
     // Pre-populate if editing an existing itinerary
     if (widget.travel.hasItinerary) {
-      _stops.addAll(widget.travel.itinerary!.listOfStops);
-      _accommodations.addAll(widget.travel.itinerary!.accommodationsList);
+      _steps.addAll(widget.travel.itinerary!.itinerarySteps);
+      if (_steps.isNotEmpty) {
+        _selectedStepIndex = 0;
+      }
     }
   }
 
-  @override
-  void dispose() {
-    _stopNameCtrl.dispose();
-    _stopDescCtrl.dispose();
-    _experienceCtrl.dispose();
-    _hostingNameCtrl.dispose();
-    _hostingAddressCtrl.dispose();
-    super.dispose();
+  // ─── Step management ─────────────────────────────────────────────────
+
+  void _addStep() {
+    setState(() {
+      _steps.add(PlaceholderStep.empty());
+      _selectedStepIndex = _steps.length - 1;
+    });
   }
 
-  void _addExperience() {
-    if (_experienceCtrl.text.isNotEmpty) {
+  void _selectStep(int index) {
+    setState(() => _selectedStepIndex = index);
+  }
+
+  void _goToPreviousStep() {
+    if (_selectedStepIndex > 0) {
+      setState(() => _selectedStepIndex--);
+    }
+  }
+
+  void _goToNextStep() {
+    if (_selectedStepIndex < _steps.length - 1) {
+      setState(() => _selectedStepIndex++);
+    }
+  }
+
+  void _deleteStep(int index) {
+    _showDeleteConfirmation(() {
       setState(() {
-        _currentExperiences.add(_experienceCtrl.text);
-        _experienceCtrl.clear();
+        _steps.removeAt(index);
+        if (_steps.isEmpty) {
+          _selectedStepIndex = -1;
+        } else if (_selectedStepIndex >= _steps.length) {
+          _selectedStepIndex = _steps.length - 1;
+        } else if (_selectedStepIndex == index && index > 0) {
+          _selectedStepIndex = index - 1;
+        } else if (_selectedStepIndex > index) {
+          _selectedStepIndex--;
+        }
+      });
+    });
+  }
+
+  void _reorderSteps(int oldIndex, int newIndex) {
+    setState(() {
+      if (newIndex > oldIndex) newIndex -= 1;
+      final item = _steps.removeAt(oldIndex);
+      _steps.insert(newIndex, item);
+
+      // Keep selection following the moved item
+      if (_selectedStepIndex == oldIndex) {
+        _selectedStepIndex = newIndex;
+      } else if (_selectedStepIndex > oldIndex &&
+          _selectedStepIndex <= newIndex) {
+        _selectedStepIndex--;
+      } else if (_selectedStepIndex < oldIndex &&
+          _selectedStepIndex >= newIndex) {
+        _selectedStepIndex++;
+      }
+    });
+  }
+
+  void _onStepTypeSelected(StepType type) {
+    if (_selectedStepIndex < 0) return;
+    final current = _steps[_selectedStepIndex];
+    final now = DateTime.now();
+
+    setState(() {
+      switch (type) {
+        case StepType.stop:
+          _steps[_selectedStepIndex] = Stop(
+            id: current.id,
+            title: current.title,
+            startDate: current.startDate,
+            finishDate: current.finishDate,
+            name: '',
+            description: '',
+            experiences: [],
+            isCompleted: false,
+          );
+        case StepType.hosting:
+          _steps[_selectedStepIndex] = Hosting(
+            id: current.id,
+            title: current.title,
+            startDate: current.startDate,
+            finishDate: current.finishDate,
+            name: '',
+            address: '',
+            checkIn: now,
+            checkOut: now,
+          );
+        case StepType.travelSegment:
+          _steps[_selectedStepIndex] = TravelSegment(
+            id: current.id,
+            title: current.title,
+            startDate: current.startDate,
+            finishDate: current.finishDate,
+            travelSegmentId: 'seg_${now.millisecondsSinceEpoch}',
+            name: '',
+            transport: Airplane(
+              id: 'transport_${now.millisecondsSinceEpoch}',
+              flightNumber: '',
+              flightCompany: '',
+              flightDate: now,
+              departureGate: '',
+              departureAirport: '',
+              arrivalAirport: '',
+            ),
+            startPoint: '',
+            finishPoint: '',
+          );
+      }
+    });
+  }
+
+  void _onPlaceholderTitleChanged(String title) {
+    if (_selectedStepIndex < 0) return;
+    final current = _steps[_selectedStepIndex];
+    if (current is PlaceholderStep) {
+      setState(() {
+        _steps[_selectedStepIndex] = PlaceholderStep(
+          id: current.id,
+          title: title,
+          startDate: current.startDate,
+          finishDate: current.finishDate,
+        );
       });
     }
   }
 
-  void _addStop() {
-    if (_stopNameCtrl.text.isEmpty) return;
+  void _onStepChanged(ItineraryStep updated) {
+    if (_selectedStepIndex < 0) return;
     setState(() {
-      _stops.add(ItineraryStop(
-        id: 'stop_${DateTime.now().millisecondsSinceEpoch}',
-        name: _stopNameCtrl.text,
-        description: _stopDescCtrl.text,
-        experiences: List.from(_currentExperiences),
-        isCompleted: false,
-      ));
-      _stopNameCtrl.clear();
-      _stopDescCtrl.clear();
-      _currentExperiences.clear();
+      _steps[_selectedStepIndex] = updated;
     });
   }
 
-  void _selectStop(int index) {
+  void _toggleInterestPoint(String id) {
     setState(() {
-      _selectedStopIndex = index;
-      final stop = _stops[index];
-      _stopNameCtrl.text = stop.name;
-      _stopDescCtrl.text = stop.description;
-      _currentExperiences
-        ..clear()
-        ..addAll(stop.experiences);
+      if (_checkedInterestPointIds.contains(id)) {
+        _checkedInterestPointIds.remove(id);
+      } else {
+        _checkedInterestPointIds.add(id);
+      }
     });
   }
 
-  void _updateStop() {
-    if (_selectedStopIndex < 0) return;
-    setState(() {
-      _stops[_selectedStopIndex] = ItineraryStop(
-        id: _stops[_selectedStopIndex].id,
-        name: _stopNameCtrl.text,
-        description: _stopDescCtrl.text,
-        experiences: List.from(_currentExperiences),
-        isCompleted: _stops[_selectedStopIndex].isCompleted,
-      );
-      _selectedStopIndex = -1;
-      _stopNameCtrl.clear();
-      _stopDescCtrl.clear();
-      _currentExperiences.clear();
-    });
+  // ─── Delete confirmation ─────────────────────────────────────────────
+
+  void _showDeleteConfirmation(VoidCallback onConfirm) {
+    showDialog(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: const Text('Delete Step'),
+        content:
+            const Text('Are you sure you want to delete this step?'),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: const Text('Cancel'),
+          ),
+          TextButton(
+            onPressed: () {
+              Navigator.of(ctx).pop();
+              onConfirm();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Theme.of(context).colorScheme.error,
+            ),
+            child: const Text('Delete'),
+          ),
+        ],
+      ),
+    );
   }
+
+  // ─── Save ────────────────────────────────────────────────────────────
 
   Future<void> _saveItinerary({bool finish = false}) async {
-    if (_stops.isEmpty) return;
+    // Filter out placeholder steps before saving
+    final validSteps =
+        _steps.where((s) => s is! PlaceholderStep).toList();
+
+    if (validSteps.isEmpty) return;
 
     setState(() => _isSubmitting = true);
 
@@ -118,10 +233,9 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
     final itineraryData = {
       'id': widget.travel.itinerary?.id ??
           'itinerary_${DateTime.now().millisecondsSinceEpoch}',
-      'responsibleAgentName': 'Agent Smith', // From logged user
-      'accommodationsList':
-          _accommodations.map((a) => a.toMap()).toList(),
-      'listOfStops': _stops.map((s) => s.toMap()).toList(),
+      'responsibleAgentName': 'Agent Smith',
+      'itinerarySteps':
+          validSteps.map((s) => s.toMap()).toList(),
     };
 
     bool success;
@@ -147,6 +261,8 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
       }
     }
   }
+
+  // ─── Build ───────────────────────────────────────────────────────────
 
   @override
   Widget build(BuildContext context) {
@@ -196,293 +312,28 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // ─── Left: Interest Points ────────────────────────
-                SizedBox(
-                  width: 250,
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        color: theme.colorScheme.primary
-                            .withValues(alpha: 0.05),
-                        child: Text('Interest Points',
-                            style: theme.textTheme.titleSmall
-                                ?.copyWith(
-                                    fontWeight: FontWeight.w600)),
-                      ),
-                      Expanded(
-                        child: route.interestsList.isEmpty
-                            ? const Center(
-                                child: Padding(
-                                  padding: EdgeInsets.all(16),
-                                  child: Text('No interest points'),
-                                ),
-                              )
-                            : ListView.builder(
-                                itemCount:
-                                    route.interestsList.length,
-                                itemBuilder: (context, index) {
-                                  final poi =
-                                      route.interestsList[index];
-                                  return ListTile(
-                                    dense: true,
-                                    leading: Icon(Icons.place,
-                                        size: 18,
-                                        color: theme
-                                            .colorScheme.secondary),
-                                    title: Text(poi.name,
-                                        style: const TextStyle(
-                                            fontSize: 13)),
-                                    subtitle: Text(
-                                        poi.description,
-                                        style: const TextStyle(
-                                            fontSize: 11)),
-                                  );
-                                },
-                              ),
-                      ),
-                    ],
-                  ),
+                // ─── Left: Interest Points ──────────────────────
+                InterestPointsPanel(
+                  interestPoints: route.interestsList,
+                  checkedIds: _checkedInterestPointIds,
+                  onToggle: _toggleInterestPoint,
                 ),
                 VerticalDivider(
                     width: 1, color: theme.dividerColor),
-                // ─── Center: Stop Form ────────────────────────────
+                // ─── Center: Step Workflow ───────────────────────
                 Expanded(
-                  child: SingleChildScrollView(
-                    padding: const EdgeInsets.all(24),
-                    child: Column(
-                      crossAxisAlignment:
-                          CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          _selectedStopIndex >= 0
-                              ? 'Edit Stop #${_selectedStopIndex + 1}'
-                              : 'Add New Stop',
-                          style: theme.textTheme.titleMedium
-                              ?.copyWith(
-                                  fontWeight: FontWeight.w600),
-                        ),
-                        const SizedBox(height: 16),
-                        TextField(
-                          controller: _stopNameCtrl,
-                          decoration: const InputDecoration(
-                              labelText: 'Stop Name',
-                              border: OutlineInputBorder()),
-                        ),
-                        const SizedBox(height: 12),
-                        TextField(
-                          controller: _stopDescCtrl,
-                          decoration: const InputDecoration(
-                              labelText: 'Description',
-                              border: OutlineInputBorder()),
-                          maxLines: 2,
-                        ),
-                        const SizedBox(height: 12),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _experienceCtrl,
-                                decoration: const InputDecoration(
-                                    labelText: 'Add Experience',
-                                    border:
-                                        OutlineInputBorder()),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              onPressed: _addExperience,
-                              icon: const Icon(
-                                  Icons.add_circle),
-                              color:
-                                  theme.colorScheme.secondary,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        Wrap(
-                          spacing: 8,
-                          children: _currentExperiences
-                              .map((e) => Chip(
-                                    label: Text(e,
-                                        style:
-                                            const TextStyle(
-                                                fontSize:
-                                                    12)),
-                                    onDeleted: () {
-                                      setState(() =>
-                                          _currentExperiences
-                                              .remove(e));
-                                    },
-                                  ))
-                              .toList(),
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            if (_selectedStopIndex >= 0) ...[
-                              ElevatedButton(
-                                onPressed: _updateStop,
-                                child:
-                                    const Text('Update Stop'),
-                              ),
-                              const SizedBox(width: 8),
-                              TextButton(
-                                onPressed: () {
-                                  setState(() {
-                                    _selectedStopIndex = -1;
-                                    _stopNameCtrl.clear();
-                                    _stopDescCtrl.clear();
-                                    _currentExperiences
-                                        .clear();
-                                  });
-                                },
-                                child: const Text('Cancel'),
-                              ),
-                            ] else
-                              ElevatedButton.icon(
-                                onPressed: _addStop,
-                                icon:
-                                    const Icon(Icons.add),
-                                label: const Text(
-                                    'Add Stop'),
-                              ),
-                          ],
-                        ),
-                      ],
-                    ),
-                  ),
+                  child: _buildCenterPanel(theme),
                 ),
                 VerticalDivider(
                     width: 1, color: theme.dividerColor),
-                // ─── Right: Created Stops ─────────────────────────
-                SizedBox(
-                  width: 280,
-                  child: Column(
-                    crossAxisAlignment:
-                        CrossAxisAlignment.start,
-                    children: [
-                      Container(
-                        width: double.infinity,
-                        padding: const EdgeInsets.all(16),
-                        color: theme.colorScheme.primary
-                            .withValues(alpha: 0.05),
-                        child: Text(
-                            'Stops (${_stops.length})',
-                            style: theme
-                                .textTheme.titleSmall
-                                ?.copyWith(
-                                    fontWeight:
-                                        FontWeight.w600)),
-                      ),
-                      Expanded(
-                        child: _stops.isEmpty
-                            ? const Center(
-                                child: Padding(
-                                  padding:
-                                      EdgeInsets.all(16),
-                                  child:
-                                      Text('No stops yet'),
-                                ),
-                              )
-                            : ReorderableListView.builder(
-                                itemCount: _stops.length,
-                                onReorder: (oldIndex,
-                                    newIndex) {
-                                  setState(() {
-                                    if (newIndex >
-                                        oldIndex) {
-                                      newIndex -= 1;
-                                    }
-                                    final item = _stops
-                                        .removeAt(
-                                            oldIndex);
-                                    _stops.insert(
-                                        newIndex, item);
-                                  });
-                                },
-                                itemBuilder:
-                                    (context, index) {
-                                  final stop =
-                                      _stops[index];
-                                  final isSelected =
-                                      index ==
-                                          _selectedStopIndex;
-                                  return ListTile(
-                                    key: ValueKey(
-                                        stop.id),
-                                    selected: isSelected,
-                                    selectedTileColor: theme
-                                        .colorScheme
-                                        .secondary
-                                        .withValues(
-                                            alpha: 0.1),
-                                    leading:
-                                        CircleAvatar(
-                                      radius: 14,
-                                      backgroundColor:
-                                          theme
-                                              .colorScheme
-                                              .primary,
-                                      child: Text(
-                                        '${index + 1}',
-                                        style: TextStyle(
-                                          color: theme
-                                              .colorScheme
-                                              .onPrimary,
-                                          fontSize: 11,
-                                        ),
-                                      ),
-                                    ),
-                                    title: Text(
-                                      stop.name,
-                                      style:
-                                          const TextStyle(
-                                              fontSize:
-                                                  13,
-                                              fontWeight:
-                                                  FontWeight
-                                                      .w600),
-                                    ),
-                                    subtitle: Text(
-                                      stop.description,
-                                      style:
-                                          const TextStyle(
-                                              fontSize:
-                                                  11),
-                                      maxLines: 1,
-                                      overflow:
-                                          TextOverflow
-                                              .ellipsis,
-                                    ),
-                                    trailing:
-                                        IconButton(
-                                      icon: const Icon(
-                                          Icons.close,
-                                          size: 16),
-                                      onPressed: () {
-                                        setState(() {
-                                          _stops.removeAt(
-                                              index);
-                                          if (_selectedStopIndex ==
-                                              index) {
-                                            _selectedStopIndex =
-                                                -1;
-                                          }
-                                        });
-                                      },
-                                    ),
-                                    onTap: () =>
-                                        _selectStop(
-                                            index),
-                                  );
-                                },
-                              ),
-                      ),
-                    ],
-                  ),
+                // ─── Right: Steps List ──────────────────────────
+                StepsListPanel(
+                  steps: _steps,
+                  selectedIndex: _selectedStepIndex,
+                  onSelect: _selectStep,
+                  onReorder: _reorderSteps,
+                  onDelete: _deleteStep,
+                  onAddStep: _addStep,
                 ),
               ],
             ),
@@ -490,5 +341,133 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
         ],
       ),
     );
+  }
+
+  Widget _buildCenterPanel(ThemeData theme) {
+    if (_steps.isEmpty || _selectedStepIndex < 0) {
+      return _buildEmptyState(theme);
+    }
+
+    final step = _steps[_selectedStepIndex];
+
+    return SingleChildScrollView(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // ─── Navigation bar ─────────────────────────────────
+          _buildStepperNavigation(theme),
+          const SizedBox(height: 24),
+          // ─── Step form ──────────────────────────────────────
+          _buildStepForm(step),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildEmptyState(ThemeData theme) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.add_circle_outline,
+              size: 64,
+              color: theme.colorScheme.onSurface
+                  .withValues(alpha: 0.3)),
+          const SizedBox(height: 16),
+          Text(
+            'Add your first step to begin building the itinerary.',
+            style: TextStyle(
+              fontSize: 16,
+              color: theme.colorScheme.onSurface
+                  .withValues(alpha: 0.6),
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: _addStep,
+            icon: const Icon(Icons.add),
+            label: const Text('Add Step'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: theme.colorScheme.secondary,
+              foregroundColor: theme.colorScheme.onSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildStepperNavigation(ThemeData theme) {
+    final isFirst = _selectedStepIndex == 0;
+    final isLast = _selectedStepIndex == _steps.length - 1;
+
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+      children: [
+        IconButton(
+          onPressed: isFirst ? null : _goToPreviousStep,
+          icon: const Icon(Icons.arrow_back),
+          tooltip: 'Previous Step',
+        ),
+        Text(
+          'Step ${_selectedStepIndex + 1} of ${_steps.length}',
+          style: theme.textTheme.titleSmall
+              ?.copyWith(fontWeight: FontWeight.w600),
+        ),
+        isLast
+            ? IconButton(
+                onPressed: _addStep,
+                icon: const Icon(Icons.add),
+                tooltip: 'Add Step',
+                color: theme.colorScheme.secondary,
+              )
+            : IconButton(
+                onPressed: _goToNextStep,
+                icon: const Icon(Icons.arrow_forward),
+                tooltip: 'Next Step',
+              ),
+      ],
+    );
+  }
+
+  Widget _buildStepForm(ItineraryStep step) {
+    if (step is PlaceholderStep) {
+      return StepTypeSelector(
+        title: step.title,
+        onTitleChanged: _onPlaceholderTitleChanged,
+        onTypeSelected: _onStepTypeSelected,
+        onDelete: () => _deleteStep(_selectedStepIndex),
+      );
+    }
+
+    if (step is Stop) {
+      return StopFormWidget(
+        key: ValueKey(step.id),
+        stop: step,
+        onChanged: (updated) => _onStepChanged(updated),
+        onDelete: () => _deleteStep(_selectedStepIndex),
+      );
+    }
+
+    if (step is Hosting) {
+      return HostingFormWidget(
+        key: ValueKey(step.id),
+        hosting: step,
+        onChanged: (updated) => _onStepChanged(updated),
+        onDelete: () => _deleteStep(_selectedStepIndex),
+      );
+    }
+
+    if (step is TravelSegment) {
+      return TravelSegmentFormWidget(
+        key: ValueKey(step.id),
+        segment: step,
+        onChanged: (updated) => _onStepChanged(updated),
+        onDelete: () => _deleteStep(_selectedStepIndex),
+      );
+    }
+
+    return const SizedBox.shrink();
   }
 }

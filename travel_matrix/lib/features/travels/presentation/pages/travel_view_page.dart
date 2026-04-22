@@ -228,62 +228,74 @@ class _ItineraryViewTab extends StatelessWidget {
                       color: theme.colorScheme.onSurface
                           .withValues(alpha: 0.6))),
               const SizedBox(height: 24),
-              // Accommodations
-              Text(
-                  'Accommodations (${itinerary.accommodationsList.length})',
+              // Unified Itinerary Timeline
+              Text('Itinerary Timeline (${itinerary.itinerarySteps.length} steps)',
                   style: theme.textTheme.titleMedium
                       ?.copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              ...itinerary.accommodationsList.map(
-                (h) => Card(
-                  margin: const EdgeInsets.symmetric(vertical: 4),
-                  child: ListTile(
-                    leading: const Icon(Icons.hotel),
-                    title: Text(h.name),
-                    subtitle: Text(h.address),
-                  ),
+              const SizedBox(height: 12),
+              if (itinerary.itinerarySteps.isEmpty)
+                const Text('The itinerary is empty.')
+              else
+                ...itinerary.itinerarySteps.asMap().entries.map(
+                  (entry) {
+                    final i = entry.key;
+                    final step = entry.value;
+                    return _buildStepTile(context, theme, i, step);
+                  },
                 ),
-              ),
-              const SizedBox(height: 24),
-              // Stops
-              Text('Stops (${itinerary.listOfStops.length})',
-                  style: theme.textTheme.titleMedium
-                      ?.copyWith(fontWeight: FontWeight.w600)),
-              const SizedBox(height: 8),
-              ...itinerary.listOfStops.asMap().entries.map(
-                (entry) {
-                  final i = entry.key;
-                  final stop = entry.value;
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 4),
-                    child: ListTile(
-                      leading: CircleAvatar(
-                        radius: 16,
-                        backgroundColor: theme.colorScheme.primary,
-                        child: Text(
-                          '${i + 1}',
-                          style: TextStyle(
-                            color: theme.colorScheme.onPrimary,
-                            fontSize: 12,
-                          ),
-                        ),
-                      ),
-                      title: Text(stop.name,
-                          style: const TextStyle(
-                              fontWeight: FontWeight.w600)),
-                      subtitle: Text(stop.description),
-                      trailing: stop.isCompleted
-                          ? const Icon(Icons.check_circle,
-                              color: Color(0xFF2E7D5B))
-                          : const Icon(Icons.radio_button_unchecked),
-                    ),
-                  );
-                },
-              ),
             ],
           ),
         ),
       ),
     );
   }
+
+  Widget _buildStepTile(
+      BuildContext context, ThemeData theme, int index, ItineraryStep step) {
+    IconData icon = Icons.help_outline;
+    String title = step.title.isNotEmpty ? step.title : 'Step ${index + 1}';
+    String subtitle = '';
+    Widget? trailing;
+
+    if (step is Stop) {
+      icon = Icons.place;
+      subtitle = step.name;
+      if (step.description.isNotEmpty) {
+        subtitle += ' - ${step.description}';
+      }
+      trailing = step.isCompleted
+          ? const Icon(Icons.check_circle, color: Color(0xFF2E7D5B))
+          : const Icon(Icons.radio_button_unchecked);
+    } else if (step is Hosting) {
+      icon = Icons.hotel;
+      subtitle = '${step.name}\n${step.address}';
+    } else if (step is TravelSegment) {
+      icon = Icons.flight;
+      subtitle = '${step.name}\n${step.startPoint} → ${step.finishPoint}';
+    } else if (step is PlaceholderStep) {
+      icon = Icons.edit_note;
+      subtitle = 'Draft Step';
+    }
+
+    return Card(
+      margin: const EdgeInsets.symmetric(vertical: 6),
+      child: ListTile(
+        leading: CircleAvatar(
+          radius: 18,
+          backgroundColor: theme.colorScheme.primary,
+          child: Icon(
+            icon,
+            size: 18,
+            color: theme.colorScheme.onPrimary,
+          ),
+        ),
+        title: Text(title,
+            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+        subtitle: Text(subtitle, style: const TextStyle(fontSize: 12)),
+        trailing: trailing,
+        isThreeLine: subtitle.contains('\n'),
+      ),
+    );
+  }
 }
+
