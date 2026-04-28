@@ -212,10 +212,7 @@ class _ItineraryViewTab extends StatelessWidget {
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.w600)),
           const SizedBox(height: 12),
-          if (itinerary.itinerarySteps.isEmpty)
-            const Text('The itinerary is empty.')
-          else
-            ItineraryTimeline(steps: itinerary.itinerarySteps),
+          ItineraryTimeline(travel: travel),
         ],
       ),
     );
