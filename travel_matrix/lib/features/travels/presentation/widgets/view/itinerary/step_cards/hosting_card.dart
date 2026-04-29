@@ -1,22 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:mock_repository/mock_repository.dart';
-import '../../shared/expandable_section.dart';
 
-class StopCard extends StatefulWidget {
-  final Stop stop;
+import '../../../expandable_section.dart';
+
+class HostingCard extends StatefulWidget {
+  final Hosting hosting;
   final bool isInitialExpanded;
 
-  const StopCard({
+  const HostingCard({
     super.key,
-    required this.stop,
+    required this.hosting,
     this.isInitialExpanded = false,
   });
 
   @override
-  State<StopCard> createState() => _StopCardState();
+  State<HostingCard> createState() => _HostingCardState();
 }
 
-class _StopCardState extends State<StopCard> {
+class _HostingCardState extends State<HostingCard> {
   late bool _isExpanded;
 
   @override
@@ -44,30 +45,28 @@ class _StopCardState extends State<StopCard> {
           padding: const EdgeInsets.all(12),
           child: Row(
             children: [
-              // Image or Icon
               Container(
-                width: 60,
-                height: 60,
+                width: 50,
+                height: 50,
                 decoration: BoxDecoration(
                   color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.location_city, color: Colors.orange),
+                child: const Icon(Icons.hotel, color: Colors.blue),
               ),
               const SizedBox(width: 16),
-              // Name and Location
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.stop.name,
+                      widget.hosting.name,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),
                     ),
                     Text(
-                      widget.stop.title,
+                      widget.hosting.title,
                       style: theme.textTheme.bodySmall?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
@@ -85,38 +84,47 @@ class _StopCardState extends State<StopCard> {
         content: Padding(
           padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const Divider(),
               const SizedBox(height: 8),
-              if (widget.stop.description.isNotEmpty) ...[
-                Text(
-                  widget.stop.description,
-                  style: theme.textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 16),
-              ],
-              if (widget.stop.experiences.isNotEmpty) ...[
-                Text(
-                  'Experiences',
-                  style: theme.textTheme.titleSmall?.copyWith(fontWeight: FontWeight.bold),
-                ),
-                const SizedBox(height: 8),
-                Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: widget.stop.experiences.map((exp) => Chip(
-                    label: Text(exp, style: const TextStyle(fontSize: 11)),
-                    backgroundColor: theme.colorScheme.secondaryContainer.withValues(alpha: 0.4),
-                    visualDensity: VisualDensity.compact,
-                    padding: EdgeInsets.zero,
-                  )).toList(),
-                ),
-              ],
+              _DetailRow(icon: Icons.location_on_outlined, label: 'Address', value: widget.hosting.address),
+              const SizedBox(height: 8),
+              Row(
+                children: [
+                  Expanded(child: _DetailRow(icon: Icons.login, label: 'Check-in', value: '${widget.hosting.checkIn.day}/${widget.hosting.checkIn.month}')),
+                  Expanded(child: _DetailRow(icon: Icons.logout, label: 'Check-out', value: '${widget.hosting.checkOut.day}/${widget.hosting.checkOut.month}')),
+                ],
+              ),
             ],
           ),
         ),
       ),
+    );
+  }
+}
+
+class _DetailRow extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final String value;
+
+  const _DetailRow({required this.icon, required this.label, required this.value});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    return Row(
+      children: [
+        Icon(icon, size: 16, color: theme.colorScheme.primary),
+        const SizedBox(width: 8),
+        Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Text(label, style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.5))),
+            Text(value, style: theme.textTheme.bodySmall),
+          ],
+        ),
+      ],
     );
   }
 }

@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:mock_repository/mock_repository.dart';
-import 'step_icon.dart';
-import 'timeline_step_item.dart';
-import 'step_cards/stop_card.dart';
-import 'step_cards/flight_card.dart';
-import 'step_cards/hosting_card.dart';
-import 'step_cards/generic_step_card.dart';
-import 'step_cards/boundary_step_card.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_cards/boundary_step_card.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_cards/flight_card.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_cards/generic_step_card.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_cards/hosting_card.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_cards/stop_card.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_icon.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/view/timeline_step_item.dart';
+
 
 class ItineraryTimeline extends StatelessWidget {
   final Travel travel;

@@ -3,12 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/interest_points_panel.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/step_type_selector.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/stop_form_widget.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/hosting_form_widget.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/travel_segment_form_widget.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/steps_list_panel.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/creation/itinerary/step_type_selector.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/creation/itinerary/stop_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/creation/itinerary/hosting_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/creation/itinerary/steps_list_panel.dart';
+
+import '../widgets/creation/itinerary/interest_points_panel.dart';
+import '../widgets/creation/itinerary/travel_segment_form_widget.dart';
 
 /// Itinerary Creation Page with three-column layout:
 /// Left: interest points from route (with checklist)

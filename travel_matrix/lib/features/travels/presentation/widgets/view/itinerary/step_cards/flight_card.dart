@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:mock_repository/mock_repository.dart';
-import '../../shared/expandable_section.dart';
+
+import '../../../expandable_section.dart';
 
 class FlightCard extends StatefulWidget {
   final TravelSegment segment;
