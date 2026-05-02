@@ -2,6 +2,8 @@ import 'package:mock_repository/mock_repository.dart';
 
 /// Wraps MockApiService for the Travel Matrix application.
 /// All methods pass through the bearer token for authentication.
+///
+/// IN FUTURE, THE HTTP REQUESTS WILL COME HERE!!
 class CompassService {
   static CompassService? _instance;
   final MockApiService _apiService;
@@ -20,63 +22,63 @@ class CompassService {
 
   // ─── Auth ───────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> login(String email, String password) {
+  Future<FakeResponse> login(String email, String password) {
     return _apiService.login(email, password);
   }
 
   // ─── Users ──────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> getUser(String token) {
+  Future<FakeResponse> getUser(String token) {
     return _apiService.getUser(token);
   }
 
-  Future<Map<String, dynamic>> getAllUsers(String token) {
+  Future<FakeResponse> getAllUsers(String token) {
     return _apiService.getAllUsers(token);
   }
 
-  Future<Map<String, dynamic>> createUser(
+  Future<FakeResponse> createUser(
     String token,
     Map<String, dynamic> userData,
   ) {
     return _apiService.createUser(token, userData);
   }
 
-  Future<Map<String, dynamic>> updateUser(
+  Future<FakeResponse> updateUser(
     String token,
     Map<String, dynamic> userData,
   ) {
     return _apiService.updateUser(token, userData);
   }
 
-  Future<Map<String, dynamic>> deleteUser(String token, String userId) {
+  Future<FakeResponse> deleteUser(String token, String userId) {
     return _apiService.deleteUser(token, userId);
   }
 
   // ─── Travels ────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> getAllTravels(String token) {
+  Future<FakeResponse> getAllTravels(String token) {
     return _apiService.getAllTravels(token);
   }
 
-  Future<Map<String, dynamic>> getTravel(String token, String travelId) {
+  Future<FakeResponse> getTravel(String token, String travelId) {
     return _apiService.getTravel(token, travelId);
   }
 
-  Future<Map<String, dynamic>> getTravelsForClient(
+  Future<FakeResponse> getTravelsForClient(
     String token,
     String clientId,
   ) {
     return _apiService.getTravelsForClient(token, clientId);
   }
 
-  Future<Map<String, dynamic>> createTravel(
+  Future<FakeResponse> createTravel(
     String token,
     Map<String, dynamic> travelData,
   ) {
     return _apiService.createTravel(token, travelData);
   }
 
-  Future<Map<String, dynamic>> updateTravel(
+  Future<FakeResponse> updateTravel(
     String token,
     String travelId,
     Map<String, dynamic> travelData,
@@ -84,7 +86,7 @@ class CompassService {
     return _apiService.updateTravel(token, travelId, travelData);
   }
 
-  Future<Map<String, dynamic>> deleteTravel(
+  Future<FakeResponse> deleteTravel(
     String token,
     String travelId,
   ) {
@@ -93,7 +95,7 @@ class CompassService {
 
   // ─── Routes (within Travel) ─────────────────────────────────────────
 
-  Future<Map<String, dynamic>> updateRoute(
+  Future<FakeResponse> updateRoute(
     String token,
     String travelId,
     Map<String, dynamic> routeData,
@@ -103,7 +105,7 @@ class CompassService {
 
   // ─── Itineraries (within Travel) ────────────────────────────────────
 
-  Future<Map<String, dynamic>> createItinerary(
+  Future<FakeResponse> createItinerary(
     String token,
     String travelId,
     Map<String, dynamic> itineraryData,
@@ -111,7 +113,7 @@ class CompassService {
     return _apiService.createItinerary(token, travelId, itineraryData);
   }
 
-  Future<Map<String, dynamic>> updateItinerary(
+  Future<FakeResponse> updateItinerary(
     String token,
     String travelId,
     Map<String, dynamic> itineraryData,

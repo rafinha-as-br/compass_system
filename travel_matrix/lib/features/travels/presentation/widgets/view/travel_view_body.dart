@@ -5,8 +5,7 @@ import '../../pages/travel_views/itinerary_view_tab.dart';
 import '../../pages/travel_views/route_view_tab.dart';
 /* this widget shows the tab bar and tab bar view for the Travel view page*/
 class TravelViewBody extends StatelessWidget {
-  const TravelViewBody({super.key, required this.tabController, required this.travel});
-  final TabController tabController;
+  const TravelViewBody({super.key, required this.travel});
   final Travel travel;
 
   @override
@@ -21,7 +20,6 @@ class TravelViewBody extends StatelessWidget {
             borderRadius: BorderRadius.circular(12),
           ),
           child: TabBar(
-            controller: tabController,
             indicator: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(10),
@@ -54,7 +52,6 @@ class TravelViewBody extends StatelessWidget {
         // Tab bar view
         Expanded(
           child: TabBarView(
-            controller: tabController,
             children: [
               RouteViewTab(travel: travel),
               ItineraryViewTab(travel: travel),
