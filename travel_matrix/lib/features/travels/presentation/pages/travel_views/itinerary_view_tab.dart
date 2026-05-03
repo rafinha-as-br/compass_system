@@ -5,10 +5,11 @@ import 'package:travel_matrix/features/travels/presentation/widgets/view/itinera
 import '../../widgets/view/itinerary/itinerary_timeline.dart';
 
 /// Displays itinerary data or a prompt to create one.
+
 class ItineraryViewTab extends StatelessWidget {
   final Travel travel;
 
-  const ItineraryViewTab({required this.travel});
+  const ItineraryViewTab({super.key, required this.travel});
 
   @override
   Widget build(BuildContext context) {

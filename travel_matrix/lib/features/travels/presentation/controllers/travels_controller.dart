@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/services/auth_service.dart';
-import 'package:travel_matrix/core/services/compass_service.dart';
 import 'package:mock_repository/mock_repository.dart';
 
 class TravelsState {

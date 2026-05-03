@@ -12,6 +12,7 @@ class TravelViewBody extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       children: [
+
         // Tab bar
         Container(
           margin: const EdgeInsets.only(left: 20, right: 20, top: 16),

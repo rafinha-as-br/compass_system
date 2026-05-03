@@ -15,6 +15,11 @@ import '../widgets/creation/itinerary/travel_segment_form_widget.dart';
 /// Left: interest points from route (with checklist)
 /// Center: stepper workflow for the selected step
 /// Right: list of itinerary steps
+///
+/// FOR FUTURE REFERENCE: THERE WILL BE TWO PROVIDERS FOR THIS PAGE -> CREATE & UPDATE ITINERARY CONTROLLER
+/// THEY WILL LIVE WITH THIS WIDGET!!
+/// THE SAME IDEA APPLIES TO THE ROUTE CREATION PAGE
+///
 class ItineraryCreationPage extends StatefulWidget {
   final Travel travel;
 

@@ -7,7 +7,9 @@ import 'package:travel_matrix/features/travels/presentation/widgets/view/travel_
 ///
 
 /* Travel View Page — divided into Route View and Itinerary View tabs. It consumes
-* a travel from a provider*/
+* a travel from a provider
+
+* */
 class TravelViewPage extends StatelessWidget {
   const TravelViewPage({super.key, required this.travel});
 
