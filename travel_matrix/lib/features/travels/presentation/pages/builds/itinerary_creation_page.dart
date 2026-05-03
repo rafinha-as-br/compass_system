@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/build_models/itinerary_build_model.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/creation/itinerary/step_type_selector.dart';
@@ -8,8 +9,8 @@ import 'package:travel_matrix/features/travels/presentation/widgets/creation/iti
 import 'package:travel_matrix/features/travels/presentation/widgets/creation/itinerary/hosting_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/creation/itinerary/steps_list_panel.dart';
 
-import '../widgets/creation/itinerary/interest_points_panel.dart';
-import '../widgets/creation/itinerary/travel_segment_form_widget.dart';
+import '../../widgets/creation/itinerary/interest_points_panel.dart';
+import '../../widgets/creation/itinerary/travel_segment_form_widget.dart';
 
 /// Itinerary Creation Page with three-column layout:
 /// Left: interest points from route (with checklist)
@@ -20,10 +21,16 @@ import '../widgets/creation/itinerary/travel_segment_form_widget.dart';
 /// THEY WILL LIVE WITH THIS WIDGET!!
 /// THE SAME IDEA APPLIES TO THE ROUTE CREATION PAGE
 ///
-class ItineraryCreationPage extends StatefulWidget {
-  final Travel travel;
+///
+/// TODO: NEW CONCEPT FOR THE STEPS: THERE IS AN START AND FINISH STEP SEPARATED, IT ALWAYS BE ON THE FIRST AND LAST STEPS RESPECTIVELY,
+/// SO IT DOESN'T MATTER IF THE AGENT ADD ANOTHER STEP, THE START AND FINISH STEP WILL ALWAYS BE ON THE FIRST AND LAST INDEX
+///
 
-  const ItineraryCreationPage({super.key, required this.travel});
+
+class ItineraryCreationPage extends StatefulWidget {
+  final ItineraryBuildModel itineraryBuildModel;
+
+  const ItineraryCreationPage({super.key, required this.itineraryBuildModel});
 
   @override
   State<ItineraryCreationPage> createState() =>
@@ -39,6 +46,9 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
   @override
   void initState() {
     super.initState();
+    /// TODO: Check if is create or edit mode
+
+
     // Pre-populate if editing an existing itinerary
     if (widget.travel.hasItinerary) {
       _steps.addAll(widget.travel.itinerary!.itinerarySteps);
@@ -46,6 +56,7 @@ class _ItineraryCreationPageState extends State<ItineraryCreationPage> {
         _selectedStepIndex = 0;
       }
     }
+
   }
 
   // ─── Step management ─────────────────────────────────────────────────

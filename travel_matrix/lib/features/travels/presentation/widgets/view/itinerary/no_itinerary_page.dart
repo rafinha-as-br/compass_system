@@ -3,7 +3,7 @@ import 'package:mock_repository/mock_repository.dart';
 import 'package:provider/provider.dart';
 
 import '../../../controllers/travels_controller.dart';
-import '../../../pages/itinerary_creation_page.dart';
+import '../../../pages/builds/itinerary_creation_page.dart';
 
 class NoItineraryPage extends StatelessWidget {
   const NoItineraryPage({super.key, required this.travel});

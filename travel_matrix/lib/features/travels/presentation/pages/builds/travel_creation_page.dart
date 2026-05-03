@@ -4,9 +4,10 @@ import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/core/services/auth_service.dart';
-import 'package:travel_matrix/core/services/compass_service.dart';
 
-/// Travel Creation Page — enforces Route first, then optional Itinerary.
+///
+/// This page is similar to travel view page, where it has two TABS for creating/editing itinerary, route & participants
+///
 class TravelCreationPage extends StatefulWidget {
   const TravelCreationPage({super.key});
 

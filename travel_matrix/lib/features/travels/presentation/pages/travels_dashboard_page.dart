@@ -4,7 +4,7 @@ import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/travel_creation_page.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/travel_view_page.dart';
+import 'package:travel_matrix/features/travels/presentation/pages/views/travel_view_page.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 /// Travels Dashboard Tab — lists all travels with state indicator.
