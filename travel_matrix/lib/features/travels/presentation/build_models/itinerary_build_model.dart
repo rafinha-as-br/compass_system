@@ -5,17 +5,27 @@ import '../view_models/route_view_model.dart';
 
 class ItineraryBuildModel{
   final String travelName;
-  final List<ItineraryStepViewModel> normalSteps;
-  final ItineraryStepViewModel startStep;
-  final ItineraryStepViewModel finishStep;
+  final ItineraryStepsBuildModel? steps;
   final List<InterestPointViewModel> interestsPoints;
 
   ItineraryBuildModel({
     required this.travelName,
-    required this.normalSteps,
-    required this.startStep,
-    required this.finishStep,
+    required this.steps,
     required this.interestsPoints
   });
 
 }
+
+class ItineraryStepsBuildModel{
+  final List<ItineraryStepViewModel?> normalSteps;
+  final ItineraryStepViewModel? startStep;
+  final ItineraryStepViewModel? finishStep;
+
+  ItineraryStepsBuildModel({
+    required this.normalSteps,
+    required this.startStep,
+    required this.finishStep
+  });
+}
+
+

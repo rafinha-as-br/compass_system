@@ -1,35 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:mock_repository/mock_repository.dart';
+import 'package:provider/provider.dart';
+import 'package:travel_matrix/features/travels/presentation/build_models/itinerary_build_model.dart';
+import 'package:travel_matrix/features/travels/presentation/controllers/editor/itinerary_editor_controller.dart';
+import 'package:travel_matrix/features/travels/presentation/view_models/itinerary_steps_view_models.dart';
 
 /// Right panel displaying the ordered list of itinerary steps with
 /// selection, reordering, hover-delete, and add step support.
 class StepsListPanel extends StatelessWidget {
-  final List<ItineraryStep> steps;
+  final List<ItineraryStepViewModel> steps;
   final int selectedIndex;
-  final ValueChanged<int> onSelect;
-  final void Function(int oldIndex, int newIndex) onReorder;
-  final ValueChanged<int> onDelete;
   final VoidCallback onAddStep;
 
   const StepsListPanel({
     super.key,
     required this.steps,
     required this.selectedIndex,
-    required this.onSelect,
-    required this.onReorder,
-    required this.onDelete,
     required this.onAddStep,
   });
 
-  IconData _iconForStep(ItineraryStep step) {
-    if (step is Stop) return Icons.place;
-    if (step is Hosting) return Icons.hotel;
-    if (step is TravelSegment) return Icons.flight;
+  IconData _iconForStep(ItineraryStepViewModel step) {
+    if (step is StopStepViewModel) return Icons.place;
+    if (step is HostingStepViewModel) return Icons.hotel;
+    if (step is TravelSegmentStepViewModel) return Icons.flight;
     return Icons.edit_note; // PlaceholderStep
   }
 
   @override
   Widget build(BuildContext context) {
+    final itineraryEditorController = Provider.of<ItineraryEditorController>(context);
     final theme = Theme.of(context);
 
     return SizedBox(
@@ -57,7 +56,7 @@ class StepsListPanel extends StatelessWidget {
                   )
                 : ReorderableListView.builder(
                     itemCount: steps.length,
-                    onReorder: onReorder,
+                    onReorder: itineraryEditorController.reorderSteps,
                     itemBuilder: (context, index) {
                       final step = steps[index];
                       final isSelected = index == selectedIndex;
@@ -71,22 +70,11 @@ class StepsListPanel extends StatelessWidget {
                         title: displayTitle,
                         icon: _iconForStep(step),
                         isSelected: isSelected,
-                        onTap: () => onSelect(index),
-                        onDelete: () => onDelete(index),
+                        onTap: () => itineraryEditorController.selectStep(index),
+                        onDelete: () => itineraryEditorController.deleteStep(index),
                       );
                     },
                   ),
-          ),
-          Padding(
-            padding: const EdgeInsets.all(12),
-            child: SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: onAddStep,
-                icon: const Icon(Icons.add),
-                label: const Text('Add Step'),
-              ),
-            ),
           ),
         ],
       ),
