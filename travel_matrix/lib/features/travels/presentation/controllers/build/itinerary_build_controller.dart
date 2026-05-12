@@ -1,16 +1,6 @@
-/* this controller is responsible for creating and delete an ITINERARY
-   it will be used in itinerary_creation_page.dart
-*/
-
-// itinerary_create_controller.dart
 import 'package:flutter/material.dart';
-import 'package:travel_matrix/features/travels/presentation/view_models/itinerary_steps_view_models.dart';
-
-import '../../../domain/repository/itinerary_repository.dart';
-
-// create_itinerary_controller.dart
-import 'package:flutter/cupertino.dart';
-import 'package:travel_matrix/features/travels/presentation/view_models/itinerary_steps_view_models.dart';
+import 'package:travel_matrix/core/services/auth_service.dart';
+import 'package:travel_matrix/core/services/compass_service.dart';
 
 class CreateItineraryController extends ChangeNotifier {
   bool _isLoading = false;
@@ -19,22 +9,36 @@ class CreateItineraryController extends ChangeNotifier {
   bool get isLoading => _isLoading;
   String? get error => _error;
 
+  /// Creates an itinerary for the given travel.
+  ///
+  /// Returns `true` on success, `false` on failure.
   Future<bool> createItinerary(
-      String travelId,
-      Map<String, dynamic> itineraryData,
-      ) async {
+    String travelId,
+    Map<String, dynamic> itineraryData,
+  ) async {
     _setLoading(true);
     _clearError();
 
     try {
-      // TODO: Implement actual use case when available
-      // await CrudItinerary.create(travelId, itineraryData);
+      final token = await AuthService.instance.getToken();
+      if (token == null) {
+        _setError('Not authenticated.');
+        _setLoading(false);
+        return false;
+      }
 
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
+      final response = await CompassService.instance
+          .createItinerary(token, travelId, itineraryData);
 
       _setLoading(false);
-      return true;
+
+      if (response['status'] == 'success') {
+        return true;
+      } else {
+        _setError(
+            response['message'] as String? ?? 'Failed to create itinerary.');
+        return false;
+      }
     } catch (e) {
       _setError(e.toString());
       _setLoading(false);
@@ -54,6 +58,5 @@ class CreateItineraryController extends ChangeNotifier {
 
   void _clearError() {
     _error = null;
-    notifyListeners();
   }
 }

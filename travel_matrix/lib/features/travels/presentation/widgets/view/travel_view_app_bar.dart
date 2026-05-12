@@ -34,16 +34,24 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
             children: [
               // Travel Status and title
               Row(
-                spacing: 25,
+                spacing: 16,
                 children: [
+                  // Back button
+                  IconButton(
+                    icon: const Icon(Icons.arrow_back),
+                    onPressed: () => Navigator.of(context).pop(),
+                  ),
                   // Title
-                  Text(
-                    travel.travelName,
-                    style: const TextStyle(
-                      fontSize: 46,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF1A2C3A),
-                      letterSpacing: -0.5,
+                  Expanded(
+                    child: Text(
+                      travel.travelName,
+                      style: const TextStyle(
+                        fontSize: 32, // Slightly smaller to fit with back button
+                        fontWeight: FontWeight.w700,
+                        color: Color(0xFF1A2C3A),
+                        letterSpacing: -0.5,
+                      ),
+                      overflow: TextOverflow.ellipsis,
                     ),
                   ),
 

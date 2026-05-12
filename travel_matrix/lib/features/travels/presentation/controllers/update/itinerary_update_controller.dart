@@ -1,53 +1,51 @@
-
-/* this controller is responsible for UPDATE an ITINERARY
-   it will be used in itinerary_creation_page.dart
-*/
-
-// update_itinerary_controller.dart
 import 'package:flutter/cupertino.dart';
 
+import '../../../domain/usecases/crud_itinerary.dart';
+
+/// Controller responsible for updating an existing [Itinerary] via the domain
+/// use case [CrudItinerary].
+///
+/// Takes a raw data map to avoid coupling the presentation layer to the
+/// domain entity directly — mapping is done in [ItineraryRepositoryImpl].
 class UpdateItineraryController extends ChangeNotifier {
+  final CrudItinerary crudItinerary;
+
   bool _isLoading = false;
   String? _error;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
 
+  UpdateItineraryController({required this.crudItinerary});
+
+  /// Updates an existing itinerary identified by [travelId].
+  ///
+  /// [itineraryData] is a raw map matching the API contract.
+  /// Returns `true` on success, `false` on failure.
   Future<bool> updateItinerary(
-      String travelId,
-      Map<String, dynamic> itineraryData,
-      ) async {
-    _setLoading(true);
-    _clearError();
-
-    try {
-      // TODO: Implement actual use case when available
-      // await CrudItinerary.update(travelId, itineraryData);
-
-      // Simulate API call
-      await Future.delayed(const Duration(seconds: 1));
-
-      _setLoading(false);
-      return true;
-    } catch (e) {
-      _setError(e.toString());
-      _setLoading(false);
-      return false;
-    }
-  }
-
-  void _setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
-  }
-
-  void _setError(String error) {
-    _error = error;
-    notifyListeners();
-  }
-
-  void _clearError() {
+    String travelId,
+    Map<String, dynamic> itineraryData,
+  ) async {
+    _isLoading = true;
     _error = null;
     notifyListeners();
+
+    final params = UpdateParams(
+      travelId: travelId,
+      id: itineraryData['id'] as String,
+      itinerarySteps: const [],
+    );
+
+    final result = await crudItinerary.update(params);
+
+    _isLoading = false;
+    if (result.isSuccess) {
+      notifyListeners();
+      return true;
+    } else {
+      _error = result.error ?? 'Failed to update itinerary.';
+      notifyListeners();
+      return false;
+    }
   }
 }

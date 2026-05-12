@@ -3,9 +3,10 @@ import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/travel_creation_page.dart';
+import 'package:travel_matrix/features/travels/presentation/pages/builds/travel_creation_page.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/views/travel_view_page.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// Travels Dashboard Tab — lists all travels with state indicator.
 class TravelsDashboardPage extends StatelessWidget {
@@ -28,6 +29,7 @@ class _TravelsDashboardView extends StatelessWidget {
     final controller = context.watch<TravelsController>();
     final state = controller.state;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -38,7 +40,7 @@ class _TravelsDashboardView extends StatelessWidget {
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
               Text(
-                'All Travels',
+                l10n.allTravels,
                 style: theme.textTheme.headlineSmall?.copyWith(
                   fontWeight: FontWeight.bold,
                 ),
@@ -55,7 +57,7 @@ class _TravelsDashboardView extends StatelessWidget {
                   );
                 },
                 icon: const Icon(Icons.add),
-                label: const Text('Create Travel'),
+                label: Text(l10n.createTravel),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.secondary,
                   foregroundColor: theme.colorScheme.onSecondary,
@@ -78,7 +80,7 @@ class _TravelsDashboardView extends StatelessWidget {
                 : state.travels.isEmpty
                     ? Center(
                         child: Text(
-                          'No travels created yet.',
+                          l10n.noTravelsCreated,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface
                                 .withValues(alpha: 0.6),
@@ -90,7 +92,7 @@ class _TravelsDashboardView extends StatelessWidget {
                         itemBuilder: (context, index) {
                           final travel = state.travels[index];
                           return _buildTravelCard(
-                              context, travel, controller);
+                              context, travel, controller, l10n);
                         },
                       ),
           ),
@@ -103,6 +105,7 @@ class _TravelsDashboardView extends StatelessWidget {
     BuildContext context,
     Travel travel,
     TravelsController controller,
+    AppLocalizations l10n,
   ) {
 
     return Card(
@@ -127,7 +130,7 @@ class _TravelsDashboardView extends StatelessWidget {
         ),
         subtitle: Text(
           '${travel.routePlan.startLocation} ➔ ${travel.routePlan.destination}\n'
-          'Client: ${travel.clientId}',
+          '${l10n.clientLabel}: ${travel.clientId}',
         ),
         isThreeLine: true,
         trailing: Row(
@@ -143,7 +146,7 @@ class _TravelsDashboardView extends StatelessWidget {
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                travel.hasItinerary ? 'Itinerary Ready' : 'Route Only',
+                travel.hasItinerary ? l10n.itineraryReady : l10n.routeOnly,
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
@@ -183,3 +186,4 @@ class _TravelsDashboardView extends StatelessWidget {
     );
   }
 }
+

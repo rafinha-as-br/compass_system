@@ -1,7 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_matrix/features/travels/presentation/build_models/itinerary_build_model.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/editor/itinerary_editor_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/view_models/itinerary_steps_view_models.dart';
 

@@ -10,4 +10,13 @@ class Person {
     required this.age,
     required this.sex,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'age': age,
+      'sex': sex,
+    };
+  }
 }

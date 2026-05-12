@@ -10,5 +10,15 @@ class Itinerary {
     required this.agentId,
     required this.itinerarySteps,
   });
-}
 
+  /// validation method
+
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'agentId': agentId,
+      'itinerarySteps': itinerarySteps.map((e) => e.toJson()).toList(),
+    };
+  }
+}

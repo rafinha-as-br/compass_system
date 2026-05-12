@@ -6,16 +6,27 @@ import 'package:travel_matrix/features/travels/domain/repository/itinerary_repos
 import '../data_sources/itinerary_data_source.dart';
 
 class ItineraryRepositoryImpl implements ItineraryRepository{
+
   @override
-  Future<Result<Itinerary>> createItinerary(Map<String, dynamic> data) {
-    // TODO: implement createItinerary
-    throw UnimplementedError();
+  Future<Result> createItinerary(Itinerary itinerary) async{
+    try{
+      final data = itinerary.toJson();
+      await ItineraryDataSource().createItinerary(data);
+      return Result.success();
+    } catch(e){
+      return Result.failure(e.toString());
+    }
+
   }
 
   @override
-  Future<Result<bool>> deleteItinerary(String id) {
-    // TODO: implement deleteItinerary
-    throw UnimplementedError();
+  Future<Result> deleteItinerary(String id) async {
+    try{
+      ItineraryDataSource().deleteItinerary(id);
+      return Result.success();
+    } catch(e){
+      return Result.failure(e.toString());
+    }
   }
 
   @override

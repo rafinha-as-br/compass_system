@@ -12,6 +12,16 @@ class RoutePlan {
     required this.destination,
     required this.interestsList,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'startDate': startDate.toIso8601String(),
+      'endDate': endDate.toIso8601String(),
+      'startLocation': startLocation,
+      'destination': destination,
+      'interestsList': interestsList.map((e) => e.toJson()).toList(),
+    };
+  }
 }
 
 class InterestPoint {
@@ -24,4 +34,12 @@ class InterestPoint {
     required this.name,
     required this.description,
   });
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'description': description,
+    };
+  }
 }

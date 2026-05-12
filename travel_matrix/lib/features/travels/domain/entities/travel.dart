@@ -41,4 +41,17 @@ class Travel {
     this.itinerary,
   });
 
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'clientId': clientId,
+      'travelName': travelName,
+      'travelStatus': travelStatus.name,
+      'startDate': startDate?.toIso8601String(),
+      'finishDate': finishDate?.toIso8601String(),
+      'routePlan': routePlan.toJson(),
+      'itinerary': itinerary?.toJson(),
+      'participantsList': participantsList.map((e) => e.toJson()).toList(),
+    };
+  }
 }

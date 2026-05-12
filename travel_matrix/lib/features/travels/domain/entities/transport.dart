@@ -3,6 +3,8 @@ abstract class Transport {
   final String id;
 
   Transport({required this.id});
+
+  Map<String, dynamic> toJson();
 }
 
 class RentalCar extends Transport {
@@ -20,6 +22,19 @@ class RentalCar extends Transport {
     required this.checkInDate,
     required this.checkOutDate,
   });
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'vehicleModelName': vehicleModelName,
+      'vehicleLicensePlate': vehicleLicensePlate,
+      'companyName': companyName,
+      'checkInDate': checkInDate.toIso8601String(),
+      'checkOutDate': checkOutDate.toIso8601String(),
+      'type': 'RentalCar',
+    };
+  }
 }
 
 class Bus extends Transport {
@@ -41,6 +56,21 @@ class Bus extends Transport {
     required this.description,
     required this.details,
   });
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'travelNumber': travelNumber,
+      'travelCompany': travelCompany,
+      'departureGate': departureGate,
+      'departureDateTime': departureDateTime.toIso8601String(),
+      'busStationName': busStationName,
+      'description': description,
+      'details': details,
+      'type': 'Bus',
+    };
+  }
 }
 
 class Airplane extends Transport {
@@ -60,4 +90,18 @@ class Airplane extends Transport {
     required this.departureAirport,
     required this.arrivalAirport,
   });
+
+  @override
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'flightNumber': flightNumber,
+      'flightCompany': flightCompany,
+      'flightDate': flightDate.toIso8601String(),
+      'departureGate': departureGate,
+      'departureAirport': departureAirport,
+      'arrivalAirport': arrivalAirport,
+      'type': 'Airplane',
+    };
+  }
 }

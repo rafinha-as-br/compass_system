@@ -1,3 +1,62 @@
-/* this controller is responsible for UPDATE an TRAVEL
-   it will be used in travel_creation_page.dart
-*/
+import 'package:flutter/material.dart';
+import 'package:travel_matrix/core/services/auth_service.dart';
+import 'package:travel_matrix/core/services/compass_service.dart';
+
+class UpdateTravelController extends ChangeNotifier {
+  bool _isLoading = false;
+  String? _error;
+
+  bool get isLoading => _isLoading;
+  String? get error => _error;
+
+  /// Updates an existing travel with the given data.
+  ///
+  /// Returns `true` on success, `false` on failure.
+  Future<bool> updateTravel(
+    String travelId,
+    Map<String, dynamic> travelData,
+  ) async {
+    _setLoading(true);
+    _clearError();
+
+    try {
+      final token = await AuthService.instance.getToken();
+      if (token == null) {
+        _setError('Not authenticated.');
+        _setLoading(false);
+        return false;
+      }
+
+      final response = await CompassService.instance
+          .updateTravel(token, travelId, travelData);
+
+      _setLoading(false);
+
+      if (response['status'] == 'success') {
+        return true;
+      } else {
+        _setError(
+            response['message'] as String? ?? 'Failed to update travel.');
+        return false;
+      }
+    } catch (e) {
+      _setError(e.toString());
+      _setLoading(false);
+      return false;
+    }
+  }
+
+  void _setLoading(bool value) {
+    _isLoading = value;
+    notifyListeners();
+  }
+
+  void _setError(String error) {
+    _error = error;
+    notifyListeners();
+  }
+
+  void _clearError() {
+    _error = null;
+  }
+}
