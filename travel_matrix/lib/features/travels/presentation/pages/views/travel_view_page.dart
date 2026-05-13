@@ -26,16 +26,6 @@ class TravelViewPage extends StatelessWidget {
           body: TravelViewBody(
               travel: travel
           ),
-          floatingActionButton: FloatingActionButton.extended(
-            onPressed: () {
-              // Edit itinerary action
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Edit Itinerary clicked')),
-              );
-            },
-            icon: const Icon(Icons.edit),
-            label: const Text('Edit Itinerary'),
-          ),
         )
     );
   }
