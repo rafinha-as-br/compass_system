@@ -1,6 +1,8 @@
 
-import 'package:travel_matrix/features/travels/presentation/view_models/itinerary_view_model.dart';
-import 'package:travel_matrix/features/travels/presentation/view_models/route_view_model.dart';
+
+import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
+
+import 'itinerary_view_model.dart';
 
 enum TravelStatusModel{
   notReady,

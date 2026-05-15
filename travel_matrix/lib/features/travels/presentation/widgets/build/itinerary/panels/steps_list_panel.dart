@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/editor/itinerary_editor_controller.dart';
-import 'package:travel_matrix/features/travels/presentation/view_models/itinerary_steps_view_models.dart';
+
+import '../../../../models/view_models/itinerary_steps_view_models.dart';
 
 /// Right panel displaying the ordered list of itinerary steps with
 /// selection, reordering, hover-delete, and add step support.

@@ -1,27 +1,73 @@
-// itinerary_editor_controller.dart
 import 'package:flutter/cupertino.dart';
-import 'package:travel_matrix/features/travels/presentation/view_models/itinerary_steps_view_models.dart';
+import 'package:travel_matrix/features/travels/presentation/pages/builds/itinerary_build_page.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/interest_points_panel.dart';
 
+import '../../models/view_models/itinerary_steps_view_models.dart';
+import '../../models/view_models/route_view_model.dart';
+
+/// Controller responsible for controlling the [ItineraryBuildPage] UI, and its children.
 class ItineraryEditorController extends ChangeNotifier {
-  List<ItineraryStepViewModel> _steps = [];
+
+
   int _selectedStepIndex = -1;
   bool _isSubmitting = false;
-  final Set<String> _checkedInterestPointIds = {};
 
   // Getters
   List<ItineraryStepViewModel> get steps => List.unmodifiable(_steps);
   int get selectedStepIndex => _selectedStepIndex;
   bool get isSubmitting => _isSubmitting;
-  Set<String> get checkedInterestPointIds => _checkedInterestPointIds;
+
+
+
 
   // Initialization
-  void initializeSteps(List<ItineraryStepViewModel> steps) {
-    _steps = List.from(steps);
-    if (_steps.isNotEmpty) {
-      _selectedStepIndex = 0;
+  ItineraryEditorController({
+    required this.interestPoints,
+    required this.stepsList,
+  });
+
+  /// interests points list
+  final List<InterestPointViewModel> interestPoints;
+
+  /// interests points checklist id list, used for filtering the checked state of interest points on [InterestPointsPanel].
+  final Set<String> _checkedInterestPointIds = {};
+
+  /// getter for interest points build model for [InterestPointsPanel]
+  List<InterestPointPanelBuildModel> get interestPointPanelModels {
+    return List.unmodifiable(
+      interestPoints.map(
+            (element) => InterestPointPanelBuildModel(
+          interestPoint: element,
+          isChecked: _checkedInterestPointIds.contains(
+            element.id,
+          ),
+        ),
+      ),
+    );
+  }
+
+  /// toggle interest point check state
+  void toggleInterestPoint(String id) {
+    if (_checkedInterestPointIds.contains(id)) {
+      _checkedInterestPointIds.remove(id);
+    } else {
+      _checkedInterestPointIds.add(id);
     }
     notifyListeners();
   }
+
+
+
+  /// steps list, used to build the steps list panel, can be null in case of create mode.
+  List<ItineraryStepViewModel>? stepsList;
+
+
+
+
+  /// steps list panel
+
+
+
 
   // Step management
   void addStep(ItineraryStepViewModel step) {
@@ -88,15 +134,6 @@ class ItineraryEditorController extends ChangeNotifier {
       _steps[index] = updatedStep;
       notifyListeners();
     }
-  }
-
-  void toggleInterestPoint(String id) {
-    if (_checkedInterestPointIds.contains(id)) {
-      _checkedInterestPointIds.remove(id);
-    } else {
-      _checkedInterestPointIds.add(id);
-    }
-    notifyListeners();
   }
 
   void setSubmitting(bool value) {

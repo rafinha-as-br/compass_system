@@ -1,6 +1,6 @@
 
 
-import 'package:travel_matrix/features/travels/presentation/view_models/transports_view_model.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 
 abstract class ItineraryStepViewModel{
   final String id;
