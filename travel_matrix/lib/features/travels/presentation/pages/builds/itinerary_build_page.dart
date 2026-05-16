@@ -21,20 +21,19 @@ import '../../models/view_models/transports_view_model.dart';
 
 /// Page responsible for creating and editing an [Itinerary] for a travel.
 ///
-/// Determines its mode from [ItineraryBuildModel]:
-/// - [steps] == null → **create mode**: starts with an empty step list.
-/// - [steps] != null → **edit mode**: loads existing steps for editing.
+/// Receiving a [ItineraryBuildModel] as input for consuming, the consumed entity is used to:
 ///
-/// The [ItineraryBuildModel] entity passed by the constructor is used as the origin data source,
-/// but the real data is managed by the [ItineraryEditorController].
+/// - Determine the page mode:
+///   - [steps] == null → **create mode**: starts with an empty step list.
+///   - [steps] != null → **edit mode**: loads existing steps for editing.
+/// - Used as the origin data source for the [ItineraryEditorController].
 ///
 /// Layout: three-column fixed structure:
 /// - Left  → [InterestPointsPanel] (route interest points checklist)
 /// - Center → [StepsBuilderPanel] (type selector / concrete form)
 /// - Right  → [StepsListPanel] (ordered, reorderable list)
-/// NOTE: 3 widgets are presentational widgets, consuming data passed by [ItineraryEditorController].
+/// NOTE: The widgets below are presentational widgets, consuming data passed by [ItineraryEditorController].
 ///
-/// NOTE: Start and Finish steps are always pinned to index 0 and last index.
 class ItineraryBuildPage extends StatelessWidget {
   const ItineraryBuildPage({
     super.key,
@@ -42,7 +41,10 @@ class ItineraryBuildPage extends StatelessWidget {
     required this.travelId,
   });
 
+  /// Constructor build model class for [ItineraryBuildPage]
   final ItineraryBuildModel itineraryBuildModel;
+
+  /// travel id for creating the itinerary
   final String travelId;
 
   /// True when editing an existing itinerary (steps != null).
@@ -60,7 +62,7 @@ class ItineraryBuildPage extends StatelessWidget {
           update: (_, repo, __) => CrudItinerary(repo),
         ),
 
-        // Editor controller — dependency injection
+        // Editor controller dependency injection
         ChangeNotifierProvider(
             create: (_) => ItineraryEditorController(
               stepsList: isEditMode ? itineraryBuildModel.steps!.normalSteps : null,

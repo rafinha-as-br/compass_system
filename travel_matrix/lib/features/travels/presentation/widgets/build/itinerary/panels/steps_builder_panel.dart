@@ -1,34 +1,66 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/editor/itinerary_editor_controller.dart';
+import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 
 import '../../../../models/view_models/itinerary_steps_view_models.dart';
 
-/// This panel is responsible for building/editing an [ItineraryStepViewModel],
+/// This panel is responsible for building/editing an [ItineraryStepViewModel] list.
 ///
-/// Note: If there isn't a first and last step created, the user is forced to create the first and last step.
-class StepsBuilderPanel extends StatefulWidget {
-  const StepsBuilderPanel({super.key});
+/// Receiving a [ItineraryStepsBuildModel] as input for consuming, the consumed entity is used to:
+///
+/// - Determine the page mode:
+///   - [steps] == null → **create mode**: starts with an empty step list,
+///   with the user being forced to create the [ItineraryStepsBuildModel.startStep] and [ItineraryStepsBuildModel.startStep] before
+///   proceeding to create [ItineraryStepsBuildModel.normalSteps]
+///   - [steps] != null → **edit mode**: loads existing steps for editing.
+///
+/// Layout: one column fixed structure
+/// - [_StepNavigator] Responsible for controlling the navigation between steps.
+/// - [_StepForm] Responsible for step form render
+///
+/// NOTE: Start and Finish steps are always pinned to index 0 and last index.
+class StepsBuilderPanel extends StatelessWidget {
+  const StepsBuilderPanel({
+    super.key,
+    required this.steps,
+    required this.selectedIndex,
+  });
 
-  @override
-  State<StepsBuilderPanel> createState() => _StepsBuilderPanelState();
-}
+  /// Constructor build model class for [StepsBuilderPanel],
+  /// can be null in case of create mode.
+  final ItineraryStepsBuildModel? steps;
 
-class _StepsBuilderPanelState extends State<StepsBuilderPanel> {
+  /// Index value for the current selected step
+  final int selectedIndex;
+
+  /// Callback methods:
+
+  /// True when editing an existing itinerary (steps != null).
+  bool get isEditMode => steps != null;
+
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return Column(
+      children: [
+        _StepNavigator(),
+        Expanded(
+          child: isEditMode
+              ? _StepForm(step: step)
+              : _FirstLastStepForm(),
+        ),
+      ],
+    );
   }
-
 }
 
-/// Navigation bar at the top of the center panel showing prev/next/add controls.
+/// Navigation widget for the [StepsBuilderPanel],
+/// responsible for controlling the navigation between steps, with prev/next/add controls
 class _StepNavigator extends StatelessWidget {
   const _StepNavigator({super.key});
 
   @override
   Widget build(BuildContext context) {
-    final controller = Provider.of<ItineraryEditorController>(context);
 
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -67,7 +99,6 @@ class _StepForm extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Provider.of<ItineraryEditorController>(context);
 
     // hosting step form
     if(step is HostingStepViewModel){
