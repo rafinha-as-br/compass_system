@@ -26,6 +26,25 @@ class ItineraryStepsBuildModel {
     required this.normalSteps,
     required this.startStep,
     required this.finishStep,
-  });
+  }){
+    if(startStep.position != StepPosition.start){
+      throw ArgumentError('Start step must be the first step');
+    }
+    if(finishStep.position != StepPosition.finish){
+      throw ArgumentError('Finish step must be the last step');
+    }
+    if(normalSteps.isEmpty){
+      throw ArgumentError('Normal steps must not be empty');
+    }
+    for(var step in normalSteps){
+      if(step.position != StepPosition.middle){
+        throw ArgumentError('Normal steps must be in the middle');
+      }
+    }
+
+  }
+
+  /// getter for the full list of steps, including start and finish steps.
+  List<ItineraryStepViewModel> get stepsList => [startStep, ...normalSteps, finishStep];
 }
 
