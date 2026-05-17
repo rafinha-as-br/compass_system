@@ -13,6 +13,7 @@ enum StepPosition{
 
 /// Base view model class for all itinerary steps.
 abstract class ItineraryStepViewModel{
+  /// Represents the id on the API, can be null in case of a new local instance
   final String? _backEndId;
   final String localId;
   final String title;
@@ -30,7 +31,7 @@ abstract class ItineraryStepViewModel{
     required this.position,
   }): _backEndId = backEndId;
 
-  /// Creates a new Placeholder on local UI
+  /// Creates a new [PlaceHolderStepViewModel] on local UI
   factory ItineraryStepViewModel.newPlaceHolder(
       String title,
       DateTime startDate,
@@ -47,7 +48,7 @@ abstract class ItineraryStepViewModel{
     );
   }
 
-  /// Create a Placeholder from domain model
+  /// Create a [PlaceHolderStepViewModel] from domain model
   factory ItineraryStepViewModel.fromPlaceHolder(
       String backEndId,
       String title,

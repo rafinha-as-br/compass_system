@@ -108,7 +108,7 @@ class _ItineraryBuildView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final editor = context.watch<ItineraryEditorController>();
-    final steps = editor.steps;
+    final steps = editor.stepsBuildModel;
     final selectedIndex = editor.selectedStepIndex;
 
 

@@ -205,7 +205,6 @@ class ItineraryEditorController extends ChangeNotifier {
       notifyListeners();
     }
   }
-
   /// Reorder Steps method, used in [StepsListPanel] to reorder the steps list.
   void reorderSteps(int oldIndex, int newIndex) {
 

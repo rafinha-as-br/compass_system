@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
+import 'package:uuid/uuid.dart';
 
 import '../../../../models/view_models/itinerary_steps_view_models.dart';
 
@@ -52,7 +54,10 @@ class StepsBuilderPanel extends StatelessWidget {
           selectedIndex: selectedIndex,
         ),
         Expanded(
-          child: _StepFormRender(step: steps.stepsList[selectedIndex])
+          child: _StepFormRender(
+            step: steps.stepsList[selectedIndex],
+            onStepTypeChanged: (newStep) => updateStep(selectedIndex, newStep),
+          )
         ),
       ],
     );
@@ -140,37 +145,129 @@ class _StepNavigator extends StatelessWidget {
 
 /// Step form render widget, responsible for rendering the correct form widget based on the current step's type.
 class _StepFormRender extends StatelessWidget {
-  const _StepFormRender({required this.step});
+  const _StepFormRender({
+    required this.step,
+    required this.onStepTypeChanged,
+  });
 
   /// step for render the form
   final ItineraryStepViewModel step;
+  /// Callback to change the step type
+  final void Function(ItineraryStepViewModel newStep) onStepTypeChanged;
+
+  Future<void> _handleTypeChange(BuildContext context, Type newType) async {
+    if (step.runtimeType == newType) return;
+
+    // Show dialog if not a PlaceHolderStepViewModel
+    if (step is! PlaceHolderStepViewModel) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text('Change Step Type?'),
+          content: const Text('Changing the step type will result in the loss of specific data entered for the current step. Do you wish to proceed?'),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(false),
+              child: const Text('Cancel'),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(context).pop(true),
+              child: const Text('Proceed'),
+            ),
+          ],
+        ),
+      );
+
+      if (confirm != true) return;
+    }
+
+    ItineraryStepViewModel newStep;
+    final title = step.title;
+    final startDate = step.startDate;
+    final finishDate = step.finishDate;
+    final position = step.position;
+
+    if (newType == PlaceHolderStepViewModel) {
+      newStep = ItineraryStepViewModel.newPlaceHolder(title, startDate, finishDate, position);
+    } else if (newType == StopStepViewModel) {
+      newStep = ItineraryStepViewModel.newStop(title, startDate, finishDate, position, '', '', []);
+    } else if (newType == HostingStepViewModel) {
+      newStep = ItineraryStepViewModel.newHosting(title, startDate, finishDate, position, '', '', startDate, finishDate);
+    } else if (newType == TravelSegmentStepViewModel) {
+      final defaultTransport = RentalCarViewModel(
+        id: const Uuid().v4(),
+        vehicleModelName: '',
+        vehicleLicensePlate: '',
+        companyName: '',
+        checkInDate: startDate,
+        checkOutDate: finishDate,
+      );
+      newStep = ItineraryStepViewModel.newTravelSegment(title, startDate, finishDate, position, '', '', defaultTransport);
+    } else {
+      return;
+    }
+
+    onStepTypeChanged(newStep);
+  }
 
   @override
   Widget build(BuildContext context) {
+    Widget formContent;
 
     // hosting step form
     if(step is HostingStepViewModel){
-      return const Placeholder();
+      formContent = const Placeholder();
     }
-
     // stop step form
-    if(step is StopStepViewModel){
-      return const Placeholder();
+    else if(step is StopStepViewModel){
+      formContent = const Placeholder();
     }
-
     // travel segment step form
-    if(step is TravelSegmentStepViewModel){
-      return const Placeholder();
+    else if(step is TravelSegmentStepViewModel){
+      formContent = const Placeholder();
+    } else {
+      /// Empty state shown when no steps have been added yet.
+      formContent = const Placeholder();
     }
 
-    // first step form
-
-
-    // last step form
-
-
-    /// Empty state shown when no steps have been added yet.
-    return const Placeholder();
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: DropdownButtonFormField<Type>(
+            initialValue: step.runtimeType,
+            decoration: const InputDecoration(
+              labelText: 'Step Type',
+              border: OutlineInputBorder(),
+            ),
+            items: const [
+              DropdownMenuItem(
+                value: PlaceHolderStepViewModel,
+                child: Text('Placeholder'),
+              ),
+              DropdownMenuItem(
+                value: StopStepViewModel,
+                child: Text('Stop'),
+              ),
+              DropdownMenuItem(
+                value: HostingStepViewModel,
+                child: Text('Hosting'),
+              ),
+              DropdownMenuItem(
+                value: TravelSegmentStepViewModel,
+                child: Text('Travel Segment'),
+              ),
+            ],
+            onChanged: (newType) {
+              if (newType != null) {
+                _handleTypeChange(context, newType);
+              }
+            },
+          ),
+        ),
+        Expanded(child: formContent),
+      ],
+    );
   }
 
 }
