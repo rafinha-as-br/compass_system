@@ -3,6 +3,11 @@ import 'package:flutter/material.dart';
 /// The three concrete step types available.
 enum StepType { stop, hosting, travelSegment }
 
+/// TODO: REVIEW THIS HOLE WIDGET
+/// - Must be called when there is a Step of PlaceHolder type, must go down below the placeholder data display
+/// - With every step type has an icon now, review the implementation of this widget
+
+
 /// Renders the UI for an untyped placeholder step, allowing the user
 /// to set a title and choose which type of step to create.
 class StepTypeSelector extends StatelessWidget {

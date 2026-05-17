@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
-import 'package:uuid/uuid.dart';
-
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/change_type_dialog.dart';
 import '../../../../models/view_models/itinerary_steps_view_models.dart';
 
 /// This panel is responsible for building/editing an [ItineraryStepViewModel] list,
@@ -36,7 +35,7 @@ class StepsBuilderPanel extends StatelessWidget {
   /// Next step callback method [_StepNavigator]
   final void Function() goToNextStep;
   /// Add step callback method for [_StepNavigator]
-  final void Function(ItineraryStepViewModel newStep) addStep;
+  final void Function({required ItineraryStepViewModel newStep}) addStep;
   /// Update step callback method for [_StepFormRender]
   final void Function(int index, ItineraryStepViewModel updatedStep) updateStep;
   /// Remove step callback method for [_StepFormRender]
@@ -57,6 +56,7 @@ class StepsBuilderPanel extends StatelessWidget {
           child: _StepFormRender(
             step: steps.stepsList[selectedIndex],
             onStepTypeChanged: (newStep) => updateStep(selectedIndex, newStep),
+            selectedIndex: selectedIndex,
           )
         ),
       ],
@@ -77,10 +77,10 @@ class _StepNavigator extends StatelessWidget {
 
   /// Previous step method
   final void Function() goToPreviousStep;
-  /// Next step
+  /// Next step method
   final void Function() goToNextStep;
-  /// Add step
-  final void Function(ItineraryStepViewModel newStep) addStep;
+  /// Add step method
+  final void Function({required ItineraryStepViewModel newStep}) addStep;
 
   /// Step for render the navigation
   final ItineraryStepViewModel step;
@@ -117,7 +117,7 @@ class _StepNavigator extends StatelessWidget {
 
         /// Step title
         Text(
-          'Step — ${step.title.isNotEmpty ? step.title : '#${selectedIndex + 1}'}',
+          step.title,
           style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
         ),
 
@@ -125,8 +125,13 @@ class _StepNavigator extends StatelessWidget {
         isLastStep ?
           IconButton(
             onPressed: (){
-
-              // add a placeholder step
+              // add a placeholder step, guarantees that the title is not empty
+              addStep(
+                newStep: ItineraryStepViewModel.newPlaceHolder(
+                  currentIndex: selectedIndex + 1,
+                  position:  StepPosition.middle,
+                )
+              );
             },
             icon: const Icon(Icons.add),
             tooltip: 'Add Step',
@@ -148,13 +153,17 @@ class _StepFormRender extends StatelessWidget {
   const _StepFormRender({
     required this.step,
     required this.onStepTypeChanged,
+    required this.selectedIndex,
   });
 
   /// step for render the form
   final ItineraryStepViewModel step;
   /// Callback to change the step type
   final void Function(ItineraryStepViewModel newStep) onStepTypeChanged;
+  /// Selected index for the current step
+  final int selectedIndex;
 
+  /// Type changer handler, called when the user changes the step type, verifying if the change is valid.
   Future<void> _handleTypeChange(BuildContext context, Type newType) async {
     if (step.runtimeType == newType) return;
 
@@ -162,20 +171,7 @@ class _StepFormRender extends StatelessWidget {
     if (step is! PlaceHolderStepViewModel) {
       final confirm = await showDialog<bool>(
         context: context,
-        builder: (context) => AlertDialog(
-          title: const Text('Change Step Type?'),
-          content: const Text('Changing the step type will result in the loss of specific data entered for the current step. Do you wish to proceed?'),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(false),
-              child: const Text('Cancel'),
-            ),
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(true),
-              child: const Text('Proceed'),
-            ),
-          ],
-        ),
+        builder: (context) => ChangeStepTypeDialog(),
       );
 
       if (confirm != true) return;
@@ -188,21 +184,38 @@ class _StepFormRender extends StatelessWidget {
     final position = step.position;
 
     if (newType == PlaceHolderStepViewModel) {
-      newStep = ItineraryStepViewModel.newPlaceHolder(title, startDate, finishDate, position);
+      newStep = ItineraryStepViewModel.newPlaceHolder(currentIndex: selectedIndex, position: position);
     } else if (newType == StopStepViewModel) {
-      newStep = ItineraryStepViewModel.newStop(title, startDate, finishDate, position, '', '', []);
-    } else if (newType == HostingStepViewModel) {
-      newStep = ItineraryStepViewModel.newHosting(title, startDate, finishDate, position, '', '', startDate, finishDate);
-    } else if (newType == TravelSegmentStepViewModel) {
-      final defaultTransport = RentalCarViewModel(
-        id: const Uuid().v4(),
-        vehicleModelName: '',
-        vehicleLicensePlate: '',
-        companyName: '',
-        checkInDate: startDate,
-        checkOutDate: finishDate,
+      newStep = ItineraryStepViewModel.newStop(
+          title: title,
+          startDate: startDate,
+          finishDate: finishDate,
+          position: position,
+          description: '',
+          experiences: [],
       );
-      newStep = ItineraryStepViewModel.newTravelSegment(title, startDate, finishDate, position, '', '', defaultTransport);
+    } else if (newType == HostingStepViewModel) {
+      newStep = ItineraryStepViewModel.newHosting(
+          title: title,
+          startDate: startDate,
+          finishDate: finishDate,
+          position: position,
+          placeName: 'Place name',
+          address: 'Place address',
+          checkIn: DateTime.now(),
+          checkOut: DateTime.now().add(const Duration(days: 1)),
+      );
+    } else if (newType == TravelSegmentStepViewModel) {
+      final defaultTransport = TransportViewModel.newPlaceHolder();
+      newStep = ItineraryStepViewModel.newTravelSegment(
+          title: title,
+          startDate: startDate,
+          finishDate: finishDate,
+          position: position,
+          startPoint: 'Starting point',
+          finishPoint: 'Finish point',
+          transport: defaultTransport
+      );
     } else {
       return;
     }

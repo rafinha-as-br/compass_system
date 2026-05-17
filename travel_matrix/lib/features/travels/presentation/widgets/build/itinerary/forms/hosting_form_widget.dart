@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mock_repository/mock_repository.dart';
 
 /// Form widget for editing a Hosting step.
+///
+/// TODO: Review the implementation of all theses text editing controllers into a separated file
+/// This widget must receive the view model class, callback actions from the edit controller and have an own controller for it,
+/// Ask chatgpt how to improve this UI
 class HostingFormWidget extends StatefulWidget {
   final Hosting hosting;
   final ValueChanged<Hosting> onChanged;

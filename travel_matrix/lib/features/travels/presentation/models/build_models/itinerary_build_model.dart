@@ -33,13 +33,24 @@ class ItineraryStepsBuildModel {
     if(finishStep.position != StepPosition.finish){
       throw ArgumentError('Finish step must be the last step');
     }
-    if(normalSteps.isEmpty){
-      throw ArgumentError('Normal steps must not be empty');
-    }
     for(var step in normalSteps){
       if(step.position != StepPosition.middle){
         throw ArgumentError('Normal steps must be in the middle');
       }
+    }
+
+    final allSteps = [
+      startStep,
+      ...normalSteps,
+      finishStep,
+    ];
+
+    final ids = allSteps.map((e) => e.id).toSet();
+
+    if(ids.length != allSteps.length){
+      throw ArgumentError(
+        'Duplicated step ids are not allowed.',
+      );
     }
 
   }

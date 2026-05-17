@@ -8,9 +8,9 @@ import 'package:travel_matrix/features/travels/presentation/widgets/build/itiner
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_builder_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_list_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/step_type_selector.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/stop_form_widget.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/hosting_form_widget.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/travel_segment_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/stop_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/hosting_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment_form_widget.dart';
 
 import '../../../data/repository_impl/itinerary_repository_impl.dart';
 import '../../../domain/repository/itinerary_repository.dart';

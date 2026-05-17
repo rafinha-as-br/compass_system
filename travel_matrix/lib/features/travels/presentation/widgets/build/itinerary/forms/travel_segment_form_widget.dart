@@ -2,6 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:mock_repository/mock_repository.dart';
 
 /// Form widget for editing a TravelSegment step.
+/// TODO: ADD CHANGE OF TRANSPORT TYPE SUPPORT
+/// TODO: Review the implementation of all theses text editing controllers into a separated file
+/// This widget must receive the view model class, callback actions from the edit controller and have an own controller for it,
+/// Ask chatgpt how to improve this UI
 class TravelSegmentFormWidget extends StatefulWidget {
   final TravelSegment segment;
   final ValueChanged<TravelSegment> onChanged;

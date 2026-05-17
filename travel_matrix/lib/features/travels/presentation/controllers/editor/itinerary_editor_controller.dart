@@ -95,20 +95,15 @@ class ItineraryEditorController extends ChangeNotifier {
   /// edit them before proceeding into normal steps creation
   void createFirstAndLastSteps(){
     final firstStep = ItineraryStepViewModel.newPlaceHolder(
-      'First Step',
-      DateTime.now(),
-      DateTime.now(),
-      StepPosition.start,
+      position: StepPosition.start,
+      currentIndex: _selectedStepIndex
     );
     final lastStep = ItineraryStepViewModel.newPlaceHolder(
-      'Last Step',
-      DateTime.now(),
-      DateTime.now(),
-      StepPosition.finish,
+      position: StepPosition.finish,
+      currentIndex: _selectedStepIndex
     );
-
-
-
+    addStep(firstStep);
+    addStep(lastStep);
   }
   /// Add a new step on the Steps list, guarantees the first and last step are pinned to 0 and last index respectively
   /// TODO: Every widget that comes here, must be already validated!
