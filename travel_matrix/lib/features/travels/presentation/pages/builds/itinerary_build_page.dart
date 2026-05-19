@@ -32,7 +32,7 @@ import '../../models/view_models/transports_view_model.dart';
 /// - Left  → [InterestPointsPanel] (route interest points checklist)
 /// - Center → [StepsBuilderPanel] (type selector / concrete form)
 /// - Right  → [StepsListPanel] (ordered, reorderable list)
-/// NOTE: The widgets below are presentational widgets, consuming data passed by [ItineraryEditorController].
+/// NOTE: The widgets above are presentational widgets, consuming data passed by [ItineraryEditorController].
 ///
 class ItineraryBuildPage extends StatelessWidget {
   const ItineraryBuildPage({
