@@ -1,5 +1,6 @@
 import 'itinerary_step.dart';
 
+/// start
 class Itinerary {
   final String id;
   final String agentId;
@@ -10,9 +11,6 @@ class Itinerary {
     required this.agentId,
     required this.itinerarySteps,
   });
-
-  /// validation method
-
 
   Map<String, dynamic> toJson() {
     return {
