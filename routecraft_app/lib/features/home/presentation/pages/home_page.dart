@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
+import 'package:routecraft_app/features/home/presentation/pages/follow_travel_page.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
 import 'package:routecraft_app/features/visualization/presentation/pages/visualization_page.dart';
 
@@ -34,6 +35,15 @@ class HomePage extends StatelessWidget {
               Icons.map,
               () {
                 Navigator.push(context, MaterialPageRoute(builder: (_) => const VisualizationPage()));
+              },
+            ),
+            const SizedBox(height: 16),
+            _buildNavButton(
+              context,
+              'Follow a Travel',
+              Icons.search,
+              () {
+                Navigator.push(context, MaterialPageRoute(builder: (_) => const FollowTravelPage()));
               },
             ),
             const SizedBox(height: 16),
