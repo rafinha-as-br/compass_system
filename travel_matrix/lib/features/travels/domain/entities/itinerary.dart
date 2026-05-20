@@ -16,40 +16,12 @@ class Itinerary {
   List<ItineraryStep> itinerarySteps;
 
   /// Private constructor
-  Itinerary._({
+  Itinerary({
     required this.domainId,
     required this.backEndId,
     required this.agentId,
     required this.itinerarySteps,
   });
-
-  /// Creates a new [Itinerary] on local data
-  factory Itinerary.newLocal({
-    required String agentId,
-    required List<ItineraryStep> itinerarySteps,
-  }) {
-    return Itinerary._(
-      domainId: Uuid().v4(),
-      backEndId: null,
-      agentId: agentId,
-      itinerarySteps: itinerarySteps,
-    );
-  }
-
-  /// Creates a new [Itinerary] from API data
-  factory Itinerary.fromApi({
-    required String domainId,
-    required String backEndId,
-    required String agentId,
-    required List<ItineraryStep> itinerarySteps,
-  }) {
-    return Itinerary._(
-      domainId: domainId,
-      backEndId: backEndId,
-      agentId: agentId,
-      itinerarySteps: itinerarySteps,
-    );
-  }
 
 
   /// To json method, returns a [Map] with the itinerary data
@@ -63,11 +35,11 @@ class Itinerary {
 
   /// From json method, returns a [Itinerary] from a [Map]
   Itinerary fromJson(Map<String, dynamic> json) {
-    return Itinerary.fromApi(
-      domainId: json['domainId'],
+    return Itinerary(
+      domainId: Uuid().v4(),
       backEndId: json['backEndId'],
       agentId: json['agentId'],
-      itinerarySteps: json['itinerarySteps'].map((e) => ItineraryStep.fromJson(e)).toList(),
+      itinerarySteps: json['itinerarySteps'].map((e) => e.fromJson()).toList(),
     );
   }
 

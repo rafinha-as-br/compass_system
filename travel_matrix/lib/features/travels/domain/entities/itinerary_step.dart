@@ -1,4 +1,5 @@
 import 'package:travel_matrix/features/travels/domain/entities/itinerary.dart';
+import 'package:uuid/uuid.dart';
 import 'transport.dart';
 
 /// Represents one small detailed part of a [Itinerary].
@@ -6,7 +7,7 @@ abstract class ItineraryStep {
   /// Id used for local reference
   final String domainId;
   /// Id used reference on the Compass API
-  final String backEndId;
+  final String? backEndId;
   /// Step for the title
   final String title;
   /// Start date for the step
@@ -26,26 +27,10 @@ abstract class ItineraryStep {
     required this.finished,
   });
 
-  /// Creates a new [PlaceholderStep] on local data
+  /// Creates a new [PlaceholderStep] for an [ItineraryStep]
   factory ItineraryStep.newPlaceholder({
-    required String title,
-    required DateTime startDate,
-    required DateTime finishDate,
-  }) {
-    return PlaceholderStep._(
-      domainId: '',
-      backEndId: '',
-      title: title,
-      startDate: startDate,
-      finishDate: finishDate,
-      finished: false,
-    );
-  }
-
-  /// Creates a new [PlaceholderStep] on domain data
-  factory ItineraryStep.fromPlaceholder({
     required String domainId,
-    required String backEndId,
+    required String? backEndId,
     required String title,
     required DateTime startDate,
     required DateTime finishDate,
@@ -60,32 +45,10 @@ abstract class ItineraryStep {
     );
   }
 
-  /// Creates a new [Stop] on local data
+  /// Creates a new [Stop] for an [ItineraryStep]
   factory ItineraryStep.newStop({
-    required String title,
-    required DateTime startDate,
-    required DateTime finishDate,
-    required String name,
-    required String description,
-    required List<String> experiences,
-  }) {
-    return Stop._(
-      domainId: '',
-      backEndId: '',
-      title: title,
-      startDate: startDate,
-      finishDate: finishDate,
-      finished: false,
-      name: name,
-      description: description,
-      experiences: experiences,
-    );
-  }
-
-  /// Creates a new [Stop] on domain data
-  factory ItineraryStep.fromStop({
     required String domainId,
-    required String backEndId,
+    required String? backEndId,
     required String title,
     required DateTime startDate,
     required DateTime finishDate,
@@ -97,43 +60,19 @@ abstract class ItineraryStep {
       domainId: domainId,
       backEndId: backEndId,
       title: title,
-      name: name,
-      description: description,
-      experiences: experiences,
       startDate: startDate,
       finishDate: finishDate,
       finished: false,
+      name: name,
+      description: description,
+      experiences: experiences,
     );
   }
 
-  /// Creates a new [Hosting] on local data
+  /// Creates a new [Hosting] for an [ItineraryStep]
   factory ItineraryStep.newHosting({
-    required String title,
-    required DateTime startDate,
-    required DateTime finishDate,
-    required String name,
-    required String address,
-    required DateTime checkIn,
-    required DateTime checkOut,
-  }) {
-    return Hosting._(
-      domainId: '',
-      backEndId: '',
-      title: title,
-      startDate: startDate,
-      finishDate: finishDate,
-      finished: false,
-      name: name,
-      address: address,
-      checkIn: checkIn,
-      checkOut: checkOut,
-    );
-  }
-
-  /// Creates a new [Hosting] on domain data
-  factory ItineraryStep.fromHosting({
     required String domainId,
-    required String backEndId,
+    required String? backEndId,
     required String title,
     required DateTime startDate,
     required DateTime finishDate,
@@ -146,15 +85,39 @@ abstract class ItineraryStep {
       domainId: domainId,
       backEndId: backEndId,
       title: title,
+      startDate: startDate,
+      finishDate: finishDate,
+      finished: false,
       name: name,
       address: address,
       checkIn: checkIn,
       checkOut: checkOut,
+    );
+  }
+
+  /// Creates a new [TravelSegment] for an [ItineraryStep]
+  factory ItineraryStep.newTravelSegment({
+    required String domainId,
+    required String? backEndId,
+    required String title,
+    required DateTime startDate,
+    required DateTime finishDate,
+    required Transport transport,
+    required String startPoint,
+    required String finishPoint,
+  }) {
+    return TravelSegment._(
+      domainId: domainId,
+      backEndId: backEndId,
+      title: title,
       startDate: startDate,
       finishDate: finishDate,
       finished: false,
+      transport: transport,
+      startPoint: startPoint,
+      finishPoint: finishPoint,
     );
-  }
+}
 
   /// To json method, returns a [Map] with the step data
   Map<String, dynamic> toJson();
@@ -178,7 +141,7 @@ class PlaceholderStep extends ItineraryStep {
   @override
   PlaceholderStep fromJson(Map<String, dynamic> json) {
     return PlaceholderStep._(
-      domainId: json['domainId'],
+      domainId: Uuid().v4(),
       backEndId: json['backEndId'],
       title: json['title'],
       startDate: DateTime.parse(json['startDate']),
@@ -226,7 +189,7 @@ class Stop extends ItineraryStep {
   @override
   Stop fromJson(Map<String, dynamic> json) {
     return Stop._(
-      domainId: json['domainId'],
+      domainId: Uuid().v4(),
       backEndId: json['backEndId'],
       title: json['title'],
       startDate: DateTime.parse(json['startDate']),
@@ -252,7 +215,6 @@ class Stop extends ItineraryStep {
       'type': 'Stop',
     };
   }
-
 
 }
 
@@ -284,7 +246,7 @@ class Hosting extends ItineraryStep {
   @override
   Hosting fromJson(Map<String, dynamic> json) {
     return Hosting._(
-      domainId: json['domainId'],
+      domainId: Uuid().v4(),
       backEndId: json['backEndId'],
       title: json['title'],
       startDate: DateTime.parse(json['startDate']),
@@ -342,7 +304,7 @@ class TravelSegment extends ItineraryStep {
   @override
   TravelSegment fromJson(Map<String, dynamic> json) {
     return TravelSegment._(
-      domainId: json['domainId'],
+      domainId: Uuid().v4(),
       backEndId: json['backEndId'],
       title: json['title'],
       startDate: DateTime.parse(json['startDate']),
