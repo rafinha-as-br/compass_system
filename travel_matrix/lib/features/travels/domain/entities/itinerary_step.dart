@@ -1,5 +1,4 @@
 import 'package:travel_matrix/features/travels/domain/entities/itinerary.dart';
-import 'package:uuid/uuid.dart';
 import 'transport.dart';
 
 /// Represents one small detailed part of a [Itinerary].
@@ -27,7 +26,9 @@ abstract class ItineraryStep {
     required this.finished,
   });
 
-  /// Creates a new [PlaceholderStep] for an [ItineraryStep]
+  /// Creates a new [PlaceholderStep] for an [ItineraryStep].
+  ///
+  /// Factory constructor to create a new domain entity from view model entity
   factory ItineraryStep.newPlaceholder({
     required String domainId,
     required String? backEndId,
@@ -46,6 +47,8 @@ abstract class ItineraryStep {
   }
 
   /// Creates a new [Stop] for an [ItineraryStep]
+  ///
+  /// Factory constructor to create a new domain entity from view model entity
   factory ItineraryStep.newStop({
     required String domainId,
     required String? backEndId,
@@ -70,6 +73,8 @@ abstract class ItineraryStep {
   }
 
   /// Creates a new [Hosting] for an [ItineraryStep]
+  ///
+  /// Factory constructor to create a new domain entity from view model entity
   factory ItineraryStep.newHosting({
     required String domainId,
     required String? backEndId,
@@ -96,6 +101,8 @@ abstract class ItineraryStep {
   }
 
   /// Creates a new [TravelSegment] for an [ItineraryStep]
+  ///
+  /// Factory constructor to create a new domain entity from view model entity
   factory ItineraryStep.newTravelSegment({
     required String domainId,
     required String? backEndId,
@@ -117,13 +124,8 @@ abstract class ItineraryStep {
       startPoint: startPoint,
       finishPoint: finishPoint,
     );
-}
+  }
 
-  /// To json method, returns a [Map] with the step data
-  Map<String, dynamic> toJson();
-
-  /// From json method, returns a [ItineraryStep] from a [Map]
-  ItineraryStep fromJson(Map<String, dynamic> json);
 }
 
 /// Represents an [ItineraryStep] without type
@@ -137,30 +139,6 @@ class PlaceholderStep extends ItineraryStep {
     required super.finishDate,
     required super.finished,
   }): super._() ;
-
-  @override
-  PlaceholderStep fromJson(Map<String, dynamic> json) {
-    return PlaceholderStep._(
-      domainId: Uuid().v4(),
-      backEndId: json['backEndId'],
-      title: json['title'],
-      startDate: DateTime.parse(json['startDate']),
-      finishDate: DateTime.parse(json['finishDate']),
-        finished: json['finished'],
-    );
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'backEndId': backEndId,
-      'title': title,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'finished': finished,
-      'type': 'PlaceholderStep',
-    };
-  }
 
 }
 
@@ -185,37 +163,6 @@ class Stop extends ItineraryStep {
     required this.description,
     required this.experiences,
   }): super._();
-
-  @override
-  Stop fromJson(Map<String, dynamic> json) {
-    return Stop._(
-      domainId: Uuid().v4(),
-      backEndId: json['backEndId'],
-      title: json['title'],
-      startDate: DateTime.parse(json['startDate']),
-      finishDate: DateTime.parse(json['finishDate']),
-      experiences: List<String>.from(json['experiences']),
-      name: json['name'],
-      description: json['description'],
-      finished: json['finished'],
-    );
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'backEndId': backEndId,
-      'title': title,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'finished': finished,
-      'name': name,
-      'description': description,
-      'experiences': experiences,
-      'type': 'Stop',
-    };
-  }
-
 }
 
 /// Represents a hosting done on a specific place
@@ -242,40 +189,6 @@ class Hosting extends ItineraryStep {
     required this.checkIn,
     required this.checkOut,
     }): super._();
-
-  @override
-  Hosting fromJson(Map<String, dynamic> json) {
-    return Hosting._(
-      domainId: Uuid().v4(),
-      backEndId: json['backEndId'],
-      title: json['title'],
-      startDate: DateTime.parse(json['startDate']),
-      finishDate: DateTime.parse(json['finishDate']),
-      address: json['address'],
-      checkIn: DateTime.parse(json['checkIn']),
-      checkOut: DateTime.parse(json['checkOut']),
-      name: json['name'],
-      finished: json['finished'],
-    );
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'backEndId': backEndId,
-      'title': title,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'finished': finished,
-      'name': name,
-      'address': address,
-      'checkIn': checkIn.toIso8601String(),
-      'checkOut': checkOut.toIso8601String(),
-      'type': 'Hosting',
-    };
-  }
-
-
 }
 
 /// Represents a displacement on the [Itinerary], having different types of commuting.
@@ -298,37 +211,4 @@ class TravelSegment extends ItineraryStep {
     required this.startPoint,
     required this.finishPoint
     }): super._();
-
-
-
-  @override
-  TravelSegment fromJson(Map<String, dynamic> json) {
-    return TravelSegment._(
-      domainId: Uuid().v4(),
-      backEndId: json['backEndId'],
-      title: json['title'],
-      startDate: DateTime.parse(json['startDate']),
-      finishDate: DateTime.parse(json['finishDate']),
-      finished: json['finished'],
-      startPoint: json['startPoint'],
-      finishPoint: json['finishPoint'],
-      transport: json['transport'],
-    );
-  }
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'backEndId': backEndId,
-      'title': title,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'finished': finished,
-      'startPoint': startPoint,
-      'finishPoint': finishPoint,
-      'transport': transport.toJson(),
-      'type': 'TravelSegment',
-    };
-
-  }
 }

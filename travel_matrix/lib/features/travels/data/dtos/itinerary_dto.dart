@@ -1,39 +1,60 @@
+import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/itinerary.dart';
 import '../../domain/entities/itinerary_step.dart';
 
+/// Data transfer object for [Itinerary], having the same structure as the API.
+///
+/// This class contains the mapper methods to convert between [Itinerary] and [ItineraryDTO].
 class ItineraryDTO {
-  final String id;
-  final String responsibleAgentName;
-  List<String> itineraryStepsId;
+  /// Main id used for API reference
+  final String? id;
+  /// Travel agent Id used for API reference
+  final String agentId;
+  /// Itinerary steps Ids used for API reference
+  final List<String> itineraryStepsId;
 
   ItineraryDTO({
     required this.id,
-    required this.responsibleAgentName,
+    required this.agentId,
     required this.itineraryStepsId,
   });
 
+  /// Factory from json method
   factory ItineraryDTO.fromJson(Map<String, dynamic> json) {
     return ItineraryDTO(
-      id: json['id'],
-      responsibleAgentName: json['responsibleAgentName'],
-      itineraryStepsId: List<String>.from(json['itineraryStepsId'] ?? []),
+      id: json[ItineraryAPIConstants.id],
+      agentId: json[ItineraryAPIConstants.agent],
+      itineraryStepsId: List<String>.from(json[ItineraryAPIConstants.steps] ?? []),
     );
   }
 
+  /// To json method
   Map<String, dynamic> toJson() {
     return {
-      'id': id,
-      'responsibleAgentName': responsibleAgentName,
-      'itineraryStepsId': itineraryStepsId,
+      ItineraryAPIConstants.id : id,
+      ItineraryAPIConstants.agent : agentId,
+      ItineraryAPIConstants.steps : itineraryStepsId,
     };
   }
 
+  /// To domain mapper method
   Itinerary toDomain(List<ItineraryStep> steps) {
     return Itinerary(
-      id: id,
-      agentId: responsibleAgentName,
-      itinerarySteps: steps,
+        domainId: Uuid().v4(),
+        backEndId: id,
+        agentId: agentId,
+        itinerarySteps: steps
     );
   }
+}
+
+/// Contains the constants field names from the API
+abstract class ItineraryAPIConstants{
+  /// Main Id field
+  static const String id = 'id';
+  /// Travel agent Id field
+  static const String agent = 'agentId';
+  /// Itinerary steps list ids field
+  static const String steps = 'itineraryStepsId';
 }

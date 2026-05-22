@@ -22,7 +22,7 @@ class RouteRepositoryImpl implements RouteRepository{
   Future<Result<RoutePlan>> getRoute(String id) async{
     try{
       final routeDto = await RouteDataSource().getRoute(id);
-      final interestsListDto = await RouteDataSource().getInterests(routeDto.interestsListId);
+      final interestsListDto = await RouteDataSource().getInterests(routeDto.interestsList);
       return Result.success(
           routeDto.toDomain(interestsListDto.map((e) => e.toDomain()).toList())
       );
