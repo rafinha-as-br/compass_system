@@ -54,17 +54,22 @@ abstract class TransportDTO {
 ///
 /// This class contains the mapper methods to convert between [PlaceholderTransport] and [PlaceHolderStepDTO].
 class PlaceHolderStepDTO extends TransportDTO {
-  PlaceHolderStepDTO._({required super.id}): super._();
+  /// Description for the placeholder
+  final String description;
+  PlaceHolderStepDTO._({required super.id, required this.description}): super._();
 
   /// from Json factory constructor
   factory PlaceHolderStepDTO.fromJson(Map<String, dynamic> json) {
-    return PlaceHolderStepDTO._(id: json[TransportAPIConstants.id]);
+    return PlaceHolderStepDTO._(
+      id: json[TransportAPIConstants.id],
+      description: json[TransportAPIConstants.description]
+    );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      TransportAPIConstants.type: 'placeholder',
+      TransportAPIConstants.type: TransportAPIConstants.placeholder,
       TransportAPIConstants.id: id,
     };
   }
@@ -72,14 +77,18 @@ class PlaceHolderStepDTO extends TransportDTO {
   @override
   Transport toDomain() {
     return Transport.newPlaceholder(
-        domainId: Uuid().v4(),
-        backEndId: id
+      domainId: Uuid().v4(),
+      backEndId: id,
+      description: description
     );
   }
 
   /// From domain factory constructor
   factory PlaceHolderStepDTO.fromDomain({required PlaceholderTransport placeholder}) {
-    return PlaceHolderStepDTO._(id: placeholder.backEndId);
+    return PlaceHolderStepDTO._(
+        id: placeholder.backEndId,
+        description: placeholder.description
+    );
   }
 
 

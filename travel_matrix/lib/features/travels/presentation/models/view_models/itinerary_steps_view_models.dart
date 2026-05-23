@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 import 'package:uuid/uuid.dart';
 
+import '../../../domain/entities/itinerary_step.dart';
+
 
 /// Enum to determine the position of a step in the itinerary.
 enum StepPosition{
@@ -10,7 +12,7 @@ enum StepPosition{
   finish,
 }
 
-/// Base view model class for all itinerary steps.
+/// Itinerary Step view model class, used to represent an [ItineraryStep] on the UI
 abstract class ItineraryStepViewModel{
   /// Represents the id on the API, can be null in case of a new local instance
   final String? _backEndId;
@@ -33,7 +35,80 @@ abstract class ItineraryStepViewModel{
     required this.icon,
   }): _backEndId = backEndId;
 
+  /// Factory constructor from domain model
+  factory ItineraryStepViewModel.fromDomain(ItineraryStep domainStep, bool isFirst, bool isLast) {
 
+    final StepPosition  position;
+    if (isFirst) {
+      position = StepPosition.start;
+    } else if (isLast) {
+      position = StepPosition.finish;
+    } else {
+      position = StepPosition.middle;
+    }
+
+    switch (domainStep) {
+      case PlaceholderStep _:
+        return ItineraryStepViewModel.fromPlaceHolder(
+            backEndId: domainStep.backEndId!,
+            domainId: domainStep.domainId,
+            title: domainStep.title,
+            description: domainStep.description,
+            startDate: domainStep.startDate,
+            finishDate: domainStep.finishDate,
+            position: position,
+        );
+      case Stop _:
+        return ItineraryStepViewModel.fromStop(
+            backEndId: domainStep.backEndId!,
+            domainId: domainStep.domainId,
+            title: domainStep.title,
+            name: domainStep.name,
+            startDate: domainStep.startDate,
+            finishDate: domainStep.finishDate,
+            position: position,
+            description: domainStep.description,
+            experiences: domainStep.experiences,
+        );
+      case Hosting _:
+        return ItineraryStepViewModel.fromHosting(
+            backEndId: domainStep.backEndId!,
+            domainId: domainStep.domainId,
+            title: domainStep.title,
+            startDate: domainStep.startDate,
+            finishDate: domainStep.finishDate,
+            position: position,
+            placeName: domainStep.name,
+            address: domainStep.address,
+            checkIn: domainStep.checkIn,
+            checkOut: domainStep.checkOut,
+        );
+      case TravelSegment _:
+        return ItineraryStepViewModel.fromTravelSegment(
+            backEndId: domainStep.backEndId!,
+            domainId: domainStep.domainId,
+            title: domainStep.title,
+            startDate: domainStep.startDate,
+            finishDate: domainStep.finishDate,
+            position: position,
+            startPoint: domainStep.startPoint,
+            finishPoint: domainStep.finishPoint,
+            transport: TransportViewModel.fromDomain(domainStep.transport),
+        );
+      default:
+        ///
+        return ItineraryStepViewModel.fromPlaceHolder(
+          backEndId: domainStep.backEndId!,
+          domainId: domainStep.domainId,
+          title: domainStep.title,
+          description: 'No description',
+          startDate: domainStep.startDate,
+          finishDate: domainStep.finishDate,
+          position: position,
+        );
+
+    }
+  }
 
   /// Creates a new [PlaceHolderStepViewModel] on local UI.
   /// Guarantees that title, description, startDate, and finishDate are not empty.
@@ -58,6 +133,7 @@ abstract class ItineraryStepViewModel{
   /// Create a [PlaceHolderStepViewModel] from domain model
   factory ItineraryStepViewModel.fromPlaceHolder({
     required String backEndId,
+    required String domainId,
     required String title,
     required String description,
     required DateTime startDate,
@@ -66,7 +142,7 @@ abstract class ItineraryStepViewModel{
   }) {
     return PlaceHolderStepViewModel._(
         backEndId: backEndId,
-        localId: const Uuid().v4(),
+        localId: domainId,
         title: title,
         description: description,
         startDate: startDate,
@@ -78,6 +154,7 @@ abstract class ItineraryStepViewModel{
   /// Creates a new [StopStepViewModel] on local UI
   factory ItineraryStepViewModel.newStop({
     required String title,
+    required String name,
     required DateTime startDate,
     required DateTime finishDate,
     required StepPosition position,
@@ -88,6 +165,7 @@ abstract class ItineraryStepViewModel{
         backEndId: null,
         localId: const Uuid().v4(),
         title: title,
+        name: name,
         startDate: startDate,
         finishDate: finishDate,
         position: position,
@@ -99,7 +177,9 @@ abstract class ItineraryStepViewModel{
   /// Create a [StopStepViewModel] from domain model
   factory ItineraryStepViewModel.fromStop({
     required String backEndId,
+    required String domainId,
     required String title,
+    required String name,
     required DateTime startDate,
     required DateTime finishDate,
     required StepPosition position,
@@ -108,8 +188,9 @@ abstract class ItineraryStepViewModel{
   }) {
     return StopStepViewModel._(
         backEndId: backEndId,
-        localId: const Uuid().v4(),
+        localId: domainId,
         title: title,
+        name: name,
         startDate: startDate,
         finishDate: finishDate,
         position: position,
@@ -146,6 +227,7 @@ abstract class ItineraryStepViewModel{
   /// Create a [HostingStepViewModel] from domain model
   factory ItineraryStepViewModel.fromHosting({
     required String backEndId,
+    required String domainId,
     required String title,
     required DateTime startDate,
     required DateTime finishDate,
@@ -157,7 +239,7 @@ abstract class ItineraryStepViewModel{
   }) {
     return HostingStepViewModel._(
         backEndId: backEndId,
-        localId: const Uuid().v4(),
+        localId: domainId,
         title: title,
         startDate: startDate,
         finishDate: finishDate,
@@ -195,6 +277,7 @@ abstract class ItineraryStepViewModel{
   /// Create a [TravelSegmentStepViewModel] from domain model
   factory ItineraryStepViewModel.fromTravelSegment({
     required String backEndId,
+    required String domainId,
     required String title,
     required DateTime startDate,
     required DateTime finishDate,
@@ -205,7 +288,7 @@ abstract class ItineraryStepViewModel{
   }) {
     return TravelSegmentStepViewModel._(
         backEndId: backEndId,
-        localId: const Uuid().v4(),
+        localId: domainId,
         title: title,
         startDate: startDate,
         finishDate: finishDate,
@@ -215,6 +298,9 @@ abstract class ItineraryStepViewModel{
         transport: transport,
         icon: Icons.flight);
   }
+
+  /// To domain mapper method
+  ItineraryStep toDomain();
 
   /// Provides the local ID for UI reference
   String get id => localId;
@@ -227,7 +313,7 @@ abstract class ItineraryStepViewModel{
 
 }
 
-/// Placeholder view model type, used to represent a [ItineraryStepViewModel] without a type
+/// Placeholder view model type, used to represent a [ItineraryStepViewModel] on the UI
 class PlaceHolderStepViewModel extends ItineraryStepViewModel{
   final String description;
   PlaceHolderStepViewModel._({
@@ -241,10 +327,23 @@ class PlaceHolderStepViewModel extends ItineraryStepViewModel{
       required super.icon,
   }): super._();
 
+  @override
+  ItineraryStep toDomain() {
+    return ItineraryStep.newPlaceholder(
+      domainId: localId,
+      backEndId: _backEndId,
+      title: title,
+      description: description,
+      startDate: startDate,
+      finishDate: finishDate,
+    );
+  }
+
 }
 
-/// Stop step view model class
+/// Stop step view model class, used to represent a [Stop] on the UI
 class StopStepViewModel extends ItineraryStepViewModel{
+  final String name;
   final String description;
   final List<String> experiences;
 
@@ -255,14 +354,29 @@ class StopStepViewModel extends ItineraryStepViewModel{
     required super.startDate,
     required super.finishDate,
     required super.position,
+    required this.name,
     required this.description,
     required this.experiences,
     required super.icon,
   }) : super._();
 
+  @override
+  ItineraryStep toDomain() {
+    return ItineraryStep.newStop(
+      domainId: localId,
+      backEndId: _backEndId,
+      title: title,
+      name: name,
+      startDate: startDate,
+      finishDate: finishDate,
+      description: description,
+      experiences: experiences,
+    );
+  }
+
 }
 
-/// Hosting step view model class
+/// Hosting step view model class, used to represent a [Hosting] on the UI
 class HostingStepViewModel extends ItineraryStepViewModel{
   final String placeName;
   final String address;
@@ -287,10 +401,24 @@ class HostingStepViewModel extends ItineraryStepViewModel{
 
   String get checkOutString => checkOut.toString();
 
+  @override
+  ItineraryStep toDomain() {
+    return ItineraryStep.newHosting(
+      domainId: localId,
+      backEndId: _backEndId,
+      title: title,
+      startDate: startDate,
+      finishDate: finishDate,
+      name: placeName,
+      address: address,
+      checkIn: checkIn,
+      checkOut: checkOut,
+    );
+  }
 
 }
 
-/// Travel segment step view model class
+/// Travel segment step view model class, used to represent a [TravelSegment] on the UI
 class TravelSegmentStepViewModel extends ItineraryStepViewModel{
   final String startPoint;
   final String finishPoint;
@@ -308,5 +436,19 @@ class TravelSegmentStepViewModel extends ItineraryStepViewModel{
     required this.transport,
     required super.icon,
   }): super._();
+
+  @override
+  ItineraryStep toDomain() {
+    return  ItineraryStep.newTravelSegment(
+      domainId: localId,
+      backEndId: _backEndId,
+      title: title,
+      startDate: startDate,
+      finishDate: finishDate,
+      startPoint: startPoint,
+      finishPoint: finishPoint,
+      transport: transport.toDomain(),
+    );
+  }
 
 }

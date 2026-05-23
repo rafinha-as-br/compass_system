@@ -23,25 +23,4 @@ class Person {
     required this.sex,
   });
 
-  /// To Json method, returns a [Map] with the person data
-  Map<String, dynamic> toJson() {
-    return {
-      'id': backendId,
-      'name': name,
-      'age': age,
-      'sex': sex,
-    };
-  }
-
-  /// From Json method, returns a [Person] from a [Map]
-  Person fromJson(Map<String, dynamic> json) {
-    return Person(
-      domainId: Uuid().v4(),
-      backendId: json['id'],
-      name: json['name'],
-      age: json['age'],
-      sex: json['sex'],
-    );
-  }
-
 }

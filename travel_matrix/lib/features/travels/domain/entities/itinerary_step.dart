@@ -33,6 +33,7 @@ abstract class ItineraryStep {
     required String domainId,
     required String? backEndId,
     required String title,
+    required String description,
     required DateTime startDate,
     required DateTime finishDate,
   }) {
@@ -40,6 +41,7 @@ abstract class ItineraryStep {
       domainId: domainId,
       backEndId: backEndId,
       title: title,
+      description: description,
       startDate: startDate,
       finishDate: finishDate,
       finished: false,
@@ -130,6 +132,9 @@ abstract class ItineraryStep {
 
 /// Represents an [ItineraryStep] without type
 class PlaceholderStep extends ItineraryStep {
+  /// Description for the placeholder
+  final String description;
+
   /// Private constructor
   PlaceholderStep._({
     required super.domainId,
@@ -138,6 +143,7 @@ class PlaceholderStep extends ItineraryStep {
     required super.startDate,
     required super.finishDate,
     required super.finished,
+    required this.description,
   }): super._() ;
 
 }

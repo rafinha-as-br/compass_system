@@ -72,18 +72,23 @@ abstract class ItineraryStepDTO {
 ///
 /// This class contains the mapper methods to convert between [PlaceholderStep] and [PlaceholderStepDTO].
 class PlaceholderStepDTO extends ItineraryStepDTO {
+  /// Description for the placeholder
+  final String description;
+
   PlaceholderStepDTO({
     required super.id,
     required super.title,
     required super.startDate,
     required super.finishDate,
     required super.finished,
+    required this.description,
   });
 
   factory PlaceholderStepDTO.fromJson(Map<String, dynamic> json) {
     return PlaceholderStepDTO(
       id: json[ItineraryStepAPIConstants.id],
       title: json[ItineraryStepAPIConstants.title],
+      description: json[ItineraryStepAPIConstants.description],
       startDate: DateTime.parse(json[ItineraryStepAPIConstants.startDate]),
       finishDate: DateTime.parse(json[ItineraryStepAPIConstants.finishDate]),
       finished: json[ItineraryStepAPIConstants.finished],
@@ -109,16 +114,18 @@ class PlaceholderStepDTO extends ItineraryStepDTO {
         domainId: Uuid().v4(),
         backEndId: id,
         title: title,
+        description: description,
         startDate: startDate,
         finishDate: finishDate
     );
   }
 
   /// From domain factory constructor
-  factory PlaceholderStepDTO.fromDomain({required ItineraryStep step}) {
+  factory PlaceholderStepDTO.fromDomain({required PlaceholderStep step}) {
     return PlaceholderStepDTO(
       id: step.backEndId,
       title: step.title,
+      description: step.description,
       startDate: step.startDate,
       finishDate: step.finishDate,
       finished: step.finished,

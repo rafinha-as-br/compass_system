@@ -19,10 +19,12 @@ abstract class Transport {
   factory Transport.newPlaceholder({
     required String domainId,
     required String? backEndId,
+    required String description,
   }) {
     return PlaceholderTransport._(
       domainId: domainId,
       backEndId: backEndId,
+      description: description,
     );
   }
 
@@ -105,10 +107,13 @@ abstract class Transport {
 
 /// Represents a transport without type
 class PlaceholderTransport extends Transport {
+  /// Description for the placeholder
+  final String description;
   /// Private constructor
   PlaceholderTransport._({
     required super.domainId,
     required super.backEndId,
+    required this.description,
   }): super._();
 }
 

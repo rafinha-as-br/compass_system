@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-/// Transport view model class, used to represent different types of transports on the UI
+import '../../../domain/entities/transport.dart';
+
+/// Transport view model class, used to represent a [Transport] on the UI
 abstract class TransportViewModel{
   /// Represents the id on the API, can be null in case of a new local instance
   final String? backEndId;
@@ -14,6 +16,51 @@ abstract class TransportViewModel{
     required this.localId,
     required this.icon,
   });
+
+  /// Factory constructor from domain model
+  factory TransportViewModel.fromDomain(Transport transport){
+    switch (transport) {
+      case PlaceholderTransport _:
+        return TransportViewModel.fromPlaceHolder(
+          id: transport.backEndId!,
+          description: transport.description,
+        );
+      case RentalCar _:
+        return TransportViewModel.fromRentalCar(
+          vehicleModelName: transport.vehicleModelName,
+          vehicleLicensePlate: transport.vehicleLicensePlate,
+          companyName: transport.companyName,
+          checkInDate: transport.checkInDate,
+          checkOutDate: transport.checkOutDate,
+        );
+      case Bus _:
+        return TransportViewModel.fromBus(
+          travelNumber: transport.travelNumber,
+          travelCompany: transport.travelCompany,
+          departureGate: transport.departureGate,
+          departureDateTime: transport.departureDateTime,
+          busStationName: transport.busStationName,
+          description: transport.description,
+          details: transport.details,
+        );
+      case Airplane _:
+        return TransportViewModel.fromAirplane(
+          flightNumber: transport.flightNumber,
+          flightCompany: transport.flightCompany,
+          flightDate: transport.flightDate,
+          departureGate: transport.departureGate,
+          departureAirport: transport.departureAirport,
+          arrivalAirport: transport.arrivalAirport,
+        );
+      default:
+      return TransportViewModel.fromPlaceHolder(
+        id: transport.backEndId!,
+        description: 'No description',
+      );
+
+
+    }
+  }
 
   /// Creates a new [PlaceHolderTransportViewModel] on local UI
   factory TransportViewModel.newPlaceHolder(){
@@ -170,16 +217,18 @@ abstract class TransportViewModel{
     );
   }
 
+  /// To domain mapper method
+  Transport toDomain();
+
   /// Provides the local ID for UI reference
   String get id => localId;
   // Provides the back end id for persistence
   String? get persistedId => backEndId;
 
 
-
 }
 
-/// Placeholder view model type, used to represent a [TransportViewModel] without a type
+/// Placeholder view model type, used to represent a [PlaceholderTransport] on the UI
 class PlaceHolderTransportViewModel extends TransportViewModel{
   final String description;
   PlaceHolderTransportViewModel._({
@@ -188,9 +237,19 @@ class PlaceHolderTransportViewModel extends TransportViewModel{
     required this.description,
     required super.icon,
   }): super._();
+
+  @override
+  Transport toDomain() {
+    return Transport.newPlaceholder(
+      domainId: localId,
+      backEndId: backEndId,
+      description: description,
+    );
+  }
+
 }
 
-/// Rental car view model type
+/// Rental car view model type, used to represent a [RentalCar] on the UI
 class RentalCarViewModel extends TransportViewModel{
   final String vehicleModelName;
   final String vehicleLicensePlate;
@@ -213,10 +272,23 @@ class RentalCarViewModel extends TransportViewModel{
 
   String get checkOutString => checkOutDate.toString();
 
+  @override
+  Transport toDomain() {
+    return Transport.newRentalCar(
+      domainId: localId,
+      backEndId: backEndId,
+      vehicleModelName: vehicleModelName,
+      vehicleLicensePlate: vehicleLicensePlate,
+      companyName: companyName,
+      checkInDate: checkInDate,
+      checkOutDate: checkOutDate,
+    );
+  }
+
 
 }
 
-/// Bus view model type
+/// Bus view model type, used to represent a [Bus] on the UI
 class BusViewModel extends TransportViewModel{
   final String travelNumber;
   final String travelCompany;
@@ -239,9 +311,26 @@ class BusViewModel extends TransportViewModel{
     this.details,
   }): super._();
 
+  String get departureDateTimeString => departureDateTime.toString();
+
+  @override
+  Transport toDomain() {
+    return Transport.newBus(
+      domainId: localId,
+      backEndId: backEndId,
+      travelNumber: travelNumber,
+      travelCompany: travelCompany,
+      departureGate: departureGate,
+      departureDateTime: departureDateTime,
+      busStationName: busStationName,
+      description: description,
+      details: details,
+    );
+  }
+
 }
 
-/// Airplane view model type
+/// Airplane view model type, used to represent an [Airplane] on the UI
 class AirplaneViewModel extends TransportViewModel{
   final String flightNumber;
   final String flightCompany;
@@ -262,4 +351,19 @@ class AirplaneViewModel extends TransportViewModel{
     required this.arrivalAirport,
   }): super._();
 
+  String get flightDateString => flightDate.toString();
+
+  @override
+  Transport toDomain() {
+    return Transport.newAirplane(
+      domainId: localId,
+      backEndId: backEndId,
+      flightNumber: flightNumber,
+      flightCompany: flightCompany,
+      flightDate: flightDate,
+      departureGate: departureGate,
+      departureAirport: departureAirport,
+      arrivalAirport: arrivalAirport,
+    );
+  }
 }
