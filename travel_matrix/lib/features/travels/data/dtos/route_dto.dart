@@ -14,7 +14,7 @@ class RoutePlanDTO {
   /// Destination for the route
   final String destination;
   /// List of interests for the route
-  final List<String?> interestsList;
+  final List<InterestPointDTO> interestsList;
 
   RoutePlanDTO({
     required this.id,
@@ -33,7 +33,7 @@ class RoutePlanDTO {
       RoutePlanAPIConstants.endDate: endDate.toIso8601String(),
       RoutePlanAPIConstants.startLocation: startLocation,
       RoutePlanAPIConstants.destination: destination,
-      RoutePlanAPIConstants.interestsList: interestsList,
+      RoutePlanAPIConstants.interestsList: interestsList.map((x) => x.toJson()).toList(),
     };
   }
 
@@ -45,12 +45,16 @@ class RoutePlanDTO {
       endDate: DateTime.parse(json[RoutePlanAPIConstants.endDate]),
       startLocation: json[RoutePlanAPIConstants.startLocation],
       destination: json[RoutePlanAPIConstants.destination],
-      interestsList: List<String>.from(json[RoutePlanAPIConstants.interestsList]),
+      interestsList: List<InterestPointDTO>.from(
+        json[RoutePlanAPIConstants.interestsList].map(
+          (x) => InterestPointDTO.fromJson(x),
+        )
+      )
     );
   }
 
   /// to domain method
-  RoutePlan toDomain(List<InterestPoint> interestsList) {
+  RoutePlan toDomain() {
     return RoutePlan(
         domainId: Uuid().v4(),
         backEndId: id,
@@ -58,7 +62,7 @@ class RoutePlanDTO {
         endDate: endDate,
         startLocation: startLocation,
         destination: destination,
-        interestsList: interestsList
+        interestsList: interestsList.map((x) => x.toDomain()).toList()
     );
   }
 
@@ -70,7 +74,7 @@ class RoutePlanDTO {
       endDate: routePlan.endDate,
       startLocation: routePlan.startLocation,
       destination: routePlan.destination,
-      interestsList: routePlan.interestsList.map((interest) => interest.backEndId).toList(),
+      interestsList: routePlan.interestsList.map((x) => InterestPointDTO.fromDomain(interestPoint: x)).toList(),
     );
   }
 

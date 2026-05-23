@@ -1,7 +1,6 @@
+import 'package:travel_matrix/features/travels/data/dtos/itinerary_step_dto.dart';
 import 'package:uuid/uuid.dart';
-
 import '../../domain/entities/itinerary.dart';
-import '../../domain/entities/itinerary_step.dart';
 
 /// Data transfer object for [Itinerary], having the same structure as the API.
 ///
@@ -11,13 +10,13 @@ class ItineraryDTO {
   final String? id;
   /// Travel agent Id used for API reference
   final String agentId;
-  /// Itinerary steps Ids used for API reference
-  final List<String> itineraryStepsId;
+  /// Itinerary steps DTO
+  final List<ItineraryStepDTO> itinerarySteps;
 
   ItineraryDTO({
     required this.id,
     required this.agentId,
-    required this.itineraryStepsId,
+    required this.itinerarySteps,
   });
 
   /// Factory from json method
@@ -25,7 +24,11 @@ class ItineraryDTO {
     return ItineraryDTO(
       id: json[ItineraryAPIConstants.id],
       agentId: json[ItineraryAPIConstants.agent],
-      itineraryStepsId: List<String>.from(json[ItineraryAPIConstants.steps] ?? []),
+      itinerarySteps: List<ItineraryStepDTO>.from(
+        json[ItineraryAPIConstants.steps].map(
+          (x) => ItineraryStepDTO.fromJson(x),
+        )
+      )
     );
   }
 
@@ -34,19 +37,29 @@ class ItineraryDTO {
     return {
       ItineraryAPIConstants.id : id,
       ItineraryAPIConstants.agent : agentId,
-      ItineraryAPIConstants.steps : itineraryStepsId,
+      ItineraryAPIConstants.steps : itinerarySteps.map((x) => x.toJson()).toList(),
     };
   }
 
   /// To domain mapper method
-  Itinerary toDomain(List<ItineraryStep> steps) {
+  Itinerary toDomain() {
     return Itinerary(
         domainId: Uuid().v4(),
         backEndId: id,
         agentId: agentId,
-        itinerarySteps: steps
+        itinerarySteps: itinerarySteps.map((x) => x.toDomain()).toList()
     );
   }
+
+  /// From domain factory constructor
+  factory ItineraryDTO.fromDomain({required Itinerary itinerary}) {
+    return ItineraryDTO(
+      id: itinerary.backEndId,
+      agentId: itinerary.agentId,
+      itinerarySteps: itinerary.itinerarySteps.map((x) => ItineraryStepDTO.fromDomain(step: x)).toList(),
+    );
+  }
+
 }
 
 /// Contains the constants field names from the API

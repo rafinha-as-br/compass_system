@@ -29,6 +29,25 @@ abstract class TransportDTO {
 
   Map<String, dynamic> toJson();
 
+  /// To domain mapper method
+  Transport toDomain();
+
+  /// From domain factory constructor
+  factory TransportDTO.fromDomain({required Transport transport}) {
+    switch (transport) {
+      case PlaceholderTransport _:
+        return PlaceHolderStepDTO.fromDomain(placeholder: transport);
+      case RentalCar _:
+        return RentalCarDTO.fromDomain(rentalCar: transport);
+      case Bus _:
+        return BusDTO.fromDomain(bus: transport);
+      case Airplane _:
+        return AirplaneDTO.fromDomain(airplane: transport);
+      default:
+        throw Exception('Unknown transport type: ${transport.runtimeType}');
+    }
+  }
+
 }
 
 /// Data transfer object for [PlaceholderTransport], having the same structure as the API.
@@ -50,7 +69,7 @@ class PlaceHolderStepDTO extends TransportDTO {
     };
   }
 
-  /// To domain mapper method
+  @override
   Transport toDomain() {
     return Transport.newPlaceholder(
         domainId: Uuid().v4(),
@@ -115,7 +134,7 @@ class RentalCarDTO extends TransportDTO {
     };
   }
 
-  /// To domain mapper method
+  @override
   Transport toDomain() {
     return Transport.newRentalCar(
       domainId: Uuid().v4(),
@@ -201,7 +220,7 @@ class BusDTO extends TransportDTO {
     };
   }
 
-  /// To domain mapper method
+  @override
   Transport toDomain() {
     return Transport.newBus(
       domainId: Uuid().v4(),
@@ -286,7 +305,7 @@ class AirplaneDTO extends TransportDTO {
     };
   }
 
-  /// To domain mapper method
+  @override
   Transport toDomain() {
     return Transport.newAirplane(
       domainId: Uuid().v4(),

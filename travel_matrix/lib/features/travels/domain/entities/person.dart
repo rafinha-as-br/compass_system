@@ -15,7 +15,7 @@ class Person {
   final String sex;
 
   /// Private constructor
-  Person._({
+  Person({
     required this.domainId,
     required this.backendId,
     required this.name,
@@ -35,7 +35,7 @@ class Person {
 
   /// From Json method, returns a [Person] from a [Map]
   Person fromJson(Map<String, dynamic> json) {
-    return Person._(
+    return Person(
       domainId: Uuid().v4(),
       backendId: json['id'],
       name: json['name'],

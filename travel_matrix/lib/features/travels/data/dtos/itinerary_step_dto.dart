@@ -1,7 +1,7 @@
+import 'package:travel_matrix/features/travels/data/dtos/transport_dto.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/itinerary_step.dart';
-import '../../domain/entities/transport.dart';
 
 /// Data transfer object for [ItineraryStep], having the same structure as the API.
 abstract class ItineraryStepDTO {
@@ -42,7 +42,29 @@ abstract class ItineraryStepDTO {
     }
   }
 
+  /// To json method
   Map<String, dynamic> toJson();
+  /// to domain mapper method
+  ItineraryStep toDomain();
+  /// From domain factory constructor
+  factory ItineraryStepDTO.fromDomain({required ItineraryStep step}) {
+    switch (step) {
+      case PlaceholderStep _:
+        return PlaceholderStepDTO.fromDomain(step: step);
+      case Stop _:
+        return StopDTO.fromDomain(stop: step);
+      case Hosting _:
+        return HostingDTO.fromDomain(hosting: step);
+      case TravelSegment _:
+        return TravelSegmentDTO.fromDomain(travelSegment: step);
+      default:
+        throw Exception('Unknown step type: ${step.runtimeType}');
+    }
+
+
+  }
+
+
 
 }
 
@@ -81,6 +103,7 @@ class PlaceholderStepDTO extends ItineraryStepDTO {
   }
 
   /// To domain method
+  @override
   ItineraryStep toDomain() {
     return ItineraryStep.newPlaceholder(
         domainId: Uuid().v4(),
@@ -155,6 +178,7 @@ class StopDTO extends ItineraryStepDTO {
   }
 
   /// To domain method
+  @override
   ItineraryStep toDomain() {
     return ItineraryStep.newStop(
         domainId: Uuid().v4(),
@@ -236,6 +260,7 @@ class HostingDTO extends ItineraryStepDTO {
   }
 
   /// To domain method
+  @override
   ItineraryStep toDomain() {
     return ItineraryStep.newHosting(
       domainId: Uuid().v4(),
@@ -272,7 +297,7 @@ class HostingDTO extends ItineraryStepDTO {
 /// This class contains the mapper methods to convert between [TravelSegment] and [TravelSegmentDTO].
 class TravelSegmentDTO extends ItineraryStepDTO {
   /// Id for the transport used in the segment
-  final String transportId;
+  final TransportDTO transport;
   /// Start point of the segment
   final String startPoint;
   /// Finish point of the segment
@@ -284,7 +309,7 @@ class TravelSegmentDTO extends ItineraryStepDTO {
     required super.startDate,
     required super.finishDate,
     required super.finished,
-    required this.transportId,
+    required this.transport,
     required this.startPoint,
     required this.finishPoint,
   });
@@ -297,7 +322,7 @@ class TravelSegmentDTO extends ItineraryStepDTO {
       startDate: DateTime.parse(json[ItineraryStepAPIConstants.startDate]),
       finishDate: DateTime.parse(json[ItineraryStepAPIConstants.finishDate]),
       finished: json[ItineraryStepAPIConstants.finished],
-      transportId: json[ItineraryStepAPIConstants.transport],
+      transport: TransportDTO.fromJson(json[ItineraryStepAPIConstants.transport]),
       startPoint: json[ItineraryStepAPIConstants.startPoint],
       finishPoint: json[ItineraryStepAPIConstants.finishPoint],
     );
@@ -312,25 +337,39 @@ class TravelSegmentDTO extends ItineraryStepDTO {
       ItineraryStepAPIConstants.startDate: startDate.toIso8601String(),
       ItineraryStepAPIConstants.finishDate: finishDate.toIso8601String(),
       ItineraryStepAPIConstants.finished: finished,
-      ItineraryStepAPIConstants.transport: transportId,
+      ItineraryStepAPIConstants.transport: transport.toJson(),
       ItineraryStepAPIConstants.startPoint: startPoint,
       ItineraryStepAPIConstants.finishPoint: finishPoint,
     };
   }
 
   /// To domain mapper method
-  ItineraryStep toDomain({required Transport transport}) {
+  @override
+  ItineraryStep toDomain() {
     return ItineraryStep.newTravelSegment(
       domainId: Uuid().v4(),
       backEndId: id,
       title: title,
       startDate: startDate,
       finishDate: finishDate,
-      transport: transport,
+      transport: transport.toDomain(),
       startPoint: startPoint,
       finishPoint: finishPoint,
     );
+  }
 
+  /// From domain factory constructor
+  factory TravelSegmentDTO.fromDomain({required TravelSegment travelSegment}) {
+    return TravelSegmentDTO(
+      id: travelSegment.backEndId,
+      title: travelSegment.title,
+      startDate: travelSegment.startDate,
+      finishDate: travelSegment.finishDate,
+      finished: travelSegment.finished,
+      transport: TransportDTO.fromDomain(transport: travelSegment.transport),
+      startPoint: travelSegment.startPoint,
+      finishPoint: travelSegment.finishPoint,
+    );
   }
 }
 
