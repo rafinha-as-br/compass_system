@@ -21,42 +21,16 @@ abstract class TransportViewModel{
   factory TransportViewModel.fromDomain(Transport transport){
     switch (transport) {
       case PlaceholderTransport _:
-        return TransportViewModel.fromPlaceHolder(
-          id: transport.backEndId!,
-          description: transport.description,
-        );
+        return TransportViewModel.fromPlaceHolder(placeHolder: transport);
       case RentalCar _:
-        return TransportViewModel.fromRentalCar(
-          vehicleModelName: transport.vehicleModelName,
-          vehicleLicensePlate: transport.vehicleLicensePlate,
-          companyName: transport.companyName,
-          checkInDate: transport.checkInDate,
-          checkOutDate: transport.checkOutDate,
-        );
+        return TransportViewModel.fromRentalCar(rentalCar: transport);
       case Bus _:
-        return TransportViewModel.fromBus(
-          travelNumber: transport.travelNumber,
-          travelCompany: transport.travelCompany,
-          departureGate: transport.departureGate,
-          departureDateTime: transport.departureDateTime,
-          busStationName: transport.busStationName,
-          description: transport.description,
-          details: transport.details,
-        );
+        return TransportViewModel.fromBus(bus: transport);
       case Airplane _:
-        return TransportViewModel.fromAirplane(
-          flightNumber: transport.flightNumber,
-          flightCompany: transport.flightCompany,
-          flightDate: transport.flightDate,
-          departureGate: transport.departureGate,
-          departureAirport: transport.departureAirport,
-          arrivalAirport: transport.arrivalAirport,
-        );
+        return TransportViewModel.fromAirplane(airplane: transport);
       default:
-      return TransportViewModel.fromPlaceHolder(
-        id: transport.backEndId!,
-        description: 'No description',
-      );
+      return TransportViewModel.fromPlaceHolder(placeHolder:
+      transport as PlaceholderTransport);
 
 
     }
@@ -73,14 +47,11 @@ abstract class TransportViewModel{
   }
 
   /// Creates a new [PlaceHolderTransportViewModel] from domain model
-  factory TransportViewModel.fromPlaceHolder({
-    required String id,
-    required String description,
-  }){
+  factory TransportViewModel.fromPlaceHolder({required PlaceholderTransport placeHolder}){
     return PlaceHolderTransportViewModel._(
-      backEndId: id,
-      localId: Uuid().v4(),
-      description: description,
+      backEndId: placeHolder.backEndId,
+      localId: placeHolder.domainId,
+      description: placeHolder.description,
       icon: Icons.lightbulb,
     );
   }
@@ -106,21 +77,15 @@ abstract class TransportViewModel{
   }
 
   /// Create a [RentalCarViewModel] from domain model
-  factory TransportViewModel.fromRentalCar({
-    required String vehicleModelName,
-    required String vehicleLicensePlate,
-    required String companyName,
-    required DateTime checkInDate,
-    required DateTime checkOutDate
-  }){
+  factory TransportViewModel.fromRentalCar({required RentalCar rentalCar}){
     return RentalCarViewModel._(
-        backEndId: null,
-        localId: Uuid().v4(),
-        vehicleModelName: vehicleModelName,
-        vehicleLicensePlate: vehicleLicensePlate,
-        companyName: companyName,
-        checkInDate: checkInDate,
-        checkOutDate: checkOutDate,
+        backEndId: rentalCar.backEndId,
+        localId: rentalCar.domainId,
+        vehicleModelName: rentalCar.vehicleModelName,
+        vehicleLicensePlate: rentalCar.vehicleLicensePlate,
+        companyName: rentalCar.companyName,
+        checkInDate: rentalCar.checkInDate,
+        checkOutDate: rentalCar.checkOutDate,
         icon: Icons.car_rental
     );
   }
@@ -150,25 +115,17 @@ abstract class TransportViewModel{
   }
 
   /// Create a [BusViewModel] from domain model
-  factory TransportViewModel.fromBus({
-    required String travelNumber,
-    required String travelCompany,
-    required String departureGate,
-    required DateTime departureDateTime,
-    required String busStationName,
-    required String description,
-    required String? details
-  }){
+  factory TransportViewModel.fromBus({required Bus bus}){
     return BusViewModel._(
-        backEndId: null,
-        localId: Uuid().v4(),
-        travelNumber: travelNumber,
-        travelCompany: travelCompany,
-        departureGate: departureGate,
-        departureDateTime: departureDateTime,
-        busStationName: busStationName,
-        description: description,
-        details: details,
+        backEndId: bus.backEndId,
+        localId: bus.domainId,
+        travelNumber: bus.travelNumber,
+        travelCompany: bus.travelCompany,
+        departureGate: bus.departureGate,
+        departureDateTime: bus.departureDateTime,
+        busStationName: bus.busStationName,
+        description: bus.description,
+        details: bus.details,
         icon: Icons.directions_bus
     );
   }
@@ -196,24 +153,17 @@ abstract class TransportViewModel{
   }
 
   /// Create a [AirplaneViewModel] from domain model
-  factory TransportViewModel.fromAirplane({
-    required String flightNumber,
-    required String flightCompany,
-    required DateTime flightDate,
-    required String departureGate,
-    required String departureAirport,
-    required String arrivalAirport
-  }){
+  factory TransportViewModel.fromAirplane({required Airplane airplane}){
     return AirplaneViewModel._(
-        backEndId: null,
-        localId: Uuid().v4(),
-        flightNumber: flightNumber,
-        flightCompany: flightCompany,
-        flightDate: flightDate,
-        departureGate: departureGate,
-        departureAirport: departureAirport,
-        arrivalAirport: arrivalAirport,
-        icon: Icons.flight
+      backEndId: airplane.backEndId,
+      localId: airplane.domainId,
+      flightNumber: airplane.flightNumber,
+      flightCompany: airplane.flightCompany,
+      flightDate: airplane.flightDate,
+      departureGate: airplane.departureGate,
+      departureAirport: airplane.departureAirport,
+      arrivalAirport: airplane.arrivalAirport,
+      icon: Icons.flight
     );
   }
 

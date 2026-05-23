@@ -25,16 +25,16 @@ class RoutePlanViewModel{
 
   /// factory constructor for domain model
   factory RoutePlanViewModel.fromDomain(
-      RoutePlan backEndId,
+      RoutePlan routePlan,
     ){
     return RoutePlanViewModel._(
-      backEndId: backEndId.backEndId,
-      localId: backEndId.domainId,
-      startDate: backEndId.startDate,
-      endDate: backEndId.endDate,
-      start: backEndId.startLocation,
-      destination: backEndId.destination,
-      interests: backEndId.interestsList.map((x) => InterestPointViewModel.fromDomain(backEndId.backEndId!, x.domainId, x.name, x.description)).toList()
+      backEndId: routePlan.backEndId,
+      localId: routePlan.domainId,
+      startDate: routePlan.startDate,
+      endDate: routePlan.endDate,
+      start: routePlan.startLocation,
+      destination: routePlan.destination,
+      interests: routePlan.interestsList.map((x) => InterestPointViewModel.fromDomain(x)).toList()
     );
   }
 
@@ -95,12 +95,12 @@ class InterestPointViewModel{
   });
 
   /// factory constructor for domain model
-  factory InterestPointViewModel.fromDomain(String backEndId, String domainId, String name, String description){
+  factory InterestPointViewModel.fromDomain(InterestPoint interestPoint){
     return InterestPointViewModel(
-      backEndId: backEndId,
-      localId: domainId,
-      name: name,
-      description: description
+      backEndId: interestPoint.backEndId,
+      localId: interestPoint.domainId,
+      name: interestPoint.name,
+      description: interestPoint.description
     );
   }
 

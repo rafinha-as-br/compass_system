@@ -122,7 +122,7 @@ class RentalCarDTO extends TransportDTO {
   /// from Json factory constructor
   factory RentalCarDTO.fromJson(Map<String, dynamic> json) {
     return RentalCarDTO._(
-      id: json[TransportApiFields.type],
+      id: json[TransportApiFields.id],
       vehicleModelName: json[TransportApiFields.vehicleModelName],
       vehicleLicensePlate: json[TransportApiFields.vehicleLicensePlate],
       companyName: json[TransportApiFields.companyName],
@@ -307,7 +307,7 @@ class AirplaneDTO extends TransportDTO {
       TransportApiFields.type: TransportApiValues.airplane,
       TransportApiFields.id: id,
       TransportApiFields.flightNumber: flightNumber,
-      TransportApiFields.companyName: flightCompany,
+      TransportApiFields.flightCompany: flightCompany,
       TransportApiFields.flightDate: flightDate.toIso8601String(),
       TransportApiFields.departureGate: departureGate,
       TransportApiFields.departureAirport: departureAirport,

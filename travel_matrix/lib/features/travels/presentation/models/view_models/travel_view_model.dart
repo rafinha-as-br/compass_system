@@ -91,6 +91,7 @@ class TravelViewModel{
       route: RoutePlanViewModel.fromDomain(travel.routePlan),
       participants: travel.participantsList.map((x) => PersonViewModel.fromDomain(x)).toList(),
       events: travel.eventsLog?.map((x) => TravelEventViewModel.fromDomain(x)).toList(),
+      itinerary: travel.itinerary == null ? null : ItineraryViewModel.fromDomain(travel.itinerary!),
 
     );
   }

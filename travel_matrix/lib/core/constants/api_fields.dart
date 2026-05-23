@@ -36,13 +36,13 @@ static const String travelStatus = 'travelStatus';
 static const String startDate = CommonApiFields.startDate;
 static const String finishDate = CommonApiFields.finishDate;
 
-static const String routePlanId = 'routePlan';
+static const String routePlan = 'routePlan';
 
-static const String itineraryId = 'itinerary';
+static const String itinerary = 'itinerary';
 
-static const String participantIds = 'participants';
+static const String participants = 'participants';
 
-static const String eventIds = 'events';
+static const String events = 'events';
 }
 
 /// ===========================================================
@@ -58,7 +58,6 @@ static const String eventDate = 'eventDate';
 
 static const String eventDescription = 'eventDescription';
 
-static const String relatedEntityId = 'relatedEntityId';
 }
 
 /// ===========================================================

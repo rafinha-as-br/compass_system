@@ -44,10 +44,10 @@ class TravelDTO {
       clientName: json[TravelApiFields.client],
       travelName: json[TravelApiFields.travelName],
       travelStatus: json[TravelApiFields.travelStatus],
-      routePlan: json[TravelApiFields.routePlanId],
-      participants: json[TravelApiFields.participantIds] ?? [],
-      eventsLog: json[TravelApiFields.eventIds],
-      itinerary: json[TravelApiFields.itineraryId],
+      routePlan: RoutePlanDTO.fromJson(json[TravelApiFields.routePlan]),
+      participants: json[TravelApiFields.participants].map((x) => PersonDTO.fromJson(x)).toList(),
+      eventsLog: json[TravelApiFields.events]?.map((x) => TravelEventDTO.fromJson(x)).toList(),
+      itinerary: json[TravelApiFields.itinerary] == null ? null : ItineraryDTO.fromJson(json[TravelApiFields.itinerary]),
     );
   }
 
@@ -58,10 +58,10 @@ class TravelDTO {
       TravelApiFields.client: clientName,
       TravelApiFields.travelName: travelName,
       TravelApiFields.travelStatus: travelStatus,
-      TravelApiFields.routePlanId: routePlan,
-      TravelApiFields.itineraryId: itinerary,
-      TravelApiFields.participantIds: participants,
-      TravelApiFields.eventIds: eventsLog,
+      TravelApiFields.routePlan: routePlan.toJson(),
+      TravelApiFields.itinerary: itinerary?.toJson(),
+      TravelApiFields.participants: participants.map((x) => x.toJson()).toList(),
+      TravelApiFields.events: eventsLog?.map((x) => x.toJson()).toList(),
     };
   }
 
@@ -86,7 +86,7 @@ class TravelDTO {
       id: travel.backEndId,
       clientName: travel.clientName,
       travelName: travel.travelName,
-      travelStatus: travel.travelStatus.toString(),
+      travelStatus: travel.travelStatus.toApiValue(),
       routePlan: RoutePlanDTO.fromDomain(routePlan: travel.routePlan),
       participants: travel.participantsList.map((x) => PersonDTO.fromDomain(person: x)).toList(),
       eventsLog: travel.eventsLog?.map((x) => TravelEventDTO.fromDomain(travelEvent: x)).toList(),
