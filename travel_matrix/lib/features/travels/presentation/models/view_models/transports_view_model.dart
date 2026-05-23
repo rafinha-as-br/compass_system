@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 
-/// Transport view model class, used to represent different types of transports on the UI
+import '../../../domain/entities/transport.dart';
+
+/// Transport view model class, used to represent a [Transport] on the UI
 abstract class TransportViewModel{
   /// Represents the id on the API, can be null in case of a new local instance
   final String? backEndId;
@@ -15,6 +17,25 @@ abstract class TransportViewModel{
     required this.icon,
   });
 
+  /// Factory constructor from domain model
+  factory TransportViewModel.fromDomain(Transport transport){
+    switch (transport) {
+      case PlaceholderTransport _:
+        return TransportViewModel.fromPlaceHolder(placeHolder: transport);
+      case RentalCar _:
+        return TransportViewModel.fromRentalCar(rentalCar: transport);
+      case Bus _:
+        return TransportViewModel.fromBus(bus: transport);
+      case Airplane _:
+        return TransportViewModel.fromAirplane(airplane: transport);
+      default:
+      return TransportViewModel.fromPlaceHolder(placeHolder:
+      transport as PlaceholderTransport);
+
+
+    }
+  }
+
   /// Creates a new [PlaceHolderTransportViewModel] on local UI
   factory TransportViewModel.newPlaceHolder(){
     return PlaceHolderTransportViewModel._(
@@ -26,14 +47,11 @@ abstract class TransportViewModel{
   }
 
   /// Creates a new [PlaceHolderTransportViewModel] from domain model
-  factory TransportViewModel.fromPlaceHolder({
-    required String id,
-    required String description,
-  }){
+  factory TransportViewModel.fromPlaceHolder({required PlaceholderTransport placeHolder}){
     return PlaceHolderTransportViewModel._(
-      backEndId: id,
-      localId: Uuid().v4(),
-      description: description,
+      backEndId: placeHolder.backEndId,
+      localId: placeHolder.domainId,
+      description: placeHolder.description,
       icon: Icons.lightbulb,
     );
   }
@@ -59,21 +77,15 @@ abstract class TransportViewModel{
   }
 
   /// Create a [RentalCarViewModel] from domain model
-  factory TransportViewModel.fromRentalCar({
-    required String vehicleModelName,
-    required String vehicleLicensePlate,
-    required String companyName,
-    required DateTime checkInDate,
-    required DateTime checkOutDate
-  }){
+  factory TransportViewModel.fromRentalCar({required RentalCar rentalCar}){
     return RentalCarViewModel._(
-        backEndId: null,
-        localId: Uuid().v4(),
-        vehicleModelName: vehicleModelName,
-        vehicleLicensePlate: vehicleLicensePlate,
-        companyName: companyName,
-        checkInDate: checkInDate,
-        checkOutDate: checkOutDate,
+        backEndId: rentalCar.backEndId,
+        localId: rentalCar.domainId,
+        vehicleModelName: rentalCar.vehicleModelName,
+        vehicleLicensePlate: rentalCar.vehicleLicensePlate,
+        companyName: rentalCar.companyName,
+        checkInDate: rentalCar.checkInDate,
+        checkOutDate: rentalCar.checkOutDate,
         icon: Icons.car_rental
     );
   }
@@ -103,25 +115,17 @@ abstract class TransportViewModel{
   }
 
   /// Create a [BusViewModel] from domain model
-  factory TransportViewModel.fromBus({
-    required String travelNumber,
-    required String travelCompany,
-    required String departureGate,
-    required DateTime departureDateTime,
-    required String busStationName,
-    required String description,
-    required String? details
-  }){
+  factory TransportViewModel.fromBus({required Bus bus}){
     return BusViewModel._(
-        backEndId: null,
-        localId: Uuid().v4(),
-        travelNumber: travelNumber,
-        travelCompany: travelCompany,
-        departureGate: departureGate,
-        departureDateTime: departureDateTime,
-        busStationName: busStationName,
-        description: description,
-        details: details,
+        backEndId: bus.backEndId,
+        localId: bus.domainId,
+        travelNumber: bus.travelNumber,
+        travelCompany: bus.travelCompany,
+        departureGate: bus.departureGate,
+        departureDateTime: bus.departureDateTime,
+        busStationName: bus.busStationName,
+        description: bus.description,
+        details: bus.details,
         icon: Icons.directions_bus
     );
   }
@@ -149,26 +153,22 @@ abstract class TransportViewModel{
   }
 
   /// Create a [AirplaneViewModel] from domain model
-  factory TransportViewModel.fromAirplane({
-    required String flightNumber,
-    required String flightCompany,
-    required DateTime flightDate,
-    required String departureGate,
-    required String departureAirport,
-    required String arrivalAirport
-  }){
+  factory TransportViewModel.fromAirplane({required Airplane airplane}){
     return AirplaneViewModel._(
-        backEndId: null,
-        localId: Uuid().v4(),
-        flightNumber: flightNumber,
-        flightCompany: flightCompany,
-        flightDate: flightDate,
-        departureGate: departureGate,
-        departureAirport: departureAirport,
-        arrivalAirport: arrivalAirport,
-        icon: Icons.flight
+      backEndId: airplane.backEndId,
+      localId: airplane.domainId,
+      flightNumber: airplane.flightNumber,
+      flightCompany: airplane.flightCompany,
+      flightDate: airplane.flightDate,
+      departureGate: airplane.departureGate,
+      departureAirport: airplane.departureAirport,
+      arrivalAirport: airplane.arrivalAirport,
+      icon: Icons.flight
     );
   }
+
+  /// To domain mapper method
+  Transport toDomain();
 
   /// Provides the local ID for UI reference
   String get id => localId;
@@ -176,10 +176,9 @@ abstract class TransportViewModel{
   String? get persistedId => backEndId;
 
 
-
 }
 
-/// Placeholder view model type, used to represent a [TransportViewModel] without a type
+/// Placeholder view model type, used to represent a [PlaceholderTransport] on the UI
 class PlaceHolderTransportViewModel extends TransportViewModel{
   final String description;
   PlaceHolderTransportViewModel._({
@@ -188,9 +187,19 @@ class PlaceHolderTransportViewModel extends TransportViewModel{
     required this.description,
     required super.icon,
   }): super._();
+
+  @override
+  Transport toDomain() {
+    return Transport.newPlaceholder(
+      domainId: localId,
+      backEndId: backEndId,
+      description: description,
+    );
+  }
+
 }
 
-/// Rental car view model type
+/// Rental car view model type, used to represent a [RentalCar] on the UI
 class RentalCarViewModel extends TransportViewModel{
   final String vehicleModelName;
   final String vehicleLicensePlate;
@@ -213,10 +222,23 @@ class RentalCarViewModel extends TransportViewModel{
 
   String get checkOutString => checkOutDate.toString();
 
+  @override
+  Transport toDomain() {
+    return Transport.newRentalCar(
+      domainId: localId,
+      backEndId: backEndId,
+      vehicleModelName: vehicleModelName,
+      vehicleLicensePlate: vehicleLicensePlate,
+      companyName: companyName,
+      checkInDate: checkInDate,
+      checkOutDate: checkOutDate,
+    );
+  }
+
 
 }
 
-/// Bus view model type
+/// Bus view model type, used to represent a [Bus] on the UI
 class BusViewModel extends TransportViewModel{
   final String travelNumber;
   final String travelCompany;
@@ -239,9 +261,26 @@ class BusViewModel extends TransportViewModel{
     this.details,
   }): super._();
 
+  String get departureDateTimeString => departureDateTime.toString();
+
+  @override
+  Transport toDomain() {
+    return Transport.newBus(
+      domainId: localId,
+      backEndId: backEndId,
+      travelNumber: travelNumber,
+      travelCompany: travelCompany,
+      departureGate: departureGate,
+      departureDateTime: departureDateTime,
+      busStationName: busStationName,
+      description: description,
+      details: details,
+    );
+  }
+
 }
 
-/// Airplane view model type
+/// Airplane view model type, used to represent an [Airplane] on the UI
 class AirplaneViewModel extends TransportViewModel{
   final String flightNumber;
   final String flightCompany;
@@ -262,4 +301,19 @@ class AirplaneViewModel extends TransportViewModel{
     required this.arrivalAirport,
   }): super._();
 
+  String get flightDateString => flightDate.toString();
+
+  @override
+  Transport toDomain() {
+    return Transport.newAirplane(
+      domainId: localId,
+      backEndId: backEndId,
+      flightNumber: flightNumber,
+      flightCompany: flightCompany,
+      flightDate: flightDate,
+      departureGate: departureGate,
+      departureAirport: departureAirport,
+      arrivalAirport: arrivalAirport,
+    );
+  }
 }

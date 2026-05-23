@@ -1,4 +1,3 @@
-
 import 'package:travel_matrix/core/services/compass_service/clients/itinerary_api_client.dart';
 import 'package:travel_matrix/features/travels/data/dtos/itinerary_dto.dart';
 
