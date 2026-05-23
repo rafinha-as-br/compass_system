@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/timeline_analyzer.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 import 'package:uuid/uuid.dart';
 
@@ -21,6 +22,8 @@ abstract class ItineraryStepViewModel{
   final DateTime startDate;
   final DateTime finishDate;
   final StepPosition position;
+  /// Severity of the problem on the timeline, null in case of no problem
+  final TimelineProblemSeverity? problemSeverity;
   /// Icon for the step type
   final IconData icon;
 
@@ -33,12 +36,13 @@ abstract class ItineraryStepViewModel{
     required this.finishDate,
     required this.position,
     required this.icon,
+    required this.problemSeverity,
   }): _backEndId = backEndId;
 
   /// Factory constructor from domain model
   factory ItineraryStepViewModel.fromDomain(ItineraryStep domainStep, bool isFirst, bool isLast) {
 
-    final StepPosition  position;
+    final StepPosition position;
     if (isFirst) {
       position = StepPosition.start;
     } else if (isLast) {
@@ -50,24 +54,23 @@ abstract class ItineraryStepViewModel{
     switch (domainStep) {
       case PlaceholderStep _:
         return ItineraryStepViewModel.fromPlaceHolder(
-            placeHolder: domainStep,
-            position: position,
+          placeHolder: domainStep,
+          position: position,
         );
       case Stop _:
         return ItineraryStepViewModel.fromStop(
-            stop: domainStep,
-            position: position,
-
+          stop: domainStep,
+          position: position,
         );
       case Hosting _:
         return ItineraryStepViewModel.fromHosting(
-            hosting: domainStep,
-            position: position,
+          hosting: domainStep,
+          position: position,
         );
       case TravelSegment _:
         return ItineraryStepViewModel.fromTravelSegment(
           travelSegment: domainStep,
-            position: position,
+          position: position,
         );
       default:
         ///
@@ -95,6 +98,7 @@ abstract class ItineraryStepViewModel{
         finishDate: DateTime.now().add(
           const Duration(days: 1),
         ),
+        problemSeverity: null,
         position: position,
         icon: Icons.edit_note);
   }
@@ -112,7 +116,9 @@ abstract class ItineraryStepViewModel{
         startDate: placeHolder.startDate,
         finishDate: placeHolder.finishDate,
         position: position,
-        icon: Icons.edit_note);
+        problemSeverity: null,
+        icon: Icons.edit_note
+    );
   }
 
   /// Creates a new [StopStepViewModel] on local UI
@@ -135,7 +141,9 @@ abstract class ItineraryStepViewModel{
         position: position,
         description: description,
         experiences: experiences,
-        icon: Icons.place);
+        problemSeverity: null,
+        icon: Icons.place
+    );
   }
 
   /// Create a [StopStepViewModel] from domain model
@@ -153,6 +161,7 @@ abstract class ItineraryStepViewModel{
         position: position,
         description: stop.description,
         experiences: stop.experiences,
+        problemSeverity: null,
         icon: Icons.place
     );
   }
@@ -179,6 +188,7 @@ abstract class ItineraryStepViewModel{
         address: address,
         checkIn: checkIn,
         checkOut: checkOut,
+        problemSeverity: null,
         icon: Icons.hotel);
   }
 
@@ -186,7 +196,6 @@ abstract class ItineraryStepViewModel{
   factory ItineraryStepViewModel.fromHosting({
     required Hosting hosting,
     required StepPosition position,
-
   }) {
     return HostingStepViewModel._(
         backEndId: hosting.backEndId,
@@ -198,6 +207,7 @@ abstract class ItineraryStepViewModel{
         address: hosting.address,
         checkIn: hosting.checkIn,
         checkOut: hosting.checkOut,
+        problemSeverity: null,
         position: position,
         icon: Icons.hotel);
   }
@@ -221,6 +231,7 @@ abstract class ItineraryStepViewModel{
         position: position,
         startPoint: startPoint,
         finishPoint: finishPoint,
+        problemSeverity: null,
         transport: transport,
         icon: Icons.flight);
   }
@@ -240,12 +251,17 @@ abstract class ItineraryStepViewModel{
         finishPoint: travelSegment.finishPoint,
         transport: TransportViewModel.fromDomain(travelSegment.transport),
         position: position,
+        problemSeverity: null,
         icon: Icons.directions
     );
   }
 
   /// To domain mapper method
   ItineraryStep toDomain();
+
+  ItineraryStepViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  });
 
   /// Provides the local ID for UI reference
   String get id => localId;
@@ -269,6 +285,7 @@ class PlaceHolderStepViewModel extends ItineraryStepViewModel{
       required super.startDate,
       required super.finishDate,
       required super.position,
+      required super.problemSeverity,
       required super.icon,
   }): super._();
 
@@ -284,6 +301,22 @@ class PlaceHolderStepViewModel extends ItineraryStepViewModel{
     );
   }
 
+  @override
+  PlaceHolderStepViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  }) {
+    return PlaceHolderStepViewModel._(
+      backEndId: _backEndId,
+      localId: localId,
+      title: title,
+      description: description,
+      startDate: startDate,
+      finishDate: finishDate,
+      position: position,
+      problemSeverity: problemSeverity ?? this.problemSeverity,
+      icon: icon,
+    );
+  }
 }
 
 /// Stop step view model class, used to represent a [Stop] on the UI
@@ -302,6 +335,7 @@ class StopStepViewModel extends ItineraryStepViewModel{
     required this.name,
     required this.description,
     required this.experiences,
+    required super.problemSeverity,
     required super.icon,
   }) : super._();
 
@@ -319,6 +353,24 @@ class StopStepViewModel extends ItineraryStepViewModel{
     );
   }
 
+  @override
+  StopStepViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  }) {
+    return StopStepViewModel._(
+      backEndId: _backEndId,
+      localId: localId,
+      title: title,
+      startDate: startDate,
+      finishDate: finishDate,
+      position: position,
+      name: name,
+      description: description,
+      experiences: experiences,
+      problemSeverity: problemSeverity ?? this.problemSeverity,
+      icon: icon,
+    );
+  }
 }
 
 /// Hosting step view model class, used to represent a [Hosting] on the UI
@@ -339,6 +391,7 @@ class HostingStepViewModel extends ItineraryStepViewModel{
     required this.address,
     required this.checkIn,
     required this.checkOut,
+    required super.problemSeverity,
     required super.icon,
   }): super._();
 
@@ -361,6 +414,25 @@ class HostingStepViewModel extends ItineraryStepViewModel{
     );
   }
 
+  @override
+  HostingStepViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  }) {
+    return HostingStepViewModel._(
+      backEndId: _backEndId,
+      localId: localId,
+      title: title,
+      startDate: startDate,
+      finishDate: finishDate,
+      position: position,
+      placeName: placeName,
+      address: address,
+      checkIn: checkIn,
+      checkOut: checkOut,
+      problemSeverity: problemSeverity ?? this.problemSeverity,
+      icon: icon,
+    );
+  }
 }
 
 /// Travel segment step view model class, used to represent a [TravelSegment] on the UI
@@ -375,6 +447,7 @@ class TravelSegmentStepViewModel extends ItineraryStepViewModel{
     required super.title,
     required super.startDate,
     required super.finishDate,
+    required super.problemSeverity,
     required super.position,
     required this.startPoint,
     required this.finishPoint,
@@ -396,4 +469,22 @@ class TravelSegmentStepViewModel extends ItineraryStepViewModel{
     );
   }
 
+  @override
+  TravelSegmentStepViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  }) {
+    return TravelSegmentStepViewModel._(
+      backEndId: _backEndId,
+      localId: localId,
+      title: title,
+      startDate: startDate,
+      finishDate: finishDate,
+      position: position,
+      startPoint: startPoint,
+      finishPoint: finishPoint,
+      problemSeverity: problemSeverity ?? this.problemSeverity,
+      transport: transport,
+      icon: icon,
+    );
+  }
 }

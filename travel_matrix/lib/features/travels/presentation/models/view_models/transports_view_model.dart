@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/timeline_analyzer.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../domain/entities/transport.dart';
@@ -8,12 +9,14 @@ abstract class TransportViewModel{
   /// Represents the id on the API, can be null in case of a new local instance
   final String? backEndId;
   final String localId;
+  final TimelineProblemSeverity? problemSeverity;
   /// Icon for the step type
   final IconData icon;
 
   TransportViewModel._({
     required this.backEndId,
     required this.localId,
+    required this.problemSeverity,
     required this.icon,
   });
 
@@ -42,6 +45,7 @@ abstract class TransportViewModel{
       backEndId: null,
       localId: Uuid().v4(),
       description: 'New transport description',
+      problemSeverity: null,
       icon: Icons.lightbulb,
     );
   }
@@ -52,6 +56,7 @@ abstract class TransportViewModel{
       backEndId: placeHolder.backEndId,
       localId: placeHolder.domainId,
       description: placeHolder.description,
+      problemSeverity: null,
       icon: Icons.lightbulb,
     );
   }
@@ -72,6 +77,7 @@ abstract class TransportViewModel{
         companyName: companyName,
         checkInDate: checkInDate,
         checkOutDate: checkOutDate,
+        problemSeverity: null,
         icon: Icons.car_rental
     );
   }
@@ -86,6 +92,7 @@ abstract class TransportViewModel{
         companyName: rentalCar.companyName,
         checkInDate: rentalCar.checkInDate,
         checkOutDate: rentalCar.checkOutDate,
+        problemSeverity: null,
         icon: Icons.car_rental
     );
   }
@@ -110,6 +117,7 @@ abstract class TransportViewModel{
         busStationName: busStationName,
         description: description,
         details: details,
+        problemSeverity: null,
         icon: Icons.directions_bus
     );
   }
@@ -126,6 +134,7 @@ abstract class TransportViewModel{
         busStationName: bus.busStationName,
         description: bus.description,
         details: bus.details,
+        problemSeverity: null,
         icon: Icons.directions_bus
     );
   }
@@ -148,6 +157,7 @@ abstract class TransportViewModel{
         departureGate: departureGate,
         departureAirport: departureAirport,
         arrivalAirport: arrivalAirport,
+        problemSeverity: null,
         icon: Icons.flight
     );
   }
@@ -163,12 +173,17 @@ abstract class TransportViewModel{
       departureGate: airplane.departureGate,
       departureAirport: airplane.departureAirport,
       arrivalAirport: airplane.arrivalAirport,
+      problemSeverity: null,
       icon: Icons.flight
     );
   }
 
   /// To domain mapper method
   Transport toDomain();
+
+  TransportViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  });
 
   /// Provides the local ID for UI reference
   String get id => localId;
@@ -184,6 +199,7 @@ class PlaceHolderTransportViewModel extends TransportViewModel{
   PlaceHolderTransportViewModel._({
     required super.backEndId,
     required super.localId,
+    required super.problemSeverity,
     required this.description,
     required super.icon,
   }): super._();
@@ -197,6 +213,18 @@ class PlaceHolderTransportViewModel extends TransportViewModel{
     );
   }
 
+  @override
+  PlaceHolderTransportViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  }) {
+    return PlaceHolderTransportViewModel._(
+      backEndId: backEndId,
+      localId: localId,
+      description: description,
+      problemSeverity: problemSeverity ?? this.problemSeverity,
+      icon: icon,
+    );
+  }
 }
 
 /// Rental car view model type, used to represent a [RentalCar] on the UI
@@ -210,6 +238,7 @@ class RentalCarViewModel extends TransportViewModel{
   RentalCarViewModel._({
     required super.backEndId,
     required super.localId,
+    required super.problemSeverity,
     required this.vehicleModelName,
     required this.vehicleLicensePlate,
     required this.companyName,
@@ -235,7 +264,22 @@ class RentalCarViewModel extends TransportViewModel{
     );
   }
 
-
+  @override
+  RentalCarViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  }) {
+    return RentalCarViewModel._(
+      backEndId: backEndId,
+      localId: localId,
+      vehicleModelName: vehicleModelName,
+      vehicleLicensePlate: vehicleLicensePlate,
+      companyName: companyName,
+      checkInDate: checkInDate,
+      checkOutDate: checkOutDate,
+      problemSeverity: problemSeverity ?? this.problemSeverity,
+      icon: icon,
+    );
+  }
 }
 
 /// Bus view model type, used to represent a [Bus] on the UI
@@ -251,6 +295,7 @@ class BusViewModel extends TransportViewModel{
   BusViewModel._({
     required super.backEndId,
     required super.localId,
+    required super.problemSeverity,
     required this.travelNumber,
     required this.travelCompany,
     required this.departureGate,
@@ -278,6 +323,24 @@ class BusViewModel extends TransportViewModel{
     );
   }
 
+  @override
+  BusViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  }) {
+    return BusViewModel._(
+      backEndId: backEndId,
+      localId: localId,
+      travelNumber: travelNumber,
+      travelCompany: travelCompany,
+      departureGate: departureGate,
+      departureDateTime: departureDateTime,
+      busStationName: busStationName,
+      description: description,
+      details: details,
+      problemSeverity: problemSeverity ?? this.problemSeverity,
+      icon: icon,
+    );
+  }
 }
 
 /// Airplane view model type, used to represent an [Airplane] on the UI
@@ -292,6 +355,7 @@ class AirplaneViewModel extends TransportViewModel{
   AirplaneViewModel._({
     required super.backEndId,
     required super.localId,
+    required super.problemSeverity,
     required super.icon,
     required this.flightNumber,
     required this.flightCompany,
@@ -314,6 +378,24 @@ class AirplaneViewModel extends TransportViewModel{
       departureGate: departureGate,
       departureAirport: departureAirport,
       arrivalAirport: arrivalAirport,
+    );
+  }
+
+  @override
+  AirplaneViewModel copyWith({
+    TimelineProblemSeverity? problemSeverity,
+  }) {
+    return AirplaneViewModel._(
+      backEndId: backEndId,
+      localId: localId,
+      flightNumber: flightNumber,
+      flightCompany: flightCompany,
+      flightDate: flightDate,
+      departureGate: departureGate,
+      departureAirport: departureAirport,
+      arrivalAirport: arrivalAirport,
+      problemSeverity: problemSeverity ?? this.problemSeverity,
+      icon: icon,
     );
   }
 }
