@@ -4,13 +4,14 @@ import 'package:travel_matrix/features/travels/data/dtos/travel_event_dto.dart';
 import 'package:uuid/uuid.dart';
 import '../../domain/entities/travel.dart';
 import '../../domain/entities/person.dart';
+import 'package:travel_matrix/core/constants/api_fields.dart';
 
 /// Data transfer object for [Travel], having the same structure as the API.
 class TravelDTO {
   /// Main id used for API reference
   final String? id;
-  /// Client id that created the travel
-  final String clientId;
+  /// Client name that created the travel
+  final String clientName;
   /// Travel main name
   final String travelName;
   /// Travel status
@@ -26,7 +27,7 @@ class TravelDTO {
 
   TravelDTO({
     required this.id,
-    required this.clientId,
+    required this.clientName,
     required this.travelName,
     required this.travelStatus,
     required this.routePlan,
@@ -39,28 +40,28 @@ class TravelDTO {
   /// From json factory constructor
   factory TravelDTO.fromJson(Map<String, dynamic> json) {
     return TravelDTO(
-      id: json[TravelAPIConstants.id],
-      clientId: json[TravelAPIConstants.clientId],
-      travelName: json[TravelAPIConstants.travelName],
-      travelStatus: json[TravelAPIConstants.travelStatus],
-      routePlan: json[TravelAPIConstants.routePlanId],
-      participants: json[TravelAPIConstants.participantsListIds] ?? [],
-      eventsLog: json[TravelAPIConstants.eventsLogIds],
-      itinerary: json[TravelAPIConstants.itineraryId],
+      id: json[TravelApiFields.id],
+      clientName: json[TravelApiFields.client],
+      travelName: json[TravelApiFields.travelName],
+      travelStatus: json[TravelApiFields.travelStatus],
+      routePlan: json[TravelApiFields.routePlanId],
+      participants: json[TravelApiFields.participantIds] ?? [],
+      eventsLog: json[TravelApiFields.eventIds],
+      itinerary: json[TravelApiFields.itineraryId],
     );
   }
 
   /// To json method
   Map<String, dynamic> toJson() {
     return {
-      TravelAPIConstants.id: id,
-      TravelAPIConstants.clientId: clientId,
-      TravelAPIConstants.travelName: travelName,
-      TravelAPIConstants.travelStatus: travelStatus,
-      TravelAPIConstants.routePlanId: routePlan,
-      TravelAPIConstants.itineraryId: itinerary,
-      TravelAPIConstants.participantsListIds: participants,
-      TravelAPIConstants.eventsLogIds: eventsLog,
+      TravelApiFields.id: id,
+      TravelApiFields.client: clientName,
+      TravelApiFields.travelName: travelName,
+      TravelApiFields.travelStatus: travelStatus,
+      TravelApiFields.routePlanId: routePlan,
+      TravelApiFields.itineraryId: itinerary,
+      TravelApiFields.participantIds: participants,
+      TravelApiFields.eventIds: eventsLog,
     };
   }
 
@@ -69,7 +70,7 @@ class TravelDTO {
     return Travel(
       domainId: Uuid().v4(),
       backEndId: id,
-      clientId: clientId,
+      clientName: clientName,
       travelName: travelName,
       routePlan: routePlan.toDomain(),
       participantsList: participants.map((x) => x.toDomain()).toList(),
@@ -83,7 +84,7 @@ class TravelDTO {
   factory TravelDTO.fromDomain({required Travel travel}) {
     return TravelDTO(
       id: travel.backEndId,
-      clientId: travel.clientId,
+      clientName: travel.clientName,
       travelName: travel.travelName,
       travelStatus: travel.travelStatus.toString(),
       routePlan: RoutePlanDTO.fromDomain(routePlan: travel.routePlan),
@@ -116,19 +117,19 @@ class PersonDTO {
 
   Map<String, dynamic> toJson() {
     return {
-      PersonAPIConstants.id: id,
-      PersonAPIConstants.name: name,
-      PersonAPIConstants.age: age,
-      PersonAPIConstants.sex: sex,
+      PersonApiFields.id: id,
+      PersonApiFields.name: name,
+      PersonApiFields.age: age,
+      PersonApiFields.sex: sex,
     };
   }
 
   factory PersonDTO.fromJson(Map<String, dynamic> json) {
     return PersonDTO(
-      id: json[PersonAPIConstants.id],
-      name: json[PersonAPIConstants.name],
-      age: json[PersonAPIConstants.age],
-      sex: json[PersonAPIConstants.sex],
+      id: json[PersonApiFields.id],
+      name: json[PersonApiFields.name],
+      age: json[PersonApiFields.age],
+      sex: json[PersonApiFields.sex],
     );
   }
 
@@ -155,23 +156,3 @@ class PersonDTO {
 
 }
 
-/// Contains the constants field names from the API
-class TravelAPIConstants{
-  static const String id = 'id';
-  static const String clientId = 'clientId';
-  static const String travelName = 'travelName';
-  static const String travelStatus = 'travelStatus';
-  static const String startDate = 'startDate';
-  static const String finishDate = 'finishDate';
-  static const String routePlanId = 'routePlanId';
-  static const String itineraryId = 'itineraryId';
-  static const String participantsListIds = 'participantsListIds';
-  static const String eventsLogIds = 'eventsLogIds';
-}
-
-class PersonAPIConstants{
-  static const String id = 'id';
-  static const String name = 'name';
-  static const String age = 'age';
-  static const String sex = 'sex';
-}

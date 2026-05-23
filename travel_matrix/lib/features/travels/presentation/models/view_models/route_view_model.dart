@@ -25,22 +25,16 @@ class RoutePlanViewModel{
 
   /// factory constructor for domain model
   factory RoutePlanViewModel.fromDomain(
-      String backEndId,
-      String domainId,
-      DateTime startDate,
-      DateTime endDate,
-      String start,
-      String destination,
-      List<InterestPointViewModel> interests
+      RoutePlan backEndId,
     ){
     return RoutePlanViewModel._(
-      backEndId: backEndId,
-      localId: domainId,
-      startDate: startDate,
-      endDate: endDate,
-      start: start,
-      destination: destination,
-      interests: interests
+      backEndId: backEndId.backEndId,
+      localId: backEndId.domainId,
+      startDate: backEndId.startDate,
+      endDate: backEndId.endDate,
+      start: backEndId.startLocation,
+      destination: backEndId.destination,
+      interests: backEndId.interestsList.map((x) => InterestPointViewModel.fromDomain(backEndId.backEndId!, x.domainId, x.name, x.description)).toList()
     );
   }
 

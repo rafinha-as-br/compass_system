@@ -50,7 +50,7 @@ class Travel {
   /// Main id used for API reference
   final String? backEndId;
   /// Client id that created the travel
-  final String clientId;
+  final String clientName;
   /// Travel name
   final String travelName;
   /// Travel status
@@ -68,7 +68,7 @@ class Travel {
   Travel({
     required this.domainId,
     required this.backEndId,
-    required this.clientId,
+    required this.clientName,
     required this.travelName,
     required this.routePlan,
     required this.participantsList,

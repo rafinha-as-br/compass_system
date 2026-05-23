@@ -1,6 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/travel_event.dart';
+import 'package:travel_matrix/core/constants/api_fields.dart';
 
 /// Data transfer object for [TravelEvent], having the same structure as the API.
 class TravelEventDTO{
@@ -23,20 +24,20 @@ class TravelEventDTO{
   /// To json method
   Map<String, dynamic> toJson() {
     return {
-      TravelEventAPIConstants.id: id,
-      TravelEventAPIConstants.eventType: eventType,
-      TravelEventAPIConstants.eventDate: eventDate.toIso8601String(),
-      TravelEventAPIConstants.eventDescription: eventDescription,
+      TravelEventApiFields.id: id,
+      TravelEventApiFields.eventType: eventType,
+      TravelEventApiFields.eventDate: eventDate.toIso8601String(),
+      TravelEventApiFields.eventDescription: eventDescription,
     };
   }
 
   /// From json method
   factory TravelEventDTO.fromJson(Map<String, dynamic> json) {
     return TravelEventDTO(
-      id: json[TravelEventAPIConstants.id ],
-      eventType: json[TravelEventAPIConstants.eventType],
-      eventDate: DateTime.parse(json[TravelEventAPIConstants.eventDate]),
-      eventDescription: json[TravelEventAPIConstants.eventDescription],
+      id: json[TravelEventApiFields.id ],
+      eventType: json[TravelEventApiFields.eventType],
+      eventDate: DateTime.parse(json[TravelEventApiFields.eventDate]),
+      eventDescription: json[TravelEventApiFields.eventDescription],
     );
   }
 
@@ -55,17 +56,10 @@ class TravelEventDTO{
   factory TravelEventDTO.fromDomain({required TravelEvent travelEvent}) {
     return TravelEventDTO(
       id: travelEvent.backEndId,
-      eventType: travelEvent.type.toString(),
+      eventType: travelEvent.type.toApiValue(),
       eventDate: travelEvent.date,
       eventDescription: travelEvent.description,
     );
   }
 
-}
-
-class TravelEventAPIConstants{
-  static const String id = 'id';
-  static const String eventType = 'eventType';
-  static const String eventDate = 'eventDate';
-  static const String eventDescription = 'eventDescription';
 }

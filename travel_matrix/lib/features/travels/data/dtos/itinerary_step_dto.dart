@@ -2,6 +2,7 @@ import 'package:travel_matrix/features/travels/data/dtos/transport_dto.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/itinerary_step.dart';
+import 'package:travel_matrix/core/constants/api_fields.dart';
 
 /// Data transfer object for [ItineraryStep], having the same structure as the API.
 abstract class ItineraryStepDTO {
@@ -26,15 +27,15 @@ abstract class ItineraryStepDTO {
 
   /// Factory constructor to create a Step DTO type from JSON
   factory ItineraryStepDTO.fromJson(Map<String, dynamic> json) {
-    final type = json[ItineraryStepAPIConstants.type];
+    final type = json[ItineraryStepApiFields.type];
     switch (type) {
-      case ItineraryStepAPIConstants.placeholder:
+      case ItineraryStepApiValues.placeholder:
         return PlaceholderStepDTO.fromJson(json);
-      case ItineraryStepAPIConstants.stop:
+      case ItineraryStepApiValues.stop:
         return StopDTO.fromJson(json);
-      case ItineraryStepAPIConstants.hosting:
+      case ItineraryStepApiValues.hosting:
         return HostingDTO.fromJson(json);
-      case ItineraryStepAPIConstants.travelSegment:
+      case ItineraryStepApiValues.travelSegment:
         return TravelSegmentDTO.fromJson(json);
       default:
         // Returns a placeholder and throw the rest of the data out
@@ -86,24 +87,24 @@ class PlaceholderStepDTO extends ItineraryStepDTO {
 
   factory PlaceholderStepDTO.fromJson(Map<String, dynamic> json) {
     return PlaceholderStepDTO(
-      id: json[ItineraryStepAPIConstants.id],
-      title: json[ItineraryStepAPIConstants.title],
-      description: json[ItineraryStepAPIConstants.description],
-      startDate: DateTime.parse(json[ItineraryStepAPIConstants.startDate]),
-      finishDate: DateTime.parse(json[ItineraryStepAPIConstants.finishDate]),
-      finished: json[ItineraryStepAPIConstants.finished],
+      id: json[ItineraryStepApiFields.id],
+      title: json[ItineraryStepApiFields.title],
+      description: json[ItineraryStepApiFields.description],
+      startDate: DateTime.parse(json[ItineraryStepApiFields.startDate]),
+      finishDate: DateTime.parse(json[ItineraryStepApiFields.finishDate]),
+      finished: json[ItineraryStepApiFields.finished],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      ItineraryStepAPIConstants.type: ItineraryStepAPIConstants.placeholder,
-      ItineraryStepAPIConstants.id: id,
-      ItineraryStepAPIConstants.title: title,
-      ItineraryStepAPIConstants.startDate: startDate.toIso8601String(),
-      ItineraryStepAPIConstants.finishDate: finishDate.toIso8601String(),
-      ItineraryStepAPIConstants.finished: finished,
+      ItineraryStepApiFields.type: ItineraryStepApiValues.placeholder,
+      ItineraryStepApiFields.id: id,
+      ItineraryStepApiFields.title: title,
+      ItineraryStepApiFields.startDate: startDate.toIso8601String(),
+      ItineraryStepApiFields.finishDate: finishDate.toIso8601String(),
+      ItineraryStepApiFields.finished: finished,
     };
   }
 
@@ -158,29 +159,29 @@ class StopDTO extends ItineraryStepDTO {
   /// From json factory constructor
   factory StopDTO.fromJson(Map<String, dynamic> json) {
     return StopDTO(
-      id: json[ItineraryStepAPIConstants.id],
-      title: json[ItineraryStepAPIConstants.title],
-      startDate: DateTime.parse(json[ItineraryStepAPIConstants.startDate]),
-      finishDate: DateTime.parse(json[ItineraryStepAPIConstants.finishDate]),
-      finished: json[ItineraryStepAPIConstants.finished],
-      name: json[ItineraryStepAPIConstants.name],
-      description: json[ItineraryStepAPIConstants.description],
-      experiences: List<String>.from(json[ItineraryStepAPIConstants.experiences]),
+      id: json[ItineraryStepApiFields.id],
+      title: json[ItineraryStepApiFields.title],
+      startDate: DateTime.parse(json[ItineraryStepApiFields.startDate]),
+      finishDate: DateTime.parse(json[ItineraryStepApiFields.finishDate]),
+      finished: json[ItineraryStepApiFields.finished],
+      name: json[ItineraryStepApiFields.name],
+      description: json[ItineraryStepApiFields.description],
+      experiences: List<String>.from(json[ItineraryStepApiFields.experiences]),
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      ItineraryStepAPIConstants.type: ItineraryStepAPIConstants.stop,
-      ItineraryStepAPIConstants.id: id,
-      ItineraryStepAPIConstants.title: title,
-      ItineraryStepAPIConstants.startDate: startDate.toIso8601String(),
-      ItineraryStepAPIConstants.finishDate: finishDate.toIso8601String(),
-      ItineraryStepAPIConstants.finished: finished,
-      ItineraryStepAPIConstants.name: name,
-      ItineraryStepAPIConstants.description: description,
-      ItineraryStepAPIConstants.experiences: experiences,
+      ItineraryStepApiFields.type: ItineraryStepApiValues.stop,
+      ItineraryStepApiFields.id: id,
+      ItineraryStepApiFields.title: title,
+      ItineraryStepApiFields.startDate: startDate.toIso8601String(),
+      ItineraryStepApiFields.finishDate: finishDate.toIso8601String(),
+      ItineraryStepApiFields.finished: finished,
+      ItineraryStepApiFields.name: name,
+      ItineraryStepApiFields.description: description,
+      ItineraryStepApiFields.experiences: experiences,
     };
   }
 
@@ -238,31 +239,31 @@ class HostingDTO extends ItineraryStepDTO {
 
   factory HostingDTO.fromJson(Map<String, dynamic> json) {
     return HostingDTO(
-      id: json[ItineraryStepAPIConstants.id],
-      title: json[ItineraryStepAPIConstants.title],
-      startDate: DateTime.parse(json[ItineraryStepAPIConstants.startDate]),
-      finishDate: DateTime.parse(json[ItineraryStepAPIConstants.finishDate]),
-      finished: json[ItineraryStepAPIConstants.finished],
-      name: json[ItineraryStepAPIConstants.name],
-      address: json[ItineraryStepAPIConstants.address],
-      checkIn: DateTime.parse(json[ItineraryStepAPIConstants.checkIn]),
-      checkOut: DateTime.parse(json[ItineraryStepAPIConstants.checkOut]),
+      id: json[ItineraryStepApiFields.id],
+      title: json[ItineraryStepApiFields.title],
+      startDate: DateTime.parse(json[ItineraryStepApiFields.startDate]),
+      finishDate: DateTime.parse(json[ItineraryStepApiFields.finishDate]),
+      finished: json[ItineraryStepApiFields.finished],
+      name: json[ItineraryStepApiFields.name],
+      address: json[ItineraryStepApiFields.address],
+      checkIn: DateTime.parse(json[ItineraryStepApiFields.checkIn]),
+      checkOut: DateTime.parse(json[ItineraryStepApiFields.checkOut]),
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      ItineraryStepAPIConstants.type: ItineraryStepAPIConstants.hosting,
-      ItineraryStepAPIConstants.id: id,
-      ItineraryStepAPIConstants.title: title,
-      ItineraryStepAPIConstants.startDate: startDate.toIso8601String(),
-      ItineraryStepAPIConstants.finishDate: finishDate.toIso8601String(),
-      ItineraryStepAPIConstants.finished: finished,
-      ItineraryStepAPIConstants.name: name,
-      ItineraryStepAPIConstants.address: address,
-      ItineraryStepAPIConstants.checkIn: checkIn.toIso8601String(),
-      ItineraryStepAPIConstants.checkOut: checkOut.toIso8601String(),
+      ItineraryStepApiFields.type: ItineraryStepApiValues.hosting,
+      ItineraryStepApiFields.id: id,
+      ItineraryStepApiFields.title: title,
+      ItineraryStepApiFields.startDate: startDate.toIso8601String(),
+      ItineraryStepApiFields.finishDate: finishDate.toIso8601String(),
+      ItineraryStepApiFields.finished: finished,
+      ItineraryStepApiFields.name: name,
+      ItineraryStepApiFields.address: address,
+      ItineraryStepApiFields.checkIn: checkIn.toIso8601String(),
+      ItineraryStepApiFields.checkOut: checkOut.toIso8601String(),
     };
   }
 
@@ -324,29 +325,29 @@ class TravelSegmentDTO extends ItineraryStepDTO {
   /// From json factory constructor
   factory TravelSegmentDTO.fromJson(Map<String, dynamic> json) {
     return TravelSegmentDTO(
-      id: json[ItineraryStepAPIConstants.id],
-      title: json[ItineraryStepAPIConstants.title],
-      startDate: DateTime.parse(json[ItineraryStepAPIConstants.startDate]),
-      finishDate: DateTime.parse(json[ItineraryStepAPIConstants.finishDate]),
-      finished: json[ItineraryStepAPIConstants.finished],
-      transport: TransportDTO.fromJson(json[ItineraryStepAPIConstants.transport]),
-      startPoint: json[ItineraryStepAPIConstants.startPoint],
-      finishPoint: json[ItineraryStepAPIConstants.finishPoint],
+      id: json[ItineraryStepApiFields.id],
+      title: json[ItineraryStepApiFields.title],
+      startDate: DateTime.parse(json[ItineraryStepApiFields.startDate]),
+      finishDate: DateTime.parse(json[ItineraryStepApiFields.finishDate]),
+      finished: json[ItineraryStepApiFields.finished],
+      transport: TransportDTO.fromJson(json[ItineraryStepApiFields.transport]),
+      startPoint: json[ItineraryStepApiFields.startPoint],
+      finishPoint: json[ItineraryStepApiFields.finishPoint],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      ItineraryStepAPIConstants.type: ItineraryStepAPIConstants.travelSegment,
-      ItineraryStepAPIConstants.id: id,
-      ItineraryStepAPIConstants.title: title,
-      ItineraryStepAPIConstants.startDate: startDate.toIso8601String(),
-      ItineraryStepAPIConstants.finishDate: finishDate.toIso8601String(),
-      ItineraryStepAPIConstants.finished: finished,
-      ItineraryStepAPIConstants.transport: transport.toJson(),
-      ItineraryStepAPIConstants.startPoint: startPoint,
-      ItineraryStepAPIConstants.finishPoint: finishPoint,
+      ItineraryStepApiFields.type: ItineraryStepApiValues.travelSegment,
+      ItineraryStepApiFields.id: id,
+      ItineraryStepApiFields.title: title,
+      ItineraryStepApiFields.startDate: startDate.toIso8601String(),
+      ItineraryStepApiFields.finishDate: finishDate.toIso8601String(),
+      ItineraryStepApiFields.finished: finished,
+      ItineraryStepApiFields.transport: transport.toJson(),
+      ItineraryStepApiFields.startPoint: startPoint,
+      ItineraryStepApiFields.finishPoint: finishPoint,
     };
   }
 
@@ -380,49 +381,3 @@ class TravelSegmentDTO extends ItineraryStepDTO {
   }
 }
 
-/// Contains the constants field names from the API
-class ItineraryStepAPIConstants{
-  /// Main id field
-  static const String id = 'id';
-  /// Step title field
-  static const String title = 'title';
-  /// Start date for the step field
-  static const String startDate = 'startDate';
-  /// Finish date for the step field
-  static const String finishDate = 'finishDate';
-  /// Bool for the step finished field
-  static const String finished = 'finished';
-  /// Type field
-  static const String type = 'type';
-  /// Placeholder type
-  static const String placeholder = 'placeholder';
-  /// Stop type
-  static const String stop = 'stop';
-  /// Hosting type
-  static const String hosting = 'hosting';
-  /// Travel segment type
-  static const String travelSegment = 'travel_segment';
-  /// Location field
-  static const String location = 'location';
-  /// Is start field
-  static const String isStart = 'isStart';
-  /// Name field
-  static const String name = 'name';
-  /// Description field
-  static const String description = 'description';
-  /// Experiences field
-  static const String experiences = 'experiences';
-  /// Address field
-  static const String address = 'address';
-  /// Check in field
-  static const String checkIn = 'checkIn';
-  /// Check out field
-  static const String checkOut = 'checkOut';
-  /// Transport Id field
-  static const String transport = 'transportId';
-  /// Start point field
-  static const String startPoint = 'startPoint';
-  /// Finish point field
-  static const String finishPoint = 'finishPoint';
-
-}

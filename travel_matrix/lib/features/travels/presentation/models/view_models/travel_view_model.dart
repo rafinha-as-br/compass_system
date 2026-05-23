@@ -2,6 +2,7 @@
 
 import 'package:travel_matrix/features/travels/domain/entities/person.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_event_view_model.dart';
 
 import '../../../domain/entities/travel.dart';
 import 'itinerary_view_model.dart';
@@ -59,37 +60,53 @@ class TravelViewModel{
   final String? backEndId;
   final String localId;
   final String clientName;
-  final String agentName;
   final String travelTitle;
   final TravelStatusViewModel status;
   final RoutePlanViewModel route;
   final ItineraryViewModel? itinerary;
   final List<PersonViewModel> participants;
+  final List<TravelEventViewModel>? events;
 
 
   TravelViewModel({
     required this.backEndId,
     required this.localId,
     required this.clientName,
-    required this.agentName,
     required this.travelTitle,
     required this.status,
     required this.route,
     required this.participants,
+    required this.events,
     this.itinerary,
   });
+
+  /// Factory constructor from domain model
+  factory TravelViewModel.fromDomain(Travel travel){
+    return TravelViewModel(
+      backEndId: travel.backEndId,
+      localId: travel.domainId,
+      clientName: travel.clientName,
+      travelTitle: travel.travelName,
+      status: TravelStatusViewModel.fromDomain(travel.travelStatus),
+      route: RoutePlanViewModel.fromDomain(travel.routePlan),
+      participants: travel.participantsList.map((x) => PersonViewModel.fromDomain(x)).toList(),
+      events: travel.eventsLog?.map((x) => TravelEventViewModel.fromDomain(x)).toList(),
+
+    );
+  }
 
   /// To domain mapper method
   Travel toDomain(){
     return Travel(
       domainId: localId,
       backEndId: backEndId,
-      clientId: clientName,
+      clientName: clientName,
       travelName: travelTitle,
       routePlan: route.toDomain(),
       participantsList: participants.map((x) => x.toDomain()).toList(),
       travelStatus: status.toDomain(),
       itinerary: itinerary?.toDomain(),
+      eventsLog: events?.map((x) => x.toDomain()).toList(),
     );
   }
 

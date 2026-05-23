@@ -1,6 +1,7 @@
 import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/transport.dart';
+import 'package:travel_matrix/core/constants/api_fields.dart';
 
 /// Data transfer object for [Transport], having the same structure as the API.
 abstract class TransportDTO {
@@ -11,15 +12,15 @@ abstract class TransportDTO {
 
   /// Factory constructor to create a Transport DTO type from JSON
   factory TransportDTO.fromJson(Map<String, dynamic> json) {
-    final type = json[TransportAPIConstants.type];
+    final type = json[TransportApiFields.type];
     switch (type) {
-      case TransportAPIConstants.placeholder:
+      case TransportApiValues.placeholder:
         return PlaceHolderStepDTO.fromJson(json);
-      case TransportAPIConstants.rentalCar:
+      case TransportApiValues.rentalCar:
         return RentalCarDTO.fromJson(json);
-      case TransportAPIConstants.bus:
+      case TransportApiValues.bus:
         return BusDTO.fromJson(json);
-      case TransportAPIConstants.airplane:
+      case TransportApiValues.airplane:
         return AirplaneDTO.fromJson(json);
       default:
         /// Return a placeholder and throw the rest of the data out
@@ -61,16 +62,16 @@ class PlaceHolderStepDTO extends TransportDTO {
   /// from Json factory constructor
   factory PlaceHolderStepDTO.fromJson(Map<String, dynamic> json) {
     return PlaceHolderStepDTO._(
-      id: json[TransportAPIConstants.id],
-      description: json[TransportAPIConstants.description]
+      id: json[TransportApiFields.id],
+      description: json[TransportApiFields.description]
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      TransportAPIConstants.type: TransportAPIConstants.placeholder,
-      TransportAPIConstants.id: id,
+      TransportApiFields.type: TransportApiValues.placeholder,
+      TransportApiFields.id: id,
     };
   }
 
@@ -121,25 +122,25 @@ class RentalCarDTO extends TransportDTO {
   /// from Json factory constructor
   factory RentalCarDTO.fromJson(Map<String, dynamic> json) {
     return RentalCarDTO._(
-      id: json[TransportAPIConstants.type],
-      vehicleModelName: json[TransportAPIConstants.vehicleModelName],
-      vehicleLicensePlate: json[TransportAPIConstants.vehicleLicensePlate],
-      companyName: json[TransportAPIConstants.companyName],
-      checkInDate: DateTime.parse(json[TransportAPIConstants.checkInDate]),
-      checkOutDate: DateTime.parse(json[TransportAPIConstants.checkOutDate]),
+      id: json[TransportApiFields.type],
+      vehicleModelName: json[TransportApiFields.vehicleModelName],
+      vehicleLicensePlate: json[TransportApiFields.vehicleLicensePlate],
+      companyName: json[TransportApiFields.companyName],
+      checkInDate: DateTime.parse(json[TransportApiFields.checkInDate]),
+      checkOutDate: DateTime.parse(json[TransportApiFields.checkOutDate]),
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      TransportAPIConstants.type: TransportAPIConstants.rentalCar,
-      TransportAPIConstants.id: id,
-      TransportAPIConstants.vehicleModelName: vehicleModelName,
-      TransportAPIConstants.vehicleLicensePlate: vehicleLicensePlate,
-      TransportAPIConstants.companyName: companyName,
-      TransportAPIConstants.checkInDate: checkInDate.toIso8601String(),
-      TransportAPIConstants.checkOutDate: checkOutDate.toIso8601String(),
+      TransportApiFields.type: TransportApiValues.rentalCar,
+      TransportApiFields.id: id,
+      TransportApiFields.vehicleModelName: vehicleModelName,
+      TransportApiFields.vehicleLicensePlate: vehicleLicensePlate,
+      TransportApiFields.companyName: companyName,
+      TransportApiFields.checkInDate: checkInDate.toIso8601String(),
+      TransportApiFields.checkOutDate: checkOutDate.toIso8601String(),
     };
   }
 
@@ -203,29 +204,29 @@ class BusDTO extends TransportDTO {
   /// from Json factory constructor
   factory BusDTO.fromJson(Map<String, dynamic> json) {
     return BusDTO(
-      id: json[TransportAPIConstants.id],
-      travelNumber: json[TransportAPIConstants.travelNumber],
-      travelCompany: json[TransportAPIConstants.travelCompany],
-      departureGate: json[TransportAPIConstants.departureGate],
-      departureDateTime: DateTime.parse(json[TransportAPIConstants.departureDateTime]),
-      busStationName: json[TransportAPIConstants.busStationName],
-      description: json[TransportAPIConstants.description],
-      details: json[TransportAPIConstants.details],
+      id: json[TransportApiFields.id],
+      travelNumber: json[TransportApiFields.travelNumber],
+      travelCompany: json[TransportApiFields.travelCompany],
+      departureGate: json[TransportApiFields.departureGate],
+      departureDateTime: DateTime.parse(json[TransportApiFields.departureDateTime]),
+      busStationName: json[TransportApiFields.busStationName],
+      description: json[TransportApiFields.description],
+      details: json[TransportApiFields.details],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      TransportAPIConstants.type: TransportAPIConstants.bus,
-      TransportAPIConstants.id: id,
-      TransportAPIConstants.travelNumber: travelNumber,
-      TransportAPIConstants.travelCompany: travelCompany,
-      TransportAPIConstants.departureGate: departureGate,
-      TransportAPIConstants.departureDateTime: departureDateTime.toIso8601String(),
-      TransportAPIConstants.busStationName: busStationName,
-      TransportAPIConstants.description: description,
-      TransportAPIConstants.details: details,
+      TransportApiFields.type: TransportApiValues.bus,
+      TransportApiFields.id: id,
+      TransportApiFields.travelNumber: travelNumber,
+      TransportApiFields.travelCompany: travelCompany,
+      TransportApiFields.departureGate: departureGate,
+      TransportApiFields.departureDateTime: departureDateTime.toIso8601String(),
+      TransportApiFields.busStationName: busStationName,
+      TransportApiFields.description: description,
+      TransportApiFields.details: details,
     };
   }
 
@@ -290,27 +291,27 @@ class AirplaneDTO extends TransportDTO {
 
   factory AirplaneDTO.fromJson(Map<String, dynamic> json) {
     return AirplaneDTO(
-      id: json[TransportAPIConstants.id],
-      flightNumber: json[TransportAPIConstants.flightNumber],
-      flightCompany: json[TransportAPIConstants.flightCompany],
-      flightDate: DateTime.parse(json[TransportAPIConstants.flightDate]),
-      departureGate: json[TransportAPIConstants.departureGate],
-      departureAirport: json[TransportAPIConstants.departureAirport],
-      arrivalAirport: json[TransportAPIConstants.arrivalAirport],
+      id: json[TransportApiFields.id],
+      flightNumber: json[TransportApiFields.flightNumber],
+      flightCompany: json[TransportApiFields.flightCompany],
+      flightDate: DateTime.parse(json[TransportApiFields.flightDate]),
+      departureGate: json[TransportApiFields.departureGate],
+      departureAirport: json[TransportApiFields.departureAirport],
+      arrivalAirport: json[TransportApiFields.arrivalAirport],
     );
   }
 
   @override
   Map<String, dynamic> toJson() {
     return {
-      TransportAPIConstants.type: TransportAPIConstants.airplane,
-      TransportAPIConstants.id: id,
-      TransportAPIConstants.flightNumber: flightNumber,
-      TransportAPIConstants.companyName: flightCompany,
-      TransportAPIConstants.flightDate: flightDate.toIso8601String(),
-      TransportAPIConstants.departureGate: departureGate,
-      TransportAPIConstants.departureAirport: departureAirport,
-      TransportAPIConstants.arrivalAirport: arrivalAirport,
+      TransportApiFields.type: TransportApiValues.airplane,
+      TransportApiFields.id: id,
+      TransportApiFields.flightNumber: flightNumber,
+      TransportApiFields.companyName: flightCompany,
+      TransportApiFields.flightDate: flightDate.toIso8601String(),
+      TransportApiFields.departureGate: departureGate,
+      TransportApiFields.departureAirport: departureAirport,
+      TransportApiFields.arrivalAirport: arrivalAirport,
     };
   }
 
@@ -343,29 +344,4 @@ class AirplaneDTO extends TransportDTO {
 
 }
 
-/// Contains the constants field names from the API
-class TransportAPIConstants {
-  static const String type = 'type';
-  static const String rentalCar = 'rental_car';
-  static const String bus = 'bus';
-  static const String airplane = 'airplane';
-  static const String id = 'id';
-  static const String vehicleModelName = 'vehicleModelName';
-  static const String vehicleLicensePlate = 'vehicleLicensePlate';
-  static const String companyName = 'companyName';
-  static const String checkInDate = 'checkInDate';
-  static const String checkOutDate = 'checkOutDate';
-  static const String travelNumber = 'travelNumber';
-  static const String travelCompany = 'travelCompany';
-  static const String departureGate = 'departureGate';
-  static const String departureDateTime = 'departureDateTime';
-  static const String busStationName = 'busStationName';
-  static const String description = 'description';
-  static const String details = 'details';
-  static const String flightNumber = 'flightNumber';
-  static const String flightCompany = 'flightCompany';
-  static const String flightDate = 'flightDate';
-  static const String departureAirport = 'departureAirport';
-  static const String arrivalAirport = 'arrivalAirport';
-  static const String placeholder = 'placeholder';
-}
+

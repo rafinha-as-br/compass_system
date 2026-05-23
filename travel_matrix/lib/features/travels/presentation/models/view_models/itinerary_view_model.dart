@@ -10,8 +10,8 @@ class ItineraryViewModel{
   final String? _backEndId;
   /// Id used for local reference
   final String localId;
-  /// Agent id
-  final String _agentId;
+  /// Agent name that created the itinerary
+  final String agentName;
   /// List of [ItineraryStepViewModel]s that make up the itinerary
   final List<ItineraryStepViewModel> steps;
 
@@ -19,9 +19,9 @@ class ItineraryViewModel{
   ItineraryViewModel._({
     required String? backEndId,
     required this.localId,
-    required String agentId,
+    required this.agentName,
     required this.steps
-  }): _backEndId = backEndId, _agentId = agentId;
+  }): _backEndId = backEndId;
 
   /// Provides the local ID for UI reference
   String get id => localId;
@@ -34,17 +34,17 @@ class ItineraryViewModel{
     return ItineraryViewModel._(
       backEndId: itinerary.backEndId,
       localId: itinerary.domainId,
-      agentId: itinerary.agentId,
+      agentName: itinerary.agentName,
       steps: itinerary.itinerarySteps.map((x) => ItineraryStepViewModel.fromDomain(x, startStep == x, finishStep == x)).toList()
     );
   }
 
   /// Factory constructor for local model
-  factory ItineraryViewModel.fromLocal(List<ItineraryStepViewModel> steps, String agentId){
+  factory ItineraryViewModel.fromLocal(List<ItineraryStepViewModel> steps, String agentName){
     return ItineraryViewModel._(
       backEndId: null,
       localId: Uuid().v4(),
-      agentId: agentId,
+      agentName: agentName,
       steps: steps
     );
   }
@@ -54,7 +54,7 @@ class ItineraryViewModel{
     return Itinerary(
       domainId: localId,
       backEndId: _backEndId,
-      agentId: _agentId,
+      agentName: agentName,
       itinerarySteps: steps.map((x) => x.toDomain()).toList()
     );
   }

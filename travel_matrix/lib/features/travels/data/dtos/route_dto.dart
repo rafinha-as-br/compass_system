@@ -1,5 +1,6 @@
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:uuid/uuid.dart';
+import 'package:travel_matrix/core/constants/api_fields.dart';
 
 /// Data transfer object for [RoutePlan], having the same structure as the API.
 class RoutePlanDTO {
@@ -28,25 +29,25 @@ class RoutePlanDTO {
   /// to json method
   Map<String, dynamic> toJson() {
     return {
-      RoutePlanAPIConstants.id: id,
-      RoutePlanAPIConstants.startDate: startDate.toIso8601String(),
-      RoutePlanAPIConstants.endDate: endDate.toIso8601String(),
-      RoutePlanAPIConstants.startLocation: startLocation,
-      RoutePlanAPIConstants.destination: destination,
-      RoutePlanAPIConstants.interestsList: interestsList.map((x) => x.toJson()).toList(),
+      RoutePlanApiFields.id: id,
+      RoutePlanApiFields.startDate: startDate.toIso8601String(),
+      RoutePlanApiFields.finishDate: endDate.toIso8601String(),
+      RoutePlanApiFields.startLocation: startLocation,
+      RoutePlanApiFields.destination: destination,
+      RoutePlanApiFields.interestPoints: interestsList.map((x) => x.toJson()).toList(),
     };
   }
 
   /// from json method
   factory RoutePlanDTO.fromJson(Map<String, dynamic> json) {
     return RoutePlanDTO(
-      id: json[RoutePlanAPIConstants.id],
-      startDate: DateTime.parse(json[RoutePlanAPIConstants.startDate]),
-      endDate: DateTime.parse(json[RoutePlanAPIConstants.endDate]),
-      startLocation: json[RoutePlanAPIConstants.startLocation],
-      destination: json[RoutePlanAPIConstants.destination],
+      id: json[RoutePlanApiFields.id],
+      startDate: DateTime.parse(json[RoutePlanApiFields.startDate]),
+      endDate: DateTime.parse(json[RoutePlanApiFields.finishDate]),
+      startLocation: json[RoutePlanApiFields.startLocation],
+      destination: json[RoutePlanApiFields.destination],
       interestsList: List<InterestPointDTO>.from(
-        json[RoutePlanAPIConstants.interestsList].map(
+        json[RoutePlanApiFields.interestPoints].map(
           (x) => InterestPointDTO.fromJson(x),
         )
       )
@@ -99,18 +100,18 @@ class InterestPointDTO {
   /// To json method
   Map<String, dynamic> toJson() {
     return {
-      RoutePlanAPIConstants.id: id,
-      RoutePlanAPIConstants.interestPointName: name,
-      RoutePlanAPIConstants.interestPointDescription: description,
+      CommonApiFields.id: id,
+      InterestPointApiFields.name: name,
+      InterestPointApiFields.description: description,
     };
   }
 
   /// Factory from json method
   factory InterestPointDTO.fromJson(Map<String, dynamic> json) {
     return InterestPointDTO(
-      id: json[RoutePlanAPIConstants.id],
-      name: json[RoutePlanAPIConstants.interestPointName],
-      description: json[RoutePlanAPIConstants.interestPointDescription],
+      id: json[CommonApiFields.id],
+      name: json[InterestPointApiFields.name],
+      description: json[InterestPointApiFields.description],
     );
   }
 
@@ -135,22 +136,4 @@ class InterestPointDTO {
 
 }
 
-class RoutePlanAPIConstants{
-  /// Main id field
-  static const String id = 'id';
-  /// Start date for the route field
-  static const String startDate = 'startDate';
-  /// Finish date for the route field
-  static const String endDate = 'endDate';
-  /// Start location for the route field
-  static const String startLocation = 'startLocation';
-  /// Destination for the route field
-  static const String destination = 'destination';
-  /// List of interests for the route field
-  static const String interestsList = 'interestsListIds';
-  /// Interest point name field
-  static const String interestPointName = 'name';
-  /// Interest point description field
-  static const String interestPointDescription = 'description';
 
-}
