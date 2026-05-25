@@ -1,0 +1,49 @@
+{
+  "@@locale": "pt",
+
+  "appTitle": "RouteCraft",
+
+  "loginTitle": "Login RouteCraft",
+  "loginEmailLabel": "E-mail",
+  "loginPasswordLabel": "Senha",
+  "loginButton": "ENTRAR",
+  "loginEmailRequired": "Informe o e-mail",
+  "loginPasswordRequired": "Informe a senha",
+  "loginAccessDenied": "Acesso negado. Apenas Clientes podem acessar o RouteCraft.",
+  "loginError": "Ocorreu um erro durante o login.",
+
+  "homeTitle": "Início RouteCraft",
+  "createRouteNav": "Criar uma Rota",
+  "visualizeRoutesNav": "Visualizar Rotas e Roteiros",
+  "accountSettingsNav": "Conta e Configurações",
+
+  "createRouteTitle": "Criar uma Rota",
+  "tripInfoStep": "Informações da Viagem",
+  "tripNameLabel": "Nome da Viagem",
+  "locationsStep": "Locais",
+  "startLocationLabel": "Local de Partida",
+  "destinationLabel": "Destino",
+  "interestsStep": "Interesses",
+  "submitRoute": "ENVIAR ROTA",
+  "nextButton": "PRÓXIMO",
+  "backButton": "VOLTAR",
+  "routeCreatedSuccess": "Rota criada com sucesso!",
+  "backToHome": "Voltar ao Início",
+  "failedToCreateRoute": "Falha ao criar rota: {error}",
+  "successTitle": "Sucesso",
+
+  "visualizationTitle": "Minhas Viagens",
+  "noTravelsYet": "Nenhuma viagem ainda.",
+  "itineraryLabel": "Roteiro",
+  "stepsCount": "{count} etapas",
+  "noItinerary": "Sem roteiro",
+  "routeLabel": "Rota",
+
+  "accountTitle": "Minha Conta",
+  "nameLabel": "Nome",
+  "emailLabel": "E-mail",
+  "phoneLabel": "Telefone",
+  "saveChanges": "SALVAR ALTERAÇÕES",
+  "logoutButton": "SAIR",
+  "notAuthenticated": "Não autenticado."
+}

@@ -1,8 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/step_card_view_models.dart';
 
+/// Card for displaying a Boundary (Start/End) step in the itinerary.
+///
+/// Consumes a [BoundaryStepViewCardModel] to show start or destination
+/// location.
+///
+/// Layout: Simple row with an icon, title, and location.
 class BoundaryStepCard extends StatelessWidget {
-  final BoundaryStep step;
+  final BoundaryStepViewCardModel step;
 
   const BoundaryStepCard({
     super.key,
@@ -55,3 +61,4 @@ class BoundaryStepCard extends StatelessWidget {
     );
   }
 }
+

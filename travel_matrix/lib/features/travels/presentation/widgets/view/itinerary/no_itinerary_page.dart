@@ -1,17 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
 
-import '../../../build_models/itinerary_build_model.dart';
+import '../../../models/build_models/itinerary_build_model.dart';
+import '../../../models/view_models/route_view_model.dart';
+import '../../../models/view_models/travel_view_model.dart';
 import '../../../pages/builds/itinerary_build_page.dart';
-import '../../../view_models/route_view_model.dart';
 
 /// Displayed when a travel has no itinerary yet.
 ///
-/// Shows an empty state with a button that navigates to [ItineraryBuildPage]
-/// in create mode (null steps).
+/// Consumes a [TravelViewModel] and shows an empty state with a button that 
+/// navigates to [ItineraryBuildPage] in create mode (null steps).
+///
+/// Layout: Centered column with an icon, message, and action button.
 class NoItineraryPage extends StatelessWidget {
   const NoItineraryPage({super.key, required this.travel});
-  final Travel travel;
+  final TravelViewModel travel;
 
   @override
   Widget build(BuildContext context) {
@@ -35,17 +37,11 @@ class NoItineraryPage extends StatelessWidget {
               Navigator.of(context).push(
                 MaterialPageRoute(
                   builder: (_) => ItineraryBuildPage(
-                    travelId: travel.id,
+                    travelId: travel.localId,
                     itineraryBuildModel: ItineraryBuildModel(
-                      travelName: travel.travelName,
+                      travelName: travel.travelTitle,
                       steps: null,
-                      interestsPoints: travel.routePlan.interestsList
-                          .map((ip) => InterestPointViewModel(
-                                id: ip.id,
-                                name: ip.name,
-                                description: ip.description,
-                              ))
-                          .toList(),
+                      interestsPoints: travel.route.interests,
                     ),
                   ),
                 ),

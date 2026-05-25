@@ -1,172 +1,220 @@
-
+import 'package:travel_matrix/features/travels/domain/entities/itinerary.dart';
 import 'transport.dart';
 
+/// Represents one small detailed part of a [Itinerary].
 abstract class ItineraryStep {
-  final String id;
+  /// Id used for local reference
+  final String domainId;
+  /// Id used reference on the Compass API
+  final String? backEndId;
+  /// Step for the title
   final String title;
+  /// Start date for the step
   final DateTime startDate;
+  /// Finish date for the step
   final DateTime finishDate;
+  /// Whether the step is finished or not
   bool finished;
 
-  ItineraryStep({
-    required this.id,
+  /// Private constructor
+  ItineraryStep._({
+    required this.domainId,
+    required this.backEndId,
     required this.title,
     required this.startDate,
     required this.finishDate,
-    this.finished = false
+    required this.finished,
   });
 
-  Map<String, dynamic> toJson();
+  /// Creates a new [PlaceholderStep] for an [ItineraryStep].
+  ///
+  /// Factory constructor to create a new domain entity from view model entity
+  factory ItineraryStep.newPlaceholder({
+    required String domainId,
+    required String? backEndId,
+    required String title,
+    required String description,
+    required DateTime startDate,
+    required DateTime finishDate,
+  }) {
+    return PlaceholderStep._(
+      domainId: domainId,
+      backEndId: backEndId,
+      title: title,
+      description: description,
+      startDate: startDate,
+      finishDate: finishDate,
+      finished: false,
+    );
+  }
+
+  /// Creates a new [Stop] for an [ItineraryStep]
+  ///
+  /// Factory constructor to create a new domain entity from view model entity
+  factory ItineraryStep.newStop({
+    required String domainId,
+    required String? backEndId,
+    required String title,
+    required DateTime startDate,
+    required DateTime finishDate,
+    required String name,
+    required String description,
+    required List<String> experiences,
+  }) {
+    return Stop._(
+      domainId: domainId,
+      backEndId: backEndId,
+      title: title,
+      startDate: startDate,
+      finishDate: finishDate,
+      finished: false,
+      name: name,
+      description: description,
+      experiences: experiences,
+    );
+  }
+
+  /// Creates a new [Hosting] for an [ItineraryStep]
+  ///
+  /// Factory constructor to create a new domain entity from view model entity
+  factory ItineraryStep.newHosting({
+    required String domainId,
+    required String? backEndId,
+    required String title,
+    required DateTime startDate,
+    required DateTime finishDate,
+    required String name,
+    required String address,
+    required DateTime checkIn,
+    required DateTime checkOut,
+  }) {
+    return Hosting._(
+      domainId: domainId,
+      backEndId: backEndId,
+      title: title,
+      startDate: startDate,
+      finishDate: finishDate,
+      finished: false,
+      name: name,
+      address: address,
+      checkIn: checkIn,
+      checkOut: checkOut,
+    );
+  }
+
+  /// Creates a new [TravelSegment] for an [ItineraryStep]
+  ///
+  /// Factory constructor to create a new domain entity from view model entity
+  factory ItineraryStep.newTravelSegment({
+    required String domainId,
+    required String? backEndId,
+    required String title,
+    required DateTime startDate,
+    required DateTime finishDate,
+    required Transport transport,
+    required String startPoint,
+    required String finishPoint,
+  }) {
+    return TravelSegment._(
+      domainId: domainId,
+      backEndId: backEndId,
+      title: title,
+      startDate: startDate,
+      finishDate: finishDate,
+      finished: false,
+      transport: transport,
+      startPoint: startPoint,
+      finishPoint: finishPoint,
+    );
+  }
+
 }
 
-
+/// Represents an [ItineraryStep] without type
 class PlaceholderStep extends ItineraryStep {
-  PlaceholderStep({
-    required super.id,
-    required super.title,
-    required super.startDate,
-    required super.finishDate,
-  });
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'finished': finished,
-      'type': 'PlaceholderStep',
-    };
-  }
-}
-
-class BoundaryStep extends ItineraryStep {
-  final String location;
-  final bool isStart;
-
-  BoundaryStep({
-    required super.id,
-    required super.title,
-    required super.startDate,
-    required super.finishDate,
-    required this.location,
-    this.isStart = true,
-  });
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'finished': finished,
-      'location': location,
-      'isStart': isStart,
-      'type': 'BoundaryStep',
-    };
-  }
-}
-
-class Stop extends ItineraryStep {
-  final String name;
+  /// Description for the placeholder
   final String description;
+
+  /// Private constructor
+  PlaceholderStep._({
+    required super.domainId,
+    required super.backEndId,
+    required super.title,
+    required super.startDate,
+    required super.finishDate,
+    required super.finished,
+    required this.description,
+  }): super._() ;
+
+}
+
+/// Represents a short period of time on a specific place
+class Stop extends ItineraryStep {
+  /// The place where the stop is located
+  final String name;
+  /// Description of the stop
+  final String description;
+  /// List of experiences lived on the stop
   final List<String> experiences;
 
-  Stop({
-    required super.id,
+  /// Private constructor
+  Stop._({
+    required super.domainId,
+    required super.backEndId,
     required super.title,
     required super.startDate,
     required super.finishDate,
-    super.finished,
+    required super.finished,
     required this.name,
     required this.description,
     required this.experiences,
-  });
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'finished': finished,
-      'name': name,
-      'description': description,
-      'experiences': experiences,
-      'type': 'Stop',
-    };
-  }
+  }): super._();
 }
 
+/// Represents a hosting done on a specific place
 class Hosting extends ItineraryStep {
+  /// The place where the hosting is located
   final String name;
+  /// Address of the place where the hosting is located
   final String address;
+  /// Check in date of the hosting
   final DateTime checkIn;
+  /// Check out date of the hosting
   final DateTime checkOut;
 
-  Hosting({
-    required super.id,
+  /// Private constructor
+  Hosting._({
+    required super.domainId,
+    required super.backEndId,
     required super.title,
     required super.startDate,
     required super.finishDate,
-    super.finished,
+    required super.finished,
     required this.name,
     required this.address,
     required this.checkIn,
     required this.checkOut,
-  });
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'finished': finished,
-      'name': name,
-      'address': address,
-      'checkIn': checkIn.toIso8601String(),
-      'checkOut': checkOut.toIso8601String(),
-      'type': 'Hosting',
-    };
-  }
+    }): super._();
 }
 
+/// Represents a displacement on the [Itinerary], having different types of commuting.
 class TravelSegment extends ItineraryStep {
-  final String travelSegmentId;
+  /// Type of transport used on the segment
   final Transport transport;
+  /// Start point of the segment
   final String startPoint;
+  /// Finish point of the segment
   final String finishPoint;
 
-  TravelSegment({
-    required super.id,
+  TravelSegment._({
+    required super.domainId,
+    required super.backEndId,
     required super.title,
     required super.startDate,
     required super.finishDate,
-    super.finished,
-    required this.travelSegmentId,
+    required super.finished,
     required this.transport,
     required this.startPoint,
-    required this.finishPoint,
-  });
-
-  @override
-  Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'title': title,
-      'startDate': startDate.toIso8601String(),
-      'finishDate': finishDate.toIso8601String(),
-      'finished': finished,
-      'travelSegmentId': travelSegmentId,
-      'transport': transport.toJson(),
-      'startPoint': startPoint,
-      'finishPoint': finishPoint,
-      'type': 'TravelSegment',
-    };
-  }
+    required this.finishPoint
+    }): super._();
 }

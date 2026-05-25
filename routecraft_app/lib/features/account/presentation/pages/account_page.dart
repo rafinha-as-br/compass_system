@@ -47,13 +47,10 @@ class AccountPage extends StatelessWidget {
           ),
           ListTile(
             leading: const Icon(Icons.language),
-            title: const Text('Language (EN)'),
+            title: Text('Language (${settingsController.locale.languageCode.toUpperCase()})'),
             trailing: const Icon(Icons.chevron_right),
             onTap: () {
-              // Toggle Language logic 
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('Language toggle clicked')),
-              );
+              settingsController.toggleLanguage();
             },
           ),
           const SizedBox(height: 32),

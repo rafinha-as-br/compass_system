@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/step_card_view_models.dart';
 
 import '../../../expandable_section.dart';
 
+/// Card for displaying a Hosting step in the itinerary.
+///
+/// Consumes a [HostingViewCardModel] to show place name, address,
+/// and check-in/check-out dates.
+///
+/// Layout: Expandable card with a header (icon, place name, title) and content (details).
 class HostingCard extends StatefulWidget {
-  final Hosting hosting;
+  final HostingViewCardModel hosting;
   final bool isInitialExpanded;
 
   const HostingCard({
@@ -60,7 +66,7 @@ class _HostingCardState extends State<HostingCard> {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      widget.hosting.name,
+                      widget.hosting.placeName,
                       style: theme.textTheme.titleMedium?.copyWith(
                         fontWeight: FontWeight.bold,
                       ),

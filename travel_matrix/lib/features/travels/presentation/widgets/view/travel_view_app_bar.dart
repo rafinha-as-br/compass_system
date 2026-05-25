@@ -1,16 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 
-/*
-* This appBar is used in the Travel_View_page, responsible for showing:
-* - Travel Name
-* - Travel Status (right next to the travel name)
-* - Travel Start and Finish Date
-* - Number of Travelers
-* */
+/// This appBar is used in the Travel_View_page, responsible for showing:
+/// - Travel Name
+/// - Travel Status (right next to the travel name)
+/// - Travel Start and Finish Date
+/// - Number of Travelers
 class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
-  const TravelViewAppBar({super.key, required this.travel,});
-  final Travel travel;
+  const TravelViewAppBar({
+    super.key,
+    required this.travel,
+  });
+
+  final TravelViewModel travel;
 
   @override
   Widget build(BuildContext context) {
@@ -27,7 +29,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
       child: SafeArea(
         bottom: false,
         child: Padding(
-          padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
+          padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             mainAxisSize: MainAxisSize.min,
@@ -44,7 +46,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                   // Title
                   Expanded(
                     child: Text(
-                      travel.travelName,
+                      travel.travelTitle,
                       style: const TextStyle(
                         fontSize: 32, // Slightly smaller to fit with back button
                         fontWeight: FontWeight.w700,
@@ -62,12 +64,12 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: getTravelStatusColor(context),
+                      color: _getTravelStatusColor(context),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
-                      getTravelStatus(),
-                      style: TextStyle(
+                      travel.statusString,
+                      style: const TextStyle(
                         color: Colors.white,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
@@ -91,40 +93,24 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                       ),
                       const SizedBox(width: 4),
                       Text(
-                        '${travel.routePlan.startDate.month}'
-                            '/${travel.routePlan.startDate.day}'
-                            ' - ${travel.routePlan.endDate.month}'
-                            '/${travel.routePlan.endDate.day}',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF5B6E8C),
-                          fontWeight: FontWeight.w400,
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(width: 16),
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.person_outline,
-                        size: 14,
-                        color: Color(0xFF8E9AAB),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${travel.participantsList.length} Travelers',
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF5B6E8C),
-                          fontWeight: FontWeight.w400,
+                        '${travel.route.startDate.month}/${travel.route.startDate.day}',
+                        style: TextStyle(
+                          color: _getTravelStatusColor(context),
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12,
                         ),
                       ),
                     ],
                   ),
                 ],
               ),
-              const SizedBox(height: 4),
+              const SizedBox(height: 16),
+              const TabBar(
+                tabs: [
+                  Tab(icon: Icon(Icons.map), text: 'Route View'),
+                  Tab(icon: Icon(Icons.view_timeline), text: 'Itinerary View'),
+                ],
+              ),
             ],
           ),
         ),
@@ -133,36 +119,19 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(170);
+  Size get preferredSize => const Size.fromHeight(160);
 
-  String getTravelStatus() {
-    switch(travel.travelStatus){
-      case TravelStatus.routeCreated:
-        return 'Travel not ready';
-      case TravelStatus.itineraryCreated :
-        return 'Travel ready';
-      case TravelStatus.travelStarted:
-        return 'Travel Started';
-      case TravelStatus.travelFinished:
-        return 'Travel Completed';
-    }
-  }
-  Color getTravelStatusColor(BuildContext context) {
+  Color _getTravelStatusColor(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
-
-    switch (travel.travelStatus) {
-      case TravelStatus.routeCreated:
-        return scheme.outlineVariant;
-
-      case TravelStatus.itineraryCreated:
-        return scheme.tertiaryContainer;
-
-      case TravelStatus.travelStarted:
-        return scheme.primaryContainer;
-
-      case TravelStatus.travelFinished:
+    switch (travel.status) {
+      case TravelStatusViewModel.notReady:
+        return scheme.error;
+      case TravelStatusViewModel.ready:
+        return scheme.primary;
+      case TravelStatusViewModel.inProgress:
+        return scheme.secondary;
+      case TravelStatusViewModel.completed:
         return scheme.secondaryContainer;
     }
   }
-
 }
