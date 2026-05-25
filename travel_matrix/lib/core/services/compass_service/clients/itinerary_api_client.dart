@@ -1,6 +1,8 @@
 
 import '../api_client.dart';
 
+
+/// Singleton Repository Responsible for making API calls for Itinerary entity, using [ApiClient]
 class ItineraryApiClient{
   static ItineraryApiClient? _instance;
 

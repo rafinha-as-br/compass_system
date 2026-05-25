@@ -1,13 +1,19 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
-import 'package:provider/provider.dart';
 
-import '../../../controllers/travels_controller.dart';
-import '../../../pages/builds/itinerary_creation_page.dart';
+import '../../../models/build_models/itinerary_build_model.dart';
+import '../../../models/view_models/route_view_model.dart';
+import '../../../models/view_models/travel_view_model.dart';
+import '../../../pages/builds/itinerary_build_page.dart';
 
+/// Displayed when a travel has no itinerary yet.
+///
+/// Consumes a [TravelViewModel] and shows an empty state with a button that 
+/// navigates to [ItineraryBuildPage] in create mode (null steps).
+///
+/// Layout: Centered column with an icon, message, and action button.
 class NoItineraryPage extends StatelessWidget {
   const NoItineraryPage({super.key, required this.travel});
-  final Travel travel;
+  final TravelViewModel travel;
 
   @override
   Widget build(BuildContext context) {
@@ -28,12 +34,15 @@ class NoItineraryPage extends StatelessWidget {
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: () {
-              final controller = context.read<TravelsController>();
               Navigator.of(context).push(
                 MaterialPageRoute(
-                  builder: (_) => ChangeNotifierProvider.value(
-                    value: controller,
-                    child: ItineraryCreationPage(travel: travel),
+                  builder: (_) => ItineraryBuildPage(
+                    travelId: travel.localId,
+                    itineraryBuildModel: ItineraryBuildModel(
+                      travelName: travel.travelTitle,
+                      steps: null,
+                      interestsPoints: travel.route.interests,
+                    ),
                   ),
                 ),
               );

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
+import 'package:routecraft_app/features/home/presentation/pages/follow_travel_page.dart';
 import 'package:routecraft_app/features/visualization/presentation/controllers/visualization_controller.dart';
 
 class VisualizationPage extends StatelessWidget {
@@ -70,6 +71,13 @@ class _VisualizationView extends StatelessWidget {
           ),
           backgroundColor: travel.hasItinerary ? Colors.green : Colors.orange,
         ),
+        onTap: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => FollowTravelPage(travel: travel),
+            ),
+          );
+        },
       ),
     );
   }

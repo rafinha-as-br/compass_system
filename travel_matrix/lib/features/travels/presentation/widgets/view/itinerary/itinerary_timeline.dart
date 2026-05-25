@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/itinerary_steps_view_models.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/step_card_view_models.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_cards/boundary_step_card.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_cards/flight_card.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_cards/generic_step_card.dart';
@@ -9,8 +11,15 @@ import 'package:travel_matrix/features/travels/presentation/widgets/view/itinera
 import 'package:travel_matrix/features/travels/presentation/widgets/view/timeline_step_item.dart';
 
 
+/// Timeline widget displaying the itinerary steps.
+///
+/// Consumes a [TravelViewModel] and renders a list of [TimelineStepItem]s,
+/// including synthetic boundary steps (start/end) and mapping each
+/// [ItineraryStepViewModel] to its corresponding view card.
+///
+/// Layout: ListView with custom timeline items.
 class ItineraryTimeline extends StatelessWidget {
-  final Travel travel;
+  final TravelViewModel travel;
 
   const ItineraryTimeline({
     super.key,
@@ -26,42 +35,58 @@ class ItineraryTimeline extends StatelessWidget {
       return const Center(child: Text('No itinerary available.'));
     }
 
-    final baseSteps = itinerary.itinerarySteps;
+    final baseSteps = itinerary.steps;
     
-    // Inject boundary steps
-    final List<ItineraryStep> allSteps = [
-      BoundaryStep(
-        id: 'start_boundary',
-        title: 'Departing from',
-        startDate: travel.routePlan.startDate,
-        finishDate: travel.routePlan.startDate,
-        location: travel.routePlan.startLocation,
-        isStart: true,
-      ),
-      ...baseSteps,
-      BoundaryStep(
-        id: 'end_boundary',
-        title: 'Arriving at',
-        startDate: travel.routePlan.endDate,
-        finishDate: travel.routePlan.endDate,
-        location: travel.routePlan.destination,
-        isStart: false,
-      ),
-    ];
+    // Inject boundary steps as View Models
+    final startBoundary = BoundaryStepViewCardModel(
+      id: 'start_boundary',
+      title: 'Departing from',
+      date: travel.route.startDate,
+      location: travel.route.start,
+      isStart: true,
+    );
+
+    final endBoundary = BoundaryStepViewCardModel(
+      id: 'end_boundary',
+      title: 'Arriving at',
+      date: travel.route.endDate,
+      location: travel.route.destination,
+      isStart: false,
+    );
+
+    // Combine steps: Start Boundary, Base Steps, End Boundary
+    final int totalCount = baseSteps.length + 2;
 
     return ListView.builder(
       shrinkWrap: true,
       physics: const NeverScrollableScrollPhysics(),
-      itemCount: allSteps.length,
+      itemCount: totalCount,
       itemBuilder: (context, index) {
-        final step = allSteps[index];
-        final typeLabel = _getStepTypeLabel(step);
+        // Determine the step for this index
+        final bool isFirst = index == 0;
+        final bool isLast = index == totalCount - 1;
+        
+        dynamic currentStep;
+        DateTime stepDate;
+        
+        if (isFirst) {
+          currentStep = startBoundary;
+          stepDate = startBoundary.date;
+        } else if (isLast) {
+          currentStep = endBoundary;
+          stepDate = endBoundary.date;
+        } else {
+          currentStep = baseSteps[index - 1];
+          stepDate = (currentStep as ItineraryStepViewModel).startDate;
+        }
+
+        final typeLabel = _getStepTypeLabel(currentStep);
 
         return TimelineStepItem(
-          isFirst: index == 0,
-          isLast: index == allSteps.length - 1,
-          date: step.startDate,
-          icon: _buildStepIcon(step),
+          isFirst: isFirst,
+          isLast: isLast,
+          date: stepDate,
+          icon: _buildStepIcon(currentStep),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -77,7 +102,7 @@ class ItineraryTimeline extends StatelessWidget {
                     ),
                   ),
                 ),
-              _buildStepCard(context, step, index),
+              _buildStepCard(context, currentStep),
             ],
           ),
         );
@@ -85,58 +110,64 @@ class ItineraryTimeline extends StatelessWidget {
     );
   }
 
-  String? _getStepTypeLabel(ItineraryStep step) {
-    if (step is Stop) return 'Stop';
-    if (step is Hosting) return 'Hosting';
-    if (step is TravelSegment) return 'Segment';
-    if (step is PlaceholderStep) return 'Draft';
+  String? _getStepTypeLabel(dynamic step) {
+    if (step is StopStepViewModel) return 'Stop';
+    if (step is HostingStepViewModel) return 'Hosting';
+    if (step is TravelSegmentStepViewModel) return 'Segment';
+    if (step is PlaceHolderStepViewModel) return 'Draft';
     return null;
   }
 
-  Widget _buildStepIcon(ItineraryStep step) {
+  Widget _buildStepIcon(dynamic step) {
     IconData iconData = Icons.help_outline;
     Color? color;
+    bool isCompleted = false;
 
-    if (step is Stop) {
+    if (step is ItineraryStepViewModel) {
+      isCompleted = step.finishDate.isBefore(DateTime.now());
+    }
+
+    if (step is StopStepViewModel) {
       iconData = Icons.place;
       color = Colors.orange;
-    } else if (step is Hosting) {
+    } else if (step is HostingStepViewModel) {
       iconData = Icons.hotel;
       color = Colors.blue;
-    } else if (step is TravelSegment) {
-      iconData = Icons.flight;
+    } else if (step is TravelSegmentStepViewModel) {
+      iconData = Icons.flight; // Adjust based on transport type if needed
       color = Colors.green;
-    } else if (step is PlaceholderStep) {
+    } else if (step is PlaceHolderStepViewModel) {
       iconData = Icons.edit_note;
       color = Colors.grey;
-    } else if (step is BoundaryStep) {
+    } else if (step is BoundaryStepViewCardModel) {
       iconData = step.isStart ? Icons.trip_origin : Icons.flag;
       color = Colors.grey.shade400;
+      isCompleted = step.date.isBefore(DateTime.now());
     }
 
     return StepIcon(
       icon: iconData,
       color: color,
-      isCompleted: step.finished,
+      isCompleted: isCompleted,
     );
   }
 
-  Widget _buildStepCard(BuildContext context, ItineraryStep step, int index) {
-    if (step is Stop) {
-      return StopCard(stop: step);
-    } else if (step is Hosting) {
-      return HostingCard(hosting: step);
-    } else if (step is TravelSegment) {
-      final transport = step.transport;
-      if (transport is Airplane) {
-        return FlightCard(segment: step, transport: transport);
-      }
-      // Fallback for other transports or use generic if needed
-      return GenericStepCard(step: step);
-    } else if (step is BoundaryStep) {
+  Widget _buildStepCard(BuildContext context, dynamic step) {
+    if (step is StopStepViewModel) {
+      return StopCard(stop: StopViewCardModel.fromStepViewModel(step));
+    } else if (step is HostingStepViewModel) {
+      return HostingCard(hosting: HostingViewCardModel.fromStepViewModel(step));
+    } else if (step is TravelSegmentStepViewModel) {
+      // Check if it's an airplane for now, since we have FlightViewCardModel
+      // Later we can expand to BusCard, RentalCarCard
+      return FlightCard(flight: FlightViewCardModel.fromStepViewModel(step));
+    } else if (step is BoundaryStepViewCardModel) {
       return BoundaryStepCard(step: step);
+    } else if (step is ItineraryStepViewModel) {
+      return GenericStepCard(step: GenericStepViewCardModel.fromStepViewModel(step));
     } else {
-      return GenericStepCard(step: step);
+      return const SizedBox.shrink();
     }
   }
 }
+

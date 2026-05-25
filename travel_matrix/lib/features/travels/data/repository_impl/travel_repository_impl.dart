@@ -18,12 +18,12 @@ class TravelRepositoryImpl implements TravelRepository{
   Future<Result<Travel>> getTravel(String id) async{
     try{
       final travelDto = await _travelDataSource.getTravel(id);
-      final routeDomain = await _routeRepository.getRoute(travelDto.routePlanId);
-      final personsDTO = await _travelDataSource.getPersons(travelDto.participantsListIds);
+      final routeDomain = await _routeRepository.getRoute(travelDto.routePlan);
+      final personsDTO = await _travelDataSource.getPersons(travelDto.participants);
 
-      if(travelDto.itineraryId != null){
+      if(travelDto.this.itinerary != null){
         final itineraryDomain = await _itineraryRepository.getItinerary(
-            travelDto.itineraryId!
+            travelDto.this.itinerary!
         );
 
         final travel = travelDto.toDomain(

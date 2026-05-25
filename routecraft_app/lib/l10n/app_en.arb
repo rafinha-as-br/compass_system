@@ -1,0 +1,59 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "RouteCraft",
+
+  "loginTitle": "RouteCraft Login",
+  "loginEmailLabel": "Email",
+  "loginPasswordLabel": "Password",
+  "loginButton": "LOGIN",
+  "loginEmailRequired": "Enter email",
+  "loginPasswordRequired": "Enter password",
+  "loginAccessDenied": "Access denied. Only Clients can access RouteCraft.",
+  "loginError": "An error occurred during login.",
+
+  "homeTitle": "RouteCraft Home",
+  "createRouteNav": "Create a Route",
+  "visualizeRoutesNav": "Visualize Routes & Itineraries",
+  "accountSettingsNav": "User Account & Settings",
+
+  "createRouteTitle": "Create a Route",
+  "tripInfoStep": "Trip Info",
+  "tripNameLabel": "Trip Name",
+  "locationsStep": "Locations",
+  "startLocationLabel": "Start Location",
+  "destinationLabel": "Destination",
+  "interestsStep": "Interests",
+  "submitRoute": "SUBMIT ROUTE",
+  "nextButton": "NEXT",
+  "backButton": "BACK",
+  "routeCreatedSuccess": "Route created successfully!",
+  "backToHome": "Back to Home",
+  "failedToCreateRoute": "Failed to create route: {error}",
+  "@failedToCreateRoute": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "successTitle": "Success",
+
+  "visualizationTitle": "My Travels",
+  "noTravelsYet": "No travels yet.",
+  "itineraryLabel": "Itinerary",
+  "stepsCount": "{count} steps",
+  "@stepsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noItinerary": "No itinerary",
+  "routeLabel": "Route",
+
+  "accountTitle": "My Account",
+  "nameLabel": "Name",
+  "emailLabel": "Email",
+  "phoneLabel": "Phone",
+  "saveChanges": "SAVE CHANGES",
+  "logoutButton": "LOGOUT",
+  "notAuthenticated": "Not authenticated."
+}

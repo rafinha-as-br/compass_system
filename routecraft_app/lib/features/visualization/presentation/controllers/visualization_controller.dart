@@ -45,6 +45,28 @@ class VisualizationController extends ChangeNotifier {
         }
       }
 
+      if (travels.isEmpty) {
+        travels.add(
+          Travel(
+            id: 'mock_travel_999',
+            clientId: 'client_1',
+            agentId: 'agent_1',
+            travelName: 'Mock Travel: New York to Tokyo',
+            travelStatus: TravelStatus.routeCreated,
+            participantsList: [],
+            routePlan: RoutePlan(
+              startDate: DateTime.now(),
+              endDate: DateTime.now().add(const Duration(days: 10)),
+              startLocation: 'New York',
+              destination: 'Tokyo',
+              interestsList: [
+                InterestPoint(id: 'ip1', name: 'Mount Fuji', description: 'Sightseeing'),
+              ],
+            ),
+          ),
+        );
+      }
+
       _state = VisualizationState(
         isLoading: false,
         travels: travels,

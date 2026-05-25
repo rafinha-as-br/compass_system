@@ -1,17 +1,21 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/step_card_view_models.dart';
 
 import '../../../expandable_section.dart';
 
+/// Card for displaying a Flight (Airplane) step in the itinerary.
+///
+/// Consumes a [FlightViewCardModel] to show departure/arrival airports,
+/// flight number, airline, date, and gate details.
+///
+/// Layout: Expandable card with a header (airports, flight info) and content (date, gate).
 class FlightCard extends StatefulWidget {
-  final TravelSegment segment;
-  final Airplane transport;
+  final FlightViewCardModel flight;
   final bool isInitialExpanded;
 
   const FlightCard({
     super.key,
-    required this.segment,
-    required this.transport,
+    required this.flight,
     this.isInitialExpanded = false,
   });
 
@@ -51,7 +55,7 @@ class _FlightCardState extends State<FlightCard> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   _AirportInfo(
-                    code: widget.transport.departureAirport,
+                    code: widget.flight.departureAirport,
                     label: 'Departure',
                     align: CrossAxisAlignment.start,
                   ),
@@ -67,7 +71,7 @@ class _FlightCardState extends State<FlightCard> {
                     ],
                   ),
                   _AirportInfo(
-                    code: widget.transport.arrivalAirport,
+                    code: widget.flight.arrivalAirport,
                     label: 'Arrival',
                     align: CrossAxisAlignment.end,
                   ),
@@ -80,12 +84,12 @@ class _FlightCardState extends State<FlightCard> {
                   _MetadataItem(
                     icon: Icons.confirmation_number_outlined,
                     label: 'Flight',
-                    value: widget.transport.flightNumber,
+                    value: widget.flight.flightNumber,
                   ),
                   _MetadataItem(
                     icon: Icons.business_outlined,
                     label: 'Airline',
-                    value: widget.transport.flightCompany,
+                    value: widget.flight.flightCompany,
                   ),
                   Icon(
                     _isExpanded ? Icons.expand_less : Icons.expand_more,
@@ -108,12 +112,12 @@ class _FlightCardState extends State<FlightCard> {
                   _MetadataItem(
                     icon: Icons.door_sliding_outlined,
                     label: 'Gate',
-                    value: widget.transport.departureGate,
+                    value: widget.flight.departureGate,
                   ),
                   _MetadataItem(
                     icon: Icons.calendar_today_outlined,
                     label: 'Date',
-                    value: '${widget.transport.flightDate.day}/${widget.transport.flightDate.month}',
+                    value: '${widget.flight.flightDate.day}/${widget.flight.flightDate.month}',
                   ),
                   _MetadataItem(
                     icon: Icons.access_time_outlined,
@@ -194,3 +198,4 @@ class _MetadataItem extends StatelessWidget {
     );
   }
 }
+
