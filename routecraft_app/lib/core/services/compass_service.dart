@@ -20,34 +20,39 @@ class CompassService {
 
   // ─── Auth ───────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> login(String email, String password) {
-    return _apiService.login(email, password);
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final response = await _apiService.login(email, password);
+    return response.body;
   }
 
   // ─── Users ──────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> getUser(String token) {
-    return _apiService.getUser(token);
+  Future<Map<String, dynamic>> getUser(String token) async {
+    final response = await _apiService.getUser(token);
+    return response.body;
   }
 
   Future<Map<String, dynamic>> updateUser(
     String token,
     Map<String, dynamic> userData,
-  ) {
-    return _apiService.updateUser(token, userData);
+  ) async {
+    final response = await _apiService.updateUser(token, userData);
+    return response.body;
   }
 
   // ─── Travels ────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> getTravel(String token, String travelId) {
-    return _apiService.getTravel(token, travelId);
+  Future<Map<String, dynamic>> getTravel(String token, String travelId) async {
+    final response = await _apiService.getTravel(token, travelId);
+    return response.body;
   }
 
   Future<Map<String, dynamic>> getTravelsForClient(
     String token,
     String clientId,
-  ) {
-    return _apiService.getTravelsForClient(token, clientId);
+  ) async {
+    final response = await _apiService.getTravelsForClient(token, clientId);
+    return response.body;
   }
 
   // ─── Routes ─────────────────────────────────────────────────────────
@@ -55,7 +60,8 @@ class CompassService {
   Future<Map<String, dynamic>> createTravel(
     String token,
     Map<String, dynamic> travelData,
-  ) {
-    return _apiService.createTravel(token, travelData);
+  ) async {
+    final response = await _apiService.createTravel(token, travelData);
+    return response.body;
   }
 }

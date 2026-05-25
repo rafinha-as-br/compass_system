@@ -1,7 +1,10 @@
 import 'package:mock_repository/mock_repository.dart';
 
-/// Wraps MockApiService for the Travel Matrix application.
-/// All methods pass through the bearer token for authentication.
+/// Wraps [MockApiService] for the Travel Matrix application.
+///
+/// This singleton service provides a unified API surface for all
+/// network operations. It delegates to the mock backend and will
+/// be replaced by a real HTTP client when the production API arrives.
 class CompassService {
   static CompassService? _instance;
   final MockApiService _apiService;
@@ -20,102 +23,139 @@ class CompassService {
 
   // ─── Auth ───────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> login(String email, String password) {
-    return _apiService.login(email, password);
+  /// Authenticates a user and returns a bearer token payload.
+  Future<Map<String, dynamic>> login(String email, String password) async {
+    final response = await _apiService.login(email, password);
+    return response.body;
   }
 
   // ─── Users ──────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> getUser(String token) {
-    return _apiService.getUser(token);
+  /// Returns the authenticated user's data.
+  Future<Map<String, dynamic>> getUser(String token) async {
+    final response = await _apiService.getUser(token);
+    return response.body;
   }
 
-  Future<Map<String, dynamic>> getAllUsers(String token) {
-    return _apiService.getAllUsers(token);
+  /// Returns all client users. Travel Agent only.
+  Future<Map<String, dynamic>> getAllUsers(String token) async {
+    final response = await _apiService.getAllUsers(token);
+    return response.body;
   }
 
+  /// Creates a new client user. Travel Agent only.
   Future<Map<String, dynamic>> createUser(
     String token,
     Map<String, dynamic> userData,
-  ) {
-    return _apiService.createUser(token, userData);
+  ) async {
+    final response = await _apiService.createUser(token, userData);
+    return response.body;
   }
 
+  /// Updates a user's data.
   Future<Map<String, dynamic>> updateUser(
     String token,
     Map<String, dynamic> userData,
-  ) {
-    return _apiService.updateUser(token, userData);
+  ) async {
+    final response = await _apiService.updateUser(token, userData);
+    return response.body;
   }
 
-  Future<Map<String, dynamic>> deleteUser(String token, String userId) {
-    return _apiService.deleteUser(token, userId);
+  /// Deletes a user by ID. Travel Agent only.
+  Future<Map<String, dynamic>> deleteUser(String token, String userId) async {
+    final response = await _apiService.deleteUser(token, userId);
+    return response.body;
   }
 
   // ─── Travels ────────────────────────────────────────────────────────
 
-  Future<Map<String, dynamic>> getAllTravels(String token) {
-    return _apiService.getAllTravels(token);
+  /// Returns all travels. Travel Agent only.
+  Future<Map<String, dynamic>> getAllTravels(String token) async {
+    final response = await _apiService.getAllTravels(token);
+    return response.body;
   }
 
-  Future<Map<String, dynamic>> getTravel(String token, String travelId) {
-    return _apiService.getTravel(token, travelId);
+  /// Returns a single travel by ID.
+  Future<Map<String, dynamic>> getTravel(
+    String token,
+    String travelId,
+  ) async {
+    final response = await _apiService.getTravel(token, travelId);
+    return response.body;
   }
 
+  /// Returns all travels for a specific client.
   Future<Map<String, dynamic>> getTravelsForClient(
     String token,
     String clientId,
-  ) {
-    return _apiService.getTravelsForClient(token, clientId);
+  ) async {
+    final response = await _apiService.getTravelsForClient(token, clientId);
+    return response.body;
   }
 
+  /// Creates a new travel. Travel Agent only.
   Future<Map<String, dynamic>> createTravel(
     String token,
     Map<String, dynamic> travelData,
-  ) {
-    return _apiService.createTravel(token, travelData);
+  ) async {
+    final response = await _apiService.createTravel(token, travelData);
+    return response.body;
   }
 
+  /// Updates an existing travel. Travel Agent only.
   Future<Map<String, dynamic>> updateTravel(
     String token,
     String travelId,
     Map<String, dynamic> travelData,
-  ) {
-    return _apiService.updateTravel(token, travelId, travelData);
+  ) async {
+    final response =
+        await _apiService.updateTravel(token, travelId, travelData);
+    return response.body;
   }
 
+  /// Deletes a travel by ID. Travel Agent only.
   Future<Map<String, dynamic>> deleteTravel(
     String token,
     String travelId,
-  ) {
-    return _apiService.deleteTravel(token, travelId);
+  ) async {
+    final response = await _apiService.deleteTravel(token, travelId);
+    return response.body;
   }
 
-  // ─── Routes (within Travel) ─────────────────────────────────────────
+  // ─── Routes ─────────────────────────────────────────────────────────
 
+  /// Updates the route of an existing travel. Travel Agent only.
   Future<Map<String, dynamic>> updateRoute(
     String token,
     String travelId,
     Map<String, dynamic> routeData,
-  ) {
-    return _apiService.updateRoute(token, travelId, routeData);
+  ) async {
+    final response =
+        await _apiService.updateRoute(token, travelId, routeData);
+    return response.body;
   }
 
-  // ─── Itineraries (within Travel) ────────────────────────────────────
+  // ─── Itineraries ────────────────────────────────────────────────────
 
+  /// Creates an itinerary for a travel. Travel Agent only.
   Future<Map<String, dynamic>> createItinerary(
     String token,
     String travelId,
     Map<String, dynamic> itineraryData,
-  ) {
-    return _apiService.createItinerary(token, travelId, itineraryData);
+  ) async {
+    final response =
+        await _apiService.createItinerary(token, travelId, itineraryData);
+    return response.body;
   }
 
+  /// Updates the itinerary for a travel. Travel Agent only.
   Future<Map<String, dynamic>> updateItinerary(
     String token,
     String travelId,
     Map<String, dynamic> itineraryData,
-  ) {
-    return _apiService.updateItinerary(token, travelId, itineraryData);
+  ) async {
+    final response =
+        await _apiService.updateItinerary(token, travelId, itineraryData);
+    return response.body;
   }
 }

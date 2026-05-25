@@ -1,0 +1,241 @@
+// ignore: unused_import
+import 'package:intl/intl.dart' as intl;
+import 'app_localizations.dart';
+
+// ignore_for_file: type=lint
+
+/// The translations for English (`en`).
+class AppLocalizationsEn extends AppLocalizations {
+  AppLocalizationsEn([String locale = 'en']) : super(locale);
+
+  @override
+  String get appTitle => 'Travel Matrix';
+
+  @override
+  String get loginTitle => 'Welcome to Travel Matrix';
+
+  @override
+  String get loginSubtitle => 'Please login to continue';
+
+  @override
+  String get loginEmailLabel => 'Email';
+
+  @override
+  String get loginPasswordLabel => 'Password';
+
+  @override
+  String get loginButton => 'LOGIN AS AGENT';
+
+  @override
+  String get loginEmailRequired => 'Enter email';
+
+  @override
+  String get loginPasswordRequired => 'Enter password';
+
+  @override
+  String get loginAccessDenied =>
+      'Access denied. Only Travel Agents can access Travel Matrix.';
+
+  @override
+  String get loginError => 'An error occurred during login.';
+
+  @override
+  String get dashboardTitle => 'Dashboard Overview';
+
+  @override
+  String get totalTravels => 'Total Travels';
+
+  @override
+  String get itinerariesCompleted => 'Itineraries Completed';
+
+  @override
+  String get pendingItineraries => 'Pending Itineraries';
+
+  @override
+  String get activeClients => 'Active Clients';
+
+  @override
+  String get recentTravelUpdates => 'Recent Travel Updates';
+
+  @override
+  String get noTravelsCreated => 'No travels created yet.';
+
+  @override
+  String get statusComplete => 'COMPLETE';
+
+  @override
+  String get statusPending => 'PENDING';
+
+  @override
+  String get allTravels => 'All Travels';
+
+  @override
+  String get createTravel => 'Create Travel';
+
+  @override
+  String get itineraryReady => 'Itinerary Ready';
+
+  @override
+  String get routeOnly => 'Route Only';
+
+  @override
+  String get clientLabel => 'Client';
+
+  @override
+  String get createTravelTitle => 'Create Travel';
+
+  @override
+  String get stepCreateRoute => 'Step 1: Create Route';
+
+  @override
+  String get stepCreateRouteHint =>
+      'Define the route first. An itinerary can be created after.';
+
+  @override
+  String get travelNameLabel => 'Travel Name';
+
+  @override
+  String get travelNameRequired => 'Travel name is required';
+
+  @override
+  String get startLocationLabel => 'Start Location';
+
+  @override
+  String get destinationLabel => 'Destination';
+
+  @override
+  String get requiredField => 'Required';
+
+  @override
+  String get startDateLabel => 'Start Date';
+
+  @override
+  String get endDateLabel => 'End Date';
+
+  @override
+  String get interestPointsTitle => 'Interest Points';
+
+  @override
+  String get pointNameLabel => 'Point Name';
+
+  @override
+  String get descriptionLabel => 'Description';
+
+  @override
+  String get createItineraryTitle => 'Create Itinerary';
+
+  @override
+  String get editItineraryTitle => 'Edit Itinerary';
+
+  @override
+  String get saveButton => 'Save';
+
+  @override
+  String get updateButton => 'Update';
+
+  @override
+  String get createButton => 'Create';
+
+  @override
+  String get finishItinerary => 'Finish Itinerary';
+
+  @override
+  String get deleteStep => 'Delete Step';
+
+  @override
+  String get deleteStepConfirm => 'Are you sure you want to delete this step?';
+
+  @override
+  String get cancelButton => 'Cancel';
+
+  @override
+  String get deleteButton => 'Delete';
+
+  @override
+  String get addStep => 'Add Step';
+
+  @override
+  String get addFirstStepHint =>
+      'Add your first step to begin building the itinerary.';
+
+  @override
+  String get previousStep => 'Previous Step';
+
+  @override
+  String get nextStep => 'Next Step';
+
+  @override
+  String get itinerarySavedSuccess => 'Itinerary saved.';
+
+  @override
+  String get itineraryFinishedSuccess => 'Itinerary finished successfully!';
+
+  @override
+  String get failedToCreateItinerary => 'Failed to create itinerary.';
+
+  @override
+  String get routeDetails => 'Route Details';
+
+  @override
+  String get fromLabel => 'From';
+
+  @override
+  String get toLabel => 'To';
+
+  @override
+  String interestPointsCount(int count) {
+    return 'Interest Points ($count)';
+  }
+
+  @override
+  String get noInterestPoints => 'No interest points defined.';
+
+  @override
+  String get noItineraryCreated => 'No itinerary has been created yet.';
+
+  @override
+  String get notAuthenticated => 'Not authenticated.';
+
+  @override
+  String failedToFetchTravels(String error) {
+    return 'Failed to fetch travels: $error';
+  }
+
+  @override
+  String failedToFetchUsers(String error) {
+    return 'Failed to fetch users: $error';
+  }
+
+  @override
+  String get usersTitle => 'Users';
+
+  @override
+  String get createUser => 'Create User';
+
+  @override
+  String get editUser => 'Edit User';
+
+  @override
+  String get viewUser => 'View User';
+
+  @override
+  String get deleteUser => 'Delete User';
+
+  @override
+  String get deleteUserConfirm => 'Are you sure you want to delete this user?';
+
+  @override
+  String get agentSettings => 'Agent Settings';
+
+  @override
+  String get systemPreferences => 'System Preferences';
+
+  @override
+  String get adminDarkMode => 'Admin Dark Mode';
+
+  @override
+  String get logOutOfMatrix => 'Log Out of Matrix';
+
+  @override
+  String get languageLabel => 'Language';
+}

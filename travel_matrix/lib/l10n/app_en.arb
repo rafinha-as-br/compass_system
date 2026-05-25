@@ -1,0 +1,103 @@
+{
+  "@@locale": "en",
+
+  "appTitle": "Travel Matrix",
+
+  "loginTitle": "Welcome to Travel Matrix",
+  "loginSubtitle": "Please login to continue",
+  "loginEmailLabel": "Email",
+  "loginPasswordLabel": "Password",
+  "loginButton": "LOGIN AS AGENT",
+  "loginEmailRequired": "Enter email",
+  "loginPasswordRequired": "Enter password",
+  "loginAccessDenied": "Access denied. Only Travel Agents can access Travel Matrix.",
+  "loginError": "An error occurred during login.",
+
+  "dashboardTitle": "Dashboard Overview",
+  "totalTravels": "Total Travels",
+  "itinerariesCompleted": "Itineraries Completed",
+  "pendingItineraries": "Pending Itineraries",
+  "activeClients": "Active Clients",
+  "recentTravelUpdates": "Recent Travel Updates",
+  "noTravelsCreated": "No travels created yet.",
+  "statusComplete": "COMPLETE",
+  "statusPending": "PENDING",
+
+  "allTravels": "All Travels",
+  "createTravel": "Create Travel",
+  "itineraryReady": "Itinerary Ready",
+  "routeOnly": "Route Only",
+  "clientLabel": "Client",
+
+  "createTravelTitle": "Create Travel",
+  "stepCreateRoute": "Step 1: Create Route",
+  "stepCreateRouteHint": "Define the route first. An itinerary can be created after.",
+  "travelNameLabel": "Travel Name",
+  "travelNameRequired": "Travel name is required",
+  "startLocationLabel": "Start Location",
+  "destinationLabel": "Destination",
+  "requiredField": "Required",
+  "startDateLabel": "Start Date",
+  "endDateLabel": "End Date",
+  "interestPointsTitle": "Interest Points",
+  "pointNameLabel": "Point Name",
+  "descriptionLabel": "Description",
+
+  "createItineraryTitle": "Create Itinerary",
+  "editItineraryTitle": "Edit Itinerary",
+  "saveButton": "Save",
+  "updateButton": "Update",
+  "createButton": "Create",
+  "finishItinerary": "Finish Itinerary",
+  "deleteStep": "Delete Step",
+  "deleteStepConfirm": "Are you sure you want to delete this step?",
+  "cancelButton": "Cancel",
+  "deleteButton": "Delete",
+  "addStep": "Add Step",
+  "addFirstStepHint": "Add your first step to begin building the itinerary.",
+  "previousStep": "Previous Step",
+  "nextStep": "Next Step",
+  "itinerarySavedSuccess": "Itinerary saved.",
+  "itineraryFinishedSuccess": "Itinerary finished successfully!",
+  "failedToCreateItinerary": "Failed to create itinerary.",
+
+  "routeDetails": "Route Details",
+  "fromLabel": "From",
+  "toLabel": "To",
+  "interestPointsCount": "Interest Points ({count})",
+  "@interestPointsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noInterestPoints": "No interest points defined.",
+
+  "noItineraryCreated": "No itinerary has been created yet.",
+
+  "notAuthenticated": "Not authenticated.",
+  "failedToFetchTravels": "Failed to fetch travels: {error}",
+  "@failedToFetchTravels": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "failedToFetchUsers": "Failed to fetch users: {error}",
+  "@failedToFetchUsers": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+
+  "usersTitle": "Users",
+  "createUser": "Create User",
+  "editUser": "Edit User",
+  "viewUser": "View User",
+  "deleteUser": "Delete User",
+  "deleteUserConfirm": "Are you sure you want to delete this user?",
+
+  "agentSettings": "Agent Settings",
+  "systemPreferences": "System Preferences",
+  "adminDarkMode": "Admin Dark Mode",
+  "logOutOfMatrix": "Log Out of Matrix",
+  "languageLabel": "Language"
+}

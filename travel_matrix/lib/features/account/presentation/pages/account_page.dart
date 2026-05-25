@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:travel_matrix/app/controllers/settings_controller.dart';
 import 'package:travel_matrix/core/services/auth_service.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/app/gates/gate_auth.dart';
 
 class AccountPage extends StatelessWidget {
@@ -11,10 +12,11 @@ class AccountPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final settingsController = context.watch<SettingsController>();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Agent Settings'),
+        title: Text(l10n.agentSettings),
       ),
       body: Center(
         child: Container(
@@ -38,10 +40,10 @@ class AccountPage extends StatelessWidget {
                 style: TextStyle(color: Colors.grey),
               ),
               const SizedBox(height: 48),
-              const Text('System Preferences', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+              Text(l10n.systemPreferences, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
               const Divider(),
               SwitchListTile(
-                title: const Text('Admin Dark Mode'),
+                title: Text(l10n.adminDarkMode),
                 secondary: const Icon(Icons.dark_mode),
                 value: settingsController.themeMode == ThemeMode.dark,
                 onChanged: (bool val) {
@@ -50,12 +52,10 @@ class AccountPage extends StatelessWidget {
               ),
               ListTile(
                 leading: const Icon(Icons.language),
-                title: const Text('Language (EN)'),
+                title: Text('${l10n.languageLabel} (${settingsController.locale.languageCode.toUpperCase()})'),
                 trailing: const Icon(Icons.chevron_right),
                 onTap: () {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Language toggle clicked')),
-                  );
+                  settingsController.toggleLanguage();
                 },
               ),
               const SizedBox(height: 32),
@@ -66,7 +66,7 @@ class AccountPage extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 16),
                 ),
                 icon: const Icon(Icons.logout),
-                label: const Text('Log Out of Matrix'),
+                label: Text(l10n.logOutOfMatrix),
                 onPressed: () async {
                   await AuthService.instance.clearToken();
                   if (context.mounted) {
@@ -84,3 +84,4 @@ class AccountPage extends StatelessWidget {
     );
   }
 }
+

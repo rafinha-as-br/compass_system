@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
-import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/view_user_page.dart';
 import 'package:travel_matrix/features/users/presentation/pages/create_user_page.dart';
@@ -30,80 +29,72 @@ class _UsersDashboardView extends StatelessWidget {
     final state = controller.state;
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const BreadcrumbBar(items: ['Users Dashboard']),
-        Expanded(
-          child: Padding(
-            padding: const EdgeInsets.all(24),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Header
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text(
-                      'Client Users',
-                      style: theme.textTheme.headlineSmall?.copyWith(
-                        fontWeight: FontWeight.bold,
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Header
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Text(
+                'Client Users',
+                style: theme.textTheme.headlineSmall?.copyWith(
+                  fontWeight: FontWeight.bold,
+                ),
+              ),
+              ElevatedButton.icon(
+                onPressed: () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (_) => ChangeNotifierProvider.value(
+                        value: controller,
+                        child: const CreateUserPage(),
                       ),
                     ),
-                    ElevatedButton.icon(
-                      onPressed: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(
-                            builder: (_) => ChangeNotifierProvider.value(
-                              value: controller,
-                              child: const CreateUserPage(),
-                            ),
-                          ),
-                        );
-                      },
-                      icon: const Icon(Icons.person_add),
-                      label: const Text('Create User'),
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: theme.colorScheme.secondary,
-                        foregroundColor: theme.colorScheme.onSecondary,
-                      ),
-                    ),
-                  ],
+                  );
+                },
+                icon: const Icon(Icons.person_add),
+                label: const Text('Create User'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: theme.colorScheme.secondary,
+                  foregroundColor: theme.colorScheme.onSecondary,
                 ),
-                const SizedBox(height: 16),
-                if (state.errorMessage != null)
-                  Padding(
-                    padding: const EdgeInsets.only(bottom: 12),
-                    child: Text(
-                      state.errorMessage!,
-                      style:
-                          TextStyle(color: theme.colorScheme.error),
-                    ),
-                  ),
-                // Users Table
-                Expanded(
-                  child: state.isLoading
-                      ? const Center(child: CircularProgressIndicator())
-                      : state.users.isEmpty
-                          ? Center(
-                              child: Text(
-                                'No client users found.',
-                                style: TextStyle(
-                                  color: theme.colorScheme.onSurface
-                                      .withValues(alpha: 0.6),
-                                ),
-                              ),
-                            )
-                          : Card(
-                              child: _buildUsersTable(
-                                  context, state.users, controller),
-                            ),
-                ),
-              ],
-            ),
+              ),
+            ],
           ),
-        ),
-      ],
+          const SizedBox(height: 16),
+          if (state.errorMessage != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                state.errorMessage!,
+                style:
+                    TextStyle(color: theme.colorScheme.error),
+              ),
+            ),
+          // Users Table
+          Expanded(
+            child: state.isLoading
+                ? const Center(child: CircularProgressIndicator())
+                : state.users.isEmpty
+                    ? Center(
+                        child: Text(
+                          'No client users found.',
+                          style: TextStyle(
+                            color: theme.colorScheme.onSurface
+                                .withValues(alpha: 0.6),
+                          ),
+                        ),
+                      )
+                    : Card(
+                        child: _buildUsersTable(
+                            context, state.users, controller),
+                      ),
+          ),
+        ],
+      ),
     );
   }
 
