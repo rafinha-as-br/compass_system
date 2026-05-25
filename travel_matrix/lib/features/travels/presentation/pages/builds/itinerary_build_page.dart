@@ -59,7 +59,13 @@ class ItineraryBuildPage extends StatelessWidget {
         // Editor controller dependency injection
         ChangeNotifierProvider(
             create: (_) => ItineraryEditorController(
-              steps: isEditMode ? itineraryBuildModel.steps!.normalSteps : null,
+              steps: isEditMode 
+                ? [
+                    itineraryBuildModel.steps!.startStep,
+                    ...itineraryBuildModel.steps!.normalSteps,
+                    itineraryBuildModel.steps!.finishStep,
+                  ] 
+                : null,
               interestPoints: itineraryBuildModel.interestsPoints,
             )
         ),
@@ -134,14 +140,16 @@ class _ItineraryBuildView extends StatelessWidget {
           VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
 
           // ─── Center: Step workflow ──────────────────────────────
-          StepsBuilderPanel(
-              steps: steps,
-              selectedIndex: selectedIndex,
-              goToPreviousStep: editor.goToPreviousStep,
-              goToNextStep: editor.goToNextStep,
-              addStep: editor.addStep,
-              updateStep: editor.updateStep,
-              removeStep: editor.deleteStep
+          Expanded(
+            child: StepsBuilderPanel(
+                steps: steps,
+                selectedIndex: selectedIndex,
+                goToPreviousStep: editor.goToPreviousStep,
+                goToNextStep: editor.goToNextStep,
+                addStep: editor.addStep,
+                updateStep: editor.updateStep,
+                removeStep: editor.deleteStep
+            ),
           ),
           VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
 

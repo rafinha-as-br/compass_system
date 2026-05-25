@@ -67,6 +67,7 @@ class StepsListPanel extends StatelessWidget {
                       final step = stepsList[index];
                       final isSelected = index == selectedIndex;
                       return _StepListTile(
+                        key: ValueKey(step.localId),
                         step: step,
                         isSelected: isSelected,
                         index: index,
@@ -111,6 +112,7 @@ class _StepListTile extends StatelessWidget {
   final VoidCallback onDeleteStep;
 
   const _StepListTile({
+    super.key,
     required this.step,
     required this.isSelected,
     required this.index,

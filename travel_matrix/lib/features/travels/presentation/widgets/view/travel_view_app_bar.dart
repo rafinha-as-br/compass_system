@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
+import 'package:travel_matrix/features/travels/presentation/pages/builds/route_creation_page.dart';
+import 'package:travel_matrix/features/travels/presentation/pages/builds/itinerary_build_page.dart';
+import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 
 /// This appBar is used in the Travel_View_page, responsible for showing:
 /// - Travel Name
@@ -54,6 +57,60 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                         letterSpacing: -0.5,
                       ),
                       overflow: TextOverflow.ellipsis,
+                    ),
+                  ),
+
+                  // Edit Route Button
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => RouteCreationPage(travel: travel),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.edit_road, size: 16),
+                    label: const Text('Edit Route'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                    ),
+                  ),
+
+                  // Edit Itinerary Button
+                  ElevatedButton.icon(
+                    onPressed: () {
+                      final steps = travel.itinerary?.steps;
+                      if (steps == null || steps.length < 2) {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text('Itinerary is not ready or incomplete.'),
+                          ),
+                        );
+                        return;
+                      }
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (_) => ItineraryBuildPage(
+                            travelId: travel.localId,
+                            itineraryBuildModel: ItineraryBuildModel(
+                              travelName: travel.travelTitle,
+                              interestsPoints: travel.route.interests,
+                              steps: ItineraryStepsBuildModel(
+                                startStep: steps.first,
+                                finishStep: steps.last,
+                                normalSteps: steps.sublist(1, steps.length - 1),
+                              ),
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                    icon: const Icon(Icons.edit_calendar, size: 16),
+                    label: const Text('Edit Itinerary'),
+                    style: ElevatedButton.styleFrom(
+                      padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
                     ),
                   ),
 
@@ -127,7 +184,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(170);
+  Size get preferredSize => const Size.fromHeight(190);
 
   String _formatDate(DateTime date) {
     const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
