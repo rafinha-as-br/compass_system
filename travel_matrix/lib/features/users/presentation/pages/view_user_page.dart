@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
-import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/edit_user_page.dart';
 import 'package:travel_matrix/features/users/presentation/pages/delete_user_dialog.dart';
@@ -56,93 +55,84 @@ class ViewUserPage extends StatelessWidget {
           const SizedBox(width: 8),
         ],
       ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const BreadcrumbBar(
-              items: ['Users Dashboard', 'View User']),
-          Expanded(
-            child: SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 600),
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // User avatar and name header
+                Center(
                   child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      // User avatar and name header
-                      Center(
-                        child: Column(
-                          children: [
-                            CircleAvatar(
-                              radius: 40,
-                              backgroundColor: theme.colorScheme.primary,
-                              child: Text(
-                                user.name.isNotEmpty
-                                    ? user.name[0].toUpperCase()
-                                    : '?',
-                                style: TextStyle(
-                                  fontSize: 32,
-                                  color: theme.colorScheme.onPrimary,
-                                ),
-                              ),
-                            ),
-                            const SizedBox(height: 12),
-                            Text(
-                              user.name,
-                              style: theme.textTheme.headlineSmall
-                                  ?.copyWith(fontWeight: FontWeight.bold),
-                            ),
-                            const SizedBox(height: 4),
-                            Container(
-                              padding: const EdgeInsets.symmetric(
-                                  horizontal: 12, vertical: 4),
-                              decoration: BoxDecoration(
-                                color: user.isActive
-                                    ? const Color(0xFF2E7D5B)
-                                        .withValues(alpha: 0.1)
-                                    : const Color(0xFFB23A3A)
-                                        .withValues(alpha: 0.1),
-                                borderRadius: BorderRadius.circular(12),
-                              ),
-                              child: Text(
-                                user.isActive ? 'Active' : 'Inactive',
-                                style: TextStyle(
-                                  fontWeight: FontWeight.w600,
-                                  color: user.isActive
-                                      ? const Color(0xFF2E7D5B)
-                                      : const Color(0xFFB23A3A),
-                                ),
-                              ),
-                            ),
-                          ],
+                      CircleAvatar(
+                        radius: 40,
+                        backgroundColor: theme.colorScheme.primary,
+                        child: Text(
+                          user.name.isNotEmpty
+                              ? user.name[0].toUpperCase()
+                              : '?',
+                          style: TextStyle(
+                            fontSize: 32,
+                            color: theme.colorScheme.onPrimary,
+                          ),
                         ),
                       ),
-                      const SizedBox(height: 32),
-                      const Divider(),
-                      const SizedBox(height: 16),
-                      // User details
-                      _buildDetailRow(
-                          theme, Icons.badge, 'CPF', user.cpf),
-                      _buildDetailRow(
-                          theme, Icons.email, 'Email', user.email),
-                      _buildDetailRow(
-                          theme, Icons.phone, 'Phone', user.phoneNumber),
-                      _buildDetailRow(
-                        theme,
-                        Icons.cake,
-                        'Birth Date',
-                        '${user.birthDate.day}/${user.birthDate.month}/${user.birthDate.year}',
+                      const SizedBox(height: 12),
+                      Text(
+                        user.name,
+                        style: theme.textTheme.headlineSmall
+                            ?.copyWith(fontWeight: FontWeight.bold),
                       ),
-                      _buildDetailRow(
-                          theme, Icons.person, 'Sex', user.sex),
+                      const SizedBox(height: 4),
+                      Container(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 12, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: user.isActive
+                              ? const Color(0xFF2E7D5B)
+                                  .withValues(alpha: 0.1)
+                              : const Color(0xFFB23A3A)
+                                  .withValues(alpha: 0.1),
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: Text(
+                          user.isActive ? 'Active' : 'Inactive',
+                          style: TextStyle(
+                            fontWeight: FontWeight.w600,
+                            color: user.isActive
+                                ? const Color(0xFF2E7D5B)
+                                : const Color(0xFFB23A3A),
+                          ),
+                        ),
+                      ),
                     ],
                   ),
                 ),
-              ),
+                const SizedBox(height: 32),
+                const Divider(),
+                const SizedBox(height: 16),
+                // User details
+                _buildDetailRow(
+                    theme, Icons.badge, 'CPF', user.cpf),
+                _buildDetailRow(
+                    theme, Icons.email, 'Email', user.email),
+                _buildDetailRow(
+                    theme, Icons.phone, 'Phone', user.phoneNumber),
+                _buildDetailRow(
+                  theme,
+                  Icons.cake,
+                  'Birth Date',
+                  '${user.birthDate.day}/${user.birthDate.month}/${user.birthDate.year}',
+                ),
+                _buildDetailRow(
+                    theme, Icons.person, 'Sex', user.sex),
+              ],
             ),
           ),
-        ],
+        ),
       ),
     );
   }

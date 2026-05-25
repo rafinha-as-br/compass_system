@@ -1,0 +1,61 @@
+import 'package:flutter/material.dart';
+
+import '../../../models/build_models/itinerary_build_model.dart';
+import '../../../models/view_models/route_view_model.dart';
+import '../../../models/view_models/travel_view_model.dart';
+import '../../../pages/builds/itinerary_build_page.dart';
+
+/// Displayed when a travel has no itinerary yet.
+///
+/// Consumes a [TravelViewModel] and shows an empty state with a button that 
+/// navigates to [ItineraryBuildPage] in create mode (null steps).
+///
+/// Layout: Centered column with an icon, message, and action button.
+class NoItineraryPage extends StatelessWidget {
+  const NoItineraryPage({super.key, required this.travel});
+  final TravelViewModel travel;
+
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(Icons.event_note, size: 64,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+          const SizedBox(height: 16),
+          Text(
+            'No itinerary has been created yet.',
+            style: TextStyle(
+              fontSize: 16,
+              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ),
+          const SizedBox(height: 24),
+          ElevatedButton.icon(
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                  builder: (_) => ItineraryBuildPage(
+                    travelId: travel.localId,
+                    itineraryBuildModel: ItineraryBuildModel(
+                      travelName: travel.travelTitle,
+                      steps: null,
+                      interestsPoints: travel.route.interests,
+                    ),
+                  ),
+                ),
+              );
+            },
+            icon: const Icon(Icons.add),
+            label: const Text('Create Itinerary'),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Theme.of(context).colorScheme.secondary,
+              foregroundColor: Theme.of(context).colorScheme.onSecondary,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/services/auth_service.dart';
 import 'package:travel_matrix/core/services/compass_service.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/data/dtos/travel_dto.dart';
+
+import '../models/view_models/travel_view_model.dart';
 
 class TravelsState {
   final bool isLoading;
-  final List<Travel> travels;
+  final List<TravelViewModel> travels;
   final String? errorMessage;
 
   const TravelsState({
@@ -42,7 +44,8 @@ class TravelsController extends ChangeNotifier {
       if (response['status'] == 'success') {
         final data = response['data'] as List<dynamic>;
         final travels = data
-            .map((e) => Travel.fromJson(e as Map<String, dynamic>))
+            .map((e) => TravelDTO.fromJson(e as Map<String, dynamic>).toDomain())
+            .map((t) => TravelViewModel.fromDomain(t))
             .toList();
         _state = TravelsState(isLoading: false, travels: travels);
       } else {

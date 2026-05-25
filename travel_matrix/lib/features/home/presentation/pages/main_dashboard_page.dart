@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/services/auth_service.dart';
 import 'package:travel_matrix/core/services/compass_service.dart';
-import 'package:travel_matrix/shared/widgets/breadcrumb_bar.dart';
 import 'package:mock_repository/mock_repository.dart';
 
 /// Main Dashboard Tab — displays travel updates and KPI metrics.
@@ -55,43 +54,35 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const BreadcrumbBar(items: ['Main Dashboard']),
-        Expanded(
-          child: _isLoading
-              ? const Center(child: CircularProgressIndicator())
-              : SingleChildScrollView(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        'Dashboard Overview',
-                        style: theme.textTheme.headlineSmall?.copyWith(
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      const SizedBox(height: 24),
-                      // ─── KPI Cards ──────────────────────────────────
-                      _buildKpiRow(theme),
-                      const SizedBox(height: 32),
-                      // ─── Recent Travels ─────────────────────────────
-                      Text(
-                        'Recent Travel Updates',
-                        style: theme.textTheme.titleMedium?.copyWith(
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
-                      const SizedBox(height: 12),
-                      _buildRecentTravels(theme),
-                    ],
+    return _isLoading
+        ? const Center(child: CircularProgressIndicator())
+        : SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Dashboard Overview',
+                  style: theme.textTheme.headlineSmall?.copyWith(
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
-        ),
-      ],
-    );
+                const SizedBox(height: 24),
+                // ─── KPI Cards ──────────────────────────────────
+                _buildKpiRow(theme),
+                const SizedBox(height: 32),
+                // ─── Recent Travels ─────────────────────────────
+                Text(
+                  'Recent Travel Updates',
+                  style: theme.textTheme.titleMedium?.copyWith(
+                    fontWeight: FontWeight.w600,
+                  ),
+                ),
+                const SizedBox(height: 12),
+                _buildRecentTravels(theme),
+              ],
+            ),
+          );
   }
 
   Widget _buildKpiRow(ThemeData theme) {
