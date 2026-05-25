@@ -17,10 +17,11 @@ class FieldState<T>{
     T? value,
     String? error,
     bool? isTouched,
+    bool clearError = false,
   }){
     return FieldState(
       value: value ?? this.value,
-      error: error,
+      error: clearError ? null : (error ?? this.error),
       isTouched: isTouched ?? this.isTouched,
     );
   }

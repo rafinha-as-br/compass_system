@@ -606,7 +606,15 @@ class TravelSegmentStepViewModel extends ItineraryStepViewModel{
   @override
   List<TimelineNode>? buildInternalTimeline() {
     final List<TimelineNode> nodes = [];
-    final transportNode = transport.toTimelineNode();
+    final transportNodeOriginal = transport.toTimelineNode();
+    final transportNode = transportNodeOriginal != null
+        ? TimelineNode(
+            domainId: localId,
+            startDate: transportNodeOriginal.startDate,
+            finishDate: transportNodeOriginal.finishDate,
+            sequenceIndex: transportNodeOriginal.sequenceIndex,
+          )
+        : null;
 
     nodes.add(
       TimelineNode.instant(
@@ -632,4 +640,3 @@ class TravelSegmentStepViewModel extends ItineraryStepViewModel{
   }
 
 }
-

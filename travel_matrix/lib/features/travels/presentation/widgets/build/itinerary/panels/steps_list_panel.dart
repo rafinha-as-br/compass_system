@@ -121,35 +121,57 @@ class _StepListTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
 
-    return ListTile(
-      selected: isSelected,
-      selectedTileColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
-      leading: CircleAvatar(
-        radius: 14,
-        backgroundColor: Theme.of(context).colorScheme.primary,
-        child: Icon(
-          step.icon,
-          size: 14,
-          color: Theme.of(context).colorScheme.onPrimary
-        ),
+    final hasProblems = step.problems != null && step.problems!.isNotEmpty;
+
+    return Container(
+      decoration: BoxDecoration(
+        border: hasProblems
+            ? Border(
+                left: BorderSide(color: Colors.amber.shade700, width: 4.0),
+              )
+            : null,
       ),
-      title: Text(
-        step.title,
-        style: const TextStyle(
-          fontSize: 13,
-          fontWeight: FontWeight.w600,
+      child: ListTile(
+        selected: isSelected,
+        selectedTileColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
+        leading: CircleAvatar(
+          radius: 14,
+          backgroundColor: Theme.of(context).colorScheme.primary,
+          child: Icon(
+            step.icon,
+            size: 14,
+            color: Theme.of(context).colorScheme.onPrimary
+          ),
         ),
-      ),
-      trailing: IconButton(
-        icon: Icon(
-          Icons.delete_outline,
-          size: 18,
-          color: Theme.of(context).colorScheme.error
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                step.title,
+                style: const TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                ),
+                overflow: TextOverflow.ellipsis,
+              ),
+            ),
+            if (hasProblems) ...[
+              const SizedBox(width: 6),
+              Icon(Icons.warning_amber_rounded, size: 16, color: Colors.amber.shade700),
+            ],
+          ],
         ),
-        onPressed: onDeleteStep,
-        tooltip: 'Delete step',
+        trailing: IconButton(
+          icon: Icon(
+            Icons.delete_outline,
+            size: 18,
+            color: Theme.of(context).colorScheme.error
+          ),
+          onPressed: onDeleteStep,
+          tooltip: 'Delete step',
+        ),
+        onTap: () => onSelectStep(index),
       ),
-      onTap: () => onSelectStep(index),
     );
   }
 

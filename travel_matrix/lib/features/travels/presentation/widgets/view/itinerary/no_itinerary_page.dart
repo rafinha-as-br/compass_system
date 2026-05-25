@@ -41,10 +41,7 @@ class NoItineraryPage extends StatelessWidget {
                       steps: null,
                       interestsPoints: travel.routePlan.interestsList
                           .map((ip) => InterestPointViewModel(
-                                id: ip.id,
-                                name: ip.name,
-                                description: ip.description,
-                              ))
+                            backEndId: backEndId, localId: localId, name: name, description: description))
                           .toList(),
                     ),
                   ),

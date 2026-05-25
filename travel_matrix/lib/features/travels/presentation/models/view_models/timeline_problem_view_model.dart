@@ -22,7 +22,7 @@ class TimelineProblemViewModel{
 
   /// color getter for UI
   Color get problemColor {
-    return Colors.yellow;
+    return Colors.amber.shade700;
   }
 
   /// Mapper method from [TimelineProblem] to [TimelineProblemViewModel]

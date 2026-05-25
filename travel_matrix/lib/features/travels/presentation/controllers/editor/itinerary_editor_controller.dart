@@ -274,7 +274,10 @@ class ItineraryEditorController extends ChangeNotifier {
     final List<TimelineProblem> timelineProblems = [];
 
     // making the itinerary analysis
-    final itineraryNodes = _stepsList.map((e) => e.toTimelineNode(sequenceIndex: _stepsList.indexOf(e))).toList();
+    final itineraryNodes = [
+      for (int i = 0; i < _stepsList.length; i++)
+        _stepsList[i].toTimelineNode(sequenceIndex: i)
+    ];
     final itineraryAnalysis = timelineAnalyzer(itineraryNodes);
     timelineProblems.addAll(itineraryAnalysis);
 
@@ -288,19 +291,22 @@ class ItineraryEditorController extends ChangeNotifier {
     }
 
     // updating the steps list
-    for(var step in _stepsList){
+    for (int i = 0; i < _stepsList.length; i++) {
+      final step = _stepsList[i];
       final List<TimelineProblemViewModel> problemsViewModel = [];
+      for (var problem in timelineProblems) {
+        if (problem.involves(step.localId)) {
+          // Find step1 and step2 from the list, default to the current step if not found
+          // (e.g. if the node is an internal transport node that shares the step's localId)
+          final step1 = _stepsList.firstWhere((s) => s.localId == problem.nodeId1, orElse: () => step);
+          final step2 = _stepsList.firstWhere((s) => s.localId == problem.nodeId2, orElse: () => step);
 
-      for(var problem in timelineProblems){
-        if(problem.involves(step.localId)){
-          final problemViewModel = TimelineProblemViewModel.fromTimelineProblem(problem, step, _stepsList[_stepsList.indexOf(step) - 1]);
+          final problemViewModel = TimelineProblemViewModel.fromTimelineProblem(problem, step1, step2);
           problemsViewModel.add(problemViewModel);
         }
       }
-
-
-      step.copyWith(problems: problemsViewModel.isEmpty ? null : problemsViewModel);
-
+      // assign back to the list (using the empty list to clear previous problems)
+      _stepsList[i] = step.copyWith(problems: problemsViewModel);
     }
 
   }

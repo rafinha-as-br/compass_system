@@ -7,6 +7,7 @@ import 'package:travel_matrix/shared/widgets/text_fields.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/hosting_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/stop_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/timeline_warning_box.dart';
 
 /// This panel is responsible for building/editing an [ItineraryStepViewModel] list,
 /// receiving a [ItineraryStepsBuildModel] as input for consuming.
@@ -273,7 +274,7 @@ class _StepFormRender extends StatelessWidget {
       padding: const EdgeInsets.all(16.0),
       decoration: BoxDecoration(
         border: Border.all(
-            color: step.problems != null ? Colors.yellow
+            color: (step.problems != null && step.problems!.isNotEmpty) ? Colors.amber.shade700
                 :
             Colors.transparent
         )
@@ -321,6 +322,8 @@ class _StepFormRender extends StatelessWidget {
                   _BasicStepForm(step: step, onChanged: onStepTypeChanged),
                   const SizedBox(height: 16),
                   formContent,
+                  if (step.problems != null && step.problems!.isNotEmpty)
+                    TimelineWarningBox(problems: step.problems!),
                 ],
               ),
             ),
