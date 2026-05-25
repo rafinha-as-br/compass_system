@@ -45,7 +45,7 @@ class TravelDTO {
       travelName: json[TravelApiFields.travelName],
       travelStatus: json[TravelApiFields.travelStatus],
       routePlan: RoutePlanDTO.fromJson(json[TravelApiFields.routePlan]),
-      participants: json[TravelApiFields.participants].map((x) => PersonDTO.fromJson(x)).toList(),
+      participants: (json[TravelApiFields.participants] as List<dynamic>?)?.map((x) => PersonDTO.fromJson(x as Map<String, dynamic>)).toList().cast<PersonDTO>() ?? [],
       eventsLog: json[TravelApiFields.events]?.map((x) => TravelEventDTO.fromJson(x)).toList(),
       itinerary: json[TravelApiFields.itinerary] == null ? null : ItineraryDTO.fromJson(json[TravelApiFields.itinerary]),
     );
