@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:mock_repository/mock_repository.dart';
 
-import '../../../build_models/itinerary_build_model.dart';
+import '../../../models/build_models/itinerary_build_model.dart';
+import '../../../models/view_models/route_view_model.dart';
 import '../../../pages/builds/itinerary_build_page.dart';
-import '../../../view_models/route_view_model.dart';
 
 /// Displayed when a travel has no itinerary yet.
 ///
@@ -41,10 +41,7 @@ class NoItineraryPage extends StatelessWidget {
                       steps: null,
                       interestsPoints: travel.routePlan.interestsList
                           .map((ip) => InterestPointViewModel(
-                                id: ip.id,
-                                name: ip.name,
-                                description: ip.description,
-                              ))
+                            backEndId: backEndId, localId: localId, name: name, description: description))
                           .toList(),
                     ),
                   ),

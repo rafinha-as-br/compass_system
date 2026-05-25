@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/timeline_analyzer.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../domain/entities/transport.dart';
@@ -170,11 +171,16 @@ abstract class TransportViewModel{
   /// To domain mapper method
   Transport toDomain();
 
+  /// To [TimelineNode] mapper method
+  TimelineNode? toTimelineNode();
+
+
   /// Provides the local ID for UI reference
   String get id => localId;
   // Provides the back end id for persistence
   String? get persistedId => backEndId;
 
+  ///
 
 }
 
@@ -196,6 +202,13 @@ class PlaceHolderTransportViewModel extends TransportViewModel{
       description: description,
     );
   }
+
+  /// Placeholder does not need to build a timeline node
+  @override
+  TimelineNode? toTimelineNode() {
+    return null;
+  }
+
 
 }
 
@@ -234,6 +247,17 @@ class RentalCarViewModel extends TransportViewModel{
       checkOutDate: checkOutDate,
     );
   }
+
+  @override
+  TimelineNode? toTimelineNode() {
+    return TimelineNode(
+      domainId: localId,
+      startDate: checkInDate,
+      finishDate: checkOutDate,
+      sequenceIndex: 1,
+    );
+  }
+
 
 
 }
@@ -278,6 +302,19 @@ class BusViewModel extends TransportViewModel{
     );
   }
 
+  @override
+  TimelineNode? toTimelineNode() {
+    return TimelineNode.instant(
+        domainId: localId,
+        date: departureDateTime,
+        sequenceIndex: 1
+    );
+  }
+
+
+
+
+
 }
 
 /// Airplane view model type, used to represent an [Airplane] on the UI
@@ -316,4 +353,14 @@ class AirplaneViewModel extends TransportViewModel{
       arrivalAirport: arrivalAirport,
     );
   }
+
+  @override
+  TimelineNode? toTimelineNode() {
+    return TimelineNode.instant(
+        domainId: localId,
+        date: flightDate,
+        sequenceIndex: 1
+    );
+  }
+
 }

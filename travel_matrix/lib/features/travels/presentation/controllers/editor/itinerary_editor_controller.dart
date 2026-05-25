@@ -1,5 +1,7 @@
 import 'package:flutter/cupertino.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/timeline_analyzer.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/timeline_problem_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/builds/itinerary_build_page.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/interest_points_panel.dart';
 
@@ -102,17 +104,17 @@ class ItineraryEditorController extends ChangeNotifier {
       position: StepPosition.finish,
       currentIndex: _selectedStepIndex
     );
-    addStep(firstStep);
-    addStep(lastStep);
+    addStep(newStep: firstStep);
+    addStep(newStep: lastStep);
   }
-  /// Add a new step on the Steps list, guarantees the first and last step are pinned to 0 and last index respectively
-  /// TODO: Every widget that comes here, must be already validated!
-  void addStep(ItineraryStepViewModel step) {
 
-    switch(step.position){
+  /// Add a new step on the Steps list, guarantees the first and last step are pinned to 0 and last index respectively
+  void addStep({required ItineraryStepViewModel newStep}) {
+
+    switch(newStep.position){
 
       case StepPosition.start:
-        _stepsList.insert(0, step);
+        _stepsList.insert(0, newStep);
         break;
 
       case StepPosition.middle:
@@ -122,21 +124,25 @@ class ItineraryEditorController extends ChangeNotifier {
         );
 
         if (finishIndex == -1) {
-          _stepsList.add(step);
+          _stepsList.add(newStep);
         } else {
-          _stepsList.insert(finishIndex, step);
+          _stepsList.insert(finishIndex, newStep);
         }
 
         break;
 
       case StepPosition.finish:
-        _stepsList.add(step);
+        _stepsList.add(newStep);
         break;
     }
+
+    /// Verifies the timeline problems
+    _commitTimelineChanges();
 
     notifyListeners();
   }
   /// Update step method, it safely protects against invalid change of step position.
+  /// This method works as a auto-save method.
   void updateStep(int index, ItineraryStepViewModel updatedStep) {
 
     if (index < 0 || index >= _stepsList.length) return;
@@ -150,6 +156,9 @@ class ItineraryEditorController extends ChangeNotifier {
     }
 
     _stepsList[index] = updatedStep;
+
+    /// Verifies the timeline problems
+    _commitTimelineChanges();
 
     notifyListeners();
   }
@@ -183,6 +192,9 @@ class ItineraryEditorController extends ChangeNotifier {
         _selectedStepIndex = _stepsList.length - 1;
       }
     }
+
+    // Verifies the timeline problems
+    _commitTimelineChanges();
 
     notifyListeners();
   }
@@ -250,8 +262,56 @@ class ItineraryEditorController extends ChangeNotifier {
       _selectedStepIndex++;
     }
 
+    // Verifies the timeline problems
+    _commitTimelineChanges();
+
     notifyListeners();
   }
+
+  /// Update the steps in the list with the TimelineProblems
+  void _commitTimelineChanges() {
+
+    final List<TimelineProblem> timelineProblems = [];
+
+    // making the itinerary analysis
+    final itineraryNodes = [
+      for (int i = 0; i < _stepsList.length; i++)
+        _stepsList[i].toTimelineNode(sequenceIndex: i)
+    ];
+    final itineraryAnalysis = timelineAnalyzer(itineraryNodes);
+    timelineProblems.addAll(itineraryAnalysis);
+
+    // making the steps analysis
+    for(var step in _stepsList){
+      final stepNodes = step.buildInternalTimeline();
+      if(stepNodes != null){
+        final stepAnalysis = timelineAnalyzer(stepNodes);
+        timelineProblems.addAll(stepAnalysis);
+      }
+    }
+
+    // updating the steps list
+    for (int i = 0; i < _stepsList.length; i++) {
+      final step = _stepsList[i];
+      final List<TimelineProblemViewModel> problemsViewModel = [];
+      for (var problem in timelineProblems) {
+        if (problem.involves(step.localId)) {
+          // Find step1 and step2 from the list, default to the current step if not found
+          // (e.g. if the node is an internal transport node that shares the step's localId)
+          final step1 = _stepsList.firstWhere((s) => s.localId == problem.nodeId1, orElse: () => step);
+          final step2 = _stepsList.firstWhere((s) => s.localId == problem.nodeId2, orElse: () => step);
+
+          final problemViewModel = TimelineProblemViewModel.fromTimelineProblem(problem, step1, step2);
+          problemsViewModel.add(problemViewModel);
+        }
+      }
+      // assign back to the list (using the empty list to clear previous problems)
+      _stepsList[i] = step.copyWith(problems: problemsViewModel);
+    }
+
+  }
+
+  /// Is itinerary without any errors checker
 
 
 }

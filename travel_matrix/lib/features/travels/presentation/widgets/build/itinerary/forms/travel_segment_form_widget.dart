@@ -1,16 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/itinerary_steps_view_models.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment/airplane_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment/bus_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment/rental_car_form_widget.dart';
 
-/// Form widget for editing a TravelSegment step.
-/// TODO: ADD CHANGE OF TRANSPORT TYPE SUPPORT
-/// TODO: Review the implementation of all theses text editing controllers into a separated file
-/// This widget must receive the view model class, callback actions from the edit controller and have an own controller for it,
-/// Ask chatgpt how to improve this UI
+import '../../../../../../../shared/widgets/text_fields.dart';
+import 'field_state.dart';
+
 class TravelSegmentFormWidget extends StatefulWidget {
-  final TravelSegment segment;
-  final ValueChanged<TravelSegment> onChanged;
-  final VoidCallback onDelete;
-
   const TravelSegmentFormWidget({
     super.key,
     required this.segment,
@@ -18,468 +16,394 @@ class TravelSegmentFormWidget extends StatefulWidget {
     required this.onDelete,
   });
 
+  final TravelSegmentStepViewModel segment;
+  final ValueChanged<TravelSegmentStepViewModel> onChanged;
+  final VoidCallback onDelete;
+
   @override
   State<TravelSegmentFormWidget> createState() =>
       _TravelSegmentFormWidgetState();
 }
 
-class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
-  late final TextEditingController _titleCtrl;
+class _TravelSegmentFormWidgetState
+    extends State<TravelSegmentFormWidget> {
+
+
   late final TextEditingController _startPointCtrl;
   late final TextEditingController _finishPointCtrl;
-  late DateTime _startDate;
-  late DateTime _finishDate;
-  late String _transportType;
 
-  // Airplane controllers
-  late final TextEditingController _flightNumberCtrl;
-  late final TextEditingController _flightCompanyCtrl;
-  late final TextEditingController _departureGateCtrl;
-  late final TextEditingController _departureAirportCtrl;
-  late final TextEditingController _arrivalAirportCtrl;
-
-  // Bus controllers
-  late final TextEditingController _busTravelNumberCtrl;
-  late final TextEditingController _busTravelCompanyCtrl;
-  late final TextEditingController _busDepartureGateCtrl;
-  late final TextEditingController _busStationNameCtrl;
-  late final TextEditingController _busDescriptionCtrl;
-
-  // RentalCar controllers
-  late final TextEditingController _vehicleModelCtrl;
-  late final TextEditingController _vehiclePlateCtrl;
-  late final TextEditingController _rentalCompanyCtrl;
+  late TravelSegmentFormState _formState;
 
   @override
   void initState() {
     super.initState();
-    _titleCtrl = TextEditingController(text: widget.segment.title);
-    _startPointCtrl = TextEditingController(text: widget.segment.startPoint);
-    _finishPointCtrl = TextEditingController(text: widget.segment.finishPoint);
-    _startDate = widget.segment.startDate;
-    _finishDate = widget.segment.finishDate;
 
-    _transportType = _resolveTransportType(widget.segment.transport);
 
-    // Initialize transport controllers
-    _flightNumberCtrl = TextEditingController();
-    _flightCompanyCtrl = TextEditingController();
-    _departureGateCtrl = TextEditingController();
-    _departureAirportCtrl = TextEditingController();
-    _arrivalAirportCtrl = TextEditingController();
-    _busTravelNumberCtrl = TextEditingController();
-    _busTravelCompanyCtrl = TextEditingController();
-    _busDepartureGateCtrl = TextEditingController();
-    _busStationNameCtrl = TextEditingController();
-    _busDescriptionCtrl = TextEditingController();
-    _vehicleModelCtrl = TextEditingController();
-    _vehiclePlateCtrl = TextEditingController();
-    _rentalCompanyCtrl = TextEditingController();
+    _startPointCtrl = TextEditingController(
+      text: widget.segment.startPoint,
+    );
 
-    _loadTransportData(widget.segment.transport);
+    _finishPointCtrl = TextEditingController(
+      text: widget.segment.finishPoint,
+    );
+
+    _formState = TravelSegmentFormState(
+      startPoint: FieldState(
+        value: widget.segment.startPoint,
+      ),
+      finishPoint: FieldState(
+        value: widget.segment.finishPoint,
+      ),
+      transport: widget.segment.transport,
+    );
   }
 
-  String _resolveTransportType(Transport transport) {
-    if (transport is Airplane) return 'airplane';
-    if (transport is Bus) return 'bus';
-    if (transport is RentalCar) return 'rental_car';
-    return 'airplane';
-  }
+  @override
+  void dispose() {
 
-  void _loadTransportData(Transport transport) {
-    if (transport is Airplane) {
-      _flightNumberCtrl.text = transport.flightNumber;
-      _flightCompanyCtrl.text = transport.flightCompany;
-      _departureGateCtrl.text = transport.departureGate;
-      _departureAirportCtrl.text = transport.departureAirport;
-      _arrivalAirportCtrl.text = transport.arrivalAirport;
-    } else if (transport is Bus) {
-      _busTravelNumberCtrl.text = transport.travelNumber;
-      _busTravelCompanyCtrl.text = transport.travelCompany;
-      _busDepartureGateCtrl.text = transport.departureGate;
-      _busStationNameCtrl.text = transport.busStationName;
-      _busDescriptionCtrl.text = transport.description;
-    } else if (transport is RentalCar) {
-      _vehicleModelCtrl.text = transport.vehicleModelName;
-      _vehiclePlateCtrl.text = transport.vehicleLicensePlate;
-      _rentalCompanyCtrl.text = transport.companyName;
-    }
+    _startPointCtrl.dispose();
+    _finishPointCtrl.dispose();
+    super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant TravelSegmentFormWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.segment.id != widget.segment.id) {
-      _titleCtrl.text = widget.segment.title;
+
+    if (oldWidget.segment != widget.segment) {
+
+
       _startPointCtrl.text = widget.segment.startPoint;
       _finishPointCtrl.text = widget.segment.finishPoint;
-      _startDate = widget.segment.startDate;
-      _finishDate = widget.segment.finishDate;
-      _transportType = _resolveTransportType(widget.segment.transport);
-      _loadTransportData(widget.segment.transport);
+
+      _formState = TravelSegmentFormState(
+        startPoint: FieldState(
+          value: widget.segment.startPoint,
+        ),
+        finishPoint: FieldState(
+          value: widget.segment.finishPoint,
+        ),
+        transport: widget.segment.transport,
+      );
+
+      setState(() {});
     }
   }
 
-  @override
-  void dispose() {
-    _titleCtrl.dispose();
-    _startPointCtrl.dispose();
-    _finishPointCtrl.dispose();
-    _flightNumberCtrl.dispose();
-    _flightCompanyCtrl.dispose();
-    _departureGateCtrl.dispose();
-    _departureAirportCtrl.dispose();
-    _arrivalAirportCtrl.dispose();
-    _busTravelNumberCtrl.dispose();
-    _busTravelCompanyCtrl.dispose();
-    _busDepartureGateCtrl.dispose();
-    _busStationNameCtrl.dispose();
-    _busDescriptionCtrl.dispose();
-    _vehicleModelCtrl.dispose();
-    _vehiclePlateCtrl.dispose();
-    _rentalCompanyCtrl.dispose();
-    super.dispose();
+  FieldState<String> _validateRequiredField(String value) {
+
+    if (value.trim().isEmpty) {
+      return FieldState(
+        value: value,
+        error: 'Field cannot be empty',
+        isTouched: true,
+      );
+    }
+
+    return FieldState(
+      value: value,
+      isTouched: true,
+    );
   }
 
-  Transport _buildTransport() {
-    final now = DateTime.now();
-    final id = widget.segment.transport.id;
+  void _onStartPointChanged(String value) {
 
-    switch (_transportType) {
+    final validatedField = _validateRequiredField(value);
+
+    setState(() {
+      _formState = _formState.copyWith(
+        startPoint: validatedField,
+      );
+    });
+
+    _emitIfValid();
+  }
+
+  void _onFinishPointChanged(String value) {
+
+    final validatedField = _validateRequiredField(value);
+
+    setState(() {
+      _formState = _formState.copyWith(
+        finishPoint: validatedField,
+      );
+    });
+
+    _emitIfValid();
+  }
+
+  void _emitIfValid() {
+
+    if (!_formState.isValid) {
+      return;
+    }
+
+    widget.onChanged(
+      widget.segment.copyWith(
+        title: widget.segment.title,
+        startDate: widget.segment.startDate,
+        finishDate: widget.segment.finishDate,
+        startPoint: _formState.startPoint.value,
+        finishPoint: _formState.finishPoint.value,
+        transport: _formState.transport,
+      ),
+    );
+  }
+
+  void _changeTransportType(String type) {
+
+    late TransportViewModel newTransport;
+
+    switch (type) {
+
       case 'airplane':
-        return Airplane(
-          id: id,
-          flightNumber: _flightNumberCtrl.text,
-          flightCompany: _flightCompanyCtrl.text,
-          flightDate: _startDate,
-          departureGate: _departureGateCtrl.text,
-          departureAirport: _departureAirportCtrl.text,
-          arrivalAirport: _arrivalAirportCtrl.text,
-        );
-      case 'bus':
-        return Bus(
-          id: id,
-          travelNumber: _busTravelNumberCtrl.text,
-          travelCompany: _busTravelCompanyCtrl.text,
-          departureGate: _busDepartureGateCtrl.text,
-          departureDateTime: _startDate,
-          busStationName: _busStationNameCtrl.text,
-          description: _busDescriptionCtrl.text,
-          details: null,
-        );
-      case 'rental_car':
-        return RentalCar(
-          id: id,
-          vehicleModelName: _vehicleModelCtrl.text,
-          vehicleLicensePlate: _vehiclePlateCtrl.text,
-          companyName: _rentalCompanyCtrl.text,
-          checkInDate: _startDate,
-          checkOutDate: _finishDate,
-        );
-      default:
-        return Airplane(
-          id: id,
+        newTransport = TransportViewModel.newAirplane(
           flightNumber: '',
           flightCompany: '',
-          flightDate: now,
+          flightDate: DateTime.now(),
           departureGate: '',
           departureAirport: '',
           arrivalAirport: '',
         );
+        break;
+
+      case 'bus':
+        newTransport = TransportViewModel.newBus(
+          travelNumber: '',
+          travelCompany: '',
+          departureGate: '',
+          departureDateTime: DateTime.now(),
+          busStationName: '',
+          description: '',
+          details: null,
+        );
+        break;
+
+      case 'rental_car':
+        newTransport = TransportViewModel.newRentalCar(
+          vehicleModelName: '',
+          vehicleLicensePlate: '',
+          companyName: '',
+          checkInDate: DateTime.now(),
+          checkOutDate: DateTime.now(),
+        );
+        break;
     }
+
+    setState(() {
+      _formState = _formState.copyWith(
+        transport: newTransport,
+      );
+    });
+
+    _emitIfValid();
   }
 
-  void _emitChange() {
-    widget.onChanged(TravelSegment(
-      id: widget.segment.id,
-      title: _titleCtrl.text,
-      startDate: _startDate,
-      finishDate: _finishDate,
-      travelSegmentId: widget.segment.travelSegmentId,
-      transport: _buildTransport(),
-      startPoint: _startPointCtrl.text,
-      finishPoint: _finishPointCtrl.text,
-    ));
-  }
+  String get _selectedTransportType {
 
-  Future<void> _pickDate({
-    required DateTime current,
-    required ValueChanged<DateTime> onPicked,
-  }) async {
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: current,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
-    );
-    if (picked != null) {
-      setState(() => onPicked(picked));
-      _emitChange();
+    if (_formState.transport is AirplaneViewModel) {
+      return 'airplane';
     }
-  }
 
-  String _formatDate(DateTime dt) =>
-      '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
+    if (_formState.transport is BusViewModel) {
+      return 'bus';
+    }
+
+    return 'rental_car';
+  }
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Travel Segment',
-          style: theme.textTheme.titleMedium
-              ?.copyWith(fontWeight: FontWeight.w600),
+    return Container(
+      padding: const EdgeInsets.all(16),
+
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: Theme.of(context).colorScheme.secondary,
         ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: _titleCtrl,
-          decoration: const InputDecoration(
-            labelText: 'Step Title',
-            border: OutlineInputBorder(),
+      ),
+
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+
+
+
+          Row(
+            children: [
+
+              Expanded(
+                child: CustomFormField.text(
+                  label: 'Start Point',
+                  enabled: true,
+                  controller: _startPointCtrl,
+                  errorText: _formState.startPoint.isTouched
+                      ? _formState.startPoint.error
+                      : null,
+                  onChanged: _onStartPointChanged,
+                ),
+              ),
+
+              const SizedBox(width: 12),
+
+              Expanded(
+                child: CustomFormField.text(
+                  label: 'Finish Point',
+                  enabled: true,
+                  controller: _finishPointCtrl,
+                  errorText: _formState.finishPoint.isTouched
+                      ? _formState.finishPoint.error
+                      : null,
+                  onChanged: _onFinishPointChanged,
+                ),
+              ),
+            ],
           ),
-          onChanged: (_) => _emitChange(),
-        ),
-        const SizedBox(height: 12),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _startPointCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Start Point',
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (_) => _emitChange(),
-              ),
+
+          const SizedBox(height: 16),
+
+          DropdownButtonFormField<String>(
+            initialValue: _selectedTransportType,
+
+            decoration: const InputDecoration(
+              labelText: 'Transport Type',
+              border: OutlineInputBorder(),
             ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: TextField(
-                controller: _finishPointCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Finish Point',
-                  border: OutlineInputBorder(),
-                ),
-                onChanged: (_) => _emitChange(),
+
+            items: const [
+
+              DropdownMenuItem(
+                value: 'airplane',
+                child: Text('Airplane'),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => _pickDate(
-                  current: _startDate,
-                  onPicked: (d) => _startDate = d,
-                ),
-                icon: const Icon(Icons.calendar_today, size: 16),
-                label: Text('Start: ${_formatDate(_startDate)}'),
+
+              DropdownMenuItem(
+                value: 'bus',
+                child: Text('Bus'),
               ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => _pickDate(
-                  current: _finishDate,
-                  onPicked: (d) => _finishDate = d,
-                ),
-                icon: const Icon(Icons.event, size: 16),
-                label: Text('End: ${_formatDate(_finishDate)}'),
+
+              DropdownMenuItem(
+                value: 'rental_car',
+                child: Text('Rental Car'),
               ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 16),
-        Text(
-          'Transport Type',
-          style: theme.textTheme.bodyMedium?.copyWith(
-            fontWeight: FontWeight.w600,
+            ],
+
+            onChanged: (value) {
+
+              if (value == null) {
+                return;
+              }
+
+              _changeTransportType(value);
+            },
           ),
-        ),
-        const SizedBox(height: 8),
-        SegmentedButton<String>(
-          segments: const [
-            ButtonSegment(value: 'airplane', label: Text('Airplane')),
-            ButtonSegment(value: 'bus', label: Text('Bus')),
-            ButtonSegment(value: 'rental_car', label: Text('Rental Car')),
-          ],
-          selected: {_transportType},
-          onSelectionChanged: (selected) {
-            setState(() => _transportType = selected.first);
-            _emitChange();
-          },
-        ),
-        const SizedBox(height: 16),
-        _buildTransportFields(theme),
-        const SizedBox(height: 24),
-        OutlinedButton.icon(
-          onPressed: widget.onDelete,
-          icon: const Icon(Icons.delete_outline),
-          label: const Text('Delete Step'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: theme.colorScheme.error,
-            side: BorderSide(color: theme.colorScheme.error),
+
+          const SizedBox(height: 16),
+
+          _buildTransportForm(),
+
+          const SizedBox(height: 16),
+
+          OutlinedButton.icon(
+            onPressed: widget.onDelete,
+            icon: const Icon(Icons.delete),
+            label: const Text('Delete Step'),
           ),
-        ),
-      ],
+        ],
+      ),
     );
   }
 
-  Widget _buildTransportFields(ThemeData theme) {
-    switch (_transportType) {
-      case 'airplane':
-        return Column(
-          children: [
-            TextField(
-              controller: _flightNumberCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Flight Number',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _emitChange(),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _flightCompanyCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Airline Company',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _emitChange(),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _departureGateCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Departure Gate',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _emitChange(),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _departureAirportCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Departure Airport',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (_) => _emitChange(),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _arrivalAirportCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Arrival Airport',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (_) => _emitChange(),
-                  ),
-                ),
-              ],
-            ),
-          ],
+  Widget _buildTransportForm() {
+
+    switch (_formState.transport) {
+
+      case AirplaneViewModel airplane:
+
+        return AirplaneForm(
+          airplaneViewModel: airplane,
+
+          onChanged: (updatedAirplane) {
+
+            setState(() {
+              _formState = _formState.copyWith(
+                transport: updatedAirplane,
+              );
+            });
+
+            _emitIfValid();
+          },
         );
-      case 'bus':
-        return Column(
-          children: [
-            TextField(
-              controller: _busTravelNumberCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Travel Number',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _emitChange(),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _busTravelCompanyCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Travel Company',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _emitChange(),
-            ),
-            const SizedBox(height: 12),
-            Row(
-              children: [
-                Expanded(
-                  child: TextField(
-                    controller: _busDepartureGateCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Departure Gate',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (_) => _emitChange(),
-                  ),
-                ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: TextField(
-                    controller: _busStationNameCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Bus Station',
-                      border: OutlineInputBorder(),
-                    ),
-                    onChanged: (_) => _emitChange(),
-                  ),
-                ),
-              ],
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _busDescriptionCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Description',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _emitChange(),
-            ),
-          ],
+
+      case BusViewModel bus:
+
+        return BusForm(
+          busViewModel: bus,
+
+          onChanged: (updatedBus) {
+
+            setState(() {
+              _formState = _formState.copyWith(
+                transport: updatedBus,
+              );
+            });
+
+            _emitIfValid();
+          },
         );
-      case 'rental_car':
-        return Column(
-          children: [
-            TextField(
-              controller: _vehicleModelCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Vehicle Model',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _emitChange(),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _vehiclePlateCtrl,
-              decoration: const InputDecoration(
-                labelText: 'License Plate',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _emitChange(),
-            ),
-            const SizedBox(height: 12),
-            TextField(
-              controller: _rentalCompanyCtrl,
-              decoration: const InputDecoration(
-                labelText: 'Rental Company',
-                border: OutlineInputBorder(),
-              ),
-              onChanged: (_) => _emitChange(),
-            ),
-          ],
+
+      case RentalCarViewModel rentalCar:
+
+        return RentalCarForm(
+          rentalCar: rentalCar,
+
+          onChanged: (updatedRentalCar) {
+
+            setState(() {
+              _formState = _formState.copyWith(
+                transport: updatedRentalCar,
+              );
+            });
+
+            _emitIfValid();
+          },
         );
+
       default:
         return const SizedBox.shrink();
     }
+  }
+}
+
+/// Represents the state of the [TravelSegmentFormWidget]
+class TravelSegmentFormState {
+
+  final FieldState<String> startPoint;
+  final FieldState<String> finishPoint;
+
+  /// Transport already contains its own internal validation
+  final TransportViewModel transport;
+
+  bool get isValid =>
+      startPoint.isValid &&
+          finishPoint.isValid;
+
+  const TravelSegmentFormState({
+    required this.startPoint,
+    required this.finishPoint,
+    required this.transport,
+  });
+
+  TravelSegmentFormState copyWith({
+    FieldState<String>? startPoint,
+    FieldState<String>? finishPoint,
+    TransportViewModel? transport,
+  }) {
+    return TravelSegmentFormState(
+      startPoint: startPoint ?? this.startPoint,
+      finishPoint: finishPoint ?? this.finishPoint,
+      transport: transport ?? this.transport,
+    );
   }
 }

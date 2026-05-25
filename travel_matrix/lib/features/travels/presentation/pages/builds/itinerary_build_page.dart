@@ -65,7 +65,7 @@ class ItineraryBuildPage extends StatelessWidget {
         // Editor controller dependency injection
         ChangeNotifierProvider(
             create: (_) => ItineraryEditorController(
-              stepsList: isEditMode ? itineraryBuildModel.steps!.normalSteps : null,
+              steps: isEditMode ? itineraryBuildModel.steps!.normalSteps : null,
               interestPoints: itineraryBuildModel.interestsPoints,
             )
         ),
@@ -124,28 +124,8 @@ class _ItineraryBuildView extends StatelessWidget {
           onPressed: () => Navigator.of(context).pop(),
         ),
         actions: [
-          /// Save button
-          TextButton.icon(
-            onPressed: editor.isSubmitting ? null : () => _saveItinerary(),
-            icon: Icon(Icons.save, color: theme.colorScheme.onPrimary),
-            label: Text(
-              'Save',
-              style: TextStyle(color: theme.colorScheme.onPrimary),
-            ),
-          ),
-          const SizedBox(width: 8),
 
-          /// Finish itinerary button
-          ElevatedButton(
-            onPressed: editor.isSubmitting
-                ? null
-                : () => _saveItinerary(finish: true),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: theme.colorScheme.secondary,
-              foregroundColor: theme.colorScheme.onSecondary,
-            ),
-            child: const Text('Finish Itinerary'),
-          ),
+          /// Finish itinerary button -> Not available on the moment
           const SizedBox(width: 16),
         ],
       ),
@@ -160,17 +140,30 @@ class _ItineraryBuildView extends StatelessWidget {
           VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
 
           // ─── Center: Step workflow ──────────────────────────────
-          StepsBuilderPanel(),
+          StepsBuilderPanel(
+              steps: steps,
+              selectedIndex: selectedIndex,
+              goToPreviousStep: editor.goToPreviousStep,
+              goToNextStep: editor.goToNextStep,
+              addStep: editor.addStep,
+              updateStep: editor.updateStep,
+              removeStep: editor.deleteStep
+          ),
           VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
 
           // ─── Right: Steps list ──────────────────────────────────
           StepsListPanel(
-            steps: steps,
-            selectedIndex: selectedIndex,
-            onAddStep: _addStep,
-          ),
+              steps: steps,
+              selectedIndex: selectedIndex,
+              onSelectStep: editor.selectStep,
+              addStep: editor.addStep,
+              onReorder: editor.reorderSteps,
+              onDeleteStep: editor.deleteStep
+          )
         ],
       ),
     );
   }
 }
+
+
