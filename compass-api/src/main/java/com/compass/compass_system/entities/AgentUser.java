@@ -1,4 +1,4 @@
-package com.compass.compass_system;
+package com.compass.compass_system.entities;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -6,31 +6,30 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
 @Entity
-public class UsuarioAgente {
+public class AgentUser {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    private String nome;
+    private String name;
     private String cpf;
-    private Integer idade;
+    private Integer age;
     private String cnpj; 
-    private String sexo;
-    private String telefone;
+    private String gender;
+    private String phone;
     private String email;
-    private String senha;
+    private String password;
     
-    public UsuarioAgente() {
+    public AgentUser() {
     }
 
-
-    public String getSenha() {
-        return senha;
+    public String getPassword() {
+        return password;
     }
 
-    public void setSenha(String senha) {
-        this.senha = senha;
+    public void setPassword(String password) {
+        this.password = password;
     }
 
     public Long getId() {
@@ -41,12 +40,12 @@ public class UsuarioAgente {
         this.id = id;
     }
 
-    public String getNome() {
-        return nome;
+    public String getName() {
+        return name;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getCpf() {
@@ -57,12 +56,12 @@ public class UsuarioAgente {
         this.cpf = cpf;
     }
 
-    public Integer getIdade() {
-        return idade;
+    public Integer getAge() {
+        return age;
     }
 
-    public void setIdade(Integer idade) {
-        this.idade = idade;
+    public void setAge(Integer age) {
+        this.age = age;
     }
 
     public String getCnpj() {
@@ -73,20 +72,20 @@ public class UsuarioAgente {
         this.cnpj = cnpj;
     }
 
-    public String getSexo() {
-        return sexo;
+    public String getGender() {
+        return gender;
     }
 
-    public void setSexo(String sexo) {
-        this.sexo = sexo;
+    public void setGender(String gender) {
+        this.gender = gender;
     }
 
-    public String getTelefone() {
-        return telefone;
+    public String getPhone() {
+        return phone;
     }
 
-    public void setTelefone(String telefone) {
-        this.telefone = telefone;
+    public void setPhone(String phone) {
+        this.phone = phone;
     }
 
     public String getEmail() {
