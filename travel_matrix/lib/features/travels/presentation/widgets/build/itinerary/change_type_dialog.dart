@@ -29,7 +29,20 @@ class ChangeTransportTypeDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    return AlertDialog(
+      title: const Text('Change Transport Type?'),
+      content: const Text('Changing the transport type will result in the loss of specific data entered for the current transport. Do you wish to proceed?'),
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(false),
+          child: const Text('Cancel'),
+        ),
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(true),
+          child: const Text('Proceed'),
+        ),
+      ],
+    );
   }
 }
 

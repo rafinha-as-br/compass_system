@@ -7,17 +7,11 @@ import 'package:travel_matrix/features/travels/presentation/controllers/update/i
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/interest_points_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_builder_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_list_panel.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/step_type_selector.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/stop_form_widget.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/hosting_form_widget.dart';
-import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment_form_widget.dart';
 
 import '../../../data/repository_impl/itinerary_repository_impl.dart';
 import '../../../domain/repository/itinerary_repository.dart';
 import '../../../domain/usecases/crud_itinerary.dart';
 import '../../models/build_models/itinerary_build_model.dart';
-import '../../models/view_models/itinerary_steps_view_models.dart';
-import '../../models/view_models/transports_view_model.dart';
 
 /// Page responsible for creating and editing an [Itinerary] for a travel.
 ///

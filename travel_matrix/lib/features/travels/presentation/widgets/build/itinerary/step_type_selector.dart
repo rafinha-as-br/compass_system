@@ -1,27 +1,17 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/itinerary_steps_view_models.dart';
 
-/// The three concrete step types available.
-enum StepType { stop, hosting, travelSegment }
-
-/// TODO: REVIEW THIS HOLE WIDGET
-/// - Must be called when there is a Step of PlaceHolder type, must go down below the placeholder data display
-/// - With every step type has an icon now, review the implementation of this widget
-
-
-/// Renders the UI for an untyped placeholder step, allowing the user
-/// to set a title and choose which type of step to create.
+/// Renders the UI for selecting a step type.
 class StepTypeSelector extends StatelessWidget {
-  final String title;
-  final ValueChanged<String> onTitleChanged;
-  final ValueChanged<StepType> onTypeSelected;
-  final VoidCallback onDelete;
+  final Type selectedType;
+  final ValueChanged<Type> onTypeSelected;
+  final bool allowPlaceholder;
 
   const StepTypeSelector({
     super.key,
-    required this.title,
-    required this.onTitleChanged,
+    required this.selectedType,
     required this.onTypeSelected,
-    required this.onDelete,
+    this.allowPlaceholder = true,
   });
 
   @override
@@ -31,21 +21,6 @@ class StepTypeSelector extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          'New Step',
-          style: theme.textTheme.titleMedium
-              ?.copyWith(fontWeight: FontWeight.w600),
-        ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: TextEditingController(text: title),
-          decoration: const InputDecoration(
-            labelText: 'Step Title',
-            border: OutlineInputBorder(),
-          ),
-          onChanged: onTitleChanged,
-        ),
-        const SizedBox(height: 24),
         Text(
           'Choose step type:',
           style: theme.textTheme.bodyMedium?.copyWith(
@@ -57,64 +32,112 @@ class StepTypeSelector extends StatelessWidget {
           spacing: 12,
           runSpacing: 12,
           children: [
-            _TypeButton(
+            if (allowPlaceholder)
+              _TypeCard(
+                icon: Icons.help_outline,
+                title: 'Placeholder',
+                subtitle: 'Undecided step',
+                isSelected: selectedType == PlaceHolderStepViewModel,
+                onTap: () => onTypeSelected(PlaceHolderStepViewModel),
+              ),
+            _TypeCard(
               icon: Icons.place,
-              label: 'Add Stop',
-              color: theme.colorScheme.primary,
-              onPressed: () => onTypeSelected(StepType.stop),
+              title: 'Stop',
+              subtitle: 'Place to visit',
+              isSelected: selectedType == StopStepViewModel,
+              onTap: () => onTypeSelected(StopStepViewModel),
             ),
-            _TypeButton(
+            _TypeCard(
               icon: Icons.hotel,
-              label: 'Add Hosting',
-              color: theme.colorScheme.primary,
-              onPressed: () => onTypeSelected(StepType.hosting),
+              title: 'Hosting',
+              subtitle: 'Place to stay',
+              isSelected: selectedType == HostingStepViewModel,
+              onTap: () => onTypeSelected(HostingStepViewModel),
             ),
-            _TypeButton(
-              icon: Icons.flight,
-              label: 'Add Travel Segment',
-              color: theme.colorScheme.primary,
-              onPressed: () => onTypeSelected(StepType.travelSegment),
+            _TypeCard(
+              icon: Icons.route,
+              title: 'Travel Segment',
+              subtitle: 'Moving around',
+              isSelected: selectedType == TravelSegmentStepViewModel,
+              onTap: () => onTypeSelected(TravelSegmentStepViewModel),
             ),
           ],
-        ),
-        const SizedBox(height: 32),
-        OutlinedButton.icon(
-          onPressed: onDelete,
-          icon: const Icon(Icons.delete_outline),
-          label: const Text('Delete Step'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: theme.colorScheme.error,
-            side: BorderSide(color: theme.colorScheme.error),
-          ),
         ),
       ],
     );
   }
 }
 
-class _TypeButton extends StatelessWidget {
+class _TypeCard extends StatelessWidget {
   final IconData icon;
-  final String label;
-  final Color color;
-  final VoidCallback onPressed;
+  final String title;
+  final String subtitle;
+  final bool isSelected;
+  final VoidCallback onTap;
 
-  const _TypeButton({
+  const _TypeCard({
     required this.icon,
-    required this.label,
-    required this.color,
-    required this.onPressed,
+    required this.title,
+    required this.subtitle,
+    required this.isSelected,
+    required this.onTap,
   });
 
   @override
   Widget build(BuildContext context) {
-    return ElevatedButton.icon(
-      onPressed: onPressed,
-      icon: Icon(icon),
-      label: Text(label),
-      style: ElevatedButton.styleFrom(
-        backgroundColor: color,
-        foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 160,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? colorScheme.primary.withValues(alpha: 0.08) : Colors.transparent,
+          border: Border.all(
+            color: isSelected ? colorScheme.primary : colorScheme.outlineVariant,
+            width: isSelected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Icon(
+                  icon,
+                  color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+                ),
+                if (isSelected)
+                  Icon(
+                    Icons.check_circle,
+                    color: colorScheme.primary,
+                    size: 20,
+                  ),
+              ],
+            ),
+            const SizedBox(height: 12),
+            Text(
+              title,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              subtitle,
+              style: theme.textTheme.bodySmall?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }

@@ -8,6 +8,7 @@ import 'package:travel_matrix/features/travels/presentation/widgets/build/itiner
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/stop_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/timeline_warning_box.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/step_type_selector.dart';
 
 /// This panel is responsible for building/editing an [ItineraryStepViewModel] list,
 /// receiving a [ItineraryStepsBuildModel] as input for consuming.
@@ -266,8 +267,8 @@ class _StepFormRender extends StatelessWidget {
         onDelete: onDelete,
       );
     } else {
-      /// Empty state shown when no steps have been added yet.
-      formContent = const Placeholder();
+      /// Empty state shown while the current placeholder step has no concrete type.
+      formContent = const _StepTypeEmptyState();
     }
 
     return Container(
@@ -281,49 +282,24 @@ class _StepFormRender extends StatelessWidget {
       ),
       child: Column(
         children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: DropdownButtonFormField<Type>(
-              initialValue: step.runtimeType,
-              decoration: const InputDecoration(
-                labelText: 'Step Type',
-                border: OutlineInputBorder(),
-              ),
-              items: const [
-                DropdownMenuItem(
-                  value: PlaceHolderStepViewModel,
-                  child: Text('Placeholder'),
-                ),
-                DropdownMenuItem(
-                  value: StopStepViewModel,
-                  child: Text('Stop'),
-                ),
-                DropdownMenuItem(
-                  value: HostingStepViewModel,
-                  child: Text('Hosting'),
-                ),
-                DropdownMenuItem(
-                  value: TravelSegmentStepViewModel,
-                  child: Text('Travel Segment'),
-                ),
-              ],
-              onChanged: (newType) {
-                if (newType != null) {
-                  _handleTypeChange(context, newType);
-                }
-              },
-            ),
-          ),
           Expanded(
             child: SingleChildScrollView(
               padding: const EdgeInsets.all(16.0),
               child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   _BasicStepForm(step: step, onChanged: onStepTypeChanged),
-                  const SizedBox(height: 16),
+                  const SizedBox(height: 24),
+                  StepTypeSelector(
+                    selectedType: step.runtimeType,
+                    onTypeSelected: (newType) => _handleTypeChange(context, newType),
+                  ),
+                  const SizedBox(height: 24),
                   formContent,
-                  if (step.problems != null && step.problems!.isNotEmpty)
+                  if (step.problems != null && step.problems!.isNotEmpty) ...[
+                    const SizedBox(height: 16),
                     TimelineWarningBox(problems: step.problems!),
+                  ],
                 ],
               ),
             ),
@@ -438,6 +414,43 @@ class _BasicStepFormState extends State<_BasicStepForm> {
           ],
         ),
       ],
+    );
+  }
+}
+
+class _StepTypeEmptyState extends StatelessWidget {
+  const _StepTypeEmptyState();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        color: colorScheme.surfaceContainerHighest.withValues(alpha: 0.35),
+        border: Border.all(color: colorScheme.outlineVariant),
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Row(
+        children: [
+          Icon(
+            Icons.touch_app_outlined,
+            color: colorScheme.onSurfaceVariant,
+          ),
+          const SizedBox(width: 12),
+          Expanded(
+            child: Text(
+              'Choose a step type to continue editing this itinerary step.',
+              style: theme.textTheme.bodyMedium?.copyWith(
+                color: colorScheme.onSurfaceVariant,
+              ),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

@@ -4,6 +4,7 @@ import 'package:travel_matrix/features/travels/presentation/models/view_models/t
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment/airplane_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment/bus_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment/rental_car_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/change_type_dialog.dart';
 
 import '../../../../../../../shared/widgets/text_fields.dart';
 import 'field_state.dart';
@@ -150,7 +151,20 @@ class _TravelSegmentFormWidgetState
     );
   }
 
-  void _changeTransportType(String type) {
+  Future<void> _changeTransportType(String type) async {
+
+    if (type == _selectedTransportType) {
+      return;
+    }
+
+    if (_formState.transport is! PlaceHolderTransportViewModel) {
+      final confirm = await showDialog<bool>(
+        context: context,
+        builder: (context) => const ChangeTransportTypeDialog(),
+      );
+
+      if (confirm != true) return;
+    }
 
     late TransportViewModel newTransport;
 
@@ -209,7 +223,11 @@ class _TravelSegmentFormWidgetState
       return 'bus';
     }
 
-    return 'rental_car';
+    if (_formState.transport is RentalCarViewModel) {
+      return 'rental_car';
+    }
+
+    return '';
   }
 
   @override
@@ -263,38 +281,11 @@ class _TravelSegmentFormWidgetState
 
           const SizedBox(height: 16),
 
-          DropdownButtonFormField<String>(
-            initialValue: _selectedTransportType,
+          const SizedBox(height: 16),
 
-            decoration: const InputDecoration(
-              labelText: 'Transport Type',
-              border: OutlineInputBorder(),
-            ),
-
-            items: const [
-
-              DropdownMenuItem(
-                value: 'airplane',
-                child: Text('Airplane'),
-              ),
-
-              DropdownMenuItem(
-                value: 'bus',
-                child: Text('Bus'),
-              ),
-
-              DropdownMenuItem(
-                value: 'rental_car',
-                child: Text('Rental Car'),
-              ),
-            ],
-
-            onChanged: (value) {
-
-              if (value == null) {
-                return;
-              }
-
+          _TransportTypeSelector(
+            selectedType: _selectedTransportType,
+            onTypeSelected: (value) {
               _changeTransportType(value);
             },
           ),
@@ -404,6 +395,115 @@ class TravelSegmentFormState {
       startPoint: startPoint ?? this.startPoint,
       finishPoint: finishPoint ?? this.finishPoint,
       transport: transport ?? this.transport,
+    );
+  }
+}
+
+class _TransportTypeSelector extends StatelessWidget {
+  final String selectedType;
+  final ValueChanged<String> onTypeSelected;
+
+  const _TransportTypeSelector({
+    required this.selectedType,
+    required this.onTypeSelected,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(
+          'Transport Type',
+          style: theme.textTheme.bodyMedium?.copyWith(
+            color: colorScheme.onSurface.withValues(alpha: 0.6),
+          ),
+        ),
+        const SizedBox(height: 12),
+        Wrap(
+          spacing: 12,
+          runSpacing: 12,
+          children: [
+            _TransportCard(
+              icon: Icons.flight_takeoff,
+              title: 'Airplane',
+              isSelected: selectedType == 'airplane',
+              onTap: () => onTypeSelected('airplane'),
+            ),
+            _TransportCard(
+              icon: Icons.directions_bus,
+              title: 'Bus',
+              isSelected: selectedType == 'bus',
+              onTap: () => onTypeSelected('bus'),
+            ),
+            _TransportCard(
+              icon: Icons.car_rental,
+              title: 'Rental Car',
+              isSelected: selectedType == 'rental_car',
+              onTap: () => onTypeSelected('rental_car'),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+}
+
+class _TransportCard extends StatelessWidget {
+  final IconData icon;
+  final String title;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  const _TransportCard({
+    required this.icon,
+    required this.title,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+    
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        width: 120,
+        padding: const EdgeInsets.all(12),
+        decoration: BoxDecoration(
+          color: isSelected ? colorScheme.primary.withValues(alpha: 0.08) : Colors.transparent,
+          border: Border.all(
+            color: isSelected ? colorScheme.primary : colorScheme.outlineVariant,
+            width: isSelected ? 2 : 1,
+          ),
+          borderRadius: BorderRadius.circular(12),
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              icon,
+              color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+            ),
+            const SizedBox(height: 8),
+            Text(
+              title,
+              textAlign: TextAlign.center,
+              style: theme.textTheme.titleSmall?.copyWith(
+                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+                color: isSelected ? colorScheme.primary : colorScheme.onSurface,
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 }
