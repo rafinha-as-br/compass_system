@@ -293,7 +293,7 @@ class AirplaneDTO extends TransportDTO {
     return AirplaneDTO(
       id: json[TransportApiFields.id],
       flightNumber: json[TransportApiFields.flightNumber],
-      flightCompany: json[TransportApiFields.flightCompany],
+      flightCompany: json[TransportApiFields.companyName],
       flightDate: DateTime.parse(json[TransportApiFields.flightDate]),
       departureGate: json[TransportApiFields.departureGate],
       departureAirport: json[TransportApiFields.departureAirport],
@@ -307,7 +307,7 @@ class AirplaneDTO extends TransportDTO {
       TransportApiFields.type: TransportApiValues.airplane,
       TransportApiFields.id: id,
       TransportApiFields.flightNumber: flightNumber,
-      TransportApiFields.flightCompany: flightCompany,
+      TransportApiFields.companyName: flightCompany,
       TransportApiFields.flightDate: flightDate.toIso8601String(),
       TransportApiFields.departureGate: departureGate,
       TransportApiFields.departureAirport: departureAirport,

@@ -1,55 +1,20 @@
-
 import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/features/travels/domain/entities/itinerary.dart';
 import 'package:travel_matrix/features/travels/domain/repository/itinerary_repository.dart';
-
+import 'package:travel_matrix/features/travels/data/dtos/itinerary_dto.dart';
 import '../data_sources/itinerary_data_source.dart';
 
-class ItineraryRepositoryImpl implements ItineraryRepository{
+class ItineraryRepositoryImpl implements ItineraryRepository {
+  final ItineraryDataSource _dataSource = ItineraryDataSource();
 
   @override
-  Future<Result> createItinerary(Itinerary itinerary) async{
-    try{
-      final data = itinerary.toJson();
-      await ItineraryDataSource().createItinerary(data);
-      return Result.success();
-    } catch(e){
-      return Result.failure(e.toString());
-    }
-
-  }
-
-  @override
-  Future<Result> deleteItinerary(String id) async {
-    try{
-      ItineraryDataSource().deleteItinerary(id);
-      return Result.success();
-    } catch(e){
+  Future<Result<Itinerary>> upsertItinerary(String travelId, Itinerary itinerary) async {
+    try {
+      final dto = ItineraryDTO.fromDomain(itinerary: itinerary);
+      final updatedDto = await _dataSource.upsertItinerary(travelId, dto);
+      return Result.success(updatedDto.toDomain());
+    } catch (e) {
       return Result.failure(e.toString());
     }
   }
-
-  @override
-  Future<Result<Itinerary>> getItinerary(String id) async{
-    try{
-      final itineraryDto = await ItineraryDataSource().getItinerary(id);
-      final steps = await ItineraryDataSource().getItinerarySteps(id);
-      return Result.success(
-          itineraryDto.toDomain(steps.map((e) => e.toDomain()).toList())
-      );
-
-    } catch(e){
-      return Result.failure(e.toString());
-    }
-
-  }
-
-  @override
-  Future<Result<Itinerary>> updateItinerary(Map<String, dynamic> data) {
-    // TODO: implement updateItinerary
-    throw UnimplementedError();
-  }
-
-
-
 }

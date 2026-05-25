@@ -215,7 +215,6 @@ static const String details = 'details';
 /// Airplane
 static const String flightNumber = 'flightNumber';
 
-static const String flightCompany = 'flightCompany';
 
 static const String flightDate = 'flightDate';
 

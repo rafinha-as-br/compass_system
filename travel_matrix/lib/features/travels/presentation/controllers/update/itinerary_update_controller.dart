@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart';
 
 import '../../../domain/usecases/crud_itinerary.dart';
+import '../../../../travels/data/dtos/itinerary_dto.dart';
 
 /// Controller responsible for updating an existing [Itinerary] via the domain
 /// use case [CrudItinerary].
@@ -30,13 +31,12 @@ class UpdateItineraryController extends ChangeNotifier {
     _error = null;
     notifyListeners();
 
-    final params = UpdateParams(
-      travelId: travelId,
-      id: itineraryData['id'] as String,
-      itinerarySteps: const [],
+    final itineraryDto = ItineraryDTO.fromJson(itineraryData);
+    
+    final result = await crudItinerary.upsert(
+      travelId, 
+      itineraryDto.toDomain()
     );
-
-    final result = await crudItinerary.update(params);
 
     _isLoading = false;
     if (result.isSuccess) {

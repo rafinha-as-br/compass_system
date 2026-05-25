@@ -1,4 +1,8 @@
 import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/core/services/compass_service/clients/itinerary_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/clients/route_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/clients/travel_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/api_exception.dart';
 
 /// Wraps [MockApiService] for the Travel Matrix application.
 ///
@@ -7,12 +11,23 @@ import 'package:mock_repository/mock_repository.dart';
 /// be replaced by a real HTTP client when the production API arrives.
 class CompassService {
   static CompassService? _instance;
-  final MockApiService _apiService;
+  final MockApiService _mockApiService;
+  final TravelApiClient _travelApiClient;
+  final RouteApiClient _routeApiClient;
+  final ItineraryApiClient _itineraryApiClient;
 
-  CompassService._() : _apiService = MockApiService();
+  CompassService._()
+      : _mockApiService = MockApiService(),
+        _travelApiClient = TravelApiClient.instance,
+        _routeApiClient = RouteApiClient.instance,
+        _itineraryApiClient = ItineraryApiClient.instance;
 
   static Future<CompassService> init() async {
-    _instance ??= CompassService._();
+    if (_instance != null) return _instance!;
+    await TravelApiClient.init();
+    await RouteApiClient.init();
+    await ItineraryApiClient.init();
+    _instance = CompassService._();
     return _instance!;
   }
 
@@ -25,7 +40,7 @@ class CompassService {
 
   /// Authenticates a user and returns a bearer token payload.
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await _apiService.login(email, password);
+    final response = await _mockApiService.login(email, password);
     return response.body;
   }
 
@@ -33,13 +48,13 @@ class CompassService {
 
   /// Returns the authenticated user's data.
   Future<Map<String, dynamic>> getUser(String token) async {
-    final response = await _apiService.getUser(token);
+    final response = await _mockApiService.getUser(token);
     return response.body;
   }
 
   /// Returns all client users. Travel Agent only.
   Future<Map<String, dynamic>> getAllUsers(String token) async {
-    final response = await _apiService.getAllUsers(token);
+    final response = await _mockApiService.getAllUsers(token);
     return response.body;
   }
 
@@ -48,7 +63,7 @@ class CompassService {
     String token,
     Map<String, dynamic> userData,
   ) async {
-    final response = await _apiService.createUser(token, userData);
+    final response = await _mockApiService.createUser(token, userData);
     return response.body;
   }
 
@@ -57,13 +72,13 @@ class CompassService {
     String token,
     Map<String, dynamic> userData,
   ) async {
-    final response = await _apiService.updateUser(token, userData);
+    final response = await _mockApiService.updateUser(token, userData);
     return response.body;
   }
 
   /// Deletes a user by ID. Travel Agent only.
   Future<Map<String, dynamic>> deleteUser(String token, String userId) async {
-    final response = await _apiService.deleteUser(token, userId);
+    final response = await _mockApiService.deleteUser(token, userId);
     return response.body;
   }
 
@@ -71,8 +86,21 @@ class CompassService {
 
   /// Returns all travels. Travel Agent only.
   Future<Map<String, dynamic>> getAllTravels(String token) async {
-    final response = await _apiService.getAllTravels(token);
-    return response.body;
+    try {
+      final response = await _travelApiClient.getAllTravels(token);
+      final data = response['data'];
+      return {
+        'status': 'success',
+        'data': data is List ? data : (data == null ? [] : [data]),
+        'message': null,
+      };
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': const [],
+        'message': e.message,
+      };
+    }
   }
 
   /// Returns a single travel by ID.
@@ -80,8 +108,20 @@ class CompassService {
     String token,
     String travelId,
   ) async {
-    final response = await _apiService.getTravel(token, travelId);
-    return response.body;
+    try {
+      final response = await _travelApiClient.getTravel(token, travelId);
+      return {
+        'status': 'success',
+        'data': response,
+        'message': null,
+      };
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
   }
 
   /// Returns all travels for a specific client.
@@ -89,8 +129,24 @@ class CompassService {
     String token,
     String clientId,
   ) async {
-    final response = await _apiService.getTravelsForClient(token, clientId);
-    return response.body;
+    try {
+      final response = await _travelApiClient.getTravelsForClient(
+        token,
+        clientId,
+      );
+      final data = response['data'];
+      return {
+        'status': 'success',
+        'data': data is List ? data : (data == null ? [] : [data]),
+        'message': null,
+      };
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': const [],
+        'message': e.message,
+      };
+    }
   }
 
   /// Creates a new travel. Travel Agent only.
@@ -98,8 +154,20 @@ class CompassService {
     String token,
     Map<String, dynamic> travelData,
   ) async {
-    final response = await _apiService.createTravel(token, travelData);
-    return response.body;
+    try {
+      final response = await _travelApiClient.createTravel(token, travelData);
+      return {
+        'status': 'success',
+        'data': response,
+        'message': null,
+      };
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
   }
 
   /// Updates an existing travel. Travel Agent only.
@@ -108,9 +176,24 @@ class CompassService {
     String travelId,
     Map<String, dynamic> travelData,
   ) async {
-    final response =
-        await _apiService.updateTravel(token, travelId, travelData);
-    return response.body;
+    try {
+      final response = await _travelApiClient.updateTravel(
+        token,
+        travelId,
+        travelData,
+      );
+      return {
+        'status': 'success',
+        'data': response,
+        'message': null,
+      };
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
   }
 
   /// Deletes a travel by ID. Travel Agent only.
@@ -118,8 +201,20 @@ class CompassService {
     String token,
     String travelId,
   ) async {
-    final response = await _apiService.deleteTravel(token, travelId);
-    return response.body;
+    try {
+      await _travelApiClient.deleteTravel(token, travelId);
+      return {
+        'status': 'success',
+        'data': null,
+        'message': null,
+      };
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
   }
 
   // ─── Routes ─────────────────────────────────────────────────────────
@@ -130,9 +225,21 @@ class CompassService {
     String travelId,
     Map<String, dynamic> routeData,
   ) async {
-    final response =
-        await _apiService.updateRoute(token, travelId, routeData);
-    return response.body;
+    try {
+      final response =
+          await _routeApiClient.updateRoute(token, travelId, routeData);
+      return {
+        'status': 'success',
+        'data': response,
+        'message': null,
+      };
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
   }
 
   // ─── Itineraries ────────────────────────────────────────────────────
@@ -143,9 +250,24 @@ class CompassService {
     String travelId,
     Map<String, dynamic> itineraryData,
   ) async {
-    final response =
-        await _apiService.createItinerary(token, travelId, itineraryData);
-    return response.body;
+    try {
+      final response = await _itineraryApiClient.upsertItinerary(
+        token,
+        travelId,
+        itineraryData,
+      );
+      return {
+        'status': 'success',
+        'data': response,
+        'message': null,
+      };
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
   }
 
   /// Updates the itinerary for a travel. Travel Agent only.
@@ -154,8 +276,23 @@ class CompassService {
     String travelId,
     Map<String, dynamic> itineraryData,
   ) async {
-    final response =
-        await _apiService.updateItinerary(token, travelId, itineraryData);
-    return response.body;
+    try {
+      final response = await _itineraryApiClient.upsertItinerary(
+        token,
+        travelId,
+        itineraryData,
+      );
+      return {
+        'status': 'success',
+        'data': response,
+        'message': null,
+      };
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
   }
 }

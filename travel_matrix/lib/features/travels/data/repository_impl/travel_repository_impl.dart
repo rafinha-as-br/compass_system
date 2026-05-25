@@ -1,73 +1,64 @@
-
 import 'package:travel_matrix/features/travels/data/data_sources/travel_data_source.dart';
-import 'package:travel_matrix/features/travels/data/repository_impl/itinerary_repository_impl.dart';
-import 'package:travel_matrix/features/travels/data/repository_impl/route_repository.dart';
-import 'package:travel_matrix/features/travels/domain/repository/itinerary_repository.dart';
-import 'package:travel_matrix/features/travels/domain/repository/route_repository.dart';
 import 'package:travel_matrix/features/travels/domain/repository/travel_repository.dart';
-
+import 'package:travel_matrix/features/travels/data/dtos/travel_dto.dart';
 import '../../../../core/entities/result.dart';
 import '../../domain/entities/travel.dart';
 
-class TravelRepositoryImpl implements TravelRepository{
+class TravelRepositoryImpl implements TravelRepository {
   final TravelDataSource _travelDataSource = TravelDataSource();
-  final RouteRepository _routeRepository = RouteRepositoryImpl();
-  final ItineraryRepository _itineraryRepository = ItineraryRepositoryImpl();
 
   @override
-  Future<Result<Travel>> getTravel(String id) async{
-    try{
+  Future<Result<Travel>> getTravel(String id) async {
+    try {
       final travelDto = await _travelDataSource.getTravel(id);
-      final routeDomain = await _routeRepository.getRoute(travelDto.routePlan);
-      final personsDTO = await _travelDataSource.getPersons(travelDto.participants);
-
-      if(travelDto.this.itinerary != null){
-        final itineraryDomain = await _itineraryRepository.getItinerary(
-            travelDto.this.itinerary!
-        );
-
-        final travel = travelDto.toDomain(
-            routeDomain.data!,
-            personsDTO.map((e) => e.toDomain()).toList(),
-            itinerary: itineraryDomain.data
-        );
-
-        return Result.success(travel);
-      } else{
-
-        final travel = travelDto.toDomain(
-          routeDomain.data!,
-          personsDTO.map((e) => e.toDomain()).toList()
-        );
-
-        return Result.success(travel);
-      }
-
-
-    } catch(e){
+      return Result.success(travelDto.toDomain());
+    } catch (e) {
       return Result.failure(e.toString());
     }
   }
 
   @override
-  Future<Result<Travel>> createTravel(Map<String, dynamic> data) {
-    // TODO: implement createTravel
-    throw UnimplementedError();
+  Future<Result<List<Travel>>> getAllTravels() async {
+    try {
+      final travelDtos = await _travelDataSource.getAllTravels();
+      return Result.success(travelDtos.map((dto) => dto.toDomain()).toList());
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override
-  Future<Result<bool>> deleteTravel(String id) {
-    // TODO: implement deleteTravel
-    throw UnimplementedError();
+  Future<Result<Travel>> createTravel(Travel travel) async {
+    try {
+      final travelDto = TravelDTO.fromDomain(travel: travel);
+      final createdDto = await _travelDataSource.createTravel(travelDto);
+      return Result.success(createdDto.toDomain());
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
   @override
-  Future<Result<Travel>> updateTravel(Map<String, dynamic> data) {
-    // TODO: implement updateTravel
-    throw UnimplementedError();
+  Future<Result<bool>> deleteTravel(String id) async {
+    try {
+      await _travelDataSource.deleteTravel(id);
+      return const Result.success(true);
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
   }
 
-
-
-
+  @override
+  Future<Result<Travel>> updateTravel(Travel travel) async {
+    try {
+      if (travel.backEndId == null) {
+        return const Result.failure("Cannot update travel without an ID");
+      }
+      final travelDto = TravelDTO.fromDomain(travel: travel);
+      final updatedDto = await _travelDataSource.updateTravel(travel.backEndId!, travelDto);
+      return Result.success(updatedDto.toDomain());
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
 }
