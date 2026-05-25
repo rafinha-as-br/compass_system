@@ -163,23 +163,22 @@ class ItineraryEditorController extends ChangeNotifier {
     notifyListeners();
   }
   /// Delete step method, safely protects against invalid operations like delete first and last steps
-  void deleteStep(int index) {
+  bool deleteStep(int index) {
 
     // Invalid indexes are ignored
     // TODO: In future, add a warning UI to the user
     if (index < 0 || index >= _stepsList.length) {
-      return;
+      return false;
     }
 
     final step = _stepsList[index];
 
     // First and last steps are pinned, cannot be deleted
-    // TODO: In future, add a warning UI to the user
     if (
     step.position == StepPosition.start ||
         step.position == StepPosition.finish
     ) {
-      return;
+      return false;
     }
 
     _stepsList.removeAt(index);
@@ -197,6 +196,7 @@ class ItineraryEditorController extends ChangeNotifier {
     _commitTimelineChanges();
 
     notifyListeners();
+    return true;
   }
   /// Go to previous step method
   void goToPreviousStep() {
@@ -213,7 +213,8 @@ class ItineraryEditorController extends ChangeNotifier {
     }
   }
   /// Reorder Steps method, used in [StepsListPanel] to reorder the steps list.
-  void reorderSteps(int oldIndex, int newIndex) {
+  /// Returns false if the operation was invalid (e.g. moving a boundary step).
+  bool reorderSteps(int oldIndex, int newIndex) {
 
     final step = _stepsList[oldIndex];
 
@@ -222,22 +223,22 @@ class ItineraryEditorController extends ChangeNotifier {
     step.position == StepPosition.start ||
         step.position == StepPosition.finish
     ) {
-      return;
+      return false;
     }
 
     // Does not allow to move to start position
     if (newIndex == 0) {
-      return;
+      return false;
     }
 
     // Does not allow to move to finish position
     if (newIndex >= _stepsList.length) {
-      return;
+      return false;
     }
 
     /// Does not allow to move to the same position
     if (_stepsList[newIndex - 1].position == StepPosition.finish) {
-      return;
+      return false;
     }
 
     // Updating the index
@@ -266,6 +267,7 @@ class ItineraryEditorController extends ChangeNotifier {
     _commitTimelineChanges();
 
     notifyListeners();
+    return true;
   }
 
   /// Update the steps in the list with the TimelineProblems

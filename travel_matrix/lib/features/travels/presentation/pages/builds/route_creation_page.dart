@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 
 /// Page for editing the [RoutePlan] of an existing travel.
 ///
@@ -10,11 +11,13 @@ import 'package:travel_matrix/features/travels/presentation/controllers/travels_
 /// details (locations, dates, interest points) without creating a new travel.
 ///
 /// On submit, calls [TravelsController.updateRoute] and pops on success.
+///
+/// Layout: Form with inputs for locations, dates, and dynamic interest points.
 class RouteCreationPage extends StatefulWidget {
   const RouteCreationPage({super.key, required this.travel});
 
   /// The existing travel whose route is being edited.
-  final Travel travel;
+  final TravelViewModel travel;
 
   @override
   State<RouteCreationPage> createState() => _RouteCreationPageState();
@@ -26,7 +29,7 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
   late final TextEditingController _destinationCtrl;
   late DateTime _startDate;
   late DateTime _endDate;
-  late List<InterestPoint> _interestPoints;
+  late List<InterestPointViewModel> _interestPoints;
 
   final _poiNameCtrl = TextEditingController();
   final _poiDescCtrl = TextEditingController();
@@ -36,12 +39,12 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
   @override
   void initState() {
     super.initState();
-    final route = widget.travel.routePlan;
-    _startLocationCtrl = TextEditingController(text: route.startLocation);
+    final route = widget.travel.route;
+    _startLocationCtrl = TextEditingController(text: route.start);
     _destinationCtrl = TextEditingController(text: route.destination);
     _startDate = route.startDate;
     _endDate = route.endDate;
-    _interestPoints = List.from(route.interestsList);
+    _interestPoints = List.from(route.interests);
   }
 
   @override
@@ -56,8 +59,9 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
   void _addInterestPoint() {
     if (_poiNameCtrl.text.isEmpty) return;
     setState(() {
-      _interestPoints.add(InterestPoint(
-        id: 'poi_${DateTime.now().millisecondsSinceEpoch}',
+      _interestPoints.add(InterestPointViewModel(
+        localId: 'poi_${DateTime.now().millisecondsSinceEpoch}',
+        backEndId: null,
         name: _poiNameCtrl.text,
         description: _poiDescCtrl.text,
       ));
@@ -72,12 +76,17 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
 
     final controller = context.read<TravelsController>();
 
-    final success = await controller.updateRoute(widget.travel.id, {
+    final success = await controller.updateRoute(widget.travel.localId, {
       'startDate': _startDate.toIso8601String(),
       'endDate': _endDate.toIso8601String(),
       'startLocation': _startLocationCtrl.text,
       'destination': _destinationCtrl.text,
-      'interestsList': _interestPoints.map((p) => p.toMap()).toList(),
+      // Map back to API format (or domain format if the controller handles it)
+      'interestsList': _interestPoints.map((p) => {
+        'id': p.backEndId ?? p.localId,
+        'name': p.name,
+        'description': p.description,
+      }).toList(),
     });
 
     if (mounted) {
@@ -92,7 +101,7 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Route — ${widget.travel.travelName}'),
+        title: Text('Edit Route — ${widget.travel.travelTitle}'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () => Navigator.of(context).pop(),
@@ -280,3 +289,4 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
     );
   }
 }
+

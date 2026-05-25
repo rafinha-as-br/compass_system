@@ -1,9 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/step_card_view_models.dart';
 import '../../../expandable_section.dart';
 
+/// Card for displaying a Stop step in the itinerary.
+///
+/// Consumes a [StopViewCardModel] to show location details, description,
+/// and a list of experiences.
+///
+/// Layout: Expandable card with a header (icon, name, title) and content (description, chips).
 class StopCard extends StatefulWidget {
-  final Stop stop;
+  final StopViewCardModel stop;
   final bool isInitialExpanded;
 
   const StopCard({
@@ -120,3 +126,4 @@ class _StopCardState extends State<StopCard> {
     );
   }
 }
+

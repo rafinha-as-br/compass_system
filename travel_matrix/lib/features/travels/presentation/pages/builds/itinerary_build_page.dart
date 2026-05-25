@@ -157,8 +157,22 @@ class _ItineraryBuildView extends StatelessWidget {
               selectedIndex: selectedIndex,
               onSelectStep: editor.selectStep,
               addStep: editor.addStep,
-              onReorder: editor.reorderSteps,
-              onDeleteStep: editor.deleteStep
+              onReorder: (oldIndex, newIndex) {
+                final success = editor.reorderSteps(oldIndex, newIndex);
+                if (!success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Cannot move this step to that position.')),
+                  );
+                }
+              },
+              onDeleteStep: (index) {
+                final success = editor.deleteStep(index);
+                if (!success) {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text('Cannot delete this step.')),
+                  );
+                }
+              }
           )
         ],
       ),

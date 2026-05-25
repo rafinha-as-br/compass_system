@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/builds/travel_creation_page.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/views/travel_view_page.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// Travels Dashboard Tab — lists all travels with state indicator.
+///
+/// This is the main entry point to view travels. It consumes the [TravelsController]
+/// to load and present a list of [TravelViewModel] items.
 class TravelsDashboardPage extends StatelessWidget {
   const TravelsDashboardPage({super.key});
 
@@ -103,10 +106,12 @@ class _TravelsDashboardView extends StatelessWidget {
 
   Widget _buildTravelCard(
     BuildContext context,
-    Travel travel,
+    TravelViewModel travel,
     TravelsController controller,
     AppLocalizations l10n,
   ) {
+
+    final hasItinerary = travel.itinerary != null;
 
     return Card(
       margin: const EdgeInsets.symmetric(vertical: 6),
@@ -114,23 +119,23 @@ class _TravelsDashboardView extends StatelessWidget {
         contentPadding:
             const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
         leading: CircleAvatar(
-          backgroundColor: travel.hasItinerary
+          backgroundColor: hasItinerary
               ? TravelAppColors.success.withValues(alpha: 0.15)
               : TravelAppColors.warning.withValues(alpha: 0.15),
           child: Icon(
-            travel.hasItinerary ? Icons.check : Icons.map,
-            color: travel.hasItinerary
+            hasItinerary ? Icons.check : Icons.map,
+            color: hasItinerary
                 ? TravelAppColors.success
                 : TravelAppColors.warning,
           ),
         ),
         title: Text(
-          travel.travelName,
+          travel.travelTitle,
           style: const TextStyle(fontWeight: FontWeight.w600),
         ),
         subtitle: Text(
-          '${travel.routePlan.startLocation} ➔ ${travel.routePlan.destination}\n'
-          '${l10n.clientLabel}: ${travel.clientId}',
+          '${travel.route.start} ➔ ${travel.route.destination}\n'
+          '${l10n.clientLabel}: ${travel.clientName}',
         ),
         isThreeLine: true,
         trailing: Row(
@@ -140,17 +145,17 @@ class _TravelsDashboardView extends StatelessWidget {
               padding: const EdgeInsets.symmetric(
                   horizontal: 10, vertical: 4),
               decoration: BoxDecoration(
-                color: travel.hasItinerary
+                color: hasItinerary
                     ? TravelAppColors.success.withValues(alpha: 0.1)
                     : TravelAppColors.warning.withValues(alpha: 0.1),
                 borderRadius: BorderRadius.circular(12),
               ),
               child: Text(
-                travel.hasItinerary ? l10n.itineraryReady : l10n.routeOnly,
+                hasItinerary ? l10n.itineraryReady : l10n.routeOnly,
                 style: TextStyle(
                   fontSize: 11,
                   fontWeight: FontWeight.w600,
-                  color: travel.hasItinerary
+                  color: hasItinerary
                       ? TravelAppColors.success
                       : TravelAppColors.warning,
                 ),

@@ -1,10 +1,16 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/step_card_view_models.dart';
 
 import '../../../expandable_section.dart';
 
+/// Card for displaying a generic or placeholder step in the itinerary.
+///
+/// Consumes a [GenericStepViewCardModel] to show a basic title and whether
+/// it is a draft.
+///
+/// Layout: Expandable card with a simple header and placeholder content.
 class GenericStepCard extends StatefulWidget {
-  final ItineraryStep step;
+  final GenericStepViewCardModel step;
   final bool isInitialExpanded;
 
   const GenericStepCard({
@@ -29,7 +35,7 @@ class _GenericStepCardState extends State<GenericStepCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final isPlaceholder = widget.step is PlaceholderStep;
+    final isPlaceholder = widget.step.isDraft;
 
     return Card(
       elevation: _isExpanded ? 2 : 0.5,
@@ -90,3 +96,4 @@ class _GenericStepCardState extends State<GenericStepCard> {
     );
   }
 }
+

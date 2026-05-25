@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
 import 'package:travel_matrix/core/services/auth_service.dart';
 import 'package:travel_matrix/core/services/compass_service.dart';
+import 'package:travel_matrix/features/travels/data/dtos/travel_dto.dart';
+import '../models/view_models/travel_view_model.dart';
 
 /// State for the travel view page.
 class TravelViewState {
   final bool isLoading;
-  final Travel? travel;
+  final TravelViewModel? travel;
   final String? errorMessage;
 
   const TravelViewState({
@@ -41,9 +42,8 @@ class TravelViewController extends ChangeNotifier {
           await CompassService.instance.getTravel(token, travelId);
 
       if (response['status'] == 'success') {
-        final travel =
-            Travel.fromJson(response['data'] as Map<String, dynamic>);
-        _state = TravelViewState(isLoading: false, travel: travel);
+        final travel = TravelDTO.fromJson(response['data'] as Map<String, dynamic>).toDomain();
+        _state = TravelViewState(isLoading: false, travel: TravelViewModel.fromDomain(travel));
       } else {
         _state = TravelViewState(
           isLoading: false,
