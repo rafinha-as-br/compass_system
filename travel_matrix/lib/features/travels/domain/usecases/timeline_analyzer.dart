@@ -23,6 +23,7 @@ List<TimelineProblem> timelineAnalyzer(List<TimelineNode> nodes){
   for(var node in nodes){
     if(node.startDate.isAfter(node.finishDate)){
       addProblem(
+        /// both nodes represents the same entity on this case
         node.domainId,
         node.domainId,
         TimelineProblemType.invalidDate,
@@ -87,7 +88,13 @@ List<TimelineProblem> timelineAnalyzer(List<TimelineNode> nodes){
   return problems;
 }
 
-/// Represents a problem on the timeline
+/// Represents a problem on the timeline.
+///
+/// Node 1 and 2 represent the entities involved in the problem, having
+/// different applications on each type of problem:
+/// - Invalid date: both nodes represent the same entity with the invalid date
+/// - Invalid chronological order: The node 1 is the misplaced node, and the node 2 is the expected node
+/// - Empty gap and conflict: Each node represents a different compared entity
 class TimelineProblem {
   /// Id of the first entity
   final String nodeId1;
@@ -106,7 +113,7 @@ class TimelineProblem {
 }
 
 @immutable
-/// Represents a short period of time
+/// Represents a short period of time,
 class TimelineNode {
   /// Id used for local reference
   final String domainId;
@@ -123,6 +130,21 @@ class TimelineNode {
     required this.finishDate,
     required this.sequenceIndex
   });
+
+  /// Instant timeline node, represents only one date
+  factory TimelineNode.instant({
+    required String domainId,
+    required DateTime date,
+    required int sequenceIndex,
+  }) {
+    return TimelineNode(
+      domainId: domainId,
+      startDate: date,
+      finishDate: date,
+      sequenceIndex: sequenceIndex,
+    );
+  }
+
 }
 
 /// Type of problems on the timeline
@@ -135,30 +157,6 @@ enum TimelineProblemType{
   invalidChronologicalOrder,
   /// Invalid date
   invalidDate
-}
-
-/// Severity of the timeline problem
-enum TimelineProblemSeverity {
-  warning,
-  error,
-}
-
-extension TimelineProblemTypeSeverity on TimelineProblemType {
-  TimelineProblemSeverity get severity {
-    switch(this) {
-      case TimelineProblemType.invalidDate:
-        return TimelineProblemSeverity.error;
-
-      case TimelineProblemType.invalidChronologicalOrder:
-        return TimelineProblemSeverity.error;
-
-      case TimelineProblemType.conflict:
-        return TimelineProblemSeverity.warning;
-
-      case TimelineProblemType.emptyGap:
-        return TimelineProblemSeverity.warning;
-    }
-  }
 }
 
 

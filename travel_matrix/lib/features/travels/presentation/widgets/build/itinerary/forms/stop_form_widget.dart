@@ -1,15 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/itinerary_steps_view_models.dart';
+import 'package:travel_matrix/shared/widgets/text_fields.dart';
+import 'field_state.dart';
 
-/// Form widget for editing a Stop step.
-/// TODO: Review the implementation of all theses text editing controllers into a separated file
-/// This widget must receive the view model class, callback actions from the edit controller and have an own controller for it,
-/// Ask chatgpt how to improve this UI
 class StopFormWidget extends StatefulWidget {
-  final Stop stop;
-  final ValueChanged<Stop> onChanged;
-  final VoidCallback onDelete;
-
   const StopFormWidget({
     super.key,
     required this.stop,
@@ -17,205 +11,215 @@ class StopFormWidget extends StatefulWidget {
     required this.onDelete,
   });
 
+  final StopStepViewModel stop;
+  final ValueChanged<StopStepViewModel> onChanged;
+  final VoidCallback onDelete;
+
   @override
   State<StopFormWidget> createState() => _StopFormWidgetState();
 }
 
 class _StopFormWidgetState extends State<StopFormWidget> {
-  late final TextEditingController _titleCtrl;
   late final TextEditingController _nameCtrl;
   late final TextEditingController _descCtrl;
   late final TextEditingController _experienceCtrl;
-  late final List<String> _experiences;
-  late DateTime _startDate;
-  late DateTime _finishDate;
+  
+  late StopFormState _formState;
 
   @override
   void initState() {
     super.initState();
-    _titleCtrl = TextEditingController(text: widget.stop.title);
     _nameCtrl = TextEditingController(text: widget.stop.name);
     _descCtrl = TextEditingController(text: widget.stop.description);
     _experienceCtrl = TextEditingController();
-    _experiences = List.from(widget.stop.experiences);
-    _startDate = widget.stop.startDate;
-    _finishDate = widget.stop.finishDate;
+
+    _formState = StopFormState(
+      name: FieldState(value: widget.stop.name),
+      description: FieldState(value: widget.stop.description),
+      experiences: List.from(widget.stop.experiences),
+    );
   }
 
   @override
   void didUpdateWidget(covariant StopFormWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.stop.id != widget.stop.id) {
-      _titleCtrl.text = widget.stop.title;
+    if (oldWidget.stop != widget.stop) {
       _nameCtrl.text = widget.stop.name;
       _descCtrl.text = widget.stop.description;
-      _experiences
-        ..clear()
-        ..addAll(widget.stop.experiences);
-      _startDate = widget.stop.startDate;
-      _finishDate = widget.stop.finishDate;
+
+      _formState = StopFormState(
+        name: FieldState(value: widget.stop.name),
+        description: FieldState(value: widget.stop.description),
+        experiences: List.from(widget.stop.experiences),
+      );
+      setState(() {});
     }
   }
 
   @override
   void dispose() {
-    _titleCtrl.dispose();
     _nameCtrl.dispose();
     _descCtrl.dispose();
     _experienceCtrl.dispose();
     super.dispose();
   }
 
-  void _emitChange() {
-    widget.onChanged(Stop(
-      id: widget.stop.id,
-      title: _titleCtrl.text,
-      startDate: _startDate,
-      finishDate: _finishDate,
-      name: _nameCtrl.text,
-      description: _descCtrl.text,
-      experiences: List.from(_experiences),
-      finished: widget.stop.finished,
-    ));
+  FieldState<String> _validateRequiredField(String value) {
+    if (value.trim().isEmpty) {
+      return FieldState(
+        value: value,
+        error: 'Field cannot be empty',
+        isTouched: true,
+      );
+    }
+    return FieldState(
+      value: value,
+      isTouched: true,
+    );
+  }
+
+  void _onNameChanged(String value) {
+    final validatedField = _validateRequiredField(value);
+    setState(() {
+      _formState = _formState.copyWith(name: validatedField);
+    });
+    _emitIfValid();
+  }
+
+  void _onDescChanged(String value) {
+    setState(() {
+      _formState = _formState.copyWith(
+        description: FieldState(value: value, isTouched: true),
+      );
+    });
+    _emitIfValid();
   }
 
   void _addExperience() {
     if (_experienceCtrl.text.isNotEmpty) {
       setState(() {
-        _experiences.add(_experienceCtrl.text);
+        final newExperiences = List<String>.from(_formState.experiences)..add(_experienceCtrl.text);
+        _formState = _formState.copyWith(experiences: newExperiences);
         _experienceCtrl.clear();
       });
-      _emitChange();
+      _emitIfValid();
     }
   }
 
-  Future<void> _pickDate({required bool isStart}) async {
-    final initial = isStart ? _startDate : _finishDate;
-    final picked = await showDatePicker(
-      context: context,
-      initialDate: initial,
-      firstDate: DateTime(2020),
-      lastDate: DateTime(2100),
+  void _removeExperience(String exp) {
+    setState(() {
+      final newExperiences = List<String>.from(_formState.experiences)..remove(exp);
+      _formState = _formState.copyWith(experiences: newExperiences);
+    });
+    _emitIfValid();
+  }
+
+  void _emitIfValid() {
+    if (!_formState.isValid) {
+      return;
+    }
+
+    widget.onChanged(
+      widget.stop.copyWith(
+        name: _formState.name.value,
+        description: _formState.description.value,
+        experiences: _formState.experiences,
+      ),
     );
-    if (picked != null) {
-      setState(() {
-        if (isStart) {
-          _startDate = picked;
-        } else {
-          _finishDate = picked;
-        }
-      });
-      _emitChange();
-    }
   }
-
-  String _formatDate(DateTime dt) =>
-      '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          'Stop',
-          style: theme.textTheme.titleMedium
-              ?.copyWith(fontWeight: FontWeight.w600),
+    return Container(
+      padding: const EdgeInsets.all(16),
+      decoration: BoxDecoration(
+        border: Border.all(
+          color: theme.colorScheme.secondary,
         ),
-        const SizedBox(height: 16),
-        TextField(
-          controller: _titleCtrl,
-          decoration: const InputDecoration(
-            labelText: 'Step Title',
-            border: OutlineInputBorder(),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CustomFormField.text(
+            label: 'Stop Name',
+            enabled: true,
+            controller: _nameCtrl,
+            errorText: _formState.name.isTouched ? _formState.name.error : null,
+            onChanged: _onNameChanged,
           ),
-          onChanged: (_) => _emitChange(),
-        ),
-        const SizedBox(height: 12),
-        TextField(
-          controller: _nameCtrl,
-          decoration: const InputDecoration(
-            labelText: 'Stop Name',
-            border: OutlineInputBorder(),
+          const SizedBox(height: 12),
+          CustomFormField.text(
+            label: 'Description',
+            enabled: true,
+            controller: _descCtrl,
+            errorText: _formState.description.isTouched ? _formState.description.error : null,
+            onChanged: _onDescChanged,
           ),
-          onChanged: (_) => _emitChange(),
-        ),
-        const SizedBox(height: 12),
-        TextField(
-          controller: _descCtrl,
-          decoration: const InputDecoration(
-            labelText: 'Description',
-            border: OutlineInputBorder(),
-          ),
-          maxLines: 2,
-          onChanged: (_) => _emitChange(),
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => _pickDate(isStart: true),
-                icon: const Icon(Icons.calendar_today, size: 16),
-                label: Text('Start: ${_formatDate(_startDate)}'),
-              ),
-            ),
-            const SizedBox(width: 12),
-            Expanded(
-              child: OutlinedButton.icon(
-                onPressed: () => _pickDate(isStart: false),
-                icon: const Icon(Icons.event, size: 16),
-                label: Text('End: ${_formatDate(_finishDate)}'),
-              ),
-            ),
-          ],
-        ),
-        const SizedBox(height: 12),
-        Row(
-          children: [
-            Expanded(
-              child: TextField(
-                controller: _experienceCtrl,
-                decoration: const InputDecoration(
-                  labelText: 'Add Experience',
-                  border: OutlineInputBorder(),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: CustomFormField.text(
+                  label: 'Add Experience',
+                  enabled: true,
+                  controller: _experienceCtrl,
+                  onChanged: (_) {},
                 ),
               ),
-            ),
-            const SizedBox(width: 8),
-            IconButton(
-              onPressed: _addExperience,
-              icon: const Icon(Icons.add_circle),
-              color: theme.colorScheme.secondary,
-            ),
-          ],
-        ),
-        const SizedBox(height: 8),
-        Wrap(
-          spacing: 8,
-          children: _experiences
-              .map((e) => Chip(
-                    label: Text(e, style: const TextStyle(fontSize: 12)),
-                    onDeleted: () {
-                      setState(() => _experiences.remove(e));
-                      _emitChange();
-                    },
-                  ))
-              .toList(),
-        ),
-        const SizedBox(height: 24),
-        OutlinedButton.icon(
-          onPressed: widget.onDelete,
-          icon: const Icon(Icons.delete_outline),
-          label: const Text('Delete Step'),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: theme.colorScheme.error,
-            side: BorderSide(color: theme.colorScheme.error),
+              const SizedBox(width: 8),
+              IconButton(
+                onPressed: _addExperience,
+                icon: const Icon(Icons.add_circle),
+                color: theme.colorScheme.secondary,
+              ),
+            ],
           ),
-        ),
-      ],
+          const SizedBox(height: 8),
+          Wrap(
+            spacing: 8,
+            children: _formState.experiences
+                .map((e) => Chip(
+                      label: Text(e, style: const TextStyle(fontSize: 12)),
+                      onDeleted: () => _removeExperience(e),
+                    ))
+                .toList(),
+          ),
+          const SizedBox(height: 16),
+          OutlinedButton.icon(
+            onPressed: widget.onDelete,
+            icon: const Icon(Icons.delete),
+            label: const Text('Delete Step'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class StopFormState {
+  final FieldState<String> name;
+  final FieldState<String> description;
+  final List<String> experiences;
+
+  bool get isValid => name.isValid;
+
+  const StopFormState({
+    required this.name,
+    required this.description,
+    required this.experiences,
+  });
+
+  StopFormState copyWith({
+    FieldState<String>? name,
+    FieldState<String>? description,
+    List<String>? experiences,
+  }) {
+    return StopFormState(
+      name: name ?? this.name,
+      description: description ?? this.description,
+      experiences: experiences ?? this.experiences,
     );
   }
 }

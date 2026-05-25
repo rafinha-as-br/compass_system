@@ -3,6 +3,10 @@ import 'package:travel_matrix/features/travels/presentation/models/build_models/
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/change_type_dialog.dart';
 import '../../../../models/view_models/itinerary_steps_view_models.dart';
+import 'package:travel_matrix/shared/widgets/text_fields.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/hosting_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/stop_form_widget.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment_form_widget.dart';
 
 /// This panel is responsible for building/editing an [ItineraryStepViewModel] list,
 /// receiving a [ItineraryStepsBuildModel] as input for consuming.
@@ -56,6 +60,7 @@ class StepsBuilderPanel extends StatelessWidget {
           child: _StepFormRender(
             step: steps.stepsList[selectedIndex],
             onStepTypeChanged: (newStep) => updateStep(selectedIndex, newStep),
+            onDelete: () => removeStep(selectedIndex),
             selectedIndex: selectedIndex,
           )
         ),
@@ -153,6 +158,7 @@ class _StepFormRender extends StatelessWidget {
   const _StepFormRender({
     required this.step,
     required this.onStepTypeChanged,
+    required this.onDelete,
     required this.selectedIndex,
   });
 
@@ -160,6 +166,8 @@ class _StepFormRender extends StatelessWidget {
   final ItineraryStepViewModel step;
   /// Callback to change the step type
   final void Function(ItineraryStepViewModel newStep) onStepTypeChanged;
+  /// Callback to delete the step
+  final VoidCallback onDelete;
   /// Selected index for the current step
   final int selectedIndex;
 
@@ -190,6 +198,7 @@ class _StepFormRender extends StatelessWidget {
           title: title,
           startDate: startDate,
           finishDate: finishDate,
+          name: 'Place name',
           position: position,
           description: '',
           experiences: [],
@@ -229,58 +238,198 @@ class _StepFormRender extends StatelessWidget {
 
     // hosting step form
     if(step is HostingStepViewModel){
-      formContent = const Placeholder();
+      formContent = HostingFormWidget(
+        hosting: step as HostingStepViewModel,
+        onChanged: onStepTypeChanged,
+        onDelete: onDelete,
+      );
     }
     // stop step form
     else if(step is StopStepViewModel){
-      formContent = const Placeholder();
+      formContent = StopFormWidget(
+        stop: step as StopStepViewModel,
+        onChanged: onStepTypeChanged,
+        onDelete: onDelete,
+      );
     }
     // travel segment step form
     else if(step is TravelSegmentStepViewModel){
-      formContent = const Placeholder();
+      formContent = TravelSegmentFormWidget(
+        segment: step as TravelSegmentStepViewModel,
+        onChanged: onStepTypeChanged,
+        onDelete: onDelete,
+      );
     } else {
       /// Empty state shown when no steps have been added yet.
       formContent = const Placeholder();
     }
 
-    return Column(
-      children: [
-        Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: DropdownButtonFormField<Type>(
-            initialValue: step.runtimeType,
-            decoration: const InputDecoration(
-              labelText: 'Step Type',
-              border: OutlineInputBorder(),
+    return Container(
+      padding: const EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        border: Border.all(
+            color: step.problems != null ? Colors.yellow
+                :
+            Colors.transparent
+        )
+      ),
+      child: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.all(16.0),
+            child: DropdownButtonFormField<Type>(
+              initialValue: step.runtimeType,
+              decoration: const InputDecoration(
+                labelText: 'Step Type',
+                border: OutlineInputBorder(),
+              ),
+              items: const [
+                DropdownMenuItem(
+                  value: PlaceHolderStepViewModel,
+                  child: Text('Placeholder'),
+                ),
+                DropdownMenuItem(
+                  value: StopStepViewModel,
+                  child: Text('Stop'),
+                ),
+                DropdownMenuItem(
+                  value: HostingStepViewModel,
+                  child: Text('Hosting'),
+                ),
+                DropdownMenuItem(
+                  value: TravelSegmentStepViewModel,
+                  child: Text('Travel Segment'),
+                ),
+              ],
+              onChanged: (newType) {
+                if (newType != null) {
+                  _handleTypeChange(context, newType);
+                }
+              },
             ),
-            items: const [
-              DropdownMenuItem(
-                value: PlaceHolderStepViewModel,
-                child: Text('Placeholder'),
-              ),
-              DropdownMenuItem(
-                value: StopStepViewModel,
-                child: Text('Stop'),
-              ),
-              DropdownMenuItem(
-                value: HostingStepViewModel,
-                child: Text('Hosting'),
-              ),
-              DropdownMenuItem(
-                value: TravelSegmentStepViewModel,
-                child: Text('Travel Segment'),
-              ),
-            ],
-            onChanged: (newType) {
-              if (newType != null) {
-                _handleTypeChange(context, newType);
-              }
-            },
           ),
+          Expanded(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                children: [
+                  _BasicStepForm(step: step, onChanged: onStepTypeChanged),
+                  const SizedBox(height: 16),
+                  formContent,
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _BasicStepForm extends StatefulWidget {
+  final ItineraryStepViewModel step;
+  final ValueChanged<ItineraryStepViewModel> onChanged;
+
+  const _BasicStepForm({
+    required this.step,
+    required this.onChanged,
+  });
+
+  @override
+  State<_BasicStepForm> createState() => _BasicStepFormState();
+}
+
+class _BasicStepFormState extends State<_BasicStepForm> {
+  late final TextEditingController _titleCtrl;
+  late final TextEditingController _startDateCtrl;
+  late final TextEditingController _finishDateCtrl;
+
+  @override
+  void initState() {
+    super.initState();
+    _titleCtrl = TextEditingController(text: widget.step.title);
+    _startDateCtrl = TextEditingController(text: _formatDate(widget.step.startDate));
+    _finishDateCtrl = TextEditingController(text: _formatDate(widget.step.finishDate));
+  }
+
+  @override
+  void didUpdateWidget(covariant _BasicStepForm oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.step.id != widget.step.id) {
+      _titleCtrl.text = widget.step.title;
+      _startDateCtrl.text = _formatDate(widget.step.startDate);
+      _finishDateCtrl.text = _formatDate(widget.step.finishDate);
+    }
+  }
+
+  @override
+  void dispose() {
+    _titleCtrl.dispose();
+    _startDateCtrl.dispose();
+    _finishDateCtrl.dispose();
+    super.dispose();
+  }
+
+  String _formatDate(DateTime dt) =>
+      '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
+
+  Future<void> _pickDate({required bool isStart}) async {
+    final initial = isStart ? widget.step.startDate : widget.step.finishDate;
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime(2020),
+      lastDate: DateTime(2100),
+    );
+    if (picked != null) {
+      if (isStart) {
+        _startDateCtrl.text = _formatDate(picked);
+        widget.onChanged(widget.step.copyWith(startDate: picked));
+      } else {
+        _finishDateCtrl.text = _formatDate(picked);
+        widget.onChanged(widget.step.copyWith(finishDate: picked));
+      }
+    }
+  }
+
+  void _onTitleChanged(String value) {
+    widget.onChanged(widget.step.copyWith(title: value));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CustomFormField.text(
+          label: 'Step Title',
+          enabled: true,
+          controller: _titleCtrl,
+          onChanged: _onTitleChanged,
         ),
-        Expanded(child: formContent),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: CustomFormField.date(
+                label: 'Start Date',
+                enabled: true,
+                controller: _startDateCtrl,
+                onTap: () => _pickDate(isStart: true),
+              ),
+            ),
+            const SizedBox(width: 12),
+            Expanded(
+              child: CustomFormField.date(
+                label: 'End Date',
+                enabled: true,
+                controller: _finishDateCtrl,
+                onTap: () => _pickDate(isStart: false),
+              ),
+            ),
+          ],
+        ),
       ],
     );
   }
-
 }
