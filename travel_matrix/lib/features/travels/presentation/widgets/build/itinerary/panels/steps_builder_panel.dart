@@ -60,6 +60,7 @@ class StepsBuilderPanel extends StatelessWidget {
           child: _StepFormRender(
             step: steps.stepsList[selectedIndex],
             onStepTypeChanged: (newStep) => updateStep(selectedIndex, newStep),
+            onStepChanged: (newStep) => updateStep(selectedIndex, newStep),
             onDelete: () => removeStep(selectedIndex),
             selectedIndex: selectedIndex,
           )
@@ -160,6 +161,7 @@ class _StepFormRender extends StatelessWidget {
     required this.onStepTypeChanged,
     required this.onDelete,
     required this.selectedIndex,
+    required this.onStepChanged,
   });
 
   /// step for render the form
@@ -170,6 +172,9 @@ class _StepFormRender extends StatelessWidget {
   final VoidCallback onDelete;
   /// Selected index for the current step
   final int selectedIndex;
+  /// Callback to onChanged the step
+  final ValueChanged<ItineraryStepViewModel> onStepChanged;
+
 
   /// Type changer handler, called when the user changes the step type, verifying if the change is valid.
   Future<void> _handleTypeChange(BuildContext context, Type newType) async {
@@ -240,7 +245,7 @@ class _StepFormRender extends StatelessWidget {
     if(step is HostingStepViewModel){
       formContent = HostingFormWidget(
         hosting: step as HostingStepViewModel,
-        onChanged: onStepTypeChanged,
+        onChanged: onStepChanged,
         onDelete: onDelete,
       );
     }
@@ -248,7 +253,7 @@ class _StepFormRender extends StatelessWidget {
     else if(step is StopStepViewModel){
       formContent = StopFormWidget(
         stop: step as StopStepViewModel,
-        onChanged: onStepTypeChanged,
+        onChanged: onStepChanged,
         onDelete: onDelete,
       );
     }
@@ -256,7 +261,7 @@ class _StepFormRender extends StatelessWidget {
     else if(step is TravelSegmentStepViewModel){
       formContent = TravelSegmentFormWidget(
         segment: step as TravelSegmentStepViewModel,
-        onChanged: onStepTypeChanged,
+        onChanged: onStepChanged,
         onDelete: onDelete,
       );
     } else {

@@ -25,18 +25,20 @@ class TimelineProblemViewModel{
     return Colors.yellow;
   }
 
+  /// Mapper method from [TimelineProblem] to [TimelineProblemViewModel]
+  factory TimelineProblemViewModel.fromTimelineProblem(TimelineProblem problem, ItineraryStepViewModel step1, ItineraryStepViewModel step2){
+    final title = _typeToTitleString(problem.type);
+    final description = _typeToDescriptionString(problem.type, step1, step2);
+    return TimelineProblemViewModel(
+      title: title,
+      description: description,
+      type: problem.type,
+    );
+  }
+
 }
 
-/// Mapper method from [TimelineProblem] to [TimelineProblemViewModel]
-TimelineProblemViewModel timelineProblemToViewModel(TimelineProblem problem, ItineraryStepViewModel step1, ItineraryStepViewModel step2){
-  final title = _typeToTitleString(problem.type);
-  final description = _typeToDescriptionString(problem.type, step1, step2);
-  return TimelineProblemViewModel(
-    title: title,
-    description: description,
-    type: problem.type,
-  );
-}
+
 
 String _typeToTitleString(TimelineProblemType type){
   switch(type){

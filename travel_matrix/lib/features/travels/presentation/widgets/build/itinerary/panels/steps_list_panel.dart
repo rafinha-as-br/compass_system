@@ -17,7 +17,7 @@ class StepsListPanel extends StatelessWidget {
   /// Reorder [steps] callback method
   final void Function(int oldIndex, int newIndex) onReorder;
   /// Delete [step] callback method
-  final VoidCallback onDeleteStep;
+  final void Function(int index) onDeleteStep;
 
   const StepsListPanel({
     super.key,
@@ -71,7 +71,7 @@ class StepsListPanel extends StatelessWidget {
                         isSelected: isSelected,
                         index: index,
                         onSelectStep: onSelectStep,
-                        onDeleteStep: onDeleteStep
+                        onDeleteStep: () => onDeleteStep(index)
                       );
                     },
                   ),
