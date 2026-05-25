@@ -16,11 +16,14 @@ class TravelViewBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return TabBarView(
-      children: [
-        RouteViewTab(travel: travel),
-        ItineraryViewTab(travel: travel),
-      ],
+    return Container(
+      color: Theme.of(context).colorScheme.surfaceContainerHighest.withValues(alpha: 0.3),
+      child: TabBarView(
+        children: [
+          RouteViewTab(travel: travel),
+          ItineraryViewTab(travel: travel),
+        ],
+      ),
     );
   }
 }

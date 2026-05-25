@@ -17,11 +17,11 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      decoration: const BoxDecoration(
-        color: Colors.white,
+      decoration: BoxDecoration(
+        color: Theme.of(context).colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: Color(0xFFE8ECF0),
+            color: Theme.of(context).colorScheme.outlineVariant,
             width: 1,
           ),
         ),
@@ -64,13 +64,13 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: _getTravelStatusColor(context),
+                      color: _getTravelStatusBgColor(context),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       travel.statusString,
-                      style: const TextStyle(
-                        color: Colors.white,
+                      style: TextStyle(
+                        color: _getTravelStatusFgColor(context),
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
@@ -84,28 +84,36 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
               // Date and travelers row
               Row(
                 children: [
-                  Row(
-                    children: [
-                      const Icon(
-                        Icons.calendar_today_outlined,
-                        size: 14,
-                        color: Color(0xFF8E9AAB),
-                      ),
-                      const SizedBox(width: 4),
-                      Text(
-                        '${travel.route.startDate.month}/${travel.route.startDate.day}',
-                        style: TextStyle(
-                          color: _getTravelStatusColor(context),
-                          fontWeight: FontWeight.bold,
-                          fontSize: 12,
-                        ),
-                      ),
-                    ],
+                  const Icon(
+                    Icons.calendar_today_outlined,
+                    size: 14,
+                    color: Color(0xFF8E9AAB),
+                  ),
+                  const SizedBox(width: 4),
+                  Text(
+                    '${_formatDate(travel.route.startDate)} - ${_formatDate(travel.route.endDate)}',
+                    style: const TextStyle(
+                      color: Color(0xFF8E9AAB),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Text(
+                    '• ${travel.participants.length} Travelers',
+                    style: const TextStyle(
+                      color: Color(0xFF8E9AAB),
+                      fontWeight: FontWeight.w600,
+                      fontSize: 12,
+                    ),
                   ),
                 ],
               ),
               const SizedBox(height: 16),
               const TabBar(
+                dividerColor: Colors.transparent,
+                indicatorSize: TabBarIndicatorSize.tab,
+                unselectedLabelColor: Color(0xFF8E9AAB),
                 tabs: [
                   Tab(icon: Icon(Icons.map), text: 'Route View'),
                   Tab(icon: Icon(Icons.view_timeline), text: 'Itinerary View'),
@@ -119,19 +127,38 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   }
 
   @override
-  Size get preferredSize => const Size.fromHeight(160);
+  Size get preferredSize => const Size.fromHeight(170);
 
-  Color _getTravelStatusColor(BuildContext context) {
+  String _formatDate(DateTime date) {
+    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+    return '${months[date.month - 1]} ${date.day}, ${date.year}';
+  }
+
+  Color _getTravelStatusBgColor(BuildContext context) {
     final scheme = Theme.of(context).colorScheme;
     switch (travel.status) {
       case TravelStatusViewModel.notReady:
-        return scheme.error;
+        return scheme.errorContainer;
       case TravelStatusViewModel.ready:
-        return scheme.primary;
+        return scheme.primaryContainer;
       case TravelStatusViewModel.inProgress:
-        return scheme.secondary;
-      case TravelStatusViewModel.completed:
         return scheme.secondaryContainer;
+      case TravelStatusViewModel.completed:
+        return scheme.tertiaryContainer;
+    }
+  }
+
+  Color _getTravelStatusFgColor(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+    switch (travel.status) {
+      case TravelStatusViewModel.notReady:
+        return scheme.onErrorContainer;
+      case TravelStatusViewModel.ready:
+        return scheme.onPrimaryContainer;
+      case TravelStatusViewModel.inProgress:
+        return scheme.onSecondaryContainer;
+      case TravelStatusViewModel.completed:
+        return scheme.onTertiaryContainer;
     }
   }
 }

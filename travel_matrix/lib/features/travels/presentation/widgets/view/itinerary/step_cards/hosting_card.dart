@@ -58,7 +58,7 @@ class _HostingCardState extends State<HostingCard> {
                   color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.hotel, color: Colors.blue),
+                child: Icon(Icons.hotel, color: theme.colorScheme.primary),
               ),
               const SizedBox(width: 16),
               Expanded(

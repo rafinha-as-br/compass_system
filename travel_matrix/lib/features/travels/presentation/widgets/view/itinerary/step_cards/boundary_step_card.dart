@@ -19,17 +19,19 @@ class BoundaryStepCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
 
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
+    return Card(
+      elevation: 0,
+      color: theme.colorScheme.surface,
+      shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
-        border: Border.all(
-          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.3),
+        side: BorderSide(
+          color: theme.colorScheme.outlineVariant.withValues(alpha: 0.5),
         ),
       ),
-      child: Row(
-        children: [
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
           Icon(
             step.isStart ? Icons.trip_origin : Icons.flag_outlined,
             size: 18,
@@ -57,6 +59,7 @@ class BoundaryStepCard extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

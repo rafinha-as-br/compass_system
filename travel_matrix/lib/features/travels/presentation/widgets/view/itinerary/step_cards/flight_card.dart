@@ -61,7 +61,7 @@ class _FlightCardState extends State<FlightCard> {
                   ),
                   Column(
                     children: [
-                      const Icon(Icons.flight_takeoff, color: Colors.green, size: 20),
+                      Icon(Icons.flight_takeoff, color: theme.colorScheme.primary, size: 20),
                       const SizedBox(height: 4),
                       Container(
                         width: 80,

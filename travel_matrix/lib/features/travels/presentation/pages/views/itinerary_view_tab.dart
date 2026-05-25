@@ -21,14 +21,21 @@ class ItineraryViewTab extends StatelessWidget {
       return NoItineraryPage(travel: travel,);
     }
 
-    return SingleChildScrollView(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          ItineraryTimeline(travel: travel),
-        ],
-      ),
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isDesktop = constraints.maxWidth > 600;
+        final horizontalPadding = isDesktop ? 40.0 : 24.0;
+        
+        return SingleChildScrollView(
+          padding: EdgeInsets.symmetric(horizontal: horizontalPadding, vertical: 24),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ItineraryTimeline(travel: travel),
+            ],
+          ),
+        );
+      },
     );
   }
 }

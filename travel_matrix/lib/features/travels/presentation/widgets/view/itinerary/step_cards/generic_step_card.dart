@@ -56,12 +56,12 @@ class _GenericStepCardState extends State<GenericStepCard> {
                 width: 40,
                 height: 40,
                 decoration: BoxDecoration(
-                  color: isPlaceholder ? Colors.grey.shade200 : theme.colorScheme.surfaceContainerHighest,
+                  color: isPlaceholder ? theme.colorScheme.surfaceContainer : theme.colorScheme.surfaceContainerHighest,
                   shape: BoxShape.circle,
                 ),
                 child: Icon(
                   isPlaceholder ? Icons.edit_note : Icons.help_outline,
-                  color: isPlaceholder ? Colors.grey : theme.colorScheme.primary,
+                  color: isPlaceholder ? theme.colorScheme.onSurfaceVariant : theme.colorScheme.primary,
                   size: 20,
                 ),
               ),

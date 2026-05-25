@@ -9,6 +9,7 @@ import 'package:travel_matrix/features/travels/presentation/widgets/view/itinera
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_cards/stop_card.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_icon.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/timeline_step_item.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 
 
 /// Timeline widget displaying the itinerary steps.
@@ -86,22 +87,11 @@ class ItineraryTimeline extends StatelessWidget {
           isFirst: isFirst,
           isLast: isLast,
           date: stepDate,
+          typeLabel: typeLabel,
           icon: _buildStepIcon(currentStep),
           content: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              if (typeLabel != null)
-                Padding(
-                  padding: const EdgeInsets.only(left: 4, bottom: 4),
-                  child: Text(
-                    typeLabel.toUpperCase(),
-                    style: theme.textTheme.labelSmall?.copyWith(
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 1.2,
-                      color: theme.colorScheme.primary.withValues(alpha: 0.6),
-                    ),
-                  ),
-                ),
               _buildStepCard(context, currentStep),
             ],
           ),
@@ -113,7 +103,13 @@ class ItineraryTimeline extends StatelessWidget {
   String? _getStepTypeLabel(dynamic step) {
     if (step is StopStepViewModel) return 'Stop';
     if (step is HostingStepViewModel) return 'Hosting';
-    if (step is TravelSegmentStepViewModel) return 'Segment';
+    if (step is TravelSegmentStepViewModel) {
+      final transport = step.transport;
+      if (transport is AirplaneViewModel) return 'Flight';
+      if (transport is BusViewModel) return 'Bus';
+      if (transport is RentalCarViewModel) return 'Car Rental';
+      return 'Transport';
+    }
     if (step is PlaceHolderStepViewModel) return 'Draft';
     return null;
   }

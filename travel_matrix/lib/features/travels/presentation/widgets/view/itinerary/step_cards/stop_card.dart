@@ -58,7 +58,7 @@ class _StopCardState extends State<StopCard> {
                   color: theme.colorScheme.primaryContainer.withValues(alpha: 0.3),
                   borderRadius: BorderRadius.circular(12),
                 ),
-                child: const Icon(Icons.location_city, color: Colors.orange),
+                child: Icon(Icons.location_city, color: theme.colorScheme.primary),
               ),
               const SizedBox(width: 16),
               // Name and Location
