@@ -7,7 +7,7 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_matrix/app/app.dart';
+import 'package:travel_matrix/app/travel_matrix_app.dart';
 
 void main() {
   testWidgets('App loads correctly smoke test', (WidgetTester tester) async {

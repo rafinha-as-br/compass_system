@@ -1,6 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/app/gates/gate_auth.dart';
 
+enum AppStatus {
+  authenticated,
+  unauthenticated,
+}
+
+/// Gate responsible for directing for other gates, using [AppStatus] to
+/// determine the gate.
 class GateSplash extends StatefulWidget {
   const GateSplash({super.key});
 
@@ -37,24 +44,9 @@ class _GateSplashState extends State<GateSplash> {
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
 
-            /// logo
-            Image.asset('assets/images/logo.png', width: 700),
-            Column(
-              children: [
-                Text(
-                  'Travel Matrix App',
-                  style: TextStyle(
-                    fontSize: 32,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onPrimary,
-                  ),
-                ),
-                const SizedBox(height: 48),
-                CircularProgressIndicator(
-                  color: Theme.of(context).colorScheme.onPrimary,
-                ),
-              ],
-            ),
+            /// Loading widget
+            ///
+
           ],
         ),
       ),
