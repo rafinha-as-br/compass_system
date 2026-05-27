@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 
 /// User creation form page.
 class CreateUserPage extends StatefulWidget {
@@ -52,7 +54,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
     if (mounted) {
       setState(() => _isSubmitting = false);
       if (success) {
-        Navigator.of(context).pop();
+        context.go(AppRoutes.users);
       }
     }
   }
@@ -66,7 +68,13 @@ class _CreateUserPageState extends State<CreateUserPage> {
         title: const Text('Create User'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.users);
+            }
+          },
         ),
       ),
       body: SingleChildScrollView(

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:travel_matrix/core/services/auth_service.dart';
-import 'package:travel_matrix/core/services/compass_service.dart';
+import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 
 class CreateRouteController extends ChangeNotifier {
   bool _isLoading = false;
@@ -22,7 +22,7 @@ class CreateRouteController extends ChangeNotifier {
     _clearError();
 
     try {
-      final token = await AuthService.instance.getToken();
+      final token = await AuthStorageService.instance.getToken();
       if (token == null) {
         _setError('Not authenticated.');
         _setLoading(false);

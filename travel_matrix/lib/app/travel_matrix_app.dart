@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
-import 'package:travel_matrix/app/gates/gate_splash.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 import 'global_controllers/settings_controller.dart';
@@ -11,13 +11,15 @@ import 'global_controllers/settings_controller.dart';
 ///
 /// Configures theme, localization, and global providers.
 class TravelMatrixApp extends StatelessWidget {
-  const TravelMatrixApp({super.key});
+  final GoRouter router;
+  
+  const TravelMatrixApp({super.key, required this.router});
 
   @override
   Widget build(BuildContext context) {
     return Consumer<SettingsController>(
       builder: (context, settingsController, _) {
-        return MaterialApp(
+        return MaterialApp.router(
           title: 'Travel Matrix',
           theme: AppTheme.lightTheme,
           debugShowCheckedModeBanner: false,
@@ -31,7 +33,7 @@ class TravelMatrixApp extends StatelessWidget {
             GlobalCupertinoLocalizations.delegate,
           ],
           supportedLocales: AppLocalizations.supportedLocales,
-          home: const GateSplash(),
+          routerConfig: router,
         );
       },
     );

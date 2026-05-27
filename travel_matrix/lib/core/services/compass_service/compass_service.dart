@@ -1,7 +1,8 @@
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/core/services/compass_service/clients/auth_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/itinerary_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/route_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/travel_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/clients/user_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/api_exception.dart';
 
 /// Wraps [MockApiService] for the Travel Matrix application.
@@ -11,19 +12,23 @@ import 'package:travel_matrix/core/services/compass_service/api_exception.dart';
 /// be replaced by a real HTTP client when the production API arrives.
 class CompassService {
   static CompassService? _instance;
-  final MockApiService _mockApiService;
   final TravelApiClient _travelApiClient;
   final RouteApiClient _routeApiClient;
   final ItineraryApiClient _itineraryApiClient;
+  final UserApiClient _userApiClient;
+  final AuthApiClient _authApiClient;
 
   CompassService._()
-      : _mockApiService = MockApiService(),
-        _travelApiClient = TravelApiClient.instance,
+      : _travelApiClient = TravelApiClient.instance,
         _routeApiClient = RouteApiClient.instance,
-        _itineraryApiClient = ItineraryApiClient.instance;
+        _itineraryApiClient = ItineraryApiClient.instance,
+        _userApiClient = UserApiClient.instance,
+        _authApiClient = AuthApiClient.instance;
 
   static Future<CompassService> init() async {
     if (_instance != null) return _instance!;
+    await AuthApiClient.init();
+    await UserApiClient.init();
     await TravelApiClient.init();
     await RouteApiClient.init();
     await ItineraryApiClient.init();
@@ -40,22 +45,32 @@ class CompassService {
 
   /// Authenticates a user and returns a bearer token payload.
   Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await _mockApiService.login(email, password);
-    return response.body;
+    return _authApiClient.login(email, password);
   }
 
   // ─── Users ──────────────────────────────────────────────────────────
 
   /// Returns the authenticated user's data.
   Future<Map<String, dynamic>> getUser(String token) async {
-    final response = await _mockApiService.getUser(token);
-    return response.body;
+    return _userApiClient.getUser(token);
+  }
+
+  /// Returns a user by ID.
+  Future<Map<String, dynamic>> getUserById(String token, String userId) async {
+    try {
+      return _userApiClient.getUserById(token, userId);
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
   }
 
   /// Returns all client users. Travel Agent only.
   Future<Map<String, dynamic>> getAllUsers(String token) async {
-    final response = await _mockApiService.getAllUsers(token);
-    return response.body;
+    return _userApiClient.getAllUsers(token);
   }
 
   /// Creates a new client user. Travel Agent only.
@@ -63,8 +78,7 @@ class CompassService {
     String token,
     Map<String, dynamic> userData,
   ) async {
-    final response = await _mockApiService.createUser(token, userData);
-    return response.body;
+    return _userApiClient.createUser(token, userData);
   }
 
   /// Updates a user's data.
@@ -72,14 +86,12 @@ class CompassService {
     String token,
     Map<String, dynamic> userData,
   ) async {
-    final response = await _mockApiService.updateUser(token, userData);
-    return response.body;
+    return _userApiClient.updateUser(token, userData);
   }
 
   /// Deletes a user by ID. Travel Agent only.
   Future<Map<String, dynamic>> deleteUser(String token, String userId) async {
-    final response = await _mockApiService.deleteUser(token, userId);
-    return response.body;
+    return _userApiClient.deleteUser(token, userId);
   }
 
   // ─── Travels ────────────────────────────────────────────────────────

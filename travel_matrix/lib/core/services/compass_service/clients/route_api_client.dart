@@ -1,4 +1,4 @@
-import 'package:travel_matrix/core/services/compass_service/api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/mock_api_client.dart';
 
 class RouteApiClient{
   static RouteApiClient? _instance;
@@ -17,27 +17,27 @@ class RouteApiClient{
   }
 
   Future<Map<String, dynamic>> getAllRoutes(String token) async{
-    return ApiClient().get(token, '/routes', {}, {}, {});
+    return MockApiClient().get(token, '/routes', {}, {}, {});
   }
 
   Future<Map<String, dynamic>> getRoute(String token, String routeId) async {
-    return ApiClient().get(token, '/routes/$routeId', {}, {}, {});
+    return MockApiClient().get(token, '/routes/$routeId', {}, {}, {});
   }
 
   Future<Map<String, dynamic>> createRoute(String token, Map<String, dynamic> routeData) async {
-    return ApiClient().post(token, '/routes', {}, {}, routeData);
+    return MockApiClient().post(token, '/routes', {}, {}, routeData);
   }
 
   Future<Map<String, dynamic>> updateRoute(String token, String routeId, Map<String, dynamic> routeData) async {
-    return ApiClient().put(token, '/routes/$routeId', {}, {}, routeData);
+    return MockApiClient().put(token, '/routes/$routeId', {}, {}, routeData);
   }
 
   Future<Map<String, dynamic>> deleteRoute(String token, String routeId) async {
-    return ApiClient().delete(token, '/routes/$routeId', {}, {}, {});
+    return MockApiClient().delete(token, '/routes/$routeId', {}, {}, {});
   }
 
   Future<Map<String, dynamic>> getInterests(String token, String routeId) async {
-    return ApiClient().get(token, '/routes/$routeId/interests', {}, {}, {});
+    return MockApiClient().get(token, '/routes/$routeId/interests', {}, {}, {});
   }
 
 

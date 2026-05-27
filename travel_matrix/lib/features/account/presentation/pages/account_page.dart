@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import 'package:travel_matrix/app/controllers/settings_controller.dart';
-import 'package:travel_matrix/core/services/auth_service.dart';
+import 'package:travel_matrix/app/global_controllers/settings_controller.dart';
+import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
-import 'package:travel_matrix/app/gates/gate_auth.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -67,14 +66,8 @@ class AccountPage extends StatelessWidget {
                 ),
                 icon: const Icon(Icons.logout),
                 label: Text(l10n.logOutOfMatrix),
-                onPressed: () async {
-                  await AuthService.instance.clearToken();
-                  if (context.mounted) {
-                    Navigator.of(context).pushAndRemoveUntil(
-                      MaterialPageRoute(builder: (context) => const GateAuth()),
-                      (Route<dynamic> route) => false,
-                    );
-                  }
+                onPressed: () {
+                  context.read<AuthController>().logout();
                 },
               ),
             ],

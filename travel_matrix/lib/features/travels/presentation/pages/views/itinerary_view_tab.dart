@@ -1,10 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
+import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/builds/itinerary_build_page.dart';
+import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/itinerary_timeline.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/no_itinerary_page.dart';
-
-import '../../models/build_models/itinerary_build_model.dart';
-import '../../widgets/view/itinerary/itinerary_timeline.dart';
 
 /// Displays itinerary data or a prompt to create one.
 ///
@@ -47,21 +47,20 @@ class ItineraryViewTab extends StatelessWidget {
                       return;
                     }
 
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (_) => ItineraryBuildPage(
-                          travelId: travel.localId,
-                          itineraryBuildModel: ItineraryBuildModel(
-                            travelName: travel.travelTitle,
-                            interestsPoints: travel.route.interests,
-                            steps: ItineraryStepsBuildModel(
-                              startStep: steps.first,
-                              finishStep: steps.last,
-                              normalSteps: steps.sublist(1, steps.length - 1),
-                            ),
+                    context.go(
+                      '${AppRoutes.travels}/${travel.localId}/${AppRoutes.itineraryCreate}',
+                      extra: {
+                        'travelId': travel.localId,
+                        'itineraryBuildModel': ItineraryBuildModel(
+                          travelName: travel.travelTitle,
+                          interestsPoints: travel.route.interests,
+                          steps: ItineraryStepsBuildModel(
+                            startStep: steps.first,
+                            finishStep: steps.last,
+                            normalSteps: steps.sublist(1, steps.length - 1),
                           ),
                         ),
-                      ),
+                      },
                     );
                   },
                   icon: const Icon(Icons.edit_calendar),

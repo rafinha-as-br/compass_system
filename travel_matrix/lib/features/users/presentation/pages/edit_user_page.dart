@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 
 /// Edit User page — same structure as Create User but pre-filled.
 class EditUserPage extends StatefulWidget {
@@ -64,11 +66,8 @@ class _EditUserPageState extends State<EditUserPage> {
     });
 
     if (mounted) {
-      setState(() => _isSubmitting = false);
       if (success) {
-        // Pop back to the dashboard (past the view page too)
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
+        context.go('${AppRoutes.users}/${widget.user.id}');
       }
     }
   }
@@ -82,7 +81,13 @@ class _EditUserPageState extends State<EditUserPage> {
         title: const Text('Edit User'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('${AppRoutes.users}/${widget.user.id}');
+            }
+          },
         ),
       ),
       body: SingleChildScrollView(
