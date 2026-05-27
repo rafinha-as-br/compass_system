@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/builds/route_creation_page.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/builds/itinerary_build_page.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 
 /// This appBar is used in the Travel_View_page, responsible for showing:
@@ -46,7 +44,13 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                   // Back button
                   IconButton(
                     icon: const Icon(Icons.arrow_back),
-                    onPressed: () => Navigator.of(context).pop(),
+                    onPressed: () {
+                      if (context.canPop()) {
+                        context.pop();
+                      } else {
+                        context.go(AppRoutes.travels);
+                      }
+                    },
                   ),
                   // Title
                   Expanded(

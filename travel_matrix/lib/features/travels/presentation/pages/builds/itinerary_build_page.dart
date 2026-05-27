@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/build/itinerary_build_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/editor/itinerary_editor_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/update/itinerary_update_controller.dart';
@@ -115,13 +117,16 @@ class _ItineraryBuildView extends StatelessWidget {
     return Scaffold(
       /// TODO: CREATE AN APP BAR ON A SEPARATED FILE
     appBar: AppBar(
-        title: Text(
-          '${isEditMode ? 'Edit' : 'Create'} Itinerary'
-          ' — ${buildModel.travelName}',
-        ),
+        title: const Text('Build Itinerary'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('${AppRoutes.travels}/$travelId');
+            }
+          },
         ),
         actions: [
 

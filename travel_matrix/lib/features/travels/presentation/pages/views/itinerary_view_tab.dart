@@ -3,7 +3,6 @@ import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/builds/itinerary_build_page.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/itinerary_timeline.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/no_itinerary_page.dart';
 

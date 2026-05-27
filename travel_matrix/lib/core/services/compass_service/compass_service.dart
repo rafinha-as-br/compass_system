@@ -55,6 +55,19 @@ class CompassService {
     return _userApiClient.getUser(token);
   }
 
+  /// Returns a user by ID.
+  Future<Map<String, dynamic>> getUserById(String token, String userId) async {
+    try {
+      return _userApiClient.getUserById(token, userId);
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
+  }
+
   /// Returns all client users. Travel Agent only.
   Future<Map<String, dynamic>> getAllUsers(String token) async {
     return _userApiClient.getAllUsers(token);

@@ -5,7 +5,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
-import 'package:travel_matrix/features/users/presentation/pages/edit_user_page.dart';
+
 import 'package:travel_matrix/features/users/presentation/pages/delete_user_dialog.dart';
 
 /// Displays all data of a selected user with edit/delete actions.
@@ -24,7 +24,12 @@ class ViewUserPage extends StatelessWidget {
         title: const Text('User Details'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+              context.go(AppRoutes.users);
+            }
+          },
         ),
         actions: [
           IconButton(
@@ -45,7 +50,7 @@ class ViewUserPage extends StatelessWidget {
               if (confirmed == true) {
                 final success = await controller.deleteUser(user.id);
                 if (success && context.mounted) {
-                  Navigator.of(context).pop();
+                  context.go(AppRoutes.users);
                 }
               }
             },

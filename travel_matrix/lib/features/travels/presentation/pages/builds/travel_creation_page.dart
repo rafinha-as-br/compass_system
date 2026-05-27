@@ -4,6 +4,8 @@ import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 
 import '../../../../../core/services/auth_storage_service.dart';
 
@@ -119,7 +121,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
 
     if (mounted) {
       setState(() => _isSubmitting = false);
-      if (success) Navigator.of(context).pop();
+      if (success) context.go(AppRoutes.travels);
     }
   }
 
@@ -132,7 +134,13 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
         title: const Text('Create Travel'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.travels);
+            }
+          },
         ),
       ),
       body: _isLoadingClients
