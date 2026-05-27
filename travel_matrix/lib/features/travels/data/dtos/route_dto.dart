@@ -6,14 +6,19 @@ import 'package:travel_matrix/core/constants/api_fields.dart';
 class RoutePlanDTO {
   /// Main id used for API reference
   final String? id;
+
   /// Start date for the route
   final DateTime startDate;
+
   /// Finish date for the route
   final DateTime endDate;
+
   /// Start location for the route
   final String startLocation;
+
   /// Destination for the route
   final String destination;
+
   /// List of interests for the route
   final List<InterestPointDTO> interestsList;
 
@@ -34,36 +39,67 @@ class RoutePlanDTO {
       RoutePlanApiFields.finishDate: endDate.toIso8601String(),
       RoutePlanApiFields.startLocation: startLocation,
       RoutePlanApiFields.destination: destination,
-      RoutePlanApiFields.interestPoints: interestsList.map((x) => x.toJson()).toList(),
+      RoutePlanApiFields.interestPoints: interestsList
+          .map((x) => x.toJson())
+          .toList(),
     };
   }
 
   /// from json method
   factory RoutePlanDTO.fromJson(Map<String, dynamic> json) {
+    // interestPoints pode vir como lista de objetos ou (bug antigo) lista de strings
+    final rawPoints = json[RoutePlanApiFields.interestPoints];
+    final interestsList = <InterestPointDTO>[];
+    if (rawPoints is Iterable) {
+      for (final x in rawPoints) {
+        if (x is Map) {
+          interestsList.add(
+            InterestPointDTO.fromJson(Map<String, dynamic>.from(x)),
+          );
+        }
+        // ignora entradas que são strings (registros corrompidos antigos)
+      }
+    }
+
+    final startRaw = json[RoutePlanApiFields.startDate] as String?;
+    final finishRaw = json[RoutePlanApiFields.finishDate] as String?;
+    final now = DateTime.now();
+
     return RoutePlanDTO(
-      id: json[RoutePlanApiFields.id],
-      startDate: DateTime.parse(json[RoutePlanApiFields.startDate]),
-      endDate: DateTime.parse(json[RoutePlanApiFields.finishDate]),
-      startLocation: json[RoutePlanApiFields.startLocation],
-      destination: json[RoutePlanApiFields.destination],
-      interestsList: List<InterestPointDTO>.from(
-        json[RoutePlanApiFields.interestPoints].map(
-          (x) => InterestPointDTO.fromJson(x),
-        )
-      )
+      id: json[RoutePlanApiFields.id] as String?,
+      startDate: startRaw != null ? DateTime.parse(startRaw) : now,
+      endDate: finishRaw != null
+          ? DateTime.parse(finishRaw)
+          : now.add(const Duration(days: 7)),
+      startLocation: (json[RoutePlanApiFields.startLocation] as String?) ?? '',
+      destination: (json[RoutePlanApiFields.destination] as String?) ?? '',
+      interestsList: interestsList,
+    );
+  }
+
+  /// Factory para criar um RoutePlanDTO vazio (quando routePlan é null na API).
+  factory RoutePlanDTO.empty() {
+    final now = DateTime.now();
+    return RoutePlanDTO(
+      id: null,
+      startDate: now,
+      endDate: now.add(const Duration(days: 7)),
+      startLocation: '',
+      destination: '',
+      interestsList: [],
     );
   }
 
   /// to domain method
   RoutePlan toDomain() {
     return RoutePlan(
-        domainId: Uuid().v4(),
-        backEndId: id,
-        startDate: startDate,
-        endDate: endDate,
-        startLocation: startLocation,
-        destination: destination,
-        interestsList: interestsList.map((x) => x.toDomain()).toList()
+      domainId: Uuid().v4(),
+      backEndId: id,
+      startDate: startDate,
+      endDate: endDate,
+      startLocation: startLocation,
+      destination: destination,
+      interestsList: interestsList.map((x) => x.toDomain()).toList(),
     );
   }
 
@@ -75,19 +111,21 @@ class RoutePlanDTO {
       endDate: routePlan.endDate,
       startLocation: routePlan.startLocation,
       destination: routePlan.destination,
-      interestsList: routePlan.interestsList.map((x) => InterestPointDTO.fromDomain(interestPoint: x)).toList(),
+      interestsList: routePlan.interestsList
+          .map((x) => InterestPointDTO.fromDomain(interestPoint: x))
+          .toList(),
     );
   }
-
-
 }
 
 /// Represents a point of interest for a [RoutePlan]
 class InterestPointDTO {
   /// Main id used for API reference
   final String? id;
+
   /// Name of the place for the interest point
   final String name;
+
   /// Description of the place for the interest point
   final String description;
 
@@ -116,7 +154,7 @@ class InterestPointDTO {
   }
 
   /// To domain mapper method
-  InterestPoint toDomain(){
+  InterestPoint toDomain() {
     return InterestPoint(
       domainId: Uuid().v4(),
       backEndId: id,
@@ -133,7 +171,4 @@ class InterestPointDTO {
       description: interestPoint.description,
     );
   }
-
 }
-
-

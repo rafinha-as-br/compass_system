@@ -15,10 +15,31 @@ public class TravelController {
     @Autowired
     private TravelRepository travelRepository;
 
+    // ─── GET /travels ───────────────────────────────────────────────────────────
+    // Retorna todos os travels cadastrados. Requerido pelo Flutter (TravelApiClient.getAllTravels).
+    @GetMapping
+    public ResponseEntity<java.util.List<Travel>> getAllTravels() {
+        return ResponseEntity.ok(travelRepository.findAll());
+    }
+
+    // ─── GET /travels/client/{clientId} ────────────────────────────────────────
+    // Retorna os travels de um cliente específico. Requerido pelo Flutter (getTravelsForClient).
+    // Filtra pelo campo clientName que armazena o identificador do cliente.
+    @GetMapping("/client/{clientId}")
+    public ResponseEntity<java.util.List<Travel>> getTravelsByClient(
+            @PathVariable String clientId) {
+        java.util.List<Travel> all = travelRepository.findAll();
+        java.util.List<Travel> filtered = all.stream()
+                .filter(t -> clientId.equals(t.getClientName()))
+                .collect(java.util.stream.Collectors.toList());
+        return ResponseEntity.ok(filtered);
+    }
+
     // ─── POST /travels ─────────────────────────────────────────────────────────
     // Creates a new Travel. All nested id fields may be null; backend assigns them.
     @PostMapping
     public ResponseEntity<Travel> createTravel(@RequestBody Travel travel) {
+
         Travel saved = travelRepository.save(travel);
         return ResponseEntity.ok(saved);
     }

@@ -41,6 +41,9 @@ public class SecurityConfig {
                 // Rotas públicas (não precisam de token)
                 .requestMatchers("/teste").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                // Rotas de viagens — exigem autenticação JWT
+                // (TravelController usa /travels, fora do prefixo /api)
+                .requestMatchers("/travels/**").authenticated()
                 // Todas as outras rotas do /api/** precisam de autenticação
                 .requestMatchers("/api/**").authenticated()
                 // Qualquer outra rota é liberada

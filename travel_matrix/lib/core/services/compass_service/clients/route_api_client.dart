@@ -1,3 +1,15 @@
+// ─── MUDANÇA PARA INTEGRAÇÃO ───────────────────────────────────────────────
+// O endpoint /routes NÃO EXISTE na API Java (compass-api).
+// O RoutePlan é parte do objeto Travel e é gerenciado por /travels/{id}.
+//
+// O que mudou:
+//   - updateRoute() agora chama PUT /travels/{travelId} em vez de /routes/{id}
+//     O parâmetro routeId passado pelo CompassService é, na prática, o travelId.
+//   - Os demais métodos (getAllRoutes, getRoute, createRoute, deleteRoute, getInterests)
+//     foram mantidos mas apontam para endpoints inexistentes no backend atual.
+//     Eles retornarão 404 até que a API Java implemente /routes.
+// ──────────────────────────────────────────────────────────────────────────
+
 import 'package:travel_matrix/core/services/compass_service/api_client.dart';
 
 class RouteApiClient{
@@ -28,8 +40,12 @@ class RouteApiClient{
     return ApiClient().post(token, '/routes', {}, {}, routeData);
   }
 
+  // MUDANÇA PARA INTEGRAÇÃO: redireciona para PUT /travels/{travelId}.
+  // O backend não tem /routes — o RoutePlan é atualizado via Travel.
+  // O parâmetro [routeId] corresponde ao travelId passado por CompassService.
+  // O [routeData] deve conter os campos do objeto Travel (incluindo routePlan).
   Future<Map<String, dynamic>> updateRoute(String token, String routeId, Map<String, dynamic> routeData) async {
-    return ApiClient().put(token, '/routes/$routeId', {}, {}, routeData);
+    return ApiClient().put(token, '/travels/$routeId', {}, {}, routeData);
   }
 
   Future<Map<String, dynamic>> deleteRoute(String token, String routeId) async {

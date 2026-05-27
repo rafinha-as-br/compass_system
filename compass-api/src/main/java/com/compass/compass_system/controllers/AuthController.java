@@ -91,10 +91,10 @@ public class AuthController {
         // Verifica se o cliente existe e se a senha digitada bate com a do banco
         if (clientOpt.isPresent() && BCrypt.checkpw(login.password, clientOpt.get().getPassword())) {
             ClientUser client = clientOpt.get();
-            String token = jwtUtil.generateToken(client.getEmail(), "CLIENTE", client.getId());
+            String token = jwtUtil.generateToken(client.getEmail(), "client", client.getId());
             
             LoginResponse response = new LoginResponse(
-                token, client.getId(), client.getName(), client.getEmail(), "CLIENTE"
+                token, client.getId(), client.getName(), client.getEmail(), "client"
             );
             return ResponseEntity.ok(response);
         }
@@ -113,10 +113,10 @@ public class AuthController {
         // Verifica se o agente existe e se a senha digitada bate com a do banco
         if (agentOpt.isPresent() && BCrypt.checkpw(login.password, agentOpt.get().getPassword())) {
             AgentUser agent = agentOpt.get();
-            String token = jwtUtil.generateToken(agent.getEmail(), "AGENTE", agent.getId());
+            String token = jwtUtil.generateToken(agent.getEmail(), "travel_agent", agent.getId());
             
             LoginResponse response = new LoginResponse(
-                token, agent.getId(), agent.getName(), agent.getEmail(), "AGENTE"
+                token, agent.getId(), agent.getName(), agent.getEmail(), "travel_agent"
             );
             return ResponseEntity.ok(response);
         }

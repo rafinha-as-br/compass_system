@@ -41,7 +41,8 @@ class LoginController extends ChangeNotifier {
         final token = data['token'] as String;
 
         // Travel Matrix is only for Travel Agents
-        if (userType != 'travel_agent') {
+        // The Java API returns 'AGENTE' as the userType for travel agents
+        if (userType != 'travel_agent' && userType != 'AGENTE') {
           _state = _state.copyWith(
             isLoading: false,
             errorMessage:

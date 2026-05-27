@@ -138,7 +138,7 @@ class _EditUserPageState extends State<EditUserPage> {
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _sex,
+                    initialValue: _sex,
                     decoration: const InputDecoration(
                         labelText: 'Sex',
                         border: OutlineInputBorder()),

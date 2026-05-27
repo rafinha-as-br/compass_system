@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../../models/build_models/itinerary_build_model.dart';
-import '../../../models/view_models/route_view_model.dart';
 import '../../../models/view_models/travel_view_model.dart';
 import '../../../pages/builds/itinerary_build_page.dart';
 

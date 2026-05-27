@@ -1,5 +1,4 @@
 import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
-import 'package:uuid/uuid.dart';
 
 /// Represent a person that is included in a [Travel].
 class Person {

@@ -62,13 +62,16 @@ class HttpApiClient {
 
   Map<String, dynamic> _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
-      if (response.body.isEmpty) return {};
-      final decoded = jsonDecode(response.body);
-      if (decoded is Map<String, dynamic>) {
-        return decoded;
-      } else {
-        return {'data': decoded}; // Handle lists if needed
+      if (response.body.isEmpty) {
+        return {'status': 'success', 'data': null, 'message': null};
       }
+      final decoded = jsonDecode(response.body);
+      // Sempre envolve no envelope {status, data} esperado pelo CompassService.
+      // Se o backend já retornar esse envelope (ex: erros customizados), preserva.
+      if (decoded is Map<String, dynamic> && decoded.containsKey('status')) {
+        return decoded;
+      }
+      return {'status': 'success', 'data': decoded, 'message': null};
     } else {
       dynamic errorData;
       try {

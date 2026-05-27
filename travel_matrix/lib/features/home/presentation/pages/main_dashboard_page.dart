@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/services/auth_service.dart';
 import 'package:travel_matrix/core/services/compass_service.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/travels/data/dtos/travel_dto.dart';
+import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
 
 /// Main Dashboard Tab — displays travel updates and KPI metrics.
 class MainDashboardPage extends StatefulWidget {
@@ -36,7 +37,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
         setState(() {
           if (travelsResponse['status'] == 'success') {
             _travels = (travelsResponse['data'] as List<dynamic>)
-                .map((e) => Travel.fromJson(e as Map<String, dynamic>))
+                .map((e) => TravelDTO.fromJson(e as Map<String, dynamic>).toDomain())
                 .toList();
           }
           if (usersResponse['status'] == 'success') {
@@ -87,9 +88,9 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
 
   Widget _buildKpiRow(ThemeData theme) {
     final completedTravels =
-        _travels.where((t) => t.hasItinerary).length;
+        _travels.where((t) => t.itinerary != null).length;
     final pendingItineraries =
-        _travels.where((t) => !t.hasItinerary).length;
+        _travels.where((t) => t.itinerary == null).length;
 
     return Row(
       children: [
@@ -157,10 +158,10 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
           final travel = _travels[index];
           return ListTile(
             leading: Icon(
-              travel.hasItinerary
+              travel.itinerary != null
                   ? Icons.check_circle
                   : Icons.schedule,
-              color: travel.hasItinerary
+              color: travel.itinerary != null
                   ? const Color(0xFF2E7D5B)
                   : const Color(0xFFC08A2E),
             ),
@@ -173,7 +174,7 @@ class _MainDashboardPageState extends State<MainDashboardPage> {
             ),
             trailing: Chip(
               label: Text(
-                travel.hasItinerary ? 'COMPLETE' : 'PENDING',
+                travel.itinerary != null ? 'COMPLETE' : 'PENDING',
                 style: const TextStyle(fontSize: 10),
               ),
             ),
