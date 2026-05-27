@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/builds/route_creation_page.dart';
 
 /// Displays route data for the selected travel.
 ///
@@ -27,10 +28,9 @@ class RouteViewTab extends StatelessWidget {
             alignment: Alignment.centerRight,
             child: ElevatedButton.icon(
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => RouteCreationPage(travel: travel),
-                  ),
+                context.go(
+                  '${AppRoutes.travels}/${travel.localId}/${AppRoutes.routeCreate}',
+                  extra: {'travel': travel},
                 );
               },
               icon: const Icon(Icons.edit_road),

@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/edit_user_page.dart';
@@ -29,13 +31,9 @@ class ViewUserPage extends StatelessWidget {
             icon: const Icon(Icons.edit),
             tooltip: 'Edit User',
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => ChangeNotifierProvider.value(
-                    value: controller,
-                    child: EditUserPage(user: user),
-                  ),
-                ),
+              context.go(
+                '${AppRoutes.users}/${user.id}/${AppRoutes.userEdit}',
+                extra: {'user': user, 'controller': controller},
               );
             },
           ),

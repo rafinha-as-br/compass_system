@@ -1,19 +1,14 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
+import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
+import 'package:travel_matrix/features/travels/presentation/pages/builds/itinerary_build_page.dart';
 
-import '../../../models/build_models/itinerary_build_model.dart';
-import '../../../models/view_models/route_view_model.dart';
-import '../../../models/view_models/travel_view_model.dart';
-import '../../../pages/builds/itinerary_build_page.dart';
-
-/// Displayed when a travel has no itinerary yet.
-///
-/// Consumes a [TravelViewModel] and shows an empty state with a button that 
-/// navigates to [ItineraryBuildPage] in create mode (null steps).
-///
-/// Layout: Centered column with an icon, message, and action button.
 class NoItineraryPage extends StatelessWidget {
-  const NoItineraryPage({super.key, required this.travel});
   final TravelViewModel travel;
+
+  const NoItineraryPage({super.key, required this.travel});
 
   @override
   Widget build(BuildContext context) {
@@ -21,30 +16,26 @@ class NoItineraryPage extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(Icons.event_note, size: 64,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.3)),
+          Icon(Icons.calendar_month,
+              size: 64, color: Theme.of(context).disabledColor),
           const SizedBox(height: 16),
           Text(
-            'No itinerary has been created yet.',
-            style: TextStyle(
-              fontSize: 16,
-              color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
-            ),
+            'No Itinerary Yet',
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 24),
           ElevatedButton.icon(
             onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (_) => ItineraryBuildPage(
-                    travelId: travel.localId,
-                    itineraryBuildModel: ItineraryBuildModel(
-                      travelName: travel.travelTitle,
-                      steps: null,
-                      interestsPoints: travel.route.interests,
-                    ),
+              context.go(
+                '${AppRoutes.travels}/${travel.localId}/${AppRoutes.itineraryCreate}',
+                extra: {
+                  'travelId': travel.localId,
+                  'itineraryBuildModel': ItineraryBuildModel(
+                    travelName: travel.travelTitle,
+                    interestsPoints: travel.route.interests,
+                    steps: null,
                   ),
-                ),
+                },
               );
             },
             icon: const Icon(Icons.add),

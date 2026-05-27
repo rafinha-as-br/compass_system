@@ -1,12 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/builds/travel_creation_page.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/views/travel_view_page.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 
 /// Travels Dashboard Tab — lists all travels with state indicator.
 ///
@@ -50,13 +50,9 @@ class _TravelsDashboardView extends StatelessWidget {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ChangeNotifierProvider.value(
-                        value: controller,
-                        child: const TravelCreationPage(),
-                      ),
-                    ),
+                  context.go(
+                    '${AppRoutes.travels}/${AppRoutes.travelCreate}',
+                    extra: {'controller': controller},
                   );
                 },
                 icon: const Icon(Icons.add),
@@ -162,29 +158,21 @@ class _TravelsDashboardView extends StatelessWidget {
               ),
             ),
             const SizedBox(width: 8),
-            IconButton(
+              IconButton(
               icon: const Icon(Icons.chevron_right),
               onPressed: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(
-                    builder: (_) => ChangeNotifierProvider.value(
-                      value: controller,
-                      child: TravelViewPage(travel: travel),
-                    ),
-                  ),
+                context.go(
+                  '${AppRoutes.travels}/${travel.localId}',
+                  extra: {'travel': travel, 'controller': controller},
                 );
               },
             ),
           ],
         ),
         onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => ChangeNotifierProvider.value(
-                value: controller,
-                child: TravelViewPage(travel: travel),
-              ),
-            ),
+          context.go(
+            '${AppRoutes.travels}/${travel.localId}',
+            extra: {'travel': travel, 'controller': controller},
           );
         },
       ),

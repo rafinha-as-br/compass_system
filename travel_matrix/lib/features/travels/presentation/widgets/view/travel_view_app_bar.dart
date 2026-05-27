@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/builds/route_creation_page.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/builds/itinerary_build_page.dart';
@@ -63,10 +65,9 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                   // Edit Route Button
                   ElevatedButton.icon(
                     onPressed: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => RouteCreationPage(travel: travel),
-                        ),
+                      context.go(
+                        '${AppRoutes.travels}/${travel.localId}/${AppRoutes.routeCreate}',
+                        extra: {'travel': travel},
                       );
                     },
                     icon: const Icon(Icons.edit_road, size: 16),
@@ -89,21 +90,20 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                         );
                         return;
                       }
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (_) => ItineraryBuildPage(
-                            travelId: travel.localId,
-                            itineraryBuildModel: ItineraryBuildModel(
-                              travelName: travel.travelTitle,
-                              interestsPoints: travel.route.interests,
-                              steps: ItineraryStepsBuildModel(
-                                startStep: steps.first,
-                                finishStep: steps.last,
-                                normalSteps: steps.sublist(1, steps.length - 1),
-                              ),
+                      context.go(
+                        '${AppRoutes.travels}/${travel.localId}/${AppRoutes.itineraryCreate}',
+                        extra: {
+                          'travelId': travel.localId,
+                          'itineraryBuildModel': ItineraryBuildModel(
+                            travelName: travel.travelTitle,
+                            interestsPoints: travel.route.interests,
+                            steps: ItineraryStepsBuildModel(
+                              startStep: steps.first,
+                              finishStep: steps.last,
+                              normalSteps: steps.sublist(1, steps.length - 1),
                             ),
                           ),
-                        ),
+                        },
                       );
                     },
                     icon: const Icon(Icons.edit_calendar, size: 16),

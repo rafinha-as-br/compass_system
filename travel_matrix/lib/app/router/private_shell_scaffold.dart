@@ -1,30 +1,18 @@
 import 'package:flutter/material.dart';
-
-import 'package:travel_matrix/features/account/presentation/pages/account_page.dart';
-import 'package:travel_matrix/features/travels/presentation/pages/travels_dashboard_page.dart';
-import 'package:travel_matrix/features/users/presentation/pages/users_dashboard_page.dart';
-import 'package:travel_matrix/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class PrivateShellScaffold extends StatelessWidget {
+  final StatefulNavigationShell navigationShell;
 
-  @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-  int _selectedIndex = 0;
-
-  final List<Widget> _pages = const [
-    DashboardPage(),
-    TravelsDashboardPage(), // Index 1: Client Routes
-    TravelsDashboardPage(), // Index 2: Itineraries (same page for now)
-    UsersDashboardPage()    // Index 3: Users
-  ];
+  const PrivateShellScaffold({super.key, required this.navigationShell});
 
   @override
   Widget build(BuildContext context) {
+    final currentIndex = navigationShell.currentIndex;
+
     return Scaffold(
       backgroundColor: TravelAppColors.background,
       body: Row(
@@ -35,13 +23,11 @@ class _HomePageState extends State<HomePage> {
             color: TravelAppColors.surface,
             child: Column(
               children: [
-
                 // Header / Logo
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 24.0, vertical: 32.0),
                   child: Row(
                     children: [
-
                       Container(
                         decoration: BoxDecoration(
                           color: TravelAppColors.primary.withAlpha(240),
@@ -64,7 +50,6 @@ class _HomePageState extends State<HomePage> {
                   ),
                 ),
 
-
                 // Navigation Links
                 Expanded(
                   child: ListView(
@@ -73,40 +58,23 @@ class _HomePageState extends State<HomePage> {
                       _buildNavItem(
                         icon: Icons.dashboard,
                         label: 'Dashboard',
-                        isSelected: _selectedIndex == 0,
-                        onTap: () => setState(() => _selectedIndex = 0),
+                        isSelected: currentIndex == 0,
+                        onTap: () => navigationShell.goBranch(0),
                       ),
                       const SizedBox(height: 8),
-                      // Booking Accordion
-                      Theme(
-                        data: Theme.of(context).copyWith(dividerColor: Colors.transparent),
-                        child: ExpansionTile(
-                          iconColor: TravelAppColors.textSecondary,
-                          collapsedIconColor: TravelAppColors.textSecondary,
-                          leading: Icon(Icons.calendar_month, color: (_selectedIndex == 1 || _selectedIndex == 2) ? TravelAppColors.primary : TravelAppColors.textSecondary),
-                          title: Text('Booking', style: TextStyle(color: (_selectedIndex == 1 || _selectedIndex == 2) ? TravelAppColors.primary : TravelAppColors.textPrimary, fontWeight: FontWeight.w600)),
-                          initiallyExpanded: _selectedIndex == 1 || _selectedIndex == 2,
-                          tilePadding: const EdgeInsets.symmetric(horizontal: 16),
-                          children: [
-                            _buildSubNavItem(
-                              label: 'Client Routes',
-                              isSelected: _selectedIndex == 1,
-                              onTap: () => setState(() => _selectedIndex = 1),
-                            ),
-                            _buildSubNavItem(
-                              label: 'Itineraries',
-                              isSelected: _selectedIndex == 2,
-                              onTap: () => setState(() => _selectedIndex = 2),
-                            ),
-                          ],
-                        ),
+                      // Booking NavItem directly mapping to Travels (index 1)
+                      _buildNavItem(
+                        icon: Icons.calendar_month,
+                        label: 'Booking',
+                        isSelected: currentIndex == 1,
+                        onTap: () => navigationShell.goBranch(1),
                       ),
                       const SizedBox(height: 8),
                       _buildNavItem(
                         icon: Icons.people,
                         label: 'Users',
-                        isSelected: _selectedIndex == 3,
-                        onTap: () => setState(() => _selectedIndex = 3),
+                        isSelected: currentIndex == 2,
+                        onTap: () => navigationShell.goBranch(2),
                       ),
                       const SizedBox(height: 24),
                       const Divider(color: TravelAppColors.divider),
@@ -114,24 +82,23 @@ class _HomePageState extends State<HomePage> {
                       _buildNavItem(
                         icon: Icons.settings,
                         label: 'Settings',
-                        isSelected: false,
-                        onTap: () {
-                           Navigator.push(context, MaterialPageRoute(builder: (_) => const AccountPage()));
-                        },
+                        isSelected: currentIndex == 3,
+                        onTap: () => navigationShell.goBranch(3),
                       ),
                     ],
                   ),
                 ),
-
 
                 // Footer Links & User Profile
                 Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: Column(
                     children: [
-                      _buildSimpleLink(Icons.help_outline, 'Support'),
+                      _buildSimpleLink(Icons.help_outline, 'Support', () {}),
                       const SizedBox(height: 16),
-                      _buildSimpleLink(Icons.logout, 'Logout'),
+                      _buildSimpleLink(Icons.logout, 'Logout', () {
+                        context.read<AuthController>().logout();
+                      }),
                       const SizedBox(height: 24),
                       const Divider(color: TravelAppColors.divider),
                       const SizedBox(height: 24),
@@ -161,7 +128,7 @@ class _HomePageState extends State<HomePage> {
           Container(width: 1, color: TravelAppColors.divider),
           // Main Content
           Expanded(
-            child: _pages[_selectedIndex],
+            child: navigationShell,
           ),
         ],
       ),
@@ -190,20 +157,9 @@ class _HomePageState extends State<HomePage> {
     );
   }
 
-  Widget _buildSubNavItem({required String label, required bool isSelected, VoidCallback? onTap}) {
+  Widget _buildSimpleLink(IconData icon, String label, VoidCallback onTap) {
     return InkWell(
       onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 54, vertical: 10),
-        alignment: Alignment.centerLeft,
-        child: Text(label, style: TextStyle(color: isSelected ? TravelAppColors.primary : TravelAppColors.textSecondary, fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500)),
-      ),
-    );
-  }
-
-  Widget _buildSimpleLink(IconData icon, String label) {
-    return InkWell(
-      onTap: () {},
       child: Row(
         children: [
           Icon(icon, color: TravelAppColors.textSecondary, size: 20),

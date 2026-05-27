@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
+import 'package:go_router/go_router.dart';
 
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
-import 'package:travel_matrix/features/users/presentation/pages/view_user_page.dart';
-import 'package:travel_matrix/features/users/presentation/pages/create_user_page.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 
 /// Users Dashboard Tab — lists all Client users with status indicators.
 class UsersDashboardPage extends StatelessWidget {
@@ -46,13 +46,9 @@ class _UsersDashboardView extends StatelessWidget {
               ),
               ElevatedButton.icon(
                 onPressed: () {
-                  Navigator.of(context).push(
-                    MaterialPageRoute(
-                      builder: (_) => ChangeNotifierProvider.value(
-                        value: controller,
-                        child: const CreateUserPage(),
-                      ),
-                    ),
+                  context.go(
+                    '${AppRoutes.users}/${AppRoutes.userCreate}',
+                    extra: {'controller': controller},
                   );
                 },
                 icon: const Icon(Icons.person_add),
@@ -70,8 +66,7 @@ class _UsersDashboardView extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(
                 state.errorMessage!,
-                style:
-                    TextStyle(color: theme.colorScheme.error),
+                style: TextStyle(color: theme.colorScheme.error),
               ),
             ),
           // Users Table
@@ -171,13 +166,9 @@ class _UsersDashboardView extends StatelessWidget {
     Client user,
     UsersController controller,
   ) {
-    Navigator.of(context).push(
-      MaterialPageRoute(
-        builder: (_) => ChangeNotifierProvider.value(
-          value: controller,
-          child: ViewUserPage(user: user),
-        ),
-      ),
+    context.go(
+      '${AppRoutes.users}/${user.id}',
+      extra: {'user': user, 'controller': controller},
     );
   }
 }

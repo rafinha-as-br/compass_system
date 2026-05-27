@@ -7,15 +7,15 @@
 
 import 'package:flutter_test/flutter_test.dart';
 
-import 'package:travel_matrix/app/travel_matrix_app.dart';
+import 'package:travel_matrix/app/app_bootstrap.dart';
 
 void main() {
   testWidgets('App loads correctly smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
-    await tester.pumpWidget(const TravelMatrixApp());
+    await tester.pumpWidget(const AppBootstrap());
 
     // Verify app exists
-    expect(find.byType(TravelMatrixApp), findsOneWidget);
+    expect(find.byType(AppBootstrap), findsOneWidget);
   });
 }
 

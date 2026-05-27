@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:travel_matrix/core/services/auth_service.dart';
-import 'package:travel_matrix/core/services/compass_service.dart';
+import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:mock_repository/mock_repository.dart';
+
+import '../../../../core/services/auth_storage_service.dart';
 
 class UsersState {
   final bool isLoading;
@@ -28,7 +29,7 @@ class UsersController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final token = await AuthService.instance.getToken();
+      final token = await AuthStorageService.instance.getToken();
       if (token == null) {
         _state = const UsersState(
             isLoading: false,
@@ -63,7 +64,7 @@ class UsersController extends ChangeNotifier {
 
   Future<bool> deleteUser(String userId) async {
     try {
-      final token = await AuthService.instance.getToken();
+      final token = await AuthStorageService.instance.getToken();
       if (token == null) return false;
 
       final response =
@@ -80,7 +81,7 @@ class UsersController extends ChangeNotifier {
 
   Future<bool> createUser(Map<String, dynamic> userData) async {
     try {
-      final token = await AuthService.instance.getToken();
+      final token = await AuthStorageService.instance.getToken();
       if (token == null) return false;
 
       final response =
@@ -103,7 +104,7 @@ class UsersController extends ChangeNotifier {
 
   Future<bool> updateUser(Map<String, dynamic> userData) async {
     try {
-      final token = await AuthService.instance.getToken();
+      final token = await AuthStorageService.instance.getToken();
       if (token == null) return false;
 
       final response =
