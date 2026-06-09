@@ -1,9 +1,9 @@
 
-import 'package:travel_matrix/features/users/domain/entities/user.dart';
+import 'package:travel_matrix/features/users/domain/user.dart';
 
 /// View model class for [UserClient]
 class UserClientViewModel{
-  final String? domainId;
+  final String? backEndId;
   final String localId;
   final String name;
   final String cpf;
@@ -13,7 +13,7 @@ class UserClientViewModel{
   final String email;
 
   UserClientViewModel({
-    this.domainId,
+    required this.backEndId,
     required this.localId,
     required this.name,
     required this.cpf,
@@ -24,9 +24,31 @@ class UserClientViewModel{
   });
 
   /// From domain mapper method
-
+  factory UserClientViewModel.fromDomain({required UserClient user}){
+    return UserClientViewModel(
+        backEndId: user.backEndId,
+        localId: user.domainId,
+        name: user.name,
+        cpf: user.cpf,
+        sex: user.sex,
+        phoneNumber: user.phoneNumber,
+        status: user.status,
+        email: user.email
+    );
+  }
 
   /// To domain mapper method
-
+  UserClient toDomain(){
+    return UserClient(
+        backEndId: backEndId,
+        domainId: localId,
+        name: name,
+        cpf: cpf,
+        sex: sex,
+        phoneNumber: phoneNumber,
+        status: status,
+        email: email
+    );
+  }
 
 }
