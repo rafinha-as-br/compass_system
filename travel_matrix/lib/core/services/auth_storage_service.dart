@@ -1,20 +1,21 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class AuthService {
-  static AuthService? _instance;
+/// Responsible for storing and retrieving authentication tokens from SharedPreferences.
+class AuthStorageService {
+  static AuthStorageService? _instance;
   late final SharedPreferences _prefs;
 
-  AuthService._();
+  AuthStorageService._();
 
-  static Future<AuthService> init() async {
+  static Future<AuthStorageService> init() async {
     if (_instance == null) {
-      _instance = AuthService._();
+      _instance = AuthStorageService._();
       _instance!._prefs = await SharedPreferences.getInstance();
     }
     return _instance!;
   }
 
-  static AuthService get instance {
+  static AuthStorageService get instance {
     assert(_instance != null, 'AuthService instance not initialized!');
     return _instance!;
   }

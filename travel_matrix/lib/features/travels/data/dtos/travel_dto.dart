@@ -68,7 +68,7 @@ class TravelDTO {
   /// To domain mapper method
   Travel toDomain() {
     return Travel(
-      domainId: Uuid().v4(),
+      domainId: id ?? Uuid().v4(),
       backEndId: id,
       clientName: clientName,
       travelName: travelName,

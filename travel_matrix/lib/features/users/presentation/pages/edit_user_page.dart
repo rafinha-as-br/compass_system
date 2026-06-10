@@ -3,10 +3,13 @@ import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
 
 /// Edit User page — same structure as Create User but pre-filled.
 class EditUserPage extends StatefulWidget {
-  final Client user;
+  final UserClientViewModel user;
 
   const EditUserPage({super.key, required this.user});
 
@@ -21,8 +24,6 @@ class _EditUserPageState extends State<EditUserPage> {
   late final TextEditingController _emailCtrl;
   late final TextEditingController _phoneCtrl;
   late String _sex;
-  late DateTime _birthDate;
-  late bool _isActive;
   bool _isSubmitting = false;
 
   @override
@@ -33,8 +34,6 @@ class _EditUserPageState extends State<EditUserPage> {
     _emailCtrl = TextEditingController(text: widget.user.email);
     _phoneCtrl = TextEditingController(text: widget.user.phoneNumber);
     _sex = widget.user.sex;
-    _birthDate = widget.user.birthDate;
-    _isActive = widget.user.isActive;
   }
 
   @override
@@ -53,22 +52,17 @@ class _EditUserPageState extends State<EditUserPage> {
 
     final controller = context.read<UsersController>();
     final success = await controller.updateUser({
-      'id': widget.user.id,
+      'id': widget.user.backEndId,
       'name': _nameCtrl.text,
       'cpf': _cpfCtrl.text,
       'email': _emailCtrl.text,
       'phoneNumber': _phoneCtrl.text,
       'sex': _sex,
-      'birthDate': _birthDate.toIso8601String(),
-      'isActive': _isActive,
     });
 
     if (mounted) {
-      setState(() => _isSubmitting = false);
       if (success) {
-        // Pop back to the dashboard (past the view page too)
-        Navigator.of(context).pop();
-        Navigator.of(context).pop();
+        context.go('${AppRoutes.users}/${widget.user.localId}');
       }
     }
   }
@@ -82,7 +76,13 @@ class _EditUserPageState extends State<EditUserPage> {
         title: const Text('Edit User'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('${AppRoutes.users}/${widget.user.localId}');
+            }
+          },
         ),
       ),
       body: SingleChildScrollView(
@@ -152,36 +152,6 @@ class _EditUserPageState extends State<EditUserPage> {
                     ],
                     onChanged: (v) =>
                         setState(() => _sex = v ?? 'M'),
-                  ),
-                  const SizedBox(height: 16),
-                  ListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Birth Date'),
-                    subtitle: Text(
-                      '${_birthDate.day}/${_birthDate.month}/${_birthDate.year}',
-                    ),
-                    trailing: IconButton(
-                      icon: const Icon(Icons.calendar_today),
-                      onPressed: () async {
-                        final picked = await showDatePicker(
-                          context: context,
-                          initialDate: _birthDate,
-                          firstDate: DateTime(1920),
-                          lastDate: DateTime.now(),
-                        );
-                        if (picked != null) {
-                          setState(() => _birthDate = picked);
-                        }
-                      },
-                    ),
-                  ),
-                  const SizedBox(height: 16),
-                  SwitchListTile(
-                    contentPadding: EdgeInsets.zero,
-                    title: const Text('Active Status'),
-                    value: _isActive,
-                    onChanged: (v) =>
-                        setState(() => _isActive = v),
                   ),
                   const SizedBox(height: 32),
                   SizedBox(

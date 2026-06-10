@@ -1,4 +1,4 @@
-import 'package:travel_matrix/core/services/compass_service/api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/mock_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/api_endpoints.dart';
 
 class ItineraryApiClient {
@@ -18,6 +18,6 @@ class ItineraryApiClient {
   }
 
   Future<Map<String, dynamic>> upsertItinerary(String token, String travelId, Map<String, dynamic> itineraryData) async {
-    return ApiClient().put(token, ApiEndpoints.travelItinerary(travelId), {}, {}, itineraryData);
+    return MockApiClient().put(token, ApiEndpoints.travelItinerary(travelId), {}, {}, itineraryData);
   }
 }

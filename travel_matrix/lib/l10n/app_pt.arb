@@ -84,5 +84,45 @@
   "systemPreferences": "Preferências do Sistema",
   "adminDarkMode": "Modo Escuro Administrativo",
   "logOutOfMatrix": "Sair do Matrix",
-  "languageLabel": "Idioma"
+  "languageLabel": "Idioma",
+
+  "dashboardWelcome": "Bem-vindo, {name}",
+  "@dashboardWelcome": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "dashboardWelcomeSubtitle": "Sua mesa esta pronta com {pending} roteiros pendentes e {completed} roteiros completos.",
+  "@dashboardWelcomeSubtitle": {
+    "placeholders": {
+      "pending": { "type": "int" },
+      "completed": { "type": "int" }
+    }
+  },
+  "recentTravels": "Viagens Recentes",
+  "activeClientsListTitle": "Clientes Ativos",
+  "travelNameColumn": "Nome da Viagem",
+  "clientNameColumn": "Nome",
+  "routeColumn": "Rota",
+  "statusColumn": "Status",
+  "datesColumn": "Datas",
+  "actionsColumn": "Acoes",
+  "viewTravel": "Ver Viagem",
+  "searchTravelsHint": "Buscar viagens...",
+  "allStatus": "Todos os Status",
+  "profileSection": "Perfil",
+  "cpfLabel": "CPF",
+  "cnpjLabel": "CNPJ",
+  "phoneLabel": "Telefone",
+  "editAgentData": "Editar Dados do Agente",
+  "changePassword": "Trocar Senha",
+  "currentPassword": "Senha Atual",
+  "newPassword": "Nova Senha",
+  "digitalConcierge": "O CONCIERGE DIGITAL",
+  "dashboardNav": "Dashboard",
+  "bookingNav": "Reservas",
+  "settingsNav": "Configuracoes",
+  "supportNav": "Suporte",
+  "logoutNav": "Sair",
+  "travelAgentRole": "Agente de Viagens"
 }

@@ -3,8 +3,11 @@ import 'package:provider/provider.dart';
 import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
-import 'package:travel_matrix/core/services/auth_service.dart';
-import 'package:travel_matrix/core/services/compass_service.dart';
+import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
+
+import '../../../../../core/services/auth_storage_service.dart';
 
 /// Page for creating a new [Travel].
 ///
@@ -45,7 +48,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
   }
 
   Future<void> _loadClients() async {
-    final token = await AuthService.instance.getToken();
+    final token = await AuthStorageService.instance.getToken();
     if (token == null) return;
     final response = await CompassService.instance.getAllUsers(token);
     if (response['status'] == 'success' && mounted) {
@@ -93,7 +96,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
     final controller = context.read<TravelsController>();
 
     // Get agent info
-    final token = await AuthService.instance.getToken();
+    final token = await AuthStorageService.instance.getToken();
     String agentId = 'agent_1';
     if (token != null) {
       final userResp = await CompassService.instance.getUser(token);
@@ -118,7 +121,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
 
     if (mounted) {
       setState(() => _isSubmitting = false);
-      if (success) Navigator.of(context).pop();
+      if (success) context.go(AppRoutes.travels);
     }
   }
 
@@ -131,7 +134,13 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
         title: const Text('Create Travel'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go(AppRoutes.travels);
+            }
+          },
         ),
       ),
       body: _isLoadingClients

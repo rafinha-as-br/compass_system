@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
@@ -91,7 +93,9 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
 
     if (mounted) {
       setState(() => _isSubmitting = false);
-      if (success) Navigator.of(context).pop();
+      if (success) {
+        context.go('${AppRoutes.travels}/${widget.travel.localId}');
+      }
     }
   }
 
@@ -101,10 +105,16 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text('Edit Route — ${widget.travel.travelTitle}'),
+        title: const Text('Edit Route'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
-          onPressed: () => Navigator.of(context).pop(),
+          onPressed: () {
+            if (context.canPop()) {
+              context.pop();
+            } else {
+              context.go('${AppRoutes.travels}/${widget.travel.localId}');
+            }
+          },
         ),
       ),
       body: SingleChildScrollView(

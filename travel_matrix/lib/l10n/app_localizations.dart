@@ -541,6 +541,174 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Language'**
   String get languageLabel;
+
+  /// No description provided for @dashboardWelcome.
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome, {name}'**
+  String dashboardWelcome(String name);
+
+  /// No description provided for @dashboardWelcomeSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your desk is ready with {pending} pending itineraries and {completed} completed itinerary records.'**
+  String dashboardWelcomeSubtitle(int pending, int completed);
+
+  /// No description provided for @recentTravels.
+  ///
+  /// In en, this message translates to:
+  /// **'Recent Travels'**
+  String get recentTravels;
+
+  /// No description provided for @activeClientsListTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Active Clients'**
+  String get activeClientsListTitle;
+
+  /// No description provided for @travelNameColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Name'**
+  String get travelNameColumn;
+
+  /// No description provided for @clientNameColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get clientNameColumn;
+
+  /// No description provided for @routeColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Route'**
+  String get routeColumn;
+
+  /// No description provided for @statusColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Status'**
+  String get statusColumn;
+
+  /// No description provided for @datesColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates'**
+  String get datesColumn;
+
+  /// No description provided for @actionsColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'Actions'**
+  String get actionsColumn;
+
+  /// No description provided for @viewTravel.
+  ///
+  /// In en, this message translates to:
+  /// **'View Travel'**
+  String get viewTravel;
+
+  /// No description provided for @searchTravelsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search travels...'**
+  String get searchTravelsHint;
+
+  /// No description provided for @allStatus.
+  ///
+  /// In en, this message translates to:
+  /// **'All Status'**
+  String get allStatus;
+
+  /// No description provided for @profileSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile'**
+  String get profileSection;
+
+  /// No description provided for @cpfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CPF'**
+  String get cpfLabel;
+
+  /// No description provided for @cnpjLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CNPJ'**
+  String get cnpjLabel;
+
+  /// No description provided for @phoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get phoneLabel;
+
+  /// No description provided for @editAgentData.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Agent Data'**
+  String get editAgentData;
+
+  /// No description provided for @changePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Password'**
+  String get changePassword;
+
+  /// No description provided for @currentPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Current Password'**
+  String get currentPassword;
+
+  /// No description provided for @newPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'New Password'**
+  String get newPassword;
+
+  /// No description provided for @digitalConcierge.
+  ///
+  /// In en, this message translates to:
+  /// **'THE DIGITAL CONCIERGE'**
+  String get digitalConcierge;
+
+  /// No description provided for @dashboardNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Dashboard'**
+  String get dashboardNav;
+
+  /// No description provided for @bookingNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Booking'**
+  String get bookingNav;
+
+  /// No description provided for @settingsNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsNav;
+
+  /// No description provided for @supportNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Support'**
+  String get supportNav;
+
+  /// No description provided for @logoutNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Logout'**
+  String get logoutNav;
+
+  /// No description provided for @travelAgentRole.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Agent'**
+  String get travelAgentRole;
 }
 
 class _AppLocalizationsDelegate

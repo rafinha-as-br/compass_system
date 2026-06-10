@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:travel_matrix/core/services/auth_service.dart';
-import 'package:travel_matrix/core/services/compass_service.dart';
+import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:travel_matrix/features/travels/data/dtos/travel_dto.dart';
 import '../models/view_models/travel_view_model.dart';
 
@@ -28,7 +28,7 @@ class TravelViewController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final token = await AuthService.instance.getToken();
+      final token = await AuthStorageService.instance.getToken();
       if (token == null) {
         _state = const TravelViewState(
           isLoading: false,

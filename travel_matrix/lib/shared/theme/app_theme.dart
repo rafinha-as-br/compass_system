@@ -30,6 +30,55 @@ class TravelAppColors {
   static const Color info = Color(0xFF3A6EA5);
 }
 
+@immutable
+class AppSemanticColors extends ThemeExtension<AppSemanticColors> {
+  final Color success;
+  final Color warning;
+  final Color info;
+
+  const AppSemanticColors({
+    required this.success,
+    required this.warning,
+    required this.info,
+  });
+
+  @override
+  AppSemanticColors copyWith({
+    Color? success,
+    Color? warning,
+    Color? info,
+  }) {
+    return AppSemanticColors(
+      success: success ?? this.success,
+      warning: warning ?? this.warning,
+      info: info ?? this.info,
+    );
+  }
+
+  @override
+  AppSemanticColors lerp(
+    ThemeExtension<AppSemanticColors>? other,
+    double t,
+  ) {
+    if (other is! AppSemanticColors) return this;
+    return AppSemanticColors(
+      success: Color.lerp(success, other.success, t)!,
+      warning: Color.lerp(warning, other.warning, t)!,
+      info: Color.lerp(info, other.info, t)!,
+    );
+  }
+}
+
+extension AppSemanticColorsLookup on ThemeData {
+  AppSemanticColors get semanticColors =>
+      extension<AppSemanticColors>() ??
+      const AppSemanticColors(
+        success: TravelAppColors.success,
+        warning: TravelAppColors.warning,
+        info: TravelAppColors.info,
+      );
+}
+
 class AppTheme {
   static ThemeData get lightTheme {
     return ThemeData(
@@ -55,7 +104,14 @@ class AppTheme {
         labelColor: TravelAppColors.primary,
         unselectedLabelColor: TravelAppColors.textSecondary,
         labelStyle: TextStyle(color: TravelAppColors.textOnPrimary)
-      )
+      ),
+      extensions: const [
+        AppSemanticColors(
+          success: TravelAppColors.success,
+          warning: TravelAppColors.warning,
+          info: TravelAppColors.info,
+        ),
+      ],
     );
   }
 
@@ -79,6 +135,13 @@ class AppTheme {
         foregroundColor: TravelAppColors.textOnDark,
         elevation: 0,
       ),
+      extensions: const [
+        AppSemanticColors(
+          success: Color(0xFF65C18C),
+          warning: Color(0xFFE4B363),
+          info: Color(0xFF7BB2D9),
+        ),
+      ],
     );
   }
 }

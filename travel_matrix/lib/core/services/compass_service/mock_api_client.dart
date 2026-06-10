@@ -4,7 +4,9 @@ import 'package:mock_repository/mock_repository.dart';
 import 'api_exception.dart';
 /// Execute and handle HTTP requests
 /// the [response] on this class is from the mock repository and replaces the HTTP request
-class ApiClient{
+///
+/// ISTO AQUI TEM QUE SER DELETADO QUANDO SAIR DA MOCK API PARA A API CONVENCIONAL
+class MockApiClient{
 
   Future<Map<String, dynamic>> get(String token, String path, Map<String, dynamic> params, Map<String, dynamic> headers, Map<String, dynamic> body) async{
     final response = await MockApiService().get(token, path, params, headers, body);
@@ -28,7 +30,7 @@ class ApiClient{
 
 
   Map<String, dynamic> _handleResponse(FakeResponse response) {
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       return response.body;
     } else {
       throw ApiException.fromStatusCode(

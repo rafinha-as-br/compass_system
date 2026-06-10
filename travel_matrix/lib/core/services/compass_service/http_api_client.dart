@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'api_endpoints.dart';
 import 'api_exception.dart';
 
+/// Responsible for making HTTP requests to the Compass API.
 class HttpApiClient {
   static HttpApiClient? _instance;
   late final http.Client _client;
