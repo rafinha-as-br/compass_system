@@ -1,17 +1,14 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 
+import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
-import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
-import 'package:travel_matrix/app/router/app_routes.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 
-/// Travels Dashboard Tab — lists all travels with state indicator.
-///
-/// This is the main entry point to view travels. It consumes the [TravelsController]
-/// to load and present a list of [TravelViewModel] items.
 class TravelsDashboardPage extends StatelessWidget {
   const TravelsDashboardPage({super.key});
 
@@ -24,8 +21,16 @@ class TravelsDashboardPage extends StatelessWidget {
   }
 }
 
-class _TravelsDashboardView extends StatelessWidget {
+class _TravelsDashboardView extends StatefulWidget {
   const _TravelsDashboardView();
+
+  @override
+  State<_TravelsDashboardView> createState() => _TravelsDashboardViewState();
+}
+
+class _TravelsDashboardViewState extends State<_TravelsDashboardView> {
+  String _searchQuery = '';
+  _TravelFilter _filter = _TravelFilter.all;
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +38,7 @@ class _TravelsDashboardView extends StatelessWidget {
     final state = controller.state;
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
+    final filteredTravels = _filteredTravels(state.travels);
 
     return Padding(
       padding: const EdgeInsets.all(24),
@@ -57,14 +63,57 @@ class _TravelsDashboardView extends StatelessWidget {
                 },
                 icon: const Icon(Icons.add),
                 label: Text(l10n.createTravel),
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: theme.colorScheme.secondary,
-                  foregroundColor: theme.colorScheme.onSecondary,
+              ),
+            ],
+          ),
+          const SizedBox(height: 20),
+          Row(
+            children: [
+              Expanded(
+                flex: 2,
+                child: TextField(
+                  decoration: InputDecoration(
+                    hintText: l10n.searchTravelsHint,
+                    prefixIcon: const Icon(Icons.search),
+                    border: const OutlineInputBorder(),
+                    contentPadding: const EdgeInsets.symmetric(horizontal: 16),
+                  ),
+                  onChanged: (value) {
+                    setState(() => _searchQuery = value);
+                  },
+                ),
+              ),
+              const SizedBox(width: 16),
+              SizedBox(
+                width: 220,
+                child: DropdownButtonFormField<_TravelFilter>(
+                  value: _filter,
+                  decoration: const InputDecoration(
+                    border: OutlineInputBorder(),
+                    contentPadding: EdgeInsets.symmetric(horizontal: 12),
+                  ),
+                  items: [
+                    DropdownMenuItem(
+                      value: _TravelFilter.all,
+                      child: Text(l10n.allStatus),
+                    ),
+                    DropdownMenuItem(
+                      value: _TravelFilter.routeOnly,
+                      child: Text(l10n.routeOnly),
+                    ),
+                    DropdownMenuItem(
+                      value: _TravelFilter.itineraryReady,
+                      child: Text(l10n.itineraryReady),
+                    ),
+                  ],
+                  onChanged: (value) {
+                    setState(() => _filter = value ?? _TravelFilter.all);
+                  },
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 16),
+          const SizedBox(height: 20),
           if (state.errorMessage != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
@@ -76,7 +125,7 @@ class _TravelsDashboardView extends StatelessWidget {
           Expanded(
             child: state.isLoading
                 ? const Center(child: CircularProgressIndicator())
-                : state.travels.isEmpty
+                : filteredTravels.isEmpty
                     ? Center(
                         child: Text(
                           l10n.noTravelsCreated,
@@ -86,13 +135,19 @@ class _TravelsDashboardView extends StatelessWidget {
                           ),
                         ),
                       )
-                    : ListView.builder(
-                        itemCount: state.travels.length,
-                        itemBuilder: (context, index) {
-                          final travel = state.travels[index];
-                          return _buildTravelCard(
-                              context, travel, controller, l10n);
-                        },
+                    : Card(
+                        elevation: 0,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8),
+                          side: BorderSide(
+                            color: theme.colorScheme.outlineVariant,
+                          ),
+                        ),
+                        child: _TravelsTable(
+                          travels: filteredTravels,
+                          controller: controller,
+                          l10n: l10n,
+                        ),
                       ),
           ),
         ],
@@ -100,83 +155,132 @@ class _TravelsDashboardView extends StatelessWidget {
     );
   }
 
-  Widget _buildTravelCard(
-    BuildContext context,
-    TravelViewModel travel,
-    TravelsController controller,
-    AppLocalizations l10n,
-  ) {
+  List<TravelViewModel> _filteredTravels(List<TravelViewModel> travels) {
+    final query = _searchQuery.trim().toLowerCase();
+    return travels.where((travel) {
+      final matchesSearch = query.isEmpty ||
+          travel.travelTitle.toLowerCase().contains(query) ||
+          travel.clientName.toLowerCase().contains(query) ||
+          travel.route.destination.toLowerCase().contains(query);
 
-    final hasItinerary = travel.itinerary != null;
+      final matchesFilter = switch (_filter) {
+        _TravelFilter.all => true,
+        _TravelFilter.routeOnly => travel.itinerary == null,
+        _TravelFilter.itineraryReady => travel.itinerary != null,
+      };
 
-    return Card(
-      margin: const EdgeInsets.symmetric(vertical: 6),
-      child: ListTile(
-        contentPadding:
-            const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        leading: CircleAvatar(
-          backgroundColor: hasItinerary
-              ? TravelAppColors.success.withValues(alpha: 0.15)
-              : TravelAppColors.warning.withValues(alpha: 0.15),
-          child: Icon(
-            hasItinerary ? Icons.check : Icons.map,
-            color: hasItinerary
-                ? TravelAppColors.success
-                : TravelAppColors.warning,
-          ),
-        ),
-        title: Text(
-          travel.travelTitle,
-          style: const TextStyle(fontWeight: FontWeight.w600),
-        ),
-        subtitle: Text(
-          '${travel.route.start} ➔ ${travel.route.destination}\n'
-          '${l10n.clientLabel}: ${travel.clientName}',
-        ),
-        isThreeLine: true,
-        trailing: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            Container(
-              padding: const EdgeInsets.symmetric(
-                  horizontal: 10, vertical: 4),
-              decoration: BoxDecoration(
-                color: hasItinerary
-                    ? TravelAppColors.success.withValues(alpha: 0.1)
-                    : TravelAppColors.warning.withValues(alpha: 0.1),
-                borderRadius: BorderRadius.circular(12),
+      return matchesSearch && matchesFilter;
+    }).toList();
+  }
+}
+
+class _TravelsTable extends StatelessWidget {
+  final List<TravelViewModel> travels;
+  final TravelsController controller;
+  final AppLocalizations l10n;
+
+  const _TravelsTable({
+    required this.travels,
+    required this.controller,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final dateFormat = DateFormat.yMMMd(l10n.localeName);
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minWidth: constraints.maxWidth),
+            child: DataTable(
+              headingRowColor: WidgetStatePropertyAll(
+                theme.colorScheme.surfaceContainerHighest,
               ),
-              child: Text(
-                hasItinerary ? l10n.itineraryReady : l10n.routeOnly,
-                style: TextStyle(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  color: hasItinerary
-                      ? TravelAppColors.success
-                      : TravelAppColors.warning,
-                ),
-              ),
-            ),
-            const SizedBox(width: 8),
-              IconButton(
-              icon: const Icon(Icons.chevron_right),
-              onPressed: () {
-                context.go(
-                  '${AppRoutes.travels}/${travel.localId}',
-                  extra: {'travel': travel, 'controller': controller},
+              dataRowMaxHeight: 68,
+              dataRowMinHeight: 56,
+              columns: [
+                DataColumn(label: Text(l10n.travelNameColumn)),
+                DataColumn(label: Text(l10n.clientLabel)),
+                DataColumn(label: Text(l10n.routeColumn)),
+                DataColumn(label: Text(l10n.statusColumn)),
+                DataColumn(label: Text(l10n.datesColumn)),
+                DataColumn(label: Text(l10n.actionsColumn)),
+              ],
+              rows: travels.map((travel) {
+                final dates =
+                    '${dateFormat.format(travel.route.startDate)} - ${dateFormat.format(travel.route.endDate)}';
+                return DataRow(
+                  cells: [
+                    DataCell(Text(travel.travelTitle)),
+                    DataCell(Text(travel.clientName)),
+                    DataCell(Text('${travel.route.start} -> ${travel.route.destination}')),
+                    DataCell(_TravelStatusChip(travel: travel, l10n: l10n)),
+                    DataCell(Text(dates)),
+                    DataCell(
+                      IconButton(
+                        icon: const Icon(Icons.chevron_right),
+                        tooltip: l10n.viewTravel,
+                        onPressed: () {
+                          context.go(
+                            '${AppRoutes.travels}/${travel.localId}',
+                            extra: {
+                              'travel': travel,
+                              'controller': controller,
+                            },
+                          );
+                        },
+                      ),
+                    ),
+                  ],
                 );
-              },
+              }).toList(),
             ),
-          ],
+          ),
+        );
+      },
+    );
+  }
+}
+
+class _TravelStatusChip extends StatelessWidget {
+  final TravelViewModel travel;
+  final AppLocalizations l10n;
+
+  const _TravelStatusChip({
+    required this.travel,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final semantic = theme.semanticColors;
+    final hasItinerary = travel.itinerary != null;
+    final color = hasItinerary ? semantic.success : semantic.warning;
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.12),
+        borderRadius: BorderRadius.circular(16),
+      ),
+      child: Text(
+        hasItinerary ? l10n.itineraryReady : l10n.routeOnly,
+        style: theme.textTheme.labelSmall?.copyWith(
+          color: color,
+          fontWeight: FontWeight.bold,
         ),
-        onTap: () {
-          context.go(
-            '${AppRoutes.travels}/${travel.localId}',
-            extra: {'travel': travel, 'controller': controller},
-          );
-        },
       ),
     );
   }
 }
 
+enum _TravelFilter {
+  all,
+  routeOnly,
+  itineraryReady,
+}

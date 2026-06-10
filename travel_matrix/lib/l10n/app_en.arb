@@ -99,5 +99,45 @@
   "systemPreferences": "System Preferences",
   "adminDarkMode": "Admin Dark Mode",
   "logOutOfMatrix": "Log Out of Matrix",
-  "languageLabel": "Language"
+  "languageLabel": "Language",
+
+  "dashboardWelcome": "Welcome, {name}",
+  "@dashboardWelcome": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "dashboardWelcomeSubtitle": "Your desk is ready with {pending} pending itineraries and {completed} completed itinerary records.",
+  "@dashboardWelcomeSubtitle": {
+    "placeholders": {
+      "pending": { "type": "int" },
+      "completed": { "type": "int" }
+    }
+  },
+  "recentTravels": "Recent Travels",
+  "activeClientsListTitle": "Active Clients",
+  "travelNameColumn": "Travel Name",
+  "clientNameColumn": "Name",
+  "routeColumn": "Route",
+  "statusColumn": "Status",
+  "datesColumn": "Dates",
+  "actionsColumn": "Actions",
+  "viewTravel": "View Travel",
+  "searchTravelsHint": "Search travels...",
+  "allStatus": "All Status",
+  "profileSection": "Profile",
+  "cpfLabel": "CPF",
+  "cnpjLabel": "CNPJ",
+  "phoneLabel": "Phone",
+  "editAgentData": "Edit Agent Data",
+  "changePassword": "Change Password",
+  "currentPassword": "Current Password",
+  "newPassword": "New Password",
+  "digitalConcierge": "THE DIGITAL CONCIERGE",
+  "dashboardNav": "Dashboard",
+  "bookingNav": "Booking",
+  "settingsNav": "Settings",
+  "supportNav": "Support",
+  "logoutNav": "Logout",
+  "travelAgentRole": "Travel Agent"
 }

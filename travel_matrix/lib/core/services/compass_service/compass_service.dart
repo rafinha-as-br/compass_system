@@ -1,4 +1,5 @@
 import 'package:travel_matrix/core/services/compass_service/clients/auth_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/clients/dashboard_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/itinerary_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/route_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/travel_api_client.dart';
@@ -17,13 +18,15 @@ class CompassService {
   final ItineraryApiClient _itineraryApiClient;
   final UserApiClient _userApiClient;
   final AuthApiClient _authApiClient;
+  final DashboardApiClient _dashboardApiClient;
 
   CompassService._()
       : _travelApiClient = TravelApiClient.instance,
         _routeApiClient = RouteApiClient.instance,
         _itineraryApiClient = ItineraryApiClient.instance,
         _userApiClient = UserApiClient.instance,
-        _authApiClient = AuthApiClient.instance;
+        _authApiClient = AuthApiClient.instance,
+        _dashboardApiClient = DashboardApiClient.instance;
 
   static Future<CompassService> init() async {
     if (_instance != null) return _instance!;
@@ -32,6 +35,7 @@ class CompassService {
     await TravelApiClient.init();
     await RouteApiClient.init();
     await ItineraryApiClient.init();
+    await DashboardApiClient.init();
     _instance = CompassService._();
     return _instance!;
   }
@@ -52,6 +56,11 @@ class CompassService {
 
   /// Returns the authenticated user's data.
   Future<Map<String, dynamic>> getUser(String token) async {
+    return _userApiClient.getUser(token);
+  }
+
+  /// Returns the authenticated agent profile.
+  Future<Map<String, dynamic>> getAuthenticatedUser(String token) async {
     return _userApiClient.getUser(token);
   }
 
@@ -102,6 +111,20 @@ class CompassService {
   /// Forces a user logout. Travel Agent only.
   Future<Map<String, dynamic>> forceLogout(String token, String userId) async {
     return _userApiClient.forceLogout(token, userId);
+  }
+
+  // Dashboard
+
+  Future<Map<String, dynamic>> getDashboardStats(String token) async {
+    try {
+      return await _dashboardApiClient.getDashboardStats(token);
+    } on ApiException catch (e) {
+      return {
+        'status': 'error',
+        'data': null,
+        'message': e.message,
+      };
+    }
   }
 
   // ─── Travels ────────────────────────────────────────────────────────

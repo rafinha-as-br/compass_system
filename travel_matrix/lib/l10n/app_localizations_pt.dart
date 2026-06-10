@@ -239,4 +239,92 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get languageLabel => 'Idioma';
+
+  @override
+  String dashboardWelcome(String name) {
+    return 'Bem-vindo, $name';
+  }
+
+  @override
+  String dashboardWelcomeSubtitle(int pending, int completed) {
+    return 'Sua mesa esta pronta com $pending roteiros pendentes e $completed roteiros completos.';
+  }
+
+  @override
+  String get recentTravels => 'Viagens Recentes';
+
+  @override
+  String get activeClientsListTitle => 'Clientes Ativos';
+
+  @override
+  String get travelNameColumn => 'Nome da Viagem';
+
+  @override
+  String get clientNameColumn => 'Nome';
+
+  @override
+  String get routeColumn => 'Rota';
+
+  @override
+  String get statusColumn => 'Status';
+
+  @override
+  String get datesColumn => 'Datas';
+
+  @override
+  String get actionsColumn => 'Acoes';
+
+  @override
+  String get viewTravel => 'Ver Viagem';
+
+  @override
+  String get searchTravelsHint => 'Buscar viagens...';
+
+  @override
+  String get allStatus => 'Todos os Status';
+
+  @override
+  String get profileSection => 'Perfil';
+
+  @override
+  String get cpfLabel => 'CPF';
+
+  @override
+  String get cnpjLabel => 'CNPJ';
+
+  @override
+  String get phoneLabel => 'Telefone';
+
+  @override
+  String get editAgentData => 'Editar Dados do Agente';
+
+  @override
+  String get changePassword => 'Trocar Senha';
+
+  @override
+  String get currentPassword => 'Senha Atual';
+
+  @override
+  String get newPassword => 'Nova Senha';
+
+  @override
+  String get digitalConcierge => 'O CONCIERGE DIGITAL';
+
+  @override
+  String get dashboardNav => 'Dashboard';
+
+  @override
+  String get bookingNav => 'Reservas';
+
+  @override
+  String get settingsNav => 'Configuracoes';
+
+  @override
+  String get supportNav => 'Suporte';
+
+  @override
+  String get logoutNav => 'Sair';
+
+  @override
+  String get travelAgentRole => 'Agente de Viagens';
 }

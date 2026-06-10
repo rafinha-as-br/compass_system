@@ -238,4 +238,92 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get languageLabel => 'Language';
+
+  @override
+  String dashboardWelcome(String name) {
+    return 'Welcome, $name';
+  }
+
+  @override
+  String dashboardWelcomeSubtitle(int pending, int completed) {
+    return 'Your desk is ready with $pending pending itineraries and $completed completed itinerary records.';
+  }
+
+  @override
+  String get recentTravels => 'Recent Travels';
+
+  @override
+  String get activeClientsListTitle => 'Active Clients';
+
+  @override
+  String get travelNameColumn => 'Travel Name';
+
+  @override
+  String get clientNameColumn => 'Name';
+
+  @override
+  String get routeColumn => 'Route';
+
+  @override
+  String get statusColumn => 'Status';
+
+  @override
+  String get datesColumn => 'Dates';
+
+  @override
+  String get actionsColumn => 'Actions';
+
+  @override
+  String get viewTravel => 'View Travel';
+
+  @override
+  String get searchTravelsHint => 'Search travels...';
+
+  @override
+  String get allStatus => 'All Status';
+
+  @override
+  String get profileSection => 'Profile';
+
+  @override
+  String get cpfLabel => 'CPF';
+
+  @override
+  String get cnpjLabel => 'CNPJ';
+
+  @override
+  String get phoneLabel => 'Phone';
+
+  @override
+  String get editAgentData => 'Edit Agent Data';
+
+  @override
+  String get changePassword => 'Change Password';
+
+  @override
+  String get currentPassword => 'Current Password';
+
+  @override
+  String get newPassword => 'New Password';
+
+  @override
+  String get digitalConcierge => 'THE DIGITAL CONCIERGE';
+
+  @override
+  String get dashboardNav => 'Dashboard';
+
+  @override
+  String get bookingNav => 'Booking';
+
+  @override
+  String get settingsNav => 'Settings';
+
+  @override
+  String get supportNav => 'Support';
+
+  @override
+  String get logoutNav => 'Logout';
+
+  @override
+  String get travelAgentRole => 'Travel Agent';
 }

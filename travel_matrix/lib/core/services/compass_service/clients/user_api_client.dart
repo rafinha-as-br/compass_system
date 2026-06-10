@@ -18,29 +18,11 @@ class UserApiClient {
   }
 
   Future<Map<String, dynamic>> getUser(String token) async {
-    return MockApiClient().get(token, '${ApiEndpoints.users}/me', {}, {}, {});
+    return MockApiClient().get(token, ApiEndpoints.userMe, {}, {}, {});
   }
 
   Future<Map<String, dynamic>> getUserById(String token, String userId) async {
-    final response = await getAllUsers(token);
-    final users = response['data'] as List<dynamic>? ?? const [];
-
-    for (final user in users) {
-      final userMap = user as Map<String, dynamic>;
-      if (userMap['id'] == userId) {
-        return {
-          'status': 'success',
-          'data': userMap,
-          'message': null,
-        };
-      }
-    }
-
-    return {
-      'status': 'error',
-      'data': null,
-      'message': 'User not found.',
-    };
+    return MockApiClient().get(token, ApiEndpoints.userById(userId), {}, {}, {});
   }
 
   Future<Map<String, dynamic>> getAllUsers(String token) async {
