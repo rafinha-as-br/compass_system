@@ -56,7 +56,15 @@ class UserApiClient {
     return MockApiClient().put(token, ApiEndpoints.userById(userId), {}, {}, userData);
   }
 
-  Future<Map<String, dynamic>> deleteUser(String token, String userId) async {
-    return MockApiClient().delete(token, ApiEndpoints.userById(userId), {}, {}, {});
+  Future<Map<String, dynamic>> deactivateUser(String token, String userId, String reason) async {
+    return MockApiClient().post(token, ApiEndpoints.userDeactivate(userId), {}, {}, {'reason': reason});
+  }
+
+  Future<Map<String, dynamic>> resetPassword(String token, String userId) async {
+    return MockApiClient().post(token, ApiEndpoints.userResetPassword(userId), {}, {}, {});
+  }
+
+  Future<Map<String, dynamic>> forceLogout(String token, String userId) async {
+    return MockApiClient().post(token, ApiEndpoints.userForceLogout(userId), {}, {}, {});
   }
 }

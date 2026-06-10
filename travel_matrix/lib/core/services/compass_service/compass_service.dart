@@ -89,9 +89,19 @@ class CompassService {
     return _userApiClient.updateUser(token, userData);
   }
 
-  /// Deletes a user by ID. Travel Agent only.
-  Future<Map<String, dynamic>> deleteUser(String token, String userId) async {
-    return _userApiClient.deleteUser(token, userId);
+  /// Deactivates a user by ID. Travel Agent only.
+  Future<Map<String, dynamic>> deactivateUser(String token, String userId, String reason) async {
+    return _userApiClient.deactivateUser(token, userId, reason);
+  }
+
+  /// Resets a user's password. Travel Agent only.
+  Future<Map<String, dynamic>> resetPassword(String token, String userId) async {
+    return _userApiClient.resetPassword(token, userId);
+  }
+
+  /// Forces a user logout. Travel Agent only.
+  Future<Map<String, dynamic>> forceLogout(String token, String userId) async {
+    return _userApiClient.forceLogout(token, userId);
   }
 
   // ─── Travels ────────────────────────────────────────────────────────

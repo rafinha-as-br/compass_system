@@ -21,6 +21,7 @@ import 'package:travel_matrix/features/users/presentation/controllers/users_cont
 import 'package:travel_matrix/features/users/presentation/pages/create_user_page.dart';
 import 'package:travel_matrix/features/users/presentation/pages/edit_user_page.dart';
 import 'package:travel_matrix/features/users/presentation/widgets/user_view_wrapper.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
 
 final privateShellRoute = StatefulShellRoute.indexedStack(
   builder: (context, state, navigationShell) {
@@ -134,7 +135,7 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
             path: AppRoutes.userView,
             builder: (context, state) {
               final extra = state.extra as Map<String, dynamic>?;
-              final user = extra?['user'] as Client?;
+              final user = extra?['user'] as UserClientViewModel?;
               final controller = extra?['controller'] as UsersController?;
               final userId = state.pathParameters['id']!;
 
@@ -157,7 +158,7 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
                 },
                 builder: (context, state) {
                   final extra = state.extra as Map<String, dynamic>;
-                  final user = extra['user'] as Client;
+                  final user = extra['user'] as UserClientViewModel;
                   final controller = extra['controller'] as UsersController?;
 
                   if (controller != null) {

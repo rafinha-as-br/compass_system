@@ -1,45 +1,32 @@
 
+import 'package:travel_matrix/features/users/domain/entities/travel_summary.dart';
+import 'package:travel_matrix/features/users/domain/entities/user_stats.dart';
+import 'package:travel_matrix/features/users/domain/entities/user_status.dart';
+
 class UserClient{
-  final String id;
+  final String? backEndId;
+  final String domainId;
   final String name;
   final String cpf;
   final String sex;
   final String phoneNumber;
-  final String status;
+  final UserClientStatus status;
   final String email;
+  final List<TravelSummary> travels;
+  final UserStats stats;
 
   UserClient({
-    required this.id, required this.name,
-    required this.cpf, required this.sex,
-    required this.phoneNumber, required this.status,
-    required this.email
+    required this.backEndId,
+    required this.domainId,
+    required this.name,
+    required this.cpf,
+    required this.sex,
+    required this.phoneNumber,
+    required this.status,
+    required this.email,
+    required this.travels,
+    required this.stats,
   });
 
-
-  /// from json method
-  factory UserClient.fromJson(Map<String, dynamic> json){
-    return UserClient(
-      id: json['id'],
-      name: json['name'],
-      cpf: json['cpf'],
-      sex: json['sex'],
-      phoneNumber: json['phoneNumber'],
-      status: json['status'],
-      email: json['email'],
-    );
-  }
-
-  /// to json method
-  Map<String, dynamic> toJson(){
-    return {
-      'id': id,
-      'name': name,
-      'cpf': cpf,
-      'sex': sex,
-      'phoneNumber': phoneNumber,
-      'status' : status,
-      'email': email,
-    };
-  }
 
 }
