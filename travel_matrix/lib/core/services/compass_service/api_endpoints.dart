@@ -15,6 +15,11 @@ abstract final class ApiEndpoints {
   static const String users = '/users';
   static String userById(String id) => '/users/$id';
 
+  // Users - Security
+  static String userResetPassword(String id) => '/users/$id/reset-password';
+  static String userForceLogout(String id) => '/users/$id/force-logout';
+  static String userDeactivate(String id) => '/users/$id/deactivate';
+
   // Auth
   static const String login = '/auth/login';
   static const String register = '/auth/register';

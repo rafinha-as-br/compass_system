@@ -4,9 +4,12 @@ import 'package:mock_repository/mock_repository.dart';
 import 'package:go_router/go_router.dart';
 
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
-import 'package:travel_matrix/features/users/presentation/pages/delete_user_dialog.dart';
+import 'package:travel_matrix/features/users/presentation/pages/deactivate_user_dialog.dart';
+
+import '../view_models/client_status_view_model.dart';
 
 /// Users Dashboard Tab — lists all Client users with status indicators.
 class UsersDashboardPage extends StatelessWidget {
@@ -45,9 +48,9 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
       
       bool matchesStatus = true;
       if (_statusFilter == 'Active') {
-        matchesStatus = user.isActive;
+        matchesStatus = user.status.status is ActiveStatusViewModel;
       } else if (_statusFilter == 'Inactive') {
-        matchesStatus = !user.isActive;
+        matchesStatus = user.status.status is! ActiveStatusViewModel;
       }
 
       return matchesSearch && matchesStatus;
@@ -193,7 +196,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
 
   Widget _buildUsersTable(
     BuildContext context,
-    List<Client> users,
+    List<UserClientViewModel> users,
     UsersController controller,
   ) {
     final theme = Theme.of(context);
@@ -250,7 +253,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
-                          color: user.isActive
+                          color: user.status.status is ActiveStatusViewModel
                               ? TravelAppColors.success.withValues(alpha: 0.1)
                               : TravelAppColors.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
@@ -259,17 +262,17 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                           mainAxisSize: MainAxisSize.min,
                           children: [
                             Icon(
-                              user.isActive ? Icons.check_circle_outline : Icons.highlight_off,
+                              user.status.status is ActiveStatusViewModel ? Icons.check_circle_outline : Icons.highlight_off,
                               size: 14,
-                              color: user.isActive ? TravelAppColors.success : TravelAppColors.error,
+                              color: user.status.status is ActiveStatusViewModel ? TravelAppColors.success : TravelAppColors.error,
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              user.isActive ? 'Active' : 'Inactive',
+                              user.status.status is ActiveStatusViewModel ? 'Active' : 'Inactive',
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
-                                color: user.isActive
+                                color: user.status.status is ActiveStatusViewModel
                                     ? TravelAppColors.success
                                     : TravelAppColors.error,
                               ),
@@ -283,33 +286,21 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.edit_outlined, size: 20),
-                            color: TravelAppColors.textSecondary,
-                            tooltip: 'Edit User',
-                            onPressed: () {
-                              context.go(
-                                '${AppRoutes.users}/${user.id}/${AppRoutes.userEdit}',
-                                extra: {'user': user, 'controller': controller},
-                              );
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.delete_outlined, size: 20),
-                            color: TravelAppColors.textSecondary,
-                            tooltip: 'Delete User',
-                            onPressed: () async {
-                              showDeleteUserDialog(context, user.name).then((confirmed) {
-                                if (confirmed == true) {
-                                  controller.deleteUser(user.id);
-                                }
-                              });
-                            },
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.account_circle_outlined, size: 20),
+                            icon: const Icon(Icons.remove_red_eye_outlined, size: 20),
                             color: TravelAppColors.textSecondary,
                             tooltip: 'View User',
                             onPressed: () => _navigateToUser(context, user, controller),
+                          ),
+                          IconButton(
+                            icon: const Icon(Icons.block, size: 20),
+                            color: TravelAppColors.textSecondary,
+                            tooltip: 'Deactivate User',
+                            onPressed: () async {
+                              final reason = await showDeactivateUserDialog(context, user.name);
+                              if (reason != null) {
+                                controller.deactivateUser(user.localId, reason);
+                              }
+                            },
                           ),
                         ],
                       ),
@@ -326,11 +317,11 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
 
   void _navigateToUser(
     BuildContext context,
-    Client user,
+    UserClientViewModel user,
     UsersController controller,
   ) {
     context.go(
-      '${AppRoutes.users}/${user.id}',
+      '${AppRoutes.users}/${user.localId}',
       extra: {'user': user, 'controller': controller},
     );
   }

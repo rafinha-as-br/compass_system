@@ -5,10 +5,14 @@ import 'package:travel_matrix/core/services/auth_storage_service.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/view_user_page.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
+import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
+import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
+import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
 
 class UserViewWrapper extends StatefulWidget {
   final String userId;
-  final Client? initialUser;
+  final UserClientViewModel? initialUser;
   final UsersController? initialController;
 
   const UserViewWrapper({
@@ -23,7 +27,7 @@ class UserViewWrapper extends StatefulWidget {
 }
 
 class _UserViewWrapperState extends State<UserViewWrapper> {
-  late Future<Client?> _userFuture;
+  late Future<UserClientViewModel?> _userFuture;
   late final UsersController _controller;
   late final bool _ownsController;
 
@@ -48,13 +52,11 @@ class _UserViewWrapperState extends State<UserViewWrapper> {
     super.dispose();
   }
 
-  Future<Client?> _fetchUserById(String id) async {
-    final token = await AuthStorageService.instance.getToken();
-    if (token == null) return null;
-    
-    final response = await CompassService.instance.getUserById(token, id);
-    if (response['status'] == 'success') {
-      return Client.fromJson(response['data'] as Map<String, dynamic>);
+  Future<UserClientViewModel?> _fetchUserById(String id) async {
+    final useCases = UserUseCases(UserClientRepositoryImpl(UserClientDataSource()));
+    final result = await useCases.getUser(id);
+    if (result.isSuccess && result.data != null) {
+      return UserClientViewModel.fromDomain(user: result.data!);
     }
     return null;
   }
@@ -63,7 +65,7 @@ class _UserViewWrapperState extends State<UserViewWrapper> {
   Widget build(BuildContext context) {
     return ChangeNotifierProvider.value(
       value: _controller,
-      child: FutureBuilder<Client?>(
+      child: FutureBuilder<UserClientViewModel?>(
         future: _userFuture,
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {

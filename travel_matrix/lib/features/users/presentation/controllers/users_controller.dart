@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
+import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
+import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
 
 import '../../../../core/services/auth_storage_service.dart';
 
 class UsersState {
   final bool isLoading;
-  final List<Client> users;
+  final List<UserClientViewModel> users;
   final String? errorMessage;
 
   const UsersState({
@@ -17,10 +20,13 @@ class UsersState {
 }
 
 class UsersController extends ChangeNotifier {
+  late final UserUseCases _useCases;
+
   UsersState _state = const UsersState();
   UsersState get state => _state;
 
   UsersController() {
+    _useCases = UserUseCases(UserClientRepositoryImpl(UserClientDataSource()));
     fetchUsers();
   }
 
@@ -38,18 +44,17 @@ class UsersController extends ChangeNotifier {
         return;
       }
 
-      final response = await CompassService.instance.getAllUsers(token);
+      final result = await _useCases.getAllUsers();
 
-      if (response['status'] == 'success') {
-        final data = response['data'] as List<dynamic>;
-        final clients = data
-            .map((e) => Client.fromJson(e as Map<String, dynamic>))
+      if (result.isSuccess && result.data != null) {
+        final clients = result.data!
+            .map((e) => UserClientViewModel.fromDomain(user: e))
             .toList();
         _state = UsersState(isLoading: false, users: clients);
       } else {
         _state = UsersState(
           isLoading: false,
-          errorMessage: response['message'] as String?,
+          errorMessage: result.error,
         );
       }
       notifyListeners();
@@ -62,18 +67,32 @@ class UsersController extends ChangeNotifier {
     }
   }
 
-  Future<bool> deleteUser(String userId) async {
+  Future<bool> deactivateUser(String userId, String reason) async {
     try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) return false;
-
-      final response =
-          await CompassService.instance.deleteUser(token, userId);
-      if (response['status'] == 'success') {
+      final result = await _useCases.deactivateUser(userId, reason);
+      if (result.isSuccess) {
         await fetchUsers();
         return true;
       }
       return false;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<bool> resetPassword(String userId) async {
+    try {
+      final result = await _useCases.resetPassword(userId);
+      return result.isSuccess;
+    } catch (_) {
+      return false;
+    }
+  }
+
+  Future<bool> forceLogout(String userId) async {
+    try {
+      final result = await _useCases.forceLogout(userId);
+      return result.isSuccess;
     } catch (_) {
       return false;
     }

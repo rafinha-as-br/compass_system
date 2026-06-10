@@ -1,6 +1,6 @@
 
 import 'package:travel_matrix/core/entities/result.dart';
-import 'package:travel_matrix/features/users/domain/user.dart';
+import 'package:travel_matrix/features/users/domain/entities/user.dart';
 
 /// Repository responsible for handling all user operations
 abstract class UserClientRepository{
@@ -13,6 +13,10 @@ abstract class UserClientRepository{
   Future<Result<List<UserClient>>> getAllUsers();
   /// Update method
   Future<Result> updateUser(UserClient updatedUser);
-  /// Delete method
-  Future<Result> deleteUser(String userId);
+  /// Deactivate method
+  Future<Result> deactivateUser(String userId, String reason);
+  /// Reset password method
+  Future<Result> resetPassword(String userId);
+  /// Force logout method
+  Future<Result> forceLogout(String userId);
 }

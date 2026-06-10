@@ -30,4 +30,21 @@ class UserClientDataSource{
     return result;
   }
 
+  Future<Map<String, dynamic>> deactivateUser(String userId, String reason) async {
+    final token = await _authService.getToken();
+    final result = await _userService.deactivateUser(token!, userId, reason);
+    return result;
+  }
+
+  Future<Map<String, dynamic>> resetPassword(String userId) async {
+    final token = await _authService.getToken();
+    final result = await _userService.resetPassword(token!, userId);
+    return result;
+  }
+
+  Future<Map<String, dynamic>> forceLogout(String userId) async {
+    final token = await _authService.getToken();
+    final result = await _userService.forceLogout(token!, userId);
+    return result;
+  }
 }

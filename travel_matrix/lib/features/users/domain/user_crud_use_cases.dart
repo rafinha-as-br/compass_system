@@ -1,6 +1,6 @@
 
 import 'package:travel_matrix/core/entities/result.dart';
-import 'package:travel_matrix/features/users/domain/user.dart';
+import 'package:travel_matrix/features/users/domain/entities/user.dart';
 import 'package:travel_matrix/features/users/domain/user_client_repository.dart';
 
 /// Contains all the use cases for [UserClient], having all crud methods
@@ -29,9 +29,19 @@ class UserUseCases{
     return await _repository.updateUser(updatedUser);
   }
 
-  /// Delete user method
-  Future<Result> deleteUser(String userId) async{
-    return await _repository.deleteUser(userId);
+  /// Deactivate user method
+  Future<Result> deactivateUser(String userId, String reason) async{
+    return await _repository.deactivateUser(userId, reason);
+  }
+
+  /// Reset password method
+  Future<Result> resetPassword(String userId) async{
+    return await _repository.resetPassword(userId);
+  }
+
+  /// Force logout method
+  Future<Result> forceLogout(String userId) async{
+    return await _repository.forceLogout(userId);
   }
 
 }

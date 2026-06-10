@@ -1,5 +1,8 @@
 
-import 'package:travel_matrix/features/users/domain/user.dart';
+import 'package:travel_matrix/features/users/domain/entities/user.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/client_status_view_model.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/travel_summary_view_model.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/user_stats_view_model.dart';
 
 /// View model class for [UserClient]
 class UserClientViewModel{
@@ -9,8 +12,10 @@ class UserClientViewModel{
   final String cpf;
   final String sex;
   final String phoneNumber;
-  final String status;
+  final UserClientStatusViewModel status;
   final String email;
+  final List<TravelSummaryViewModel> travels;
+  final UserStatsViewModel stats;
 
   UserClientViewModel({
     required this.backEndId,
@@ -21,6 +26,8 @@ class UserClientViewModel{
     required this.phoneNumber,
     required this.status,
     required this.email,
+    required this.travels,
+    required this.stats,
   });
 
   /// From domain mapper method
@@ -32,8 +39,10 @@ class UserClientViewModel{
         cpf: user.cpf,
         sex: user.sex,
         phoneNumber: user.phoneNumber,
-        status: user.status,
-        email: user.email
+        status: UserClientStatusViewModel.fromDomain(user.status),
+        email: user.email,
+        travels: user.travels.map((travel) => TravelSummaryViewModel.fromDomain(travel)).toList(),
+        stats: UserStatsViewModel.fromDomain(user.stats),
     );
   }
 
@@ -46,8 +55,10 @@ class UserClientViewModel{
         cpf: cpf,
         sex: sex,
         phoneNumber: phoneNumber,
-        status: status,
-        email: email
+        status: status.toDomain(),
+        email: email,
+        travels: travels.map((travel) => travel.toDomain()).toList(),
+        stats: stats.toDomain(),
     );
   }
 
