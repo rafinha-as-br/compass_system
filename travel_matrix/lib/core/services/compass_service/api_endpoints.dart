@@ -13,6 +13,7 @@ abstract final class ApiEndpoints {
 
   // Users
   static const String users = '/users';
+  static const String userMe = '/users/me';
   static String userById(String id) => '/users/$id';
 
   // Users - Security
@@ -24,7 +25,8 @@ abstract final class ApiEndpoints {
   static const String login = '/auth/login';
   static const String register = '/auth/register';
 
+  // Dashboard
+  static const String dashboardStats = '/dashboard/stats';
 
-  /// TODO: REMOVE THIS ENDPOINT
   static String travelItinerary(String travelId) => '/travels/$travelId/itinerary';
 }

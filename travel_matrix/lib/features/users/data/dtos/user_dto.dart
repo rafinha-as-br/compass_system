@@ -34,7 +34,7 @@ class UserDTO{
   UserClient toDomain(){
     return UserClient(
         backEndId: id,
-        domainId: Uuid().v4(),
+        domainId: id ?? Uuid().v4(),
         name: name,
         cpf: cpf,
         sex: sex,

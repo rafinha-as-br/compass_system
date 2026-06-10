@@ -30,7 +30,7 @@ class MockApiClient{
 
 
   Map<String, dynamic> _handleResponse(FakeResponse response) {
-    if (response.statusCode == 200) {
+    if (response.statusCode >= 200 && response.statusCode < 300) {
       return response.body;
     } else {
       throw ApiException.fromStatusCode(
