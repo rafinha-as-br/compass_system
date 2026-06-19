@@ -2,7 +2,6 @@ import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:travel_matrix/features/travels/domain/repository/route_repository.dart';
 
-import '../data_sources/route_data_source.dart';
 
 class RouteRepositoryImpl implements RouteRepository{
   @override

@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 
-Future<String?> showDeactivateUserDialog(BuildContext context, String userName) {
+Future<String?> showDeactivateUserDialog(
+  BuildContext context,
+  String userName,
+) {
   return showDialog<String>(
     context: context,
     builder: (context) => _DeactivateUserDialog(userName: userName),
@@ -25,7 +28,7 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
     'Inadimplência',
     'Violação de termos de uso',
     'Conta duplicada',
-    'Outro'
+    'Outro',
   ];
 
   @override
@@ -66,20 +69,25 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
               ),
             ),
             const SizedBox(height: 16),
-            ..._reasons.map((reason) {
-              return RadioListTile<String>(
-                title: Text(reason),
-                value: reason,
-                groupValue: _selectedReason,
-                onChanged: (value) {
-                  setState(() {
-                    _selectedReason = value;
-                  });
-                },
-                contentPadding: EdgeInsets.zero,
-                dense: true,
-              );
-            }),
+            RadioGroup<String>(
+              groupValue: _selectedReason,
+              onChanged: (value) {
+                setState(() {
+                  _selectedReason = value;
+                });
+              },
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: _reasons.map((reason) {
+                  return RadioListTile<String>(
+                    title: Text(reason),
+                    value: reason,
+                    contentPadding: EdgeInsets.zero,
+                    dense: true,
+                  );
+                }).toList(),
+              ),
+            ),
             if (_selectedReason == 'Outro')
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 32.0),
@@ -101,7 +109,10 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
           child: const Text('CANCELAR'),
         ),
         ElevatedButton(
-          onPressed: _selectedReason == null || (_selectedReason == 'Outro' && _otherReasonController.text.trim().isEmpty)
+          onPressed:
+              _selectedReason == null ||
+                  (_selectedReason == 'Outro' &&
+                      _otherReasonController.text.trim().isEmpty)
               ? null
               : () {
                   final reason = _selectedReason == 'Outro'

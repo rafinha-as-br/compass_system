@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mock_repository/mock_repository.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
+import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
+import 'package:travel_matrix/features/travels/data/dtos/itinerary_step_dto.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/build/itinerary_build_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/editor/itinerary_editor_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/update/itinerary_update_controller.dart';
@@ -60,16 +62,16 @@ class ItineraryBuildPage extends StatelessWidget {
 
         // Editor controller dependency injection
         ChangeNotifierProvider(
-            create: (_) => ItineraryEditorController(
-              steps: isEditMode 
+          create: (_) => ItineraryEditorController(
+            steps: isEditMode
                 ? [
                     itineraryBuildModel.steps!.startStep,
                     ...itineraryBuildModel.steps!.normalSteps,
                     itineraryBuildModel.steps!.finishStep,
-                  ] 
+                  ]
                 : null,
-              interestPoints: itineraryBuildModel.interestsPoints,
-            )
+            interestPoints: itineraryBuildModel.interestsPoints,
+          ),
         ),
 
         // Conditionally provide create or update controller
@@ -107,16 +109,90 @@ class _ItineraryBuildView extends StatelessWidget {
   final ItineraryBuildModel buildModel;
   final bool isEditMode;
 
+  Future<String> _resolveAgentName() async {
+    final token = await AuthStorageService.instance.getToken();
+    if (token == null) return '';
+
+    final response = await CompassService.instance.getUser(token);
+    if (response['status'] != 'success') return '';
+
+    final data = response['data'];
+    if (data is Map<String, dynamic>) {
+      return data['name']?.toString() ?? data['email']?.toString() ?? '';
+    }
+
+    return '';
+  }
+
+  Future<void> _saveItinerary(BuildContext context) async {
+    final editor = context.read<ItineraryEditorController>();
+    final messenger = ScaffoldMessenger.of(context);
+    final router = GoRouter.of(context);
+    final updateController = isEditMode
+        ? context.read<UpdateItineraryController>()
+        : null;
+    final createController = isEditMode
+        ? null
+        : context.read<CreateItineraryController>();
+    final agentName = await _resolveAgentName();
+
+    final itineraryData = {
+      'agentName': agentName,
+      'steps': editor.stepsList
+          .map(
+            (step) =>
+                ItineraryStepDTO.fromDomain(step: step.toDomain()).toJson(),
+          )
+          .toList(),
+    };
+
+    final bool success;
+    String? error;
+
+    if (isEditMode) {
+      success = await updateController!.updateItinerary(
+        travelId,
+        itineraryData,
+      );
+      error = updateController.error;
+    } else {
+      success = await createController!.createItinerary(
+        travelId,
+        itineraryData,
+      );
+      error = createController.error;
+    }
+
+    if (!context.mounted) return;
+
+    if (success) {
+      messenger.showSnackBar(
+        SnackBar(
+          content: Text(
+            isEditMode ? 'Itinerary updated.' : 'Itinerary created.',
+          ),
+        ),
+      );
+      router.go('${AppRoutes.travels}/$travelId');
+    } else {
+      messenger.showSnackBar(
+        SnackBar(content: Text(error ?? 'Could not save itinerary.')),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final editor = context.watch<ItineraryEditorController>();
     final steps = editor.stepsBuildModel;
     final selectedIndex = editor.selectedStepIndex;
-
+    final isSaving = isEditMode
+        ? context.watch<UpdateItineraryController>().isLoading
+        : context.watch<CreateItineraryController>().isLoading;
 
     return Scaffold(
       /// TODO: CREATE AN APP BAR ON A SEPARATED FILE
-    appBar: AppBar(
+      appBar: AppBar(
         title: const Text('Build Itinerary'),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
@@ -129,8 +205,17 @@ class _ItineraryBuildView extends StatelessWidget {
           },
         ),
         actions: [
-
-          /// Finish itinerary button -> Not available on the moment
+          TextButton.icon(
+            onPressed: isSaving ? null : () => _saveItinerary(context),
+            icon: isSaving
+                ? const SizedBox(
+                    width: 18,
+                    height: 18,
+                    child: CircularProgressIndicator(strokeWidth: 2),
+                  )
+                : const Icon(Icons.check),
+            label: Text(isEditMode ? 'Update' : 'Save'),
+          ),
           const SizedBox(width: 16),
         ],
       ),
@@ -147,44 +232,44 @@ class _ItineraryBuildView extends StatelessWidget {
           // ─── Center: Step workflow ──────────────────────────────
           Expanded(
             child: StepsBuilderPanel(
-                steps: steps,
-                selectedIndex: selectedIndex,
-                goToPreviousStep: editor.goToPreviousStep,
-                goToNextStep: editor.goToNextStep,
-                addStep: editor.addStep,
-                updateStep: editor.updateStep,
-                removeStep: editor.deleteStep
+              steps: steps,
+              selectedIndex: selectedIndex,
+              goToPreviousStep: editor.goToPreviousStep,
+              goToNextStep: editor.goToNextStep,
+              addStep: editor.addStep,
+              updateStep: editor.updateStep,
+              removeStep: editor.deleteStep,
             ),
           ),
           VerticalDivider(width: 1, color: Theme.of(context).dividerColor),
 
           // ─── Right: Steps list ──────────────────────────────────
           StepsListPanel(
-              steps: steps,
-              selectedIndex: selectedIndex,
-              onSelectStep: editor.selectStep,
-              addStep: editor.addStep,
-              onReorder: (oldIndex, newIndex) {
-                final success = editor.reorderSteps(oldIndex, newIndex);
-                if (!success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Cannot move this step to that position.')),
-                  );
-                }
-              },
-              onDeleteStep: (index) {
-                final success = editor.deleteStep(index);
-                if (!success) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(content: Text('Cannot delete this step.')),
-                  );
-                }
+            steps: steps,
+            selectedIndex: selectedIndex,
+            onSelectStep: editor.selectStep,
+            addStep: editor.addStep,
+            onReorder: (oldIndex, newIndex) {
+              final success = editor.reorderSteps(oldIndex, newIndex);
+              if (!success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(
+                    content: Text('Cannot move this step to that position.'),
+                  ),
+                );
               }
-          )
+            },
+            onDeleteStep: (index) {
+              final success = editor.deleteStep(index);
+              if (!success) {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  const SnackBar(content: Text('Cannot delete this step.')),
+                );
+              }
+            },
+          ),
         ],
       ),
     );
   }
 }
-
-

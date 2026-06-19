@@ -19,12 +19,12 @@ class AgentProfileDto {
 
   factory AgentProfileDto.fromJson(Map<String, dynamic> json) {
     return AgentProfileDto(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      email: json['email'] as String? ?? '',
-      cpf: json['cpf'] as String? ?? '',
-      cnpj: json['cnpj'] as String? ?? '',
-      phoneNumber: json['phoneNumber'] as String? ?? '',
+      id: json['id']?.toString() ?? '',
+      name: json['name']?.toString() ?? '',
+      email: json['email']?.toString() ?? '',
+      cpf: json['cpf']?.toString() ?? '',
+      cnpj: json['cnpj']?.toString() ?? '',
+      phoneNumber: json['phoneNumber']?.toString() ?? json['phone']?.toString() ?? '',
     );
   }
 

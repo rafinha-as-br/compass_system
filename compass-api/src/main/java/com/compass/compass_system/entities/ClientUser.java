@@ -19,6 +19,8 @@ public class ClientUser {
     private String phone;
     private String email;
     private String password;
+    private boolean isActive = true;
+    private String deactivationReason;
     
     public ClientUser() {
     }
@@ -86,5 +88,21 @@ public class ClientUser {
 
     public void setEmail(String email) {
         this.email = email;
+    }
+
+    public boolean getIsActive() {
+        return isActive;
+    }
+
+    public void setIsActive(boolean isActive) {
+        this.isActive = isActive;
+    }
+
+    public String getDeactivationReason() {
+        return deactivationReason;
+    }
+
+    public void setDeactivationReason(String deactivationReason) {
+        this.deactivationReason = deactivationReason;
     }
 }

@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:go_router/go_router.dart';
@@ -98,80 +97,73 @@ class _EditUserPageState extends State<EditUserPage> {
                   Text(
                     'Edit: ${widget.user.name}',
                     style: theme.textTheme.titleLarge?.copyWith(
-                        fontWeight: FontWeight.bold),
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   TextFormField(
                     controller: _nameCtrl,
                     decoration: const InputDecoration(
-                        labelText: 'Full Name',
-                        border: OutlineInputBorder()),
-                    validator: (v) =>
-                        v!.isEmpty ? 'Name is required' : null,
+                      labelText: 'Full Name',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) => v!.isEmpty ? 'Name is required' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _cpfCtrl,
                     decoration: const InputDecoration(
-                        labelText: 'CPF',
-                        border: OutlineInputBorder()),
-                    validator: (v) =>
-                        v!.isEmpty ? 'CPF is required' : null,
+                      labelText: 'CPF',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) => v!.isEmpty ? 'CPF is required' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _emailCtrl,
                     decoration: const InputDecoration(
-                        labelText: 'Email',
-                        border: OutlineInputBorder()),
-                    validator: (v) =>
-                        v!.isEmpty ? 'Email is required' : null,
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) => v!.isEmpty ? 'Email is required' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _phoneCtrl,
                     decoration: const InputDecoration(
-                        labelText: 'Phone Number',
-                        border: OutlineInputBorder()),
-                    validator: (v) =>
-                        v!.isEmpty ? 'Phone is required' : null,
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) => v!.isEmpty ? 'Phone is required' : null,
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _sex,
+                    initialValue: _sex,
                     decoration: const InputDecoration(
-                        labelText: 'Sex',
-                        border: OutlineInputBorder()),
+                      labelText: 'Sex',
+                      border: OutlineInputBorder(),
+                    ),
                     items: const [
-                      DropdownMenuItem(
-                          value: 'M', child: Text('Male')),
-                      DropdownMenuItem(
-                          value: 'F', child: Text('Female')),
-                      DropdownMenuItem(
-                          value: 'O', child: Text('Other')),
+                      DropdownMenuItem(value: 'M', child: Text('Male')),
+                      DropdownMenuItem(value: 'F', child: Text('Female')),
+                      DropdownMenuItem(value: 'O', child: Text('Other')),
                     ],
-                    onChanged: (v) =>
-                        setState(() => _sex = v ?? 'M'),
+                    onChanged: (v) => setState(() => _sex = v ?? 'M'),
                   ),
                   const SizedBox(height: 32),
                   SizedBox(
                     height: 48,
                     child: ElevatedButton(
-                      onPressed:
-                          _isSubmitting ? null : _submit,
+                      onPressed: _isSubmitting ? null : _submit,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor:
-                            theme.colorScheme.secondary,
-                        foregroundColor:
-                            theme.colorScheme.onSecondary,
+                        backgroundColor: theme.colorScheme.secondary,
+                        foregroundColor: theme.colorScheme.onSecondary,
                       ),
                       child: _isSubmitting
                           ? const SizedBox(
                               width: 20,
                               height: 20,
-                              child:
-                                  CircularProgressIndicator(
-                                      strokeWidth: 2),
+                              child: CircularProgressIndicator(strokeWidth: 2),
                             )
                           : const Text('SAVE CHANGES'),
                     ),

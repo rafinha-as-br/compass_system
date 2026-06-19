@@ -10,18 +10,24 @@ import 'package:travel_matrix/core/constants/api_fields.dart';
 class TravelDTO {
   /// Main id used for API reference
   final String? id;
+
   /// Client name that created the travel
   final String clientName;
+
   /// Travel main name
   final String travelName;
+
   /// Travel status
   final String travelStatus;
+
   /// Route plan back end id for the travel
   final RoutePlanDTO routePlan;
+
   /// Itinerary DTO
   final ItineraryDTO? itinerary;
   // Participants DTO list in the travel
   final List<PersonDTO> participants;
+
   /// Travel events DTO list
   final List<TravelEventDTO>? eventsLog;
 
@@ -36,18 +42,31 @@ class TravelDTO {
     this.itinerary,
   });
 
-
   /// From json factory constructor
   factory TravelDTO.fromJson(Map<String, dynamic> json) {
+    final routePlan = json[TravelApiFields.routePlan] as Map<String, dynamic>?;
+    final events = json[TravelApiFields.events];
     return TravelDTO(
-      id: json[TravelApiFields.id],
-      clientName: json[TravelApiFields.client],
-      travelName: json[TravelApiFields.travelName],
-      travelStatus: json[TravelApiFields.travelStatus],
-      routePlan: RoutePlanDTO.fromJson(json[TravelApiFields.routePlan]),
-      participants: (json[TravelApiFields.participants] as List<dynamic>?)?.map((x) => PersonDTO.fromJson(x as Map<String, dynamic>)).toList().cast<PersonDTO>() ?? [],
-      eventsLog: json[TravelApiFields.events]?.map((x) => TravelEventDTO.fromJson(x)).toList(),
-      itinerary: json[TravelApiFields.itinerary] == null ? null : ItineraryDTO.fromJson(json[TravelApiFields.itinerary]),
+      id: json[TravelApiFields.id]?.toString(),
+      clientName: json[TravelApiFields.client]?.toString() ?? '',
+      travelName: json[TravelApiFields.travelName]?.toString() ?? '',
+      travelStatus:
+          json[TravelApiFields.travelStatus]?.toString() ?? 'route_created',
+      routePlan: RoutePlanDTO.fromJson(routePlan ?? const <String, dynamic>{}),
+      participants:
+          (json[TravelApiFields.participants] as List<dynamic>?)
+              ?.map((x) => PersonDTO.fromJson(x as Map<String, dynamic>))
+              .toList()
+              .cast<PersonDTO>() ??
+          [],
+      eventsLog: (events as List<dynamic>?)
+          ?.map((x) => TravelEventDTO.fromJson(x as Map<String, dynamic>))
+          .toList(),
+      itinerary: json[TravelApiFields.itinerary] == null
+          ? null
+          : ItineraryDTO.fromJson(
+              json[TravelApiFields.itinerary] as Map<String, dynamic>,
+            ),
     );
   }
 
@@ -60,7 +79,9 @@ class TravelDTO {
       TravelApiFields.travelStatus: travelStatus,
       TravelApiFields.routePlan: routePlan.toJson(),
       TravelApiFields.itinerary: itinerary?.toJson(),
-      TravelApiFields.participants: participants.map((x) => x.toJson()).toList(),
+      TravelApiFields.participants: participants
+          .map((x) => x.toJson())
+          .toList(),
       TravelApiFields.events: eventsLog?.map((x) => x.toJson()).toList(),
     };
   }
@@ -88,23 +109,30 @@ class TravelDTO {
       travelName: travel.travelName,
       travelStatus: travel.travelStatus.toApiValue(),
       routePlan: RoutePlanDTO.fromDomain(routePlan: travel.routePlan),
-      participants: travel.participantsList.map((x) => PersonDTO.fromDomain(person: x)).toList(),
-      eventsLog: travel.eventsLog?.map((x) => TravelEventDTO.fromDomain(travelEvent: x)).toList(),
-      itinerary: travel.itinerary == null ? null : ItineraryDTO.fromDomain(itinerary: travel.itinerary!),
+      participants: travel.participantsList
+          .map((x) => PersonDTO.fromDomain(person: x))
+          .toList(),
+      eventsLog: travel.eventsLog
+          ?.map((x) => TravelEventDTO.fromDomain(travelEvent: x))
+          .toList(),
+      itinerary: travel.itinerary == null
+          ? null
+          : ItineraryDTO.fromDomain(itinerary: travel.itinerary!),
     );
   }
-
-
 }
 
 /// Data transfer object for [Person], having the same structure as the API.
 class PersonDTO {
   /// Main id used for API reference
   final String? id;
+
   /// Person name
   final String name;
+
   /// Person age
   final String age;
+
   /// Person sex
   final String sex;
 
@@ -126,21 +154,21 @@ class PersonDTO {
 
   factory PersonDTO.fromJson(Map<String, dynamic> json) {
     return PersonDTO(
-      id: json[PersonApiFields.id],
-      name: json[PersonApiFields.name],
-      age: json[PersonApiFields.age],
-      sex: json[PersonApiFields.sex],
+      id: json[PersonApiFields.id]?.toString(),
+      name: json[PersonApiFields.name]?.toString() ?? '',
+      age: json[PersonApiFields.age]?.toString() ?? '',
+      sex: json[PersonApiFields.sex]?.toString() ?? '',
     );
   }
 
   /// To domain mapper method
-  Person toDomain(){
+  Person toDomain() {
     return Person(
-        domainId: Uuid().v4(),
-        backendId: id,
-        name: name,
-        age: age,
-        sex: sex
+      domainId: Uuid().v4(),
+      backendId: id,
+      name: name,
+      age: age,
+      sex: sex,
     );
   }
 
@@ -153,6 +181,4 @@ class PersonDTO {
       sex: person.sex,
     );
   }
-
 }
-

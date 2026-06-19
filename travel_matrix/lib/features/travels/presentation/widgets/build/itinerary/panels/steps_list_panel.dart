@@ -61,16 +61,19 @@ class StepsListPanel extends StatelessWidget {
                     ),
                   )
                 : ReorderableListView.builder(
+                    buildDefaultDragHandles: false,
                     itemCount: stepsList.length,
                     onReorder: onReorder,
                     itemBuilder: (context, index) {
                       final step = stepsList[index];
                       final isSelected = index == selectedIndex;
+                      final isDraggable = step.position == StepPosition.middle;
                       return _StepListTile(
                         key: ValueKey(step.localId),
                         step: step,
                         isSelected: isSelected,
                         index: index,
+                        isDraggable: isDraggable,
                         onSelectStep: onSelectStep,
                         onDeleteStep: () => onDeleteStep(index)
                       );
@@ -106,6 +109,8 @@ class _StepListTile extends StatelessWidget {
   final bool isSelected;
   /// Step index value
   final int index;
+  /// Whether this step can be dragged to reorder
+  final bool isDraggable;
   /// Select [step] callback method
   final void Function(int index) onSelectStep;
   /// Delete [step] callback method
@@ -116,6 +121,7 @@ class _StepListTile extends StatelessWidget {
     required this.step,
     required this.isSelected,
     required this.index,
+    required this.isDraggable,
     required this.onSelectStep,
     required this.onDeleteStep,
   });
@@ -136,15 +142,20 @@ class _StepListTile extends StatelessWidget {
       child: ListTile(
         selected: isSelected,
         selectedTileColor: Theme.of(context).colorScheme.secondary.withValues(alpha: 0.1),
-        leading: CircleAvatar(
-          radius: 14,
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          child: Icon(
-            step.icon,
-            size: 14,
-            color: Theme.of(context).colorScheme.onPrimary
-          ),
-        ),
+        leading: isDraggable
+            ? ReorderableDragStartListener(
+                index: index,
+                child: const Icon(Icons.drag_handle, size: 20),
+              )
+            : CircleAvatar(
+                radius: 14,
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                child: Icon(
+                  step.icon,
+                  size: 14,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
+              ),
         title: Row(
           children: [
             Expanded(
@@ -167,7 +178,7 @@ class _StepListTile extends StatelessWidget {
           icon: Icon(
             Icons.delete_outline,
             size: 18,
-            color: Theme.of(context).colorScheme.error
+            color: Theme.of(context).colorScheme.error,
           ),
           onPressed: onDeleteStep,
           tooltip: 'Delete step',

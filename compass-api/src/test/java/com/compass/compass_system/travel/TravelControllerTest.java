@@ -1,9 +1,16 @@
 package com.compass.compass_system.travel;
 
-import com.compass.compass_system.itinerary.*;
+import com.compass.compass_system.itinerary.Hosting;
+import com.compass.compass_system.itinerary.Itinerary;
+import com.compass.compass_system.itinerary.Stop;
+import com.compass.compass_system.itinerary.TravelSegment;
+import com.compass.compass_system.security.JwtUtil;
 import com.compass.compass_system.transport.Airplane;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.*;
+import org.junit.jupiter.api.MethodOrderer;
+import org.junit.jupiter.api.Order;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestMethodOrder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -14,8 +21,12 @@ import org.springframework.test.web.servlet.MvcResult;
 
 import java.util.List;
 
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -29,10 +40,15 @@ class TravelControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
-    // Shared state between ordered tests
+    @Autowired
+    private JwtUtil jwtUtil;
+
     static String createdTravelId;
 
-    // ─── Test 1: POST /travels ──────────────────────────────────────────────────
+    private String authHeader() {
+        return "Bearer " + jwtUtil.generateToken("agent@matrix.com", "AGENTE", 1L);
+    }
+
     @Test
     @Order(1)
     void shouldCreateTravel() throws Exception {
@@ -44,11 +60,11 @@ class TravelControllerTest {
         RoutePlan routePlan = new RoutePlan();
         routePlan.setStartDate("2025-08-01T00:00:00.000Z");
         routePlan.setFinishDate("2025-08-15T00:00:00.000Z");
-        routePlan.setStartLocation("São Paulo");
+        routePlan.setStartLocation("Sao Paulo");
         routePlan.setDestination("Lisbon");
 
         InterestPoint ip = new InterestPoint();
-        ip.setName("Belém Tower");
+        ip.setName("Belem Tower");
         ip.setDescription("Historic tower by the Tagus river");
         routePlan.setInterestPoints(List.of(ip));
         travel.setRoutePlan(routePlan);
@@ -60,6 +76,7 @@ class TravelControllerTest {
         travel.setParticipants(List.of(participant));
 
         MvcResult result = mockMvc.perform(post("/travels")
+                .header("Authorization", authHeader())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(travel)))
                 .andExpect(status().isOk())
@@ -75,33 +92,40 @@ class TravelControllerTest {
         createdTravelId = created.getId();
     }
 
-    // ─── Test 2: GET /travels/{id} ─────────────────────────────────────────────
     @Test
     @Order(2)
-    void shouldGetTravel() throws Exception {
+    void shouldRequireAuthForTravels() throws Exception {
         mockMvc.perform(get("/travels/" + createdTravelId))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @Order(3)
+    void shouldGetTravel() throws Exception {
+        mockMvc.perform(get("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(createdTravelId))
                 .andExpect(jsonPath("$.travelName").value("Lisbon 2025"));
     }
 
-    // ─── Test 3: PUT /travels/{id} ─────────────────────────────────────────────
     @Test
-    @Order(3)
+    @Order(4)
     void shouldUpdateTravel() throws Exception {
         Travel travel = new Travel();
         travel.setClientName("Maria Silva Updated");
-        travel.setTravelName("Lisbon 2025 — Extended");
+        travel.setTravelName("Lisbon 2025 - Extended");
         travel.setTravelStatus("route_created");
 
         RoutePlan routePlan = new RoutePlan();
         routePlan.setStartDate("2025-08-01T00:00:00.000Z");
         routePlan.setFinishDate("2025-08-20T00:00:00.000Z");
-        routePlan.setStartLocation("São Paulo");
+        routePlan.setStartLocation("Sao Paulo");
         routePlan.setDestination("Lisbon");
         travel.setRoutePlan(routePlan);
 
         mockMvc.perform(put("/travels/" + createdTravelId)
+                .header("Authorization", authHeader())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(travel)))
                 .andExpect(status().isOk())
@@ -109,20 +133,18 @@ class TravelControllerTest {
                 .andExpect(jsonPath("$.routePlan.finishDate").value("2025-08-20T00:00:00.000Z"));
     }
 
-    // ─── Test 4: PUT /travels/{id}/itinerary ───────────────────────────────────
     @Test
-    @Order(4)
+    @Order(5)
     void shouldUpsertItinerary() throws Exception {
         Itinerary itinerary = new Itinerary();
         itinerary.setAgentName("Carlos Agent");
 
-        // TravelSegment step with Airplane
         TravelSegment segment = new TravelSegment();
         segment.setTitle("Flight to Lisbon");
         segment.setStartDate("2025-08-01T10:00:00.000Z");
         segment.setFinishDate("2025-08-01T22:00:00.000Z");
         segment.setFinished(false);
-        segment.setStartPoint("GRU - São Paulo");
+        segment.setStartPoint("GRU - Sao Paulo");
         segment.setFinishPoint("LIS - Lisbon");
 
         Airplane airplane = new Airplane();
@@ -134,7 +156,6 @@ class TravelControllerTest {
         airplane.setArrivalAirport("LIS");
         segment.setTransport(airplane);
 
-        // Hosting step
         Hosting hosting = new Hosting();
         hosting.setTitle("Hotel Avenida");
         hosting.setStartDate("2025-08-01T23:00:00.000Z");
@@ -145,19 +166,19 @@ class TravelControllerTest {
         hosting.setCheckIn("2025-08-01T15:00:00.000Z");
         hosting.setCheckOut("2025-08-10T12:00:00.000Z");
 
-        // Stop step with experiences
         Stop stop = new Stop();
-        stop.setTitle("Visit Belém Tower");
+        stop.setTitle("Visit Belem Tower");
         stop.setStartDate("2025-08-03T09:00:00.000Z");
         stop.setFinishDate("2025-08-03T12:00:00.000Z");
         stop.setFinished(false);
-        stop.setName("Belém Tower");
+        stop.setName("Belem Tower");
         stop.setDescription("UNESCO World Heritage Site");
         stop.setExperiences(List.of("photography", "sightseeing"));
 
         itinerary.setSteps(List.of(segment, hosting, stop));
 
         mockMvc.perform(put("/travels/" + createdTravelId + "/itinerary")
+                .header("Authorization", authHeader())
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(itinerary)))
                 .andExpect(status().isOk())
@@ -170,20 +191,20 @@ class TravelControllerTest {
                 .andExpect(jsonPath("$.steps[2].type").value("stop"))
                 .andExpect(jsonPath("$.steps[2].experiences[0]").value("photography"));
 
-        // Also verify that the travelStatus was transitioned
-        mockMvc.perform(get("/travels/" + createdTravelId))
+        mockMvc.perform(get("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
                 .andExpect(jsonPath("$.travelStatus").value("itinerary_created"));
     }
 
-    // ─── Test 5: DELETE /travels/{id} ──────────────────────────────────────────
     @Test
-    @Order(5)
+    @Order(6)
     void shouldDeleteTravel() throws Exception {
-        mockMvc.perform(delete("/travels/" + createdTravelId))
+        mockMvc.perform(delete("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
                 .andExpect(status().isNoContent());
 
-        // Confirm it's gone
-        mockMvc.perform(get("/travels/" + createdTravelId))
+        mockMvc.perform(get("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
                 .andExpect(status().isNotFound());
     }
 }

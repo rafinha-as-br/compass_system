@@ -5,17 +5,37 @@ class ApiException implements Exception {
   ApiException(this.message, [this.statusCode]);
 
   factory ApiException.fromStatusCode(int? code, dynamic data) {
+    // Try to extract the backend's error message
+    String message;
+    if (data is Map<String, dynamic>) {
+      message = data['message']?.toString() ??
+                data['error']?.toString() ??
+                _defaultMessage(code);
+    } else if (data is String && data.isNotEmpty) {
+      message = data;
+    } else {
+      message = _defaultMessage(code);
+    }
+    return ApiException(message, code);
+  }
+
+  static String _defaultMessage(int? code) {
     switch (code) {
       case 400:
-        return ApiException("Bad request", code);
+        return "Bad request";
       case 401:
-        return ApiException("Unauthorized", code);
+        return "Unauthorized";
+      case 403:
+        return "Forbidden";
       case 404:
-        return ApiException("Not found", code);
+        return "Not found";
       case 500:
-        return ApiException("Server error", code);
+        return "Server error";
       default:
-        return ApiException("Unknown error", code);
+        return "Unknown error (code: $code)";
     }
   }
+
+  @override
+  String toString() => 'ApiException($statusCode): $message';
 }

@@ -12,6 +12,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.mindrot.jbcrypt.BCrypt;
 
+import java.util.Map;
 import java.util.Optional;
 
 @RestController
@@ -122,6 +123,56 @@ public class AuthController {
         }
         
         // Se algo estiver errado barra o acesso 
+        throw new BusinessException("E-mail ou senha incorretos.");
+    }
+
+    // ==================== LOGIN UNIFICADO ====================
+
+    // Rota unificada de login: tenta autenticar como agente, depois como cliente.
+    // Retorna formato compatível com o frontend Travel Matrix.
+    @PostMapping("/login")
+    public ResponseEntity<Map<String, Object>> loginUnified(@RequestBody LoginRequest login) {
+
+        // Tenta como agente primeiro
+        Optional<AgentUser> agentOpt = agentRepository.findByEmail(login.email);
+        if (agentOpt.isPresent() && BCrypt.checkpw(login.password, agentOpt.get().getPassword())) {
+            AgentUser agent = agentOpt.get();
+            String token = jwtUtil.generateToken(agent.getEmail(), "AGENTE", agent.getId());
+
+            Map<String, Object> data = new java.util.LinkedHashMap<>();
+            data.put("token", token);
+            data.put("userId", String.valueOf(agent.getId()));
+            data.put("name", agent.getName());
+            data.put("email", agent.getEmail());
+            data.put("userType", "AGENTE");
+
+            Map<String, Object> response = new java.util.LinkedHashMap<>();
+            response.put("status", "success");
+            response.put("data", data);
+            response.put("message", null);
+            return ResponseEntity.ok(response);
+        }
+
+        // Tenta como cliente
+        Optional<ClientUser> clientOpt = clientRepository.findByEmail(login.email);
+        if (clientOpt.isPresent() && BCrypt.checkpw(login.password, clientOpt.get().getPassword())) {
+            ClientUser client = clientOpt.get();
+            String token = jwtUtil.generateToken(client.getEmail(), "CLIENTE", client.getId());
+
+            Map<String, Object> data = new java.util.LinkedHashMap<>();
+            data.put("token", token);
+            data.put("userId", String.valueOf(client.getId()));
+            data.put("name", client.getName());
+            data.put("email", client.getEmail());
+            data.put("userType", "CLIENTE");
+
+            Map<String, Object> response = new java.util.LinkedHashMap<>();
+            response.put("status", "success");
+            response.put("data", data);
+            response.put("message", null);
+            return ResponseEntity.ok(response);
+        }
+
         throw new BusinessException("E-mail ou senha incorretos.");
     }
 }

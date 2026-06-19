@@ -1,4 +1,4 @@
-import 'package:travel_matrix/core/services/compass_service/mock_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/http_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/api_endpoints.dart';
 
 class TravelApiClient {
@@ -18,27 +18,31 @@ class TravelApiClient {
   }
 
   Future<Map<String, dynamic>> getAllTravels(String token) async {
-    return MockApiClient().get(token, ApiEndpoints.travels, {}, {}, {});
+    final result = await HttpApiClient.instance.get(token, ApiEndpoints.travels);
+    // The backend returns a List directly, wrap it for compatibility
+    if (result.containsKey('data')) return result;
+    return {'data': result};
   }
 
   Future<Map<String, dynamic>> getTravel(String token, String travelId) async {
-    return MockApiClient().get(token, ApiEndpoints.travelById(travelId), {}, {}, {});
+    return HttpApiClient.instance.get(token, ApiEndpoints.travelById(travelId));
   }
 
   Future<Map<String, dynamic>> getTravelsForClient(String token, String clientId) async {
-    return MockApiClient().get(token, '/travels/client/$clientId', {}, {}, {});
+    final result = await HttpApiClient.instance.get(token, ApiEndpoints.travelsByClient(clientId));
+    if (result.containsKey('data')) return result;
+    return {'data': result};
   }
 
   Future<Map<String, dynamic>> createTravel(String token, Map<String, dynamic> travelData) async {
-    return MockApiClient().post(token, ApiEndpoints.travels, {}, {}, travelData);
+    return HttpApiClient.instance.post(token, ApiEndpoints.travels, travelData);
   }
 
   Future<Map<String, dynamic>> updateTravel(String token, String travelId, Map<String, dynamic> travelData) async {
-    return MockApiClient().put(token, ApiEndpoints.travelById(travelId), {}, {}, travelData);
+    return HttpApiClient.instance.put(token, ApiEndpoints.travelById(travelId), travelData);
   }
 
   Future<Map<String, dynamic>> deleteTravel(String token, String travelId) async {
-    return MockApiClient().delete(token, ApiEndpoints.travelById(travelId), {}, {}, {});
+    return HttpApiClient.instance.delete(token, ApiEndpoints.travelById(travelId));
   }
-
 }

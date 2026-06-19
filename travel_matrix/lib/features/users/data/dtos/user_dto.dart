@@ -76,17 +76,17 @@ class UserDTO{
 
   factory UserDTO.fromJson(Map<String, dynamic> json){
     return UserDTO(
-      id: json['id'] ?? json['backEndId'],
-      name: json['name'] ?? '',
-      cpf: json['cpf'] ?? '',
-      sex: json['sex'] ?? 'M',
-      phoneNumber: json['phoneNumber'] ?? '',
+      id: (json['id'] ?? json['backEndId'])?.toString(),
+      name: json['name']?.toString() ?? '',
+      cpf: json['cpf']?.toString() ?? '',
+      sex: json['sex']?.toString() ?? json['gender']?.toString() ?? 'M',
+      phoneNumber: json['phoneNumber']?.toString() ?? json['phone']?.toString() ?? '',
       status: json['status'] != null 
           ? UserClientStatusDto.fromJson(json['status'])
           : UserClientStatusDto(
               status: ClientStatusDto(type: (json['isActive'] == true) ? 'active' : 'inactive'),
             ),
-      email: json['email'] ?? '',
+      email: json['email']?.toString() ?? '',
       travels: json['travels'] != null 
           ? (json['travels'] as List).map<TravelSummaryDTO>((travel) => TravelSummaryDTO.fromJson(travel)).toList()
           : [],

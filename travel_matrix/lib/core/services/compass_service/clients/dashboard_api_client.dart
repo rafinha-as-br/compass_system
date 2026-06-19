@@ -1,5 +1,5 @@
 import 'package:travel_matrix/core/services/compass_service/api_endpoints.dart';
-import 'package:travel_matrix/core/services/compass_service/mock_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/http_api_client.dart';
 
 class DashboardApiClient {
   static DashboardApiClient? _instance;
@@ -18,12 +18,9 @@ class DashboardApiClient {
   }
 
   Future<Map<String, dynamic>> getDashboardStats(String token) async {
-    return MockApiClient().get(
+    return HttpApiClient.instance.get(
       token,
       ApiEndpoints.dashboardStats,
-      {},
-      {},
-      {},
     );
   }
 }

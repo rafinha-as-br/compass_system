@@ -6,10 +6,17 @@
 // tree, read text, and verify that the values of widget properties are correct.
 
 import 'package:flutter_test/flutter_test.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:travel_matrix/app/app_bootstrap.dart';
+import 'package:travel_matrix/app/app_injector.dart';
 
 void main() {
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    await AppInjector.init();
+  });
+
   testWidgets('App loads correctly smoke test', (WidgetTester tester) async {
     // Build our app and trigger a frame.
     await tester.pumpWidget(const AppBootstrap());
@@ -18,4 +25,3 @@ void main() {
     expect(find.byType(AppBootstrap), findsOneWidget);
   });
 }
-

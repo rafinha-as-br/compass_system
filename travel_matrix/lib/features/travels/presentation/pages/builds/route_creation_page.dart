@@ -84,10 +84,12 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
       'startLocation': _startLocationCtrl.text,
       'destination': _destinationCtrl.text,
       // Map back to API format (or domain format if the controller handles it)
-      'interestsList': _interestPoints.map((p) => {
-        'id': p.backEndId ?? p.localId,
-        'name': p.name,
-        'description': p.description,
+      'interestsList': _interestPoints.map((p) {
+        return {
+          'id': p.backEndId ?? p.localId,
+          'name': p.name,
+          'description': p.description,
+        };
       }).toList(),
     });
 

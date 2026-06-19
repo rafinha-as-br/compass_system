@@ -8,8 +8,10 @@ abstract final class ApiEndpoints {
     return 'http://localhost:8081';
   }
   
+  // Travels
   static const String travels = '/travels';
   static String travelById(String id) => '/travels/$id';
+  static String travelsByClient(String clientName) => '/travels/client/$clientName';
 
   // Users
   static const String users = '/users';
@@ -22,11 +24,12 @@ abstract final class ApiEndpoints {
   static String userDeactivate(String id) => '/users/$id/deactivate';
 
   // Auth
-  static const String login = '/auth/login';
-  static const String register = '/auth/register';
+  static const String login = '/api/auth/login';
+  static const String register = '/api/auth/cadastrar/cliente';
 
   // Dashboard
   static const String dashboardStats = '/dashboard/stats';
 
+  // Itinerary
   static String travelItinerary(String travelId) => '/travels/$travelId/itinerary';
 }

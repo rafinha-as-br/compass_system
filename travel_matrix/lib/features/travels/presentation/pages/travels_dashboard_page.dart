@@ -87,7 +87,7 @@ class _TravelsDashboardViewState extends State<_TravelsDashboardView> {
               SizedBox(
                 width: 220,
                 child: DropdownButtonFormField<_TravelFilter>(
-                  value: _filter,
+                  initialValue: _filter,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(horizontal: 12),
@@ -126,29 +126,28 @@ class _TravelsDashboardViewState extends State<_TravelsDashboardView> {
             child: state.isLoading
                 ? const Center(child: CircularProgressIndicator())
                 : filteredTravels.isEmpty
-                    ? Center(
-                        child: Text(
-                          l10n.noTravelsCreated,
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface
-                                .withValues(alpha: 0.6),
-                          ),
-                        ),
-                      )
-                    : Card(
-                        elevation: 0,
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(
-                            color: theme.colorScheme.outlineVariant,
-                          ),
-                        ),
-                        child: _TravelsTable(
-                          travels: filteredTravels,
-                          controller: controller,
-                          l10n: l10n,
+                ? Center(
+                    child: Text(
+                      l10n.noTravelsCreated,
+                      style: TextStyle(
+                        color: theme.colorScheme.onSurface.withValues(
+                          alpha: 0.6,
                         ),
                       ),
+                    ),
+                  )
+                : Card(
+                    elevation: 0,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(8),
+                      side: BorderSide(color: theme.colorScheme.outlineVariant),
+                    ),
+                    child: _TravelsTable(
+                      travels: filteredTravels,
+                      controller: controller,
+                      l10n: l10n,
+                    ),
+                  ),
           ),
         ],
       ),
@@ -158,7 +157,8 @@ class _TravelsDashboardViewState extends State<_TravelsDashboardView> {
   List<TravelViewModel> _filteredTravels(List<TravelViewModel> travels) {
     final query = _searchQuery.trim().toLowerCase();
     return travels.where((travel) {
-      final matchesSearch = query.isEmpty ||
+      final matchesSearch =
+          query.isEmpty ||
           travel.travelTitle.toLowerCase().contains(query) ||
           travel.clientName.toLowerCase().contains(query) ||
           travel.route.destination.toLowerCase().contains(query);
@@ -217,7 +217,11 @@ class _TravelsTable extends StatelessWidget {
                   cells: [
                     DataCell(Text(travel.travelTitle)),
                     DataCell(Text(travel.clientName)),
-                    DataCell(Text('${travel.route.start} -> ${travel.route.destination}')),
+                    DataCell(
+                      Text(
+                        '${travel.route.start} -> ${travel.route.destination}',
+                      ),
+                    ),
                     DataCell(_TravelStatusChip(travel: travel, l10n: l10n)),
                     DataCell(Text(dates)),
                     DataCell(
@@ -227,10 +231,7 @@ class _TravelsTable extends StatelessWidget {
                         onPressed: () {
                           context.go(
                             '${AppRoutes.travels}/${travel.localId}',
-                            extra: {
-                              'travel': travel,
-                              'controller': controller,
-                            },
+                            extra: {'travel': travel, 'controller': controller},
                           );
                         },
                       ),
@@ -250,10 +251,7 @@ class _TravelStatusChip extends StatelessWidget {
   final TravelViewModel travel;
   final AppLocalizations l10n;
 
-  const _TravelStatusChip({
-    required this.travel,
-    required this.l10n,
-  });
+  const _TravelStatusChip({required this.travel, required this.l10n});
 
   @override
   Widget build(BuildContext context) {
@@ -279,8 +277,4 @@ class _TravelStatusChip extends StatelessWidget {
   }
 }
 
-enum _TravelFilter {
-  all,
-  routeOnly,
-  itineraryReady,
-}
+enum _TravelFilter { all, routeOnly, itineraryReady }

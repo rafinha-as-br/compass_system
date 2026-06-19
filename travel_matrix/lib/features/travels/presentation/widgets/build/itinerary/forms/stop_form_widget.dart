@@ -23,7 +23,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
   late final TextEditingController _nameCtrl;
   late final TextEditingController _descCtrl;
   late final TextEditingController _experienceCtrl;
-  
+
   late StopFormState _formState;
 
   @override
@@ -43,7 +43,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
   @override
   void didUpdateWidget(covariant StopFormWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.stop != widget.stop) {
+    if (oldWidget.stop.localId != widget.stop.localId) {
       _nameCtrl.text = widget.stop.name;
       _descCtrl.text = widget.stop.description;
 
@@ -72,10 +72,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
         isTouched: true,
       );
     }
-    return FieldState(
-      value: value,
-      isTouched: true,
-    );
+    return FieldState(value: value, isTouched: true);
   }
 
   void _onNameChanged(String value) {
@@ -98,7 +95,8 @@ class _StopFormWidgetState extends State<StopFormWidget> {
   void _addExperience() {
     if (_experienceCtrl.text.isNotEmpty) {
       setState(() {
-        final newExperiences = List<String>.from(_formState.experiences)..add(_experienceCtrl.text);
+        final newExperiences = List<String>.from(_formState.experiences)
+          ..add(_experienceCtrl.text);
         _formState = _formState.copyWith(experiences: newExperiences);
         _experienceCtrl.clear();
       });
@@ -108,7 +106,8 @@ class _StopFormWidgetState extends State<StopFormWidget> {
 
   void _removeExperience(String exp) {
     setState(() {
-      final newExperiences = List<String>.from(_formState.experiences)..remove(exp);
+      final newExperiences = List<String>.from(_formState.experiences)
+        ..remove(exp);
       _formState = _formState.copyWith(experiences: newExperiences);
     });
     _emitIfValid();
@@ -135,9 +134,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: theme.colorScheme.secondary,
-        ),
+        border: Border.all(color: theme.colorScheme.secondary),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -154,7 +151,9 @@ class _StopFormWidgetState extends State<StopFormWidget> {
             label: 'Description',
             enabled: true,
             controller: _descCtrl,
-            errorText: _formState.description.isTouched ? _formState.description.error : null,
+            errorText: _formState.description.isTouched
+                ? _formState.description.error
+                : null,
             onChanged: _onDescChanged,
           ),
           const SizedBox(height: 12),
@@ -180,10 +179,12 @@ class _StopFormWidgetState extends State<StopFormWidget> {
           Wrap(
             spacing: 8,
             children: _formState.experiences
-                .map((e) => Chip(
-                      label: Text(e, style: const TextStyle(fontSize: 12)),
-                      onDeleted: () => _removeExperience(e),
-                    ))
+                .map(
+                  (e) => Chip(
+                    label: Text(e, style: const TextStyle(fontSize: 12)),
+                    onDeleted: () => _removeExperience(e),
+                  ),
+                )
                 .toList(),
           ),
           const SizedBox(height: 16),

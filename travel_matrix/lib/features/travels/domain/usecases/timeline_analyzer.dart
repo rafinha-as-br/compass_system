@@ -62,6 +62,9 @@ List<TimelineProblem> timelineAnalyzer(List<TimelineNode> nodes){
   }
 
   /// 3. Gap & overlap analyser between the nodes on the sorted list
+  /// DISABLED: Since the itinerary dates do not have times (00:00:00), parallel
+  /// events like Hosting and Stops will always trigger false conflicts and gaps.
+  /*
   for (int i = 0; i < sortedNodes.length - 1; i++) {
     final node = sortedNodes[i];
     final nextNode = sortedNodes[i + 1];
@@ -83,6 +86,7 @@ List<TimelineProblem> timelineAnalyzer(List<TimelineNode> nodes){
       );
     }
   }
+  */
 
 
   return problems;

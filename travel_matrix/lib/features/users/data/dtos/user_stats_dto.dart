@@ -27,8 +27,8 @@ class UserStatsDTO{
 
   factory UserStatsDTO.fromJson(Map<String, dynamic> json){
     return UserStatsDTO(
-      totalTravels: json['totalTravels'],
-      uniqueDestinationsCount: json['uniqueDestinationsCount'],
+      totalTravels: json['totalTravels']?.toString() ?? '0',
+      uniqueDestinationsCount: json['uniqueDestinationsCount']?.toString() ?? '0',
     );
   }
 

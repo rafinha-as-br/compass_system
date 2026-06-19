@@ -32,8 +32,12 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
     super.initState();
     _nameCtrl = TextEditingController(text: widget.hosting.placeName);
     _addressCtrl = TextEditingController(text: widget.hosting.address);
-    _checkInCtrl = TextEditingController(text: _formatDate(widget.hosting.checkIn));
-    _checkOutCtrl = TextEditingController(text: _formatDate(widget.hosting.checkOut));
+    _checkInCtrl = TextEditingController(
+      text: _formatDate(widget.hosting.checkIn),
+    );
+    _checkOutCtrl = TextEditingController(
+      text: _formatDate(widget.hosting.checkOut),
+    );
 
     _formState = HostingFormState(
       placeName: FieldState(value: widget.hosting.placeName),
@@ -46,7 +50,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
   @override
   void didUpdateWidget(covariant HostingFormWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.hosting != widget.hosting) {
+    if (oldWidget.hosting.localId != widget.hosting.localId) {
       _nameCtrl.text = widget.hosting.placeName;
       _addressCtrl.text = widget.hosting.address;
       _checkInCtrl.text = _formatDate(widget.hosting.checkIn);
@@ -82,10 +86,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
         isTouched: true,
       );
     }
-    return FieldState(
-      value: value,
-      isTouched: true,
-    );
+    return FieldState(value: value, isTouched: true);
   }
 
   void _onNameChanged(String value) {
@@ -148,9 +149,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
-        border: Border.all(
-          color: theme.colorScheme.secondary,
-        ),
+        border: Border.all(color: theme.colorScheme.secondary),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -159,7 +158,9 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
             label: 'Hosting Name',
             enabled: true,
             controller: _nameCtrl,
-            errorText: _formState.placeName.isTouched ? _formState.placeName.error : null,
+            errorText: _formState.placeName.isTouched
+                ? _formState.placeName.error
+                : null,
             onChanged: _onNameChanged,
           ),
           const SizedBox(height: 12),
@@ -167,7 +168,9 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
             label: 'Address',
             enabled: true,
             controller: _addressCtrl,
-            errorText: _formState.address.isTouched ? _formState.address.error : null,
+            errorText: _formState.address.isTouched
+                ? _formState.address.error
+                : null,
             onChanged: _onAddressChanged,
           ),
           const SizedBox(height: 12),

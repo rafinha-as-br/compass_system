@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:travel_matrix/core/services/auth_storage_service.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 
 class LoginState {
@@ -40,7 +39,7 @@ class LoginController extends ChangeNotifier {
         final token = data['token'] as String;
 
         // Travel Matrix is only for Travel Agents
-        if (userType != 'travel_agent') {
+        if (userType != 'AGENTE') {
           _state = _state.copyWith(
             isLoading: false,
             errorMessage: 'Access denied. Only Travel Agents can access Travel Matrix.',

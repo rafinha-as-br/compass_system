@@ -26,10 +26,7 @@ class TravelSegmentFormWidget extends StatefulWidget {
       _TravelSegmentFormWidgetState();
 }
 
-class _TravelSegmentFormWidgetState
-    extends State<TravelSegmentFormWidget> {
-
-
+class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
   late final TextEditingController _startPointCtrl;
   late final TextEditingController _finishPointCtrl;
 
@@ -39,29 +36,19 @@ class _TravelSegmentFormWidgetState
   void initState() {
     super.initState();
 
+    _startPointCtrl = TextEditingController(text: widget.segment.startPoint);
 
-    _startPointCtrl = TextEditingController(
-      text: widget.segment.startPoint,
-    );
-
-    _finishPointCtrl = TextEditingController(
-      text: widget.segment.finishPoint,
-    );
+    _finishPointCtrl = TextEditingController(text: widget.segment.finishPoint);
 
     _formState = TravelSegmentFormState(
-      startPoint: FieldState(
-        value: widget.segment.startPoint,
-      ),
-      finishPoint: FieldState(
-        value: widget.segment.finishPoint,
-      ),
+      startPoint: FieldState(value: widget.segment.startPoint),
+      finishPoint: FieldState(value: widget.segment.finishPoint),
       transport: widget.segment.transport,
     );
   }
 
   @override
   void dispose() {
-
     _startPointCtrl.dispose();
     _finishPointCtrl.dispose();
     super.dispose();
@@ -71,19 +58,13 @@ class _TravelSegmentFormWidgetState
   void didUpdateWidget(covariant TravelSegmentFormWidget oldWidget) {
     super.didUpdateWidget(oldWidget);
 
-    if (oldWidget.segment != widget.segment) {
-
-
+    if (oldWidget.segment.localId != widget.segment.localId) {
       _startPointCtrl.text = widget.segment.startPoint;
       _finishPointCtrl.text = widget.segment.finishPoint;
 
       _formState = TravelSegmentFormState(
-        startPoint: FieldState(
-          value: widget.segment.startPoint,
-        ),
-        finishPoint: FieldState(
-          value: widget.segment.finishPoint,
-        ),
+        startPoint: FieldState(value: widget.segment.startPoint),
+        finishPoint: FieldState(value: widget.segment.finishPoint),
         transport: widget.segment.transport,
       );
 
@@ -92,7 +73,6 @@ class _TravelSegmentFormWidgetState
   }
 
   FieldState<String> _validateRequiredField(String value) {
-
     if (value.trim().isEmpty) {
       return FieldState(
         value: value,
@@ -101,40 +81,30 @@ class _TravelSegmentFormWidgetState
       );
     }
 
-    return FieldState(
-      value: value,
-      isTouched: true,
-    );
+    return FieldState(value: value, isTouched: true);
   }
 
   void _onStartPointChanged(String value) {
-
     final validatedField = _validateRequiredField(value);
 
     setState(() {
-      _formState = _formState.copyWith(
-        startPoint: validatedField,
-      );
+      _formState = _formState.copyWith(startPoint: validatedField);
     });
 
     _emitIfValid();
   }
 
   void _onFinishPointChanged(String value) {
-
     final validatedField = _validateRequiredField(value);
 
     setState(() {
-      _formState = _formState.copyWith(
-        finishPoint: validatedField,
-      );
+      _formState = _formState.copyWith(finishPoint: validatedField);
     });
 
     _emitIfValid();
   }
 
   void _emitIfValid() {
-
     if (!_formState.isValid) {
       return;
     }
@@ -152,7 +122,6 @@ class _TravelSegmentFormWidgetState
   }
 
   Future<void> _changeTransportType(String type) async {
-
     if (type == _selectedTransportType) {
       return;
     }
@@ -169,7 +138,6 @@ class _TravelSegmentFormWidgetState
     late TransportViewModel newTransport;
 
     switch (type) {
-
       case 'airplane':
         newTransport = TransportViewModel.newAirplane(
           flightNumber: '',
@@ -205,16 +173,13 @@ class _TravelSegmentFormWidgetState
     }
 
     setState(() {
-      _formState = _formState.copyWith(
-        transport: newTransport,
-      );
+      _formState = _formState.copyWith(transport: newTransport);
     });
 
     _emitIfValid();
   }
 
   String get _selectedTransportType {
-
     if (_formState.transport is AirplaneViewModel) {
       return 'airplane';
     }
@@ -232,25 +197,18 @@ class _TravelSegmentFormWidgetState
 
   @override
   Widget build(BuildContext context) {
-
     return Container(
       padding: const EdgeInsets.all(16),
 
       decoration: BoxDecoration(
-        border: Border.all(
-          color: Theme.of(context).colorScheme.secondary,
-        ),
+        border: Border.all(color: Theme.of(context).colorScheme.secondary),
       ),
 
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-
-
-
           Row(
             children: [
-
               Expanded(
                 child: CustomFormField.text(
                   label: 'Start Point',
@@ -307,20 +265,14 @@ class _TravelSegmentFormWidgetState
   }
 
   Widget _buildTransportForm() {
-
     switch (_formState.transport) {
-
       case AirplaneViewModel airplane:
-
         return AirplaneForm(
           airplaneViewModel: airplane,
 
           onChanged: (updatedAirplane) {
-
             setState(() {
-              _formState = _formState.copyWith(
-                transport: updatedAirplane,
-              );
+              _formState = _formState.copyWith(transport: updatedAirplane);
             });
 
             _emitIfValid();
@@ -328,16 +280,12 @@ class _TravelSegmentFormWidgetState
         );
 
       case BusViewModel bus:
-
         return BusForm(
           busViewModel: bus,
 
           onChanged: (updatedBus) {
-
             setState(() {
-              _formState = _formState.copyWith(
-                transport: updatedBus,
-              );
+              _formState = _formState.copyWith(transport: updatedBus);
             });
 
             _emitIfValid();
@@ -345,16 +293,12 @@ class _TravelSegmentFormWidgetState
         );
 
       case RentalCarViewModel rentalCar:
-
         return RentalCarForm(
           rentalCar: rentalCar,
 
           onChanged: (updatedRentalCar) {
-
             setState(() {
-              _formState = _formState.copyWith(
-                transport: updatedRentalCar,
-              );
+              _formState = _formState.copyWith(transport: updatedRentalCar);
             });
 
             _emitIfValid();
@@ -369,16 +313,13 @@ class _TravelSegmentFormWidgetState
 
 /// Represents the state of the [TravelSegmentFormWidget]
 class TravelSegmentFormState {
-
   final FieldState<String> startPoint;
   final FieldState<String> finishPoint;
 
   /// Transport already contains its own internal validation
   final TransportViewModel transport;
 
-  bool get isValid =>
-      startPoint.isValid &&
-          finishPoint.isValid;
+  bool get isValid => startPoint.isValid && finishPoint.isValid;
 
   const TravelSegmentFormState({
     required this.startPoint,
@@ -412,7 +353,7 @@ class _TransportTypeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -469,7 +410,7 @@ class _TransportCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
-    
+
     return InkWell(
       onTap: onTap,
       borderRadius: BorderRadius.circular(12),
@@ -477,9 +418,13 @@ class _TransportCard extends StatelessWidget {
         width: 120,
         padding: const EdgeInsets.all(12),
         decoration: BoxDecoration(
-          color: isSelected ? colorScheme.primary.withValues(alpha: 0.08) : Colors.transparent,
+          color: isSelected
+              ? colorScheme.primary.withValues(alpha: 0.08)
+              : Colors.transparent,
           border: Border.all(
-            color: isSelected ? colorScheme.primary : colorScheme.outlineVariant,
+            color: isSelected
+                ? colorScheme.primary
+                : colorScheme.outlineVariant,
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(12),
@@ -490,7 +435,9 @@ class _TransportCard extends StatelessWidget {
           children: [
             Icon(
               icon,
-              color: isSelected ? colorScheme.primary : colorScheme.onSurfaceVariant,
+              color: isSelected
+                  ? colorScheme.primary
+                  : colorScheme.onSurfaceVariant,
             ),
             const SizedBox(height: 8),
             Text(

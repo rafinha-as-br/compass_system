@@ -1,4 +1,4 @@
-import 'package:travel_matrix/core/services/compass_service/mock_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/http_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/api_endpoints.dart';
 
 class AuthApiClient {
@@ -18,13 +18,13 @@ class AuthApiClient {
   }
 
   Future<Map<String, dynamic>> login(String email, String password) async {
-    return MockApiClient().post('', ApiEndpoints.login, {}, {}, {
+    return HttpApiClient.instance.post('', ApiEndpoints.login, {
       'email': email,
       'password': password,
     });
   }
 
   Future<Map<String, dynamic>> register(Map<String, dynamic> userData) async {
-    return MockApiClient().post('', ApiEndpoints.register, {}, {}, userData);
+    return HttpApiClient.instance.post('', ApiEndpoints.register, userData);
   }
 }

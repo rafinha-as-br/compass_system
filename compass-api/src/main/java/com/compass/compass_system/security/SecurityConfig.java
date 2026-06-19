@@ -37,10 +37,16 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(csrf -> csrf.disable())
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+            .formLogin(form -> form.disable())
+            .httpBasic(basic -> basic.disable())
             .authorizeHttpRequests(auth -> auth
                 // Rotas públicas (não precisam de token)
                 .requestMatchers("/teste").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                // Rotas protegidas (precisam de autenticação)
+                .requestMatchers("/users/**").authenticated()
+                .requestMatchers("/travels/**").authenticated()
+                .requestMatchers("/dashboard/**").authenticated()
                 // Todas as outras rotas do /api/** precisam de autenticação
                 .requestMatchers("/api/**").authenticated()
                 // Qualquer outra rota é liberada

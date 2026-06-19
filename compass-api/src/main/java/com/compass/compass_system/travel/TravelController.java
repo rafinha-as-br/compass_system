@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -14,6 +15,22 @@ public class TravelController {
 
     @Autowired
     private TravelRepository travelRepository;
+
+    // ─── GET /travels ───────────────────────────────────────────────────────────
+    // Returns all travels.
+    @GetMapping
+    public ResponseEntity<List<Travel>> getAllTravels() {
+        List<Travel> travels = travelRepository.findAll();
+        return ResponseEntity.ok(travels);
+    }
+
+    // ─── GET /travels/client/{clientName} ───────────────────────────────────────
+    // Returns all travels for a specific client.
+    @GetMapping("/client/{clientName}")
+    public ResponseEntity<List<Travel>> getTravelsByClient(@PathVariable String clientName) {
+        List<Travel> travels = travelRepository.findByClientName(clientName);
+        return ResponseEntity.ok(travels);
+    }
 
     // ─── POST /travels ─────────────────────────────────────────────────────────
     // Creates a new Travel. All nested id fields may be null; backend assigns them.

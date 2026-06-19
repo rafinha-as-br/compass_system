@@ -9,8 +9,10 @@ import 'package:travel_matrix/core/constants/api_fields.dart';
 class ItineraryDTO {
   /// Main id used for API reference
   final String? id;
+
   /// Travel agent name that created the itinerary
   final String agentName;
+
   /// Itinerary steps DTO
   final List<ItineraryStepDTO> itinerarySteps;
 
@@ -22,33 +24,34 @@ class ItineraryDTO {
 
   /// Factory from json method
   factory ItineraryDTO.fromJson(Map<String, dynamic> json) {
+    final steps = json[ItineraryApiFields.steps];
     return ItineraryDTO(
-      id: json[ItineraryApiFields.id],
-      agentName: json[ItineraryApiFields.agentName],
+      id: json[ItineraryApiFields.id]?.toString(),
+      agentName: json[ItineraryApiFields.agentName]?.toString() ?? '',
       itinerarySteps: List<ItineraryStepDTO>.from(
-        json[ItineraryApiFields.steps].map(
-          (x) => ItineraryStepDTO.fromJson(x),
-        )
-      )
+        (steps as List<dynamic>? ?? const []).map(
+          (x) => ItineraryStepDTO.fromJson(x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 
   /// To json method
   Map<String, dynamic> toJson() {
     return {
-      ItineraryApiFields.id : id,
-      ItineraryApiFields.agentName : agentName,
-      ItineraryApiFields.steps : itinerarySteps.map((x) => x.toJson()).toList(),
+      ItineraryApiFields.id: id,
+      ItineraryApiFields.agentName: agentName,
+      ItineraryApiFields.steps: itinerarySteps.map((x) => x.toJson()).toList(),
     };
   }
 
   /// To domain mapper method
   Itinerary toDomain() {
     return Itinerary(
-        domainId: Uuid().v4(),
-        backEndId: id,
-        agentName: agentName,
-        itinerarySteps: itinerarySteps.map((x) => x.toDomain()).toList()
+      domainId: Uuid().v4(),
+      backEndId: id,
+      agentName: agentName,
+      itinerarySteps: itinerarySteps.map((x) => x.toDomain()).toList(),
     );
   }
 
@@ -57,8 +60,9 @@ class ItineraryDTO {
     return ItineraryDTO(
       id: itinerary.backEndId,
       agentName: itinerary.agentName,
-      itinerarySteps: itinerary.itinerarySteps.map((x) => ItineraryStepDTO.fromDomain(step: x)).toList(),
+      itinerarySteps: itinerary.itinerarySteps
+          .map((x) => ItineraryStepDTO.fromDomain(step: x))
+          .toList(),
     );
   }
-
 }

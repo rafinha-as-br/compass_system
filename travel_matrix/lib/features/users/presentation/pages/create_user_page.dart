@@ -89,55 +89,64 @@ class _CreateUserPageState extends State<CreateUserPage> {
                 children: [
                   Text(
                     'New Client User',
-                    style: theme.textTheme.titleLarge
-                        ?.copyWith(fontWeight: FontWeight.bold),
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                   const SizedBox(height: 24),
                   TextFormField(
                     controller: _nameCtrl,
                     decoration: const InputDecoration(
-                        labelText: 'Full Name', border: OutlineInputBorder()),
-                    validator: (v) =>
-                        v!.isEmpty ? 'Name is required' : null,
+                      labelText: 'Full Name',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) => v!.isEmpty ? 'Name is required' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _cpfCtrl,
                     decoration: const InputDecoration(
-                        labelText: 'CPF', border: OutlineInputBorder()),
-                    validator: (v) =>
-                        v!.isEmpty ? 'CPF is required' : null,
+                      labelText: 'CPF',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) => v!.isEmpty ? 'CPF is required' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _emailCtrl,
                     decoration: const InputDecoration(
-                        labelText: 'Email', border: OutlineInputBorder()),
-                    validator: (v) =>
-                        v!.isEmpty ? 'Email is required' : null,
+                      labelText: 'Email',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) => v!.isEmpty ? 'Email is required' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _phoneCtrl,
                     decoration: const InputDecoration(
-                        labelText: 'Phone Number', border: OutlineInputBorder()),
-                    validator: (v) =>
-                        v!.isEmpty ? 'Phone is required' : null,
+                      labelText: 'Phone Number',
+                      border: OutlineInputBorder(),
+                    ),
+                    validator: (v) => v!.isEmpty ? 'Phone is required' : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordCtrl,
                     decoration: const InputDecoration(
-                        labelText: 'Initial Password', border: OutlineInputBorder()),
+                      labelText: 'Initial Password',
+                      border: OutlineInputBorder(),
+                    ),
                     obscureText: true,
                     validator: (v) =>
                         v!.isEmpty ? 'Password is required' : null,
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
-                    value: _sex,
+                    initialValue: _sex,
                     decoration: const InputDecoration(
-                        labelText: 'Sex', border: OutlineInputBorder()),
+                      labelText: 'Sex',
+                      border: OutlineInputBorder(),
+                    ),
                     items: const [
                       DropdownMenuItem(value: 'M', child: Text('Male')),
                       DropdownMenuItem(value: 'F', child: Text('Female')),

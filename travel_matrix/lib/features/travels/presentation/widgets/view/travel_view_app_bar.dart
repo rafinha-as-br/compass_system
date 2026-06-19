@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
+import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 
@@ -71,7 +73,10 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                     onPressed: () {
                       context.go(
                         '${AppRoutes.travels}/${travel.localId}/${AppRoutes.routeCreate}',
-                        extra: {'travel': travel},
+                        extra: {
+                          'travel': travel,
+                          'controller': context.read<TravelsController>(),
+                        },
                       );
                     },
                     icon: const Icon(Icons.edit_road, size: 16),

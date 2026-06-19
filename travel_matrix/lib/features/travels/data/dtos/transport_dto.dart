@@ -23,6 +23,7 @@ abstract class TransportDTO {
       case TransportApiValues.airplane:
         return AirplaneDTO.fromJson(json);
       default:
+
         /// Return a placeholder and throw the rest of the data out
         return PlaceHolderStepDTO.fromJson(json);
     }
@@ -48,7 +49,6 @@ abstract class TransportDTO {
         throw Exception('Unknown transport type: ${transport.runtimeType}');
     }
   }
-
 }
 
 /// Data transfer object for [PlaceholderTransport], having the same structure as the API.
@@ -57,13 +57,14 @@ abstract class TransportDTO {
 class PlaceHolderStepDTO extends TransportDTO {
   /// Description for the placeholder
   final String description;
-  PlaceHolderStepDTO._({required super.id, required this.description}): super._();
+  PlaceHolderStepDTO._({required super.id, required this.description})
+    : super._();
 
   /// from Json factory constructor
   factory PlaceHolderStepDTO.fromJson(Map<String, dynamic> json) {
     return PlaceHolderStepDTO._(
-      id: json[TransportApiFields.id],
-      description: json[TransportApiFields.description]
+      id: json[TransportApiFields.id]?.toString(),
+      description: json[TransportApiFields.description]?.toString() ?? '',
     );
   }
 
@@ -72,6 +73,7 @@ class PlaceHolderStepDTO extends TransportDTO {
     return {
       TransportApiFields.type: TransportApiValues.placeholder,
       TransportApiFields.id: id,
+      TransportApiFields.description: description,
     };
   }
 
@@ -80,19 +82,19 @@ class PlaceHolderStepDTO extends TransportDTO {
     return Transport.newPlaceholder(
       domainId: Uuid().v4(),
       backEndId: id,
-      description: description
+      description: description,
     );
   }
 
   /// From domain factory constructor
-  factory PlaceHolderStepDTO.fromDomain({required PlaceholderTransport placeholder}) {
+  factory PlaceHolderStepDTO.fromDomain({
+    required PlaceholderTransport placeholder,
+  }) {
     return PlaceHolderStepDTO._(
-        id: placeholder.backEndId,
-        description: placeholder.description
+      id: placeholder.backEndId,
+      description: placeholder.description,
     );
   }
-
-
 }
 
 /// Data transfer object for [RentalCar], having the same structure as the API.
@@ -101,12 +103,16 @@ class PlaceHolderStepDTO extends TransportDTO {
 class RentalCarDTO extends TransportDTO {
   /// Vehicle model name used on the rental car
   final String vehicleModelName;
+
   /// Vehicle license plate used on the rental car
   final String vehicleLicensePlate;
+
   /// Company name used on the rental car
   final String companyName;
+
   /// Check in date for getting the car
   final DateTime checkInDate;
+
   /// Check out date to return the car
   final DateTime checkOutDate;
 
@@ -117,17 +123,19 @@ class RentalCarDTO extends TransportDTO {
     required this.companyName,
     required this.checkInDate,
     required this.checkOutDate,
-  }): super._();
+  }) : super._();
 
   /// from Json factory constructor
   factory RentalCarDTO.fromJson(Map<String, dynamic> json) {
     return RentalCarDTO._(
-      id: json[TransportApiFields.id],
-      vehicleModelName: json[TransportApiFields.vehicleModelName],
-      vehicleLicensePlate: json[TransportApiFields.vehicleLicensePlate],
-      companyName: json[TransportApiFields.companyName],
-      checkInDate: DateTime.parse(json[TransportApiFields.checkInDate]),
-      checkOutDate: DateTime.parse(json[TransportApiFields.checkOutDate]),
+      id: json[TransportApiFields.id]?.toString(),
+      vehicleModelName:
+          json[TransportApiFields.vehicleModelName]?.toString() ?? '',
+      vehicleLicensePlate:
+          json[TransportApiFields.vehicleLicensePlate]?.toString() ?? '',
+      companyName: json[TransportApiFields.companyName]?.toString() ?? '',
+      checkInDate: _parseDate(json[TransportApiFields.checkInDate]),
+      checkOutDate: _parseDate(json[TransportApiFields.checkOutDate]),
     );
   }
 
@@ -153,7 +161,7 @@ class RentalCarDTO extends TransportDTO {
       vehicleLicensePlate: vehicleLicensePlate,
       companyName: companyName,
       checkInDate: checkInDate,
-      checkOutDate: checkOutDate
+      checkOutDate: checkOutDate,
     );
   }
 
@@ -168,7 +176,6 @@ class RentalCarDTO extends TransportDTO {
       checkOutDate: rentalCar.checkOutDate,
     );
   }
-
 }
 
 /// Data transfer object for [Bus], having the same structure as the API.
@@ -177,16 +184,22 @@ class RentalCarDTO extends TransportDTO {
 class BusDTO extends TransportDTO {
   /// Ticket number
   final String travelNumber;
+
   /// Company name
   final String travelCompany;
+
   /// Departure gate to get on the bus
   final String departureGate;
+
   /// Departure date and time
   final DateTime departureDateTime;
+
   /// Bus station name to get on the bus
   final String busStationName;
+
   /// Description of the bus travel
   final String description;
+
   /// Extra details if necessary
   final String? details;
 
@@ -199,19 +212,19 @@ class BusDTO extends TransportDTO {
     required this.busStationName,
     required this.description,
     required this.details,
-  }): super._();
+  }) : super._();
 
   /// from Json factory constructor
   factory BusDTO.fromJson(Map<String, dynamic> json) {
     return BusDTO(
-      id: json[TransportApiFields.id],
-      travelNumber: json[TransportApiFields.travelNumber],
-      travelCompany: json[TransportApiFields.travelCompany],
-      departureGate: json[TransportApiFields.departureGate],
-      departureDateTime: DateTime.parse(json[TransportApiFields.departureDateTime]),
-      busStationName: json[TransportApiFields.busStationName],
-      description: json[TransportApiFields.description],
-      details: json[TransportApiFields.details],
+      id: json[TransportApiFields.id]?.toString(),
+      travelNumber: json[TransportApiFields.travelNumber]?.toString() ?? '',
+      travelCompany: json[TransportApiFields.travelCompany]?.toString() ?? '',
+      departureGate: json[TransportApiFields.departureGate]?.toString() ?? '',
+      departureDateTime: _parseDate(json[TransportApiFields.departureDateTime]),
+      busStationName: json[TransportApiFields.busStationName]?.toString() ?? '',
+      description: json[TransportApiFields.description]?.toString() ?? '',
+      details: json[TransportApiFields.details]?.toString(),
     );
   }
 
@@ -258,8 +271,6 @@ class BusDTO extends TransportDTO {
       details: bus.details,
     );
   }
-
-
 }
 
 /// Data transfer object for [Airplane], having the same structure as the API.
@@ -268,14 +279,19 @@ class BusDTO extends TransportDTO {
 class AirplaneDTO extends TransportDTO {
   /// Flight number
   final String flightNumber;
+
   /// Company name
   final String flightCompany;
+
   /// Flight date and time
   final DateTime flightDate;
+
   /// Departure gate to get on the airplane
   final String departureGate;
+
   /// Departure airport
   final String departureAirport;
+
   /// Arrival airport
   final String arrivalAirport;
 
@@ -287,17 +303,18 @@ class AirplaneDTO extends TransportDTO {
     required this.departureGate,
     required this.departureAirport,
     required this.arrivalAirport,
-  }): super._();
+  }) : super._();
 
   factory AirplaneDTO.fromJson(Map<String, dynamic> json) {
     return AirplaneDTO(
-      id: json[TransportApiFields.id],
-      flightNumber: json[TransportApiFields.flightNumber],
-      flightCompany: json[TransportApiFields.companyName],
-      flightDate: DateTime.parse(json[TransportApiFields.flightDate]),
-      departureGate: json[TransportApiFields.departureGate],
-      departureAirport: json[TransportApiFields.departureAirport],
-      arrivalAirport: json[TransportApiFields.arrivalAirport],
+      id: json[TransportApiFields.id]?.toString(),
+      flightNumber: json[TransportApiFields.flightNumber]?.toString() ?? '',
+      flightCompany: json[TransportApiFields.companyName]?.toString() ?? '',
+      flightDate: _parseDate(json[TransportApiFields.flightDate]),
+      departureGate: json[TransportApiFields.departureGate]?.toString() ?? '',
+      departureAirport:
+          json[TransportApiFields.departureAirport]?.toString() ?? '',
+      arrivalAirport: json[TransportApiFields.arrivalAirport]?.toString() ?? '',
     );
   }
 
@@ -341,7 +358,8 @@ class AirplaneDTO extends TransportDTO {
       arrivalAirport: airplane.arrivalAirport,
     );
   }
-
 }
 
-
+DateTime _parseDate(dynamic value) {
+  return DateTime.tryParse(value?.toString() ?? '') ?? DateTime.now();
+}

@@ -6,14 +6,19 @@ import 'package:travel_matrix/core/constants/api_fields.dart';
 class RoutePlanDTO {
   /// Main id used for API reference
   final String? id;
+
   /// Start date for the route
   final DateTime startDate;
+
   /// Finish date for the route
   final DateTime endDate;
+
   /// Start location for the route
   final String startLocation;
+
   /// Destination for the route
   final String destination;
+
   /// List of interests for the route
   final List<InterestPointDTO> interestsList;
 
@@ -34,36 +39,43 @@ class RoutePlanDTO {
       RoutePlanApiFields.finishDate: endDate.toIso8601String(),
       RoutePlanApiFields.startLocation: startLocation,
       RoutePlanApiFields.destination: destination,
-      RoutePlanApiFields.interestPoints: interestsList.map((x) => x.toJson()).toList(),
+      RoutePlanApiFields.interestPoints: interestsList
+          .map((x) => x.toJson())
+          .toList(),
     };
   }
 
   /// from json method
   factory RoutePlanDTO.fromJson(Map<String, dynamic> json) {
+    final interestPoints = json[RoutePlanApiFields.interestPoints];
+    final startDate = _parseDate(json[RoutePlanApiFields.startDate]);
     return RoutePlanDTO(
-      id: json[RoutePlanApiFields.id],
-      startDate: DateTime.parse(json[RoutePlanApiFields.startDate]),
-      endDate: DateTime.parse(json[RoutePlanApiFields.finishDate]),
-      startLocation: json[RoutePlanApiFields.startLocation],
-      destination: json[RoutePlanApiFields.destination],
+      id: json[RoutePlanApiFields.id]?.toString(),
+      startDate: startDate,
+      endDate: _parseDate(
+        json[RoutePlanApiFields.finishDate] ?? json['endDate'],
+        fallback: startDate,
+      ),
+      startLocation: json[RoutePlanApiFields.startLocation]?.toString() ?? '',
+      destination: json[RoutePlanApiFields.destination]?.toString() ?? '',
       interestsList: List<InterestPointDTO>.from(
-        json[RoutePlanApiFields.interestPoints].map(
-          (x) => InterestPointDTO.fromJson(x),
-        )
-      )
+        (interestPoints as List<dynamic>? ?? const []).map(
+          (x) => InterestPointDTO.fromJson(x as Map<String, dynamic>),
+        ),
+      ),
     );
   }
 
   /// to domain method
   RoutePlan toDomain() {
     return RoutePlan(
-        domainId: Uuid().v4(),
-        backEndId: id,
-        startDate: startDate,
-        endDate: endDate,
-        startLocation: startLocation,
-        destination: destination,
-        interestsList: interestsList.map((x) => x.toDomain()).toList()
+      domainId: Uuid().v4(),
+      backEndId: id,
+      startDate: startDate,
+      endDate: endDate,
+      startLocation: startLocation,
+      destination: destination,
+      interestsList: interestsList.map((x) => x.toDomain()).toList(),
     );
   }
 
@@ -75,19 +87,21 @@ class RoutePlanDTO {
       endDate: routePlan.endDate,
       startLocation: routePlan.startLocation,
       destination: routePlan.destination,
-      interestsList: routePlan.interestsList.map((x) => InterestPointDTO.fromDomain(interestPoint: x)).toList(),
+      interestsList: routePlan.interestsList
+          .map((x) => InterestPointDTO.fromDomain(interestPoint: x))
+          .toList(),
     );
   }
-
-
 }
 
 /// Represents a point of interest for a [RoutePlan]
 class InterestPointDTO {
   /// Main id used for API reference
   final String? id;
+
   /// Name of the place for the interest point
   final String name;
+
   /// Description of the place for the interest point
   final String description;
 
@@ -109,14 +123,14 @@ class InterestPointDTO {
   /// Factory from json method
   factory InterestPointDTO.fromJson(Map<String, dynamic> json) {
     return InterestPointDTO(
-      id: json[CommonApiFields.id],
-      name: json[InterestPointApiFields.name],
-      description: json[InterestPointApiFields.description],
+      id: json[CommonApiFields.id]?.toString(),
+      name: json[InterestPointApiFields.name]?.toString() ?? '',
+      description: json[InterestPointApiFields.description]?.toString() ?? '',
     );
   }
 
   /// To domain mapper method
-  InterestPoint toDomain(){
+  InterestPoint toDomain() {
     return InterestPoint(
       domainId: Uuid().v4(),
       backEndId: id,
@@ -133,7 +147,10 @@ class InterestPointDTO {
       description: interestPoint.description,
     );
   }
-
 }
 
-
+DateTime _parseDate(dynamic value, {DateTime? fallback}) {
+  return DateTime.tryParse(value?.toString() ?? '') ??
+      fallback ??
+      DateTime.now();
+}

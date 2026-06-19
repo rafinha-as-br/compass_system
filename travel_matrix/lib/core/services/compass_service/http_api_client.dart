@@ -17,14 +17,15 @@ class HttpApiClient {
 
   Future<Map<String, dynamic>> get(String token, String path) async {
     final uri = Uri.parse('${ApiEndpoints.baseUrl}$path');
-    final response = await _client.get(
-      uri,
-      headers: _buildHeaders(token),
-    );
+    final response = await _client.get(uri, headers: _buildHeaders(token));
     return _handleResponse(response);
   }
 
-  Future<Map<String, dynamic>> post(String token, String path, Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> post(
+    String token,
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     final uri = Uri.parse('${ApiEndpoints.baseUrl}$path');
     final response = await _client.post(
       uri,
@@ -34,7 +35,11 @@ class HttpApiClient {
     return _handleResponse(response);
   }
 
-  Future<Map<String, dynamic>> put(String token, String path, Map<String, dynamic> body) async {
+  Future<Map<String, dynamic>> put(
+    String token,
+    String path,
+    Map<String, dynamic> body,
+  ) async {
     final uri = Uri.parse('${ApiEndpoints.baseUrl}$path');
     final response = await _client.put(
       uri,
@@ -46,10 +51,7 @@ class HttpApiClient {
 
   Future<Map<String, dynamic>> delete(String token, String path) async {
     final uri = Uri.parse('${ApiEndpoints.baseUrl}$path');
-    final response = await _client.delete(
-      uri,
-      headers: _buildHeaders(token),
-    );
+    final response = await _client.delete(uri, headers: _buildHeaders(token));
     return _handleResponse(response);
   }
 
@@ -64,11 +66,14 @@ class HttpApiClient {
   Map<String, dynamic> _handleResponse(http.Response response) {
     if (response.statusCode >= 200 && response.statusCode < 300) {
       if (response.body.isEmpty) return {};
-      final decoded = jsonDecode(response.body);
-      if (decoded is Map<String, dynamic>) {
-        return decoded;
-      } else {
-        return {'data': decoded}; // Handle lists if needed
+      try {
+        final decoded = jsonDecode(response.body);
+        if (decoded is Map<String, dynamic>) {
+          return decoded;
+        }
+        return {'data': decoded};
+      } on FormatException {
+        return {'data': response.body};
       }
     } else {
       dynamic errorData;
@@ -77,10 +82,7 @@ class HttpApiClient {
       } catch (_) {
         errorData = response.body;
       }
-      throw ApiException.fromStatusCode(
-        response.statusCode,
-        errorData,
-      );
+      throw ApiException.fromStatusCode(response.statusCode, errorData);
     }
   }
 }

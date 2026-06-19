@@ -1,8 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mock_repository/mock_repository.dart';
-import 'package:travel_matrix/core/services/auth_storage_service.dart';
-import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/view_user_page.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';

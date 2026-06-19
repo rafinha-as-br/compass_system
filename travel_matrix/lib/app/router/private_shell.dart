@@ -1,6 +1,5 @@
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:mock_repository/mock_repository.dart';
 
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/app/router/private_shell_scaffold.dart';
@@ -84,6 +83,13 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
                 builder: (context, state) {
                   final extra = state.extra as Map<String, dynamic>;
                   final travel = extra['travel'] as TravelViewModel;
+                  final controller = extra['controller'] as TravelsController?;
+                  if (controller != null) {
+                    return ChangeNotifierProvider<TravelsController>.value(
+                      value: controller,
+                      child: RouteCreationPage(travel: travel),
+                    );
+                  }
                   return RouteCreationPage(travel: travel);
                 },
               ),

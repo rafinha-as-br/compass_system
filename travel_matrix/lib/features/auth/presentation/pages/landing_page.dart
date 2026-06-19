@@ -81,10 +81,12 @@ class _LandingViewState extends State<_LandingView> {
                 transitionBuilder: (Widget child, Animation<double> animation) {
                   return FadeTransition(opacity: animation, child: child);
                 },
-                child: _showLogin ? _buildLoginForm(context) : _buildWelcomePanel(context),
+                child: _showLogin
+                    ? _buildLoginForm(context)
+                    : _buildWelcomePanel(context),
               ),
             ),
-          )
+          ),
         ],
       ),
     );
@@ -107,7 +109,9 @@ class _LandingViewState extends State<_LandingView> {
           Text(
             'The digital concierge platform for elite travel agents.',
             style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-              color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+              color: Theme.of(
+                context,
+              ).colorScheme.onSurface.withValues(alpha: 0.6),
             ),
             textAlign: TextAlign.center,
           ),
@@ -159,17 +163,18 @@ class _LandingViewState extends State<_LandingView> {
                   children: [
                     Text(
                       'Agent Login',
-                      style: Theme.of(context).textTheme.headlineMedium?.copyWith(
-                        fontWeight: FontWeight.bold,
-                      ),
+                      style: Theme.of(context).textTheme.headlineMedium
+                          ?.copyWith(fontWeight: FontWeight.bold),
                     ),
                     const SizedBox(height: 8),
                     Text(
                       'Please authenticate to continue',
                       style: Theme.of(context).textTheme.bodyLarge?.copyWith(
-                        color: Theme.of(context).colorScheme.onSurface.withOpacity(0.6),
+                        color: Theme.of(
+                          context,
+                        ).colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
-                    )
+                    ),
                   ],
                 ),
 
@@ -180,7 +185,9 @@ class _LandingViewState extends State<_LandingView> {
                     if (state.errorMessage != null) ...[
                       Text(
                         state.errorMessage!,
-                        style: TextStyle(color: Theme.of(context).colorScheme.error),
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.error,
+                        ),
                         textAlign: TextAlign.center,
                       ),
                       const SizedBox(height: 16),
@@ -216,23 +223,33 @@ class _LandingViewState extends State<_LandingView> {
                       child: ElevatedButton(
                         onPressed: state.isLoading ? null : _handleLogin,
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Theme.of(context).colorScheme.primary,
-                          foregroundColor: Theme.of(context).colorScheme.onPrimary,
+                          backgroundColor: Theme.of(
+                            context,
+                          ).colorScheme.primary,
+                          foregroundColor: Theme.of(
+                            context,
+                          ).colorScheme.onPrimary,
                         ),
                         child: state.isLoading
                             ? const SizedBox(
                                 width: 20,
                                 height: 20,
-                                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                                child: CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  color: Colors.white,
+                                ),
                               )
                             : const Text(
                                 'LOGIN',
-                                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                                style: TextStyle(
+                                  fontSize: 18,
+                                  fontWeight: FontWeight.bold,
+                                ),
                               ),
                       ),
                     ),
                   ],
-                )
+                ),
               ],
             ),
           ),
