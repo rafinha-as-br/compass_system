@@ -28,6 +28,15 @@ class ItineraryViewModel{
 
   /// Factory constructor for domain model
   factory ItineraryViewModel.fromDomain(Itinerary itinerary){
+    if (itinerary.itinerarySteps.isEmpty) {
+      return ItineraryViewModel._(
+        backEndId: itinerary.backEndId,
+        localId: itinerary.domainId,
+        agentName: itinerary.agentName,
+        steps: [],
+      );
+    }
+
     final startStep = itinerary.itinerarySteps.first;
     final finishStep = itinerary.itinerarySteps.last;
 
