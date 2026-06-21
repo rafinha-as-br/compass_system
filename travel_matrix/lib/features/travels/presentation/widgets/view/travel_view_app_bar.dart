@@ -59,7 +59,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                     child: Text(
                       travel.travelTitle,
                       style: const TextStyle(
-                        fontSize: 32, // Slightly smaller to fit with back button
+                        fontSize: 32,
                         fontWeight: FontWeight.w700,
                         color: Color(0xFF1A2C3A),
                         letterSpacing: -0.5,
@@ -91,14 +91,17 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ElevatedButton.icon(
                     onPressed: () {
                       final steps = travel.itinerary?.steps;
-                      if (steps == null || steps.length < 2) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text('Itinerary is not ready or incomplete.'),
-                          ),
+                      final ItineraryStepsBuildModel? itineraryStepsBuildModel;
+                      if(steps == null || steps.length < 2){
+                        itineraryStepsBuildModel = null;
+                      } else{
+                        itineraryStepsBuildModel = ItineraryStepsBuildModel(
+                          startStep: steps.first,
+                          finishStep: steps.last,
+                          normalSteps: steps.sublist(1, steps.length - 1),
                         );
-                        return;
                       }
+
                       context.go(
                         '${AppRoutes.travels}/${travel.localId}/${AppRoutes.itineraryCreate}',
                         extra: {
@@ -106,11 +109,8 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                           'itineraryBuildModel': ItineraryBuildModel(
                             travelName: travel.travelTitle,
                             interestsPoints: travel.route.interests,
-                            steps: ItineraryStepsBuildModel(
-                              startStep: steps.first,
-                              finishStep: steps.last,
-                              normalSteps: steps.sublist(1, steps.length - 1),
-                            ),
+                            steps: itineraryStepsBuildModel,
+                            hasExistingItinerary: travel.itinerary != null,
                           ),
                         },
                       );

@@ -37,14 +37,16 @@ class ItineraryViewTab extends StatelessWidget {
                 alignment: Alignment.centerRight,
                 child: ElevatedButton.icon(
                   onPressed: () {
-                    final steps = travel.itinerary!.steps;
-                    if (steps.length < 2) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(
-                          content: Text('Itinerary is incomplete and cannot be edited.'),
-                        ),
+                    final steps = travel.itinerary?.steps;
+                    final ItineraryStepsBuildModel? itineraryStepsBuildModel;
+                    if (steps == null || steps.length < 2) {
+                      itineraryStepsBuildModel = null;
+                    } else {
+                      itineraryStepsBuildModel = ItineraryStepsBuildModel(
+                        startStep: steps.first,
+                        finishStep: steps.last,
+                        normalSteps: steps.sublist(1, steps.length - 1),
                       );
-                      return;
                     }
 
                     context.go(
@@ -54,11 +56,9 @@ class ItineraryViewTab extends StatelessWidget {
                         'itineraryBuildModel': ItineraryBuildModel(
                           travelName: travel.travelTitle,
                           interestsPoints: travel.route.interests,
-                          steps: ItineraryStepsBuildModel(
-                            startStep: steps.first,
-                            finishStep: steps.last,
-                            normalSteps: steps.sublist(1, steps.length - 1),
-                          ),
+                          steps: itineraryStepsBuildModel,
+                          itineraryId: travel.itinerary?.id,
+                          hasExistingItinerary: travel.itinerary != null,
                         ),
                       },
                     );

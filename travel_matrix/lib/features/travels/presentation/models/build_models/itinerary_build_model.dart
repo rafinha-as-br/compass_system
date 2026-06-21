@@ -6,13 +6,17 @@ import '../view_models/itinerary_steps_view_models.dart';
 /// [steps] is null in create mode and populated in edit mode.
 class ItineraryBuildModel {
   final String travelName;
+  final String? itineraryId;
   final ItineraryStepsBuildModel? steps;
   final List<InterestPointViewModel> interestsPoints;
+  final bool hasExistingItinerary;
 
   ItineraryBuildModel({
     required this.travelName,
     required this.steps,
     required this.interestsPoints,
+    this.itineraryId,
+    this.hasExistingItinerary = false,
   });
 }
 

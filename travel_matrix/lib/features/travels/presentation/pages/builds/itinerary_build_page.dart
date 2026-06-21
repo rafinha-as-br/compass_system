@@ -45,8 +45,8 @@ class ItineraryBuildPage extends StatelessWidget {
   /// travel id for creating the itinerary
   final String travelId;
 
-  /// True when editing an existing itinerary (steps != null).
-  bool get isEditMode => itineraryBuildModel.steps != null;
+  /// True when editing an existing itinerary.
+  bool get isEditMode => itineraryBuildModel.hasExistingItinerary;
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class ItineraryBuildPage extends StatelessWidget {
         // Editor controller dependency injection
         ChangeNotifierProvider(
           create: (_) => ItineraryEditorController(
-            steps: isEditMode
+            steps: itineraryBuildModel.steps != null
                 ? [
                     itineraryBuildModel.steps!.startStep,
                     ...itineraryBuildModel.steps!.normalSteps,
@@ -137,6 +137,8 @@ class _ItineraryBuildView extends StatelessWidget {
     final agentName = await _resolveAgentName();
 
     final itineraryData = {
+      if (buildModel.itineraryId != null)
+        'id': buildModel.itineraryId,
       'agentName': agentName,
       'steps': editor.stepsList
           .map(
