@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" inherit-compiler-output="true">
+    <exclude-output />
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/mock_repository/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/mock_repository/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/mock_repository/build" />
+      <excludeFolder url="file://$MODULE_DIR$/routecraft_app/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/routecraft_app/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/routecraft_app/build" />
+      <excludeFolder url="file://$MODULE_DIR$/travel_matrix/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/travel_matrix/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/travel_matrix/build" />
+      <excludeFolder url="file://$MODULE_DIR$/fake_api/.dart_tool" />
+      <excludeFolder url="file://$MODULE_DIR$/fake_api/.pub" />
+      <excludeFolder url="file://$MODULE_DIR$/fake_api/build" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" name="Dart SDK" level="project" />
+    <orderEntry type="library" name="Dart Packages" level="project" />
+  </component>
+</module>

@@ -1,0 +1,41 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
+import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:provider/provider.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
+
+import 'global_controllers/settings_controller.dart';
+
+/// Root widget for the Travel Matrix application.
+///
+/// Configures theme, localization, and global providers.
+class TravelMatrixApp extends StatelessWidget {
+  final GoRouter router;
+  
+  const TravelMatrixApp({super.key, required this.router});
+
+  @override
+  Widget build(BuildContext context) {
+    return Consumer<SettingsController>(
+      builder: (context, settingsController, _) {
+        return MaterialApp.router(
+          title: 'Travel Matrix',
+          theme: AppTheme.lightTheme,
+          debugShowCheckedModeBanner: false,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: settingsController.themeMode,
+          locale: settingsController.locale,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          routerConfig: router,
+        );
+      },
+    );
+  }
+}
