@@ -151,4 +151,27 @@ class TravelsController extends ChangeNotifier {
       return false;
     }
   }
+
+  Future<bool> markTravelAsReady(String travelId) async {
+    try {
+      final token = await AuthStorageService.instance.getToken();
+      if (token == null) return false;
+
+      final getResponse = await CompassService.instance.getTravel(token, travelId);
+      if (getResponse['status'] != 'success') return false;
+
+      final travelData = getResponse['data'] as Map<String, dynamic>;
+      travelData['travelStatus'] = 'itinerary_created';
+
+      final updateResponse = await CompassService.instance.updateTravel(token, travelId, travelData);
+      
+      if (updateResponse['status'] == 'success') {
+        await fetchTravels();
+        return true;
+      }
+      return false;
+    } catch (_) {
+      return false;
+    }
+  }
 }

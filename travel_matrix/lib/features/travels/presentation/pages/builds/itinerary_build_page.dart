@@ -175,7 +175,10 @@ class _ItineraryBuildView extends StatelessWidget {
           ),
         ),
       );
-      router.go('${AppRoutes.travels}/$travelId');
+      router.go(
+        '${AppRoutes.travels}/$travelId',
+        extra: {'refresh': true},
+      );
     } else {
       messenger.showSnackBar(
         SnackBar(content: Text(error ?? 'Could not save itinerary.')),
@@ -207,16 +210,26 @@ class _ItineraryBuildView extends StatelessWidget {
           },
         ),
         actions: [
-          TextButton.icon(
-            onPressed: isSaving ? null : () => _saveItinerary(context),
-            icon: isSaving
-                ? const SizedBox(
-                    width: 18,
-                    height: 18,
-                    child: CircularProgressIndicator(strokeWidth: 2),
-                  )
-                : const Icon(Icons.check),
-            label: Text(isEditMode ? 'Update' : 'Save'),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8.0),
+            child: FilledButton.icon(
+              onPressed: isSaving ? null : () => _saveItinerary(context),
+              icon: isSaving
+                  ? SizedBox(
+                      width: 18,
+                      height: 18,
+                      child: CircularProgressIndicator(
+                        strokeWidth: 2,
+                        color: Theme.of(context).colorScheme.onPrimary,
+                      ),
+                    )
+                  : const Icon(Icons.check),
+              label: Text(isEditMode ? 'Update' : 'Save'),
+              style: FilledButton.styleFrom(
+                backgroundColor: Theme.of(context).colorScheme.primary,
+                foregroundColor: Theme.of(context).colorScheme.onPrimary,
+              ),
+            ),
           ),
           const SizedBox(width: 16),
         ],

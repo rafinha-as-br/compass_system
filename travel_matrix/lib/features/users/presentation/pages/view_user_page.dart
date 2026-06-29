@@ -180,7 +180,6 @@ class ViewUserPage extends StatelessWidget {
           const SizedBox(height: 16),
           _buildInfoItem('SEX', user.sex == 'M' ? 'Male' : user.sex == 'F' ? 'Female' : 'Other'),
           const SizedBox(height: 16),
-          _buildInfoItem('LOCAL ID', user.localId),
         ],
       ),
     );

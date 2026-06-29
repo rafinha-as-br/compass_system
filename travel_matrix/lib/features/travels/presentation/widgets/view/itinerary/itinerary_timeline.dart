@@ -153,9 +153,11 @@ class ItineraryTimeline extends StatelessWidget {
     } else if (step is HostingStepViewModel) {
       return HostingCard(hosting: HostingViewCardModel.fromStepViewModel(step));
     } else if (step is TravelSegmentStepViewModel) {
-      // Check if it's an airplane for now, since we have FlightViewCardModel
-      // Later we can expand to BusCard, RentalCarCard
-      return FlightCard(flight: FlightViewCardModel.fromStepViewModel(step));
+      if (step.transport is AirplaneViewModel) {
+        return FlightCard(flight: FlightViewCardModel.fromStepViewModel(step));
+      } else {
+        return GenericStepCard(step: GenericStepViewCardModel.fromStepViewModel(step));
+      }
     } else if (step is BoundaryStepViewCardModel) {
       return BoundaryStepCard(step: step);
     } else if (step is ItineraryStepViewModel) {

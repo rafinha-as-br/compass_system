@@ -193,8 +193,9 @@ class _TravelsTable extends StatelessWidget {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: ConstrainedBox(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
             constraints: BoxConstraints(minWidth: constraints.maxWidth),
             child: DataTable(
               headingRowColor: WidgetStatePropertyAll(
@@ -241,8 +242,9 @@ class _TravelsTable extends StatelessWidget {
               }).toList(),
             ),
           ),
-        );
-      },
+        ),
+      );
+    },
     );
   }
 }

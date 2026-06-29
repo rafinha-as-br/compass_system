@@ -203,8 +203,9 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
     return LayoutBuilder(
       builder: (context, constraints) {
         return SingleChildScrollView(
-          scrollDirection: Axis.horizontal,
-          child: ConstrainedBox(
+          child: SingleChildScrollView(
+            scrollDirection: Axis.horizontal,
+            child: ConstrainedBox(
             constraints: BoxConstraints(minWidth: constraints.maxWidth),
             child: DataTable(
               headingRowColor: WidgetStateProperty.all(
@@ -309,8 +310,9 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
               }).toList(),
             ),
           ),
-        );
-      },
+        ),
+      );
+    },
     );
   }
 

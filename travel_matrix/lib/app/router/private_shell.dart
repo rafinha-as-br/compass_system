@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
@@ -61,9 +62,15 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
               final extra = state.extra as Map<String, dynamic>?;
               final travel = extra?['travel'] as TravelViewModel?;
               final controller = extra?['controller'] as TravelsController?;
+              final refresh = extra?['refresh'] as bool? ?? false;
               final travelId = state.pathParameters['id']!;
 
+              final keyStr = refresh 
+                  ? 'travel_view_${travelId}_${DateTime.now().millisecondsSinceEpoch}' 
+                  : 'travel_view_$travelId';
+
               return TravelViewWrapper(
+                key: ValueKey(keyStr),
                 travelId: travelId,
                 initialTravel: travel,
                 initialController: controller,

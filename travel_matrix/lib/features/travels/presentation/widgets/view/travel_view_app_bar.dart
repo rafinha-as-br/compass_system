@@ -123,6 +123,64 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                     ),
                   ),
 
+                  // Mark as Ready Button (only visible if notReady)
+                  if (travel.status == TravelStatusViewModel.notReady)
+                    Tooltip(
+                      message: travel.itinerary == null 
+                          ? 'You need to create an itinerary first' 
+                          : 'Mark travel as ready',
+                      child: ElevatedButton.icon(
+                        onPressed: travel.itinerary == null ? null : () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: const Text('Mark as Ready'),
+                              content: const Text('Are you sure you want to mark this travel as ready?'),
+                              actions: [
+                                TextButton(
+                                  onPressed: () => Navigator.of(context).pop(false),
+                                  child: const Text('Cancel'),
+                                ),
+                                ElevatedButton(
+                                  onPressed: () => Navigator.of(context).pop(true),
+                                  child: const Text('Confirm'),
+                                ),
+                              ],
+                            ),
+                          );
+
+                          if (confirm == true) {
+                            if (!context.mounted) return;
+                            final controller = context.read<TravelsController>();
+                            final success = await controller.markTravelAsReady(travel.backEndId!);
+                            if (!context.mounted) return;
+                            
+                            if (success) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(content: Text('Travel marked as ready successfully')),
+                              );
+                              context.go(AppRoutes.travels);
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text('Failed to mark travel as ready'),
+                                  backgroundColor: Colors.red,
+                                ),
+                              );
+                            }
+                          }
+                        },
+                        icon: const Icon(Icons.check_circle_outline, size: 16),
+                        label: const Text('Mark as Ready'),
+                        style: ElevatedButton.styleFrom(
+                          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
+                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+                          foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                        ),
+                      ),
+                    ),
+
                   // travel Status
                   Container(
                     padding: const EdgeInsets.symmetric(
