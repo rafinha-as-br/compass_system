@@ -7,25 +7,18 @@ import 'travel_matrix_app.dart';
 
 /// Initialization point for global providers
 class AppBootstrap extends StatelessWidget {
-
   const AppBootstrap({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     final authController = AuthController();
 
     return FutureBuilder(
       future: authController.initialize(),
       builder: (context, snapshot) {
-
         if (snapshot.connectionState != ConnectionState.done) {
           return const MaterialApp(
-            home: Scaffold(
-              body: Center(
-                child: CircularProgressIndicator(),
-              ),
-            ),
+            home: Scaffold(body: Center(child: CircularProgressIndicator())),
           );
         }
 
@@ -33,15 +26,9 @@ class AppBootstrap extends StatelessWidget {
 
         return MultiProvider(
           providers: [
-            ChangeNotifierProvider(
-              create: (_) => SettingsController(),
-            ),
-            ChangeNotifierProvider.value(
-              value: authController,
-            ),
-            Provider.value(
-              value: appRouter,
-            ),
+            ChangeNotifierProvider(create: (_) => SettingsController()),
+            ChangeNotifierProvider.value(value: authController),
+            Provider.value(value: appRouter),
           ],
           child: TravelMatrixApp(router: appRouter.router),
         );

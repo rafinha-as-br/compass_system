@@ -6,6 +6,7 @@ import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/app/router/private_shell_scaffold.dart';
 import 'package:travel_matrix/features/account/presentation/pages/account_page.dart';
 import 'package:travel_matrix/features/dashboard/presentation/pages/dashboard_page.dart';
+import 'package:travel_matrix/features/settings/presentation/pages/settings_page.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/travels_dashboard_page.dart';
 import 'package:travel_matrix/features/users/presentation/pages/users_dashboard_page.dart';
 
@@ -190,11 +191,19 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
       ),
     ]),
 
-    // Branch 3: Settings / Account
+    // Branch 3: Account
     StatefulShellBranch(routes: [
       GoRoute(
         path: AppRoutes.account,
         builder: (context, state) => const AccountPage(),
+      ),
+    ]),
+
+    // Branch 4: Settings
+    StatefulShellBranch(routes: [
+      GoRoute(
+        path: AppRoutes.settings,
+        builder: (context, state) => const SettingsPage(),
       ),
     ]),
   ],

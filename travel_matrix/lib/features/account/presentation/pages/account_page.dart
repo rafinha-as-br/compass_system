@@ -161,43 +161,7 @@ class _AccountContent extends StatelessWidget {
                     ),
                   ),
                 ),
-                const SizedBox(height: 20),
-                Card(
-                  elevation: 0,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(8),
-                    side: BorderSide(color: theme.colorScheme.outlineVariant),
-                  ),
-                  child: Padding(
-                    padding: const EdgeInsets.all(8),
-                    child: Column(
-                      children: [
-                        ListTile(
-                          title: Text(
-                            l10n.systemPreferences,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        SwitchListTile(
-                          title: Text(l10n.adminDarkMode),
-                          secondary: const Icon(Icons.dark_mode),
-                          value: settingsController.themeMode == ThemeMode.dark,
-                          onChanged: (_) => settingsController.toggleTheme(),
-                        ),
-                        ListTile(
-                          leading: const Icon(Icons.language),
-                          title: Text(
-                            '${l10n.languageLabel} (${settingsController.locale.languageCode.toUpperCase()})',
-                          ),
-                          trailing: const Icon(Icons.chevron_right),
-                          onTap: settingsController.toggleLanguage,
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
+
                 const SizedBox(height: 24),
                 FilledButton.icon(
                   style: FilledButton.styleFrom(

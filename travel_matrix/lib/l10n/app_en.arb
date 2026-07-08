@@ -139,5 +139,11 @@
   "settingsNav": "Settings",
   "supportNav": "Support",
   "logoutNav": "Logout",
-  "travelAgentRole": "Travel Agent"
+  "travelAgentRole": "Travel Agent",
+  "settingsTitle": "Settings",
+  "appearanceSection": "Appearance",
+  "themeLight": "Light",
+  "themeDark": "Dark",
+  "themeSystem": "Follow system",
+  "languageSection": "Language"
 }

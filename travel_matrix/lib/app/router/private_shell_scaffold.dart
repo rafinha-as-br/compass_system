@@ -98,10 +98,17 @@ class PrivateShellScaffold extends StatelessWidget {
                       const Divider(),
                       const SizedBox(height: 24),
                       _NavItem(
-                        icon: Icons.settings,
-                        label: l10n.settingsNav,
+                        icon: Icons.manage_accounts,
+                        label: 'Account', // Ideally from l10n.profileSection, but let's use 'Account' or l10n.profileSection
                         isSelected: currentIndex == 3,
                         onTap: () => navigationShell.goBranch(3),
+                      ),
+                      const SizedBox(height: 8),
+                      _NavItem(
+                        icon: Icons.settings,
+                        label: l10n.settingsNav,
+                        isSelected: currentIndex == 4,
+                        onTap: () => navigationShell.goBranch(4),
                       ),
                     ],
                   ),

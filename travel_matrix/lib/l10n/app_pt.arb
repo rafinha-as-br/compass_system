@@ -124,5 +124,11 @@
   "settingsNav": "Configuracoes",
   "supportNav": "Suporte",
   "logoutNav": "Sair",
-  "travelAgentRole": "Agente de Viagens"
+  "travelAgentRole": "Agente de Viagens",
+  "settingsTitle": "Configurações",
+  "appearanceSection": "Aparência",
+  "themeLight": "Claro",
+  "themeDark": "Escuro",
+  "themeSystem": "Seguir sistema",
+  "languageSection": "Idioma"
 }

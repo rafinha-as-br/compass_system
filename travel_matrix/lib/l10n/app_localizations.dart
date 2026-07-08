@@ -709,6 +709,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Travel Agent'**
   String get travelAgentRole;
+
+  /// No description provided for @settingsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Settings'**
+  String get settingsTitle;
+
+  /// No description provided for @appearanceSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Appearance'**
+  String get appearanceSection;
+
+  /// No description provided for @themeLight.
+  ///
+  /// In en, this message translates to:
+  /// **'Light'**
+  String get themeLight;
+
+  /// No description provided for @themeDark.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark'**
+  String get themeDark;
+
+  /// No description provided for @themeSystem.
+  ///
+  /// In en, this message translates to:
+  /// **'Follow system'**
+  String get themeSystem;
+
+  /// No description provided for @languageSection.
+  ///
+  /// In en, this message translates to:
+  /// **'Language'**
+  String get languageSection;
 }
 
 class _AppLocalizationsDelegate

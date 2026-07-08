@@ -327,4 +327,22 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get travelAgentRole => 'Agente de Viagens';
+
+  @override
+  String get settingsTitle => 'Configurações';
+
+  @override
+  String get appearanceSection => 'Aparência';
+
+  @override
+  String get themeLight => 'Claro';
+
+  @override
+  String get themeDark => 'Escuro';
+
+  @override
+  String get themeSystem => 'Seguir sistema';
+
+  @override
+  String get languageSection => 'Idioma';
 }
