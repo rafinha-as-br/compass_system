@@ -18,6 +18,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSubtitle => 'Please login to continue';
 
   @override
+  String get loginLabel => 'Access Travel Matrix';
+
+  @override
   String get loginEmailLabel => 'Email';
 
   @override

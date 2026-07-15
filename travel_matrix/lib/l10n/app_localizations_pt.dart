@@ -18,6 +18,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get loginSubtitle => 'Faça login para continuar';
 
   @override
+  String get loginLabel => 'Access Travel Matrix';
+
+  @override
   String get loginEmailLabel => 'E-mail';
 
   @override
