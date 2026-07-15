@@ -5,8 +5,11 @@
 
   "loginTitle": "Welcome to Travel Matrix",
   "loginSubtitle": "Please login to continue",
+  "loginLabel": "Access Travel Matrix",
   "loginEmailLabel": "Email",
   "loginPasswordLabel": "Password",
+  "loginTitlePanel" : "Agent Login",
+  "loginSubtitlePanel" : "Please authenticate to continue",
   "loginButton": "LOGIN AS AGENT",
   "loginEmailRequired": "Enter email",
   "loginPasswordRequired": "Enter password",

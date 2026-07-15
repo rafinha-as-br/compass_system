@@ -3,28 +3,40 @@ import 'package:travel_matrix/core/services/compass_service/compass_service.dart
 
 class LoginState {
   final bool isLoading;
+  final bool showLogin;
   final String? errorMessage;
+  GlobalKey formKey;
 
-  const LoginState({
+  LoginState({
     this.isLoading = false,
+    this.showLogin = false,
     this.errorMessage,
-  });
+    GlobalKey<FormState>? formKey,
+  }) : formKey = formKey ?? GlobalKey<FormState>();
 
   LoginState copyWith({
     bool? isLoading,
+    bool? showLogin,
     String? errorMessage,
   }) {
     return LoginState(
       isLoading: isLoading ?? this.isLoading,
+      showLogin: showLogin ?? this.showLogin,
       errorMessage: errorMessage,
     );
   }
 }
 
 class LoginController extends ChangeNotifier {
-  LoginState _state = const LoginState();
+  LoginState _state = LoginState();
 
   LoginState get state => _state;
+
+  void showLogin() {
+    bool showLogin = _state.showLogin ? false : true;
+    _state = _state.copyWith(showLogin: showLogin);
+    notifyListeners();
+  }
 
   Future<String?> login(String email, String password) async {
     _state = _state.copyWith(isLoading: true, errorMessage: null);
