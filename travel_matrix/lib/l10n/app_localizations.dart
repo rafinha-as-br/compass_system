@@ -134,6 +134,18 @@ abstract class AppLocalizations {
   /// **'Password'**
   String get loginPasswordLabel;
 
+  /// No description provided for @loginTitlePanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent Login'**
+  String get loginTitlePanel;
+
+  /// No description provided for @loginSubtitlePanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Please authenticate to continue'**
+  String get loginSubtitlePanel;
+
   /// No description provided for @loginButton.
   ///
   /// In en, this message translates to:

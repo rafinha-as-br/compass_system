@@ -4,6 +4,7 @@ import 'package:travel_matrix/features/auth/presentation/controllers/login_contr
 
 import '../../../../l10n/app_localizations.dart';
 
+/// Initial right side panel
 class WelcomePanel extends StatelessWidget {
   const WelcomePanel({super.key});
 
