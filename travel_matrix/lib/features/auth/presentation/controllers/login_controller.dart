@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/entities/result.dart';
-import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
+import 'package:travel_matrix/features/auth/data/auth_data_source.dart';
+import 'package:travel_matrix/features/auth/data/auth_repository_impl.dart';
+import 'package:travel_matrix/features/auth/domain/login.dart';
 
 class LoginState {
   final bool isLoading;
@@ -29,11 +31,15 @@ class LoginState {
 }
 
 class LoginController extends ChangeNotifier {
+  late final Login _login;
+
   LoginState _state = LoginState();
 
   LoginState get state => _state;
 
-  LoginController();
+  LoginController() {
+    _login = Login(AuthRepositoryImpl(AuthDataSource()));
+  }
 
   void showLogin() {
     bool showLogin = _state.showLogin ? false : true;
@@ -46,35 +52,15 @@ class LoginController extends ChangeNotifier {
     notifyListeners();
 
     try {
-      final response = await CompassService.instance.login(email, password);
-
-      if (response['status'] == 'success') {
-        final data = response['data'] as Map<String, dynamic>;
-        final userType = data['userType'] as String;
-        final token = data['token'] as String;
-
-        // Travel Matrix is only for Travel Agents
-        if (userType != 'AGENTE') {
-          const message = 'Access denied. Only Travel Agents can access Travel Matrix.';
-          _state = _state.copyWith(isLoading: false, errorMessage: message);
-          notifyListeners();
-          return const Result.failure(message);
-        }
-
-        _state = _state.copyWith(isLoading: false);
-        notifyListeners();
-        return Result.success(token);
-      } else {
-        final message = response['message'] as String? ?? 'Invalid credentials. Please try again.';
-        _state = _state.copyWith(isLoading: false, errorMessage: message);
-        notifyListeners();
-        return Result.failure(message);
-      }
+      final session = await _login(email, password);
+      _state = _state.copyWith(isLoading: false);
+      notifyListeners();
+      return Result.success(session.token);
     } catch (e) {
-      const message = 'An error occurred during login.';
+      final message = e is StateError ? e.message : 'An error occurred during login.';
       _state = _state.copyWith(isLoading: false, errorMessage: message);
       notifyListeners();
-      return const Result.failure(message);
+      return Result.failure(message);
     }
   }
 }
