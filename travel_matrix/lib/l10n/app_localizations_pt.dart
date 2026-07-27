@@ -27,6 +27,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get loginPasswordLabel => 'Senha';
 
   @override
+  String get loginTitlePanel => 'Agent Login';
+
+  @override
+  String get loginSubtitlePanel => 'Please authenticate to continue';
+
+  @override
   String get loginButton => 'ENTRAR COMO AGENTE';
 
   @override

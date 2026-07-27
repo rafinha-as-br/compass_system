@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 
 class LoginState {
@@ -32,13 +33,15 @@ class LoginController extends ChangeNotifier {
 
   LoginState get state => _state;
 
+  LoginController();
+
   void showLogin() {
     bool showLogin = _state.showLogin ? false : true;
     _state = _state.copyWith(showLogin: showLogin);
     notifyListeners();
   }
 
-  Future<String?> login(String email, String password) async {
+  Future<Result<String>> login(String email, String password) async {
     _state = _state.copyWith(isLoading: true, errorMessage: null);
     notifyListeners();
 
@@ -52,32 +55,26 @@ class LoginController extends ChangeNotifier {
 
         // Travel Matrix is only for Travel Agents
         if (userType != 'AGENTE') {
-          _state = _state.copyWith(
-            isLoading: false,
-            errorMessage: 'Access denied. Only Travel Agents can access Travel Matrix.',
-          );
+          const message = 'Access denied. Only Travel Agents can access Travel Matrix.';
+          _state = _state.copyWith(isLoading: false, errorMessage: message);
           notifyListeners();
-          return null;
+          return const Result.failure(message);
         }
 
         _state = _state.copyWith(isLoading: false);
         notifyListeners();
-        return token;
+        return Result.success(token);
       } else {
-        _state = _state.copyWith(
-          isLoading: false,
-          errorMessage: response['message'] as String? ?? 'Invalid credentials. Please try again.',
-        );
+        final message = response['message'] as String? ?? 'Invalid credentials. Please try again.';
+        _state = _state.copyWith(isLoading: false, errorMessage: message);
         notifyListeners();
-        return null;
+        return Result.failure(message);
       }
     } catch (e) {
-      _state = _state.copyWith(
-        isLoading: false,
-        errorMessage: 'An error occurred during login.',
-      );
+      const message = 'An error occurred during login.';
+      _state = _state.copyWith(isLoading: false, errorMessage: message);
       notifyListeners();
-      return null;
+      return const Result.failure(message);
     }
   }
 }
