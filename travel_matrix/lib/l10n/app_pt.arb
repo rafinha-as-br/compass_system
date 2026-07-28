@@ -83,6 +83,11 @@
   "deleteUser": "Excluir Usuário",
   "deleteUserConfirm": "Tem certeza que deseja excluir este usuário?",
 
+  "invalidCpf": "CPF inválido.",
+  "invalidCnpj": "CNPJ inválido.",
+  "confirmPasswordRequired": "Confirme sua senha atual para continuar.",
+  "profileUpdatedSuccess": "Perfil atualizado com sucesso.",
+
   "agentSettings": "Configurações do Agente",
   "systemPreferences": "Preferências do Sistema",
   "adminDarkMode": "Modo Escuro Administrativo",

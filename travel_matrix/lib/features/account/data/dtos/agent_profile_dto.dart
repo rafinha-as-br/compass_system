@@ -28,6 +28,17 @@ class AgentProfileDto {
     );
   }
 
+  factory AgentProfileDto.fromDomain(AgentProfile profile) {
+    return AgentProfileDto(
+      id: profile.id,
+      name: profile.name,
+      email: profile.email,
+      cpf: profile.cpf,
+      cnpj: profile.cnpj,
+      phoneNumber: profile.phoneNumber,
+    );
+  }
+
   AgentProfile toDomain() {
     return AgentProfile(
       id: id,
@@ -37,5 +48,16 @@ class AgentProfileDto {
       cnpj: cnpj,
       phoneNumber: phoneNumber,
     );
+  }
+
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'name': name,
+      'email': email,
+      'cpf': cpf,
+      'cnpj': cnpj,
+      'phoneNumber': phoneNumber,
+    };
   }
 }

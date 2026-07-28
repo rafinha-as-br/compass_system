@@ -316,6 +316,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newPassword => 'New Password';
 
   @override
+  String get invalidCpf => 'Invalid CPF.';
+
+  @override
+  String get invalidCnpj => 'Invalid CNPJ.';
+
+  @override
+  String get confirmPasswordRequired =>
+      'Confirm your current password to continue.';
+
+  @override
+  String get profileUpdatedSuccess => 'Profile updated successfully.';
+
+  @override
   String get digitalConcierge => 'THE DIGITAL CONCIERGE';
 
   @override
