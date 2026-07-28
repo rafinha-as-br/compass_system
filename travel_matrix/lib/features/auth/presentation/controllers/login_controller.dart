@@ -31,15 +31,18 @@ class LoginState {
 }
 
 class LoginController extends ChangeNotifier {
-  late final Login _login;
+  final Login _login;
 
   LoginState _state = LoginState();
 
   LoginState get state => _state;
 
-  LoginController() {
-    _login = Login(AuthRepositoryImpl(AuthDataSource()));
-  }
+  /// [login] é injetável para permitir testes unitários com um
+  /// [AuthRepository] fake, sem depender de rede/singletons concretos.
+  /// Em produção, o call site (`LoginController()`) continua igual —
+  /// a wiring padrão é usada como valor default.
+  LoginController({Login? login})
+      : _login = login ?? Login(AuthRepositoryImpl(AuthDataSource()));
 
   void showLogin() {
     bool showLogin = _state.showLogin ? false : true;
