@@ -8,6 +8,7 @@ abstract class AppRoutes {
   static const travels = '/travels';
   static const users = '/users';
   static const account = '/account';
+  static const settings = '/settings';
 
   /// Travels Sub-Routes
   static const travelCreate = 'create';
