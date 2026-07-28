@@ -18,7 +18,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get loginSubtitle => 'Faça login para continuar';
 
   @override
-  String get loginLabel => 'Access Travel Matrix';
+  String get loginLabel => 'Acessar o Travel Matrix';
 
   @override
   String get loginEmailLabel => 'E-mail';
@@ -27,10 +27,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get loginPasswordLabel => 'Senha';
 
   @override
-  String get loginTitlePanel => 'Agent Login';
+  String get loginTitlePanel => 'Login do Agente';
 
   @override
-  String get loginSubtitlePanel => 'Please authenticate to continue';
+  String get loginSubtitlePanel => 'Por favor, autentique-se para continuar';
 
   @override
   String get loginButton => 'ENTRAR COMO AGENTE';

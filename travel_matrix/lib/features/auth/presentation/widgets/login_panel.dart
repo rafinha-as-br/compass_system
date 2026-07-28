@@ -106,7 +106,7 @@ class _LoginHeader extends StatelessWidget {
     return Column(
       children: [
         Text(
-          l10n.loginTitle,
+          l10n.loginTitlePanel,
           style: Theme.of(
             context,
           ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
