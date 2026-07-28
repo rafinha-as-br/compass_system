@@ -116,6 +116,12 @@ abstract class AppLocalizations {
   /// **'Please login to continue'**
   String get loginSubtitle;
 
+  /// No description provided for @loginLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Access Travel Matrix'**
+  String get loginLabel;
+
   /// No description provided for @loginEmailLabel.
   ///
   /// In en, this message translates to:
@@ -127,6 +133,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Password'**
   String get loginPasswordLabel;
+
+  /// No description provided for @loginTitlePanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent Login'**
+  String get loginTitlePanel;
+
+  /// No description provided for @loginSubtitlePanel.
+  ///
+  /// In en, this message translates to:
+  /// **'Please authenticate to continue'**
+  String get loginSubtitlePanel;
 
   /// No description provided for @loginButton.
   ///

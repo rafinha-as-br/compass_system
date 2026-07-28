@@ -1,71 +1,69 @@
 import 'package:flutter/material.dart';
-import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
+import 'package:travel_matrix/core/entities/result.dart';
+import 'package:travel_matrix/features/auth/data/auth_data_source.dart';
+import 'package:travel_matrix/features/auth/data/auth_repository_impl.dart';
+import 'package:travel_matrix/features/auth/domain/login.dart';
 
 class LoginState {
   final bool isLoading;
+  final bool showLogin;
   final String? errorMessage;
+  GlobalKey formKey;
 
-  const LoginState({
+  LoginState({
     this.isLoading = false,
+    this.showLogin = false,
     this.errorMessage,
-  });
+    GlobalKey<FormState>? formKey,
+  }) : formKey = formKey ?? GlobalKey<FormState>();
 
   LoginState copyWith({
     bool? isLoading,
+    bool? showLogin,
     String? errorMessage,
   }) {
     return LoginState(
       isLoading: isLoading ?? this.isLoading,
+      showLogin: showLogin ?? this.showLogin,
       errorMessage: errorMessage,
     );
   }
 }
 
 class LoginController extends ChangeNotifier {
-  LoginState _state = const LoginState();
+  final Login _login;
+
+  LoginState _state = LoginState();
 
   LoginState get state => _state;
 
-  Future<String?> login(String email, String password) async {
+  /// [login] é injetável para permitir testes unitários com um
+  /// [AuthRepository] fake, sem depender de rede/singletons concretos.
+  /// Em produção, o call site (`LoginController()`) continua igual —
+  /// a wiring padrão é usada como valor default.
+  LoginController({Login? login})
+      : _login = login ?? Login(AuthRepositoryImpl(AuthDataSource()));
+
+  void showLogin() {
+    bool showLogin = _state.showLogin ? false : true;
+    _state = _state.copyWith(showLogin: showLogin);
+    notifyListeners();
+  }
+
+  Future<Result<String>> login(String email, String password) async {
     _state = _state.copyWith(isLoading: true, errorMessage: null);
     notifyListeners();
 
     try {
-      final response = await CompassService.instance.login(email, password);
-
-      if (response['status'] == 'success') {
-        final data = response['data'] as Map<String, dynamic>;
-        final userType = data['userType'] as String;
-        final token = data['token'] as String;
-
-        // Travel Matrix is only for Travel Agents
-        if (userType != 'AGENTE') {
-          _state = _state.copyWith(
-            isLoading: false,
-            errorMessage: 'Access denied. Only Travel Agents can access Travel Matrix.',
-          );
-          notifyListeners();
-          return null;
-        }
-
-        _state = _state.copyWith(isLoading: false);
-        notifyListeners();
-        return token;
-      } else {
-        _state = _state.copyWith(
-          isLoading: false,
-          errorMessage: response['message'] as String? ?? 'Invalid credentials. Please try again.',
-        );
-        notifyListeners();
-        return null;
-      }
-    } catch (e) {
-      _state = _state.copyWith(
-        isLoading: false,
-        errorMessage: 'An error occurred during login.',
-      );
+      final session = await _login(email, password);
+      _state = _state.copyWith(isLoading: false);
       notifyListeners();
-      return null;
+      return Result.success(session.token);
+    } catch (e) {
+      final message = e is StateError ? e.message : 'An error occurred during login.';
+      _state = _state.copyWith(isLoading: false, errorMessage: message);
+      notifyListeners();
+      return Result.failure(message);
     }
   }
 }
