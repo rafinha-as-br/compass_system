@@ -698,6 +698,12 @@ abstract class AppLocalizations {
   /// **'Invalid CNPJ.'**
   String get invalidCnpj;
 
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email.'**
+  String get invalidEmail;
+
   /// No description provided for @confirmPasswordRequired.
   ///
   /// In en, this message translates to:

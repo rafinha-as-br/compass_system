@@ -323,6 +323,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get invalidCnpj => 'CNPJ inválido.';
 
   @override
+  String get invalidEmail => 'E-mail inválido.';
+
+  @override
   String get confirmPasswordRequired =>
       'Confirme sua senha atual para continuar.';
 

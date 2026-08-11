@@ -1,4 +1,5 @@
 import 'package:flutter_test/flutter_test.dart';
+import 'package:travel_matrix/core/services/compass_service/api_exception.dart';
 import 'package:travel_matrix/features/account/domain/account_repository.dart';
 import 'package:travel_matrix/features/account/domain/entities/agent_profile.dart';
 import 'package:travel_matrix/features/account/domain/get_agent_profile.dart';
@@ -6,16 +7,18 @@ import 'package:travel_matrix/features/account/domain/update_agent_profile.dart'
 import 'package:travel_matrix/features/account/presentation/controllers/account_controller.dart';
 
 class _FakeAccountRepository implements AccountRepository {
-  _FakeAccountRepository({this.profile, this.verifyPasswordError});
+  _FakeAccountRepository({this.profile, this.verifyPasswordError, this.updateAgentProfileError});
 
   AgentProfile? profile;
   final Object? verifyPasswordError;
+  final Object? updateAgentProfileError;
 
   @override
   Future<AgentProfile> getAgentProfile() async => profile!;
 
   @override
   Future<AgentProfile> updateAgentProfile(AgentProfile profile) async {
+    if (updateAgentProfileError != null) throw updateAgentProfileError!;
     this.profile = profile;
     return profile;
   }
@@ -103,6 +106,29 @@ void main() {
 
       expect(result.isSuccess, isFalse);
       expect(result.error, 'Incorrect current password.');
+    });
+
+    test('propaga a mensagem da API quando o backend rejeita a atualização', () async {
+      repository = _FakeAccountRepository(
+        profile: _profile,
+        updateAgentProfileError: ApiException('Not found', 404),
+      );
+      controller = AccountController(
+        getAgentProfile: GetAgentProfile(repository),
+        updateAgentProfile: UpdateAgentProfile(repository),
+      );
+      await ready();
+
+      final result = await controller.updateProfile(
+        name: _profile.name,
+        email: _profile.email,
+        phoneNumber: _profile.phoneNumber,
+        cpf: _profile.cpf,
+        cnpj: _profile.cnpj,
+      );
+
+      expect(result.isSuccess, isFalse);
+      expect(result.error, 'Not found');
     });
   });
 }

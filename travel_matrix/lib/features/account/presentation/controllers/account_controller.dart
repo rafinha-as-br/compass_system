@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/entities/result.dart';
+import 'package:travel_matrix/core/services/compass_service/api_exception.dart';
 import 'package:travel_matrix/features/account/data/account_data_source.dart';
 import 'package:travel_matrix/features/account/data/account_repository_impl.dart';
 import 'package:travel_matrix/features/account/domain/entities/agent_profile.dart';
@@ -95,7 +96,11 @@ class AccountController extends ChangeNotifier {
       notifyListeners();
       return Result.success(viewModel);
     } catch (e) {
-      final message = e is StateError ? e.message : 'Could not update profile.';
+      final message = switch (e) {
+        StateError() => e.message,
+        ApiException() => e.message,
+        _ => 'Could not update profile.',
+      };
       return Result.failure(message);
     }
   }

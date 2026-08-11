@@ -5,6 +5,9 @@ enum CustomFormFieldType {
   text,
   number,
   date,
+  email,
+  document,
+  password,
 }
 
 class CustomFormField extends StatelessWidget {
@@ -101,9 +104,73 @@ class CustomFormField extends StatelessWidget {
     );
   }
 
+  /// Email field factory. Format validation (see [EmailValidator]) is the
+  /// caller's responsibility, computed into [errorText] — the same pattern
+  /// already used by the other factories in this widget.
+  factory CustomFormField.email({
+    Key? key,
+    required String label,
+    required bool enabled,
+    required TextEditingController controller,
+    required ValueChanged<String> onChanged,
+    String? errorText,
+  }) {
+    return CustomFormField._(
+      key: key,
+      label: label,
+      enabled: enabled,
+      controller: controller,
+      onChanged: onChanged,
+      type: CustomFormFieldType.email,
+      errorText: errorText,
+    );
+  }
+
+  /// CPF/CNPJ field factory. Format validation (see [CpfCnpjValidator]) is
+  /// the caller's responsibility, computed into [errorText].
+  factory CustomFormField.document({
+    Key? key,
+    required String label,
+    required bool enabled,
+    required TextEditingController controller,
+    required ValueChanged<String> onChanged,
+    String? errorText,
+  }) {
+    return CustomFormField._(
+      key: key,
+      label: label,
+      enabled: enabled,
+      controller: controller,
+      onChanged: onChanged,
+      type: CustomFormFieldType.document,
+      errorText: errorText,
+    );
+  }
+
+  /// Password field factory (obscured text).
+  factory CustomFormField.password({
+    Key? key,
+    required String label,
+    required bool enabled,
+    required TextEditingController controller,
+    required ValueChanged<String> onChanged,
+    String? errorText,
+  }) {
+    return CustomFormField._(
+      key: key,
+      label: label,
+      enabled: enabled,
+      controller: controller,
+      onChanged: onChanged,
+      type: CustomFormFieldType.password,
+      errorText: errorText,
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     final bool hasError = errorText != null;
+    final colorScheme = Theme.of(context).colorScheme;
 
     return TextField(
       controller: controller,
@@ -111,6 +178,8 @@ class CustomFormField extends StatelessWidget {
 
       /// Prevent keyboard on date field
       readOnly: type == CustomFormFieldType.date,
+
+      obscureText: type == CustomFormFieldType.password,
 
       onChanged: onChanged,
 
@@ -124,37 +193,45 @@ class CustomFormField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: label,
         errorText: errorText,
+        filled: true,
+        fillColor: enabled
+            ? colorScheme.surfaceContainerHighest.withValues(alpha: 0.35)
+            : colorScheme.surfaceContainerHighest.withValues(alpha: 0.15),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
 
-        border: const OutlineInputBorder(),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide.none,
+        ),
 
         enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
-            color: hasError
-                ? Colors.red
-                : Colors.grey,
+            color: hasError ? colorScheme.error : colorScheme.outlineVariant,
           ),
+        ),
+
+        disabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: colorScheme.outlineVariant.withValues(alpha: 0.5)),
         ),
 
         focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(
-            color: hasError
-                ? Colors.red
-                : Theme.of(context).colorScheme.primary,
+            color: hasError ? colorScheme.error : colorScheme.primary,
             width: 2,
           ),
         ),
 
-        errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.red,
-          ),
+        errorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: colorScheme.error),
         ),
 
-        focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.red,
-            width: 2,
-          ),
+        focusedErrorBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: colorScheme.error, width: 2),
         ),
       ),
     );
@@ -164,6 +241,8 @@ class CustomFormField extends StatelessWidget {
   TextInputType get _keyboardType {
     switch (type) {
       case CustomFormFieldType.text:
+      case CustomFormFieldType.document:
+      case CustomFormFieldType.password:
         return TextInputType.text;
 
       case CustomFormFieldType.number:
@@ -171,6 +250,9 @@ class CustomFormField extends StatelessWidget {
 
       case CustomFormFieldType.date:
         return TextInputType.datetime;
+
+      case CustomFormFieldType.email:
+        return TextInputType.emailAddress;
     }
   }
 
@@ -178,15 +260,16 @@ class CustomFormField extends StatelessWidget {
   List<TextInputFormatter>? get _inputFormatters {
     switch (type) {
       case CustomFormFieldType.text:
+      case CustomFormFieldType.date:
+      case CustomFormFieldType.email:
+      case CustomFormFieldType.document:
+      case CustomFormFieldType.password:
         return null;
 
       case CustomFormFieldType.number:
         return [
           FilteringTextInputFormatter.digitsOnly,
         ];
-
-      case CustomFormFieldType.date:
-        return null;
     }
   }
 }
