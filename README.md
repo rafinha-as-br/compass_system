@@ -84,4 +84,11 @@ flutter run
 - A comunicação entre os apps e a API exige que o token seja enviado no header `Authorization: Bearer <token>`.
 
 ## 🤝 Contribuição
-(Adicione aqui as regras e padrões de contribuição da equipe, se houver).
+
+### Branches
+- `main`: reservada para produção/release.
+- `develop`: branch de integração — todo trabalho é mergeado aqui antes de ir para `main`.
+- Branches de trabalho seguem a convenção `{tipo}/{CHAVE-DA-ISSUE}-claude` (ex.: `feat/CPS-17-claude`). A chave da issue no nome do branch é o que permite a integração nativa GitHub-Jira detectar o vínculo automaticamente.
+
+### Pipeline / CI
+Pull Requests contra `develop` rodam a GitHub Actions definida em [`.github/workflows/ci.yml`](.github/workflows/ci.yml). Ver [`.github/workflows/README.md`](.github/workflows/README.md) para o detalhamento de jobs, gates e o que ainda não está coberto.
