@@ -9,9 +9,6 @@ import 'package:flutter/foundation.dart';
 /// 3. Gaps & start/finish analyser between the nodes on the sorted list
 List<TimelineProblem> timelineAnalyzer(List<TimelineNode> nodes){
 
-  /// Duration allowed gap const value
-  const Duration allowedGap = Duration(hours: 1);
-
   final List<TimelineProblem> problems = [];
 
   /// Helper method to add a problem to the list
