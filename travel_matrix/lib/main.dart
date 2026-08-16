@@ -5,6 +5,7 @@ import 'app/app_injector.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  final int ciFailureDrill = 1;
   await AppInjector.init();
   runApp(const AppBootstrap());
 }
