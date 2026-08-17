@@ -317,6 +317,22 @@ class AppLocalizationsPt extends AppLocalizations {
   String get newPassword => 'Nova Senha';
 
   @override
+  String get invalidCpf => 'CPF inválido.';
+
+  @override
+  String get invalidCnpj => 'CNPJ inválido.';
+
+  @override
+  String get invalidEmail => 'E-mail inválido.';
+
+  @override
+  String get confirmPasswordRequired =>
+      'Confirme sua senha atual para continuar.';
+
+  @override
+  String get profileUpdatedSuccess => 'Perfil atualizado com sucesso.';
+
+  @override
   String get digitalConcierge => 'O CONCIERGE DIGITAL';
 
   @override

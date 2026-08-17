@@ -19,4 +19,24 @@ class AccountDataSource {
 
     return _compassService.getAuthenticatedUser(token);
   }
+
+  Future<Map<String, dynamic>> updateAgentProfile(
+    Map<String, dynamic> profileData,
+  ) async {
+    final token = await _authStorageService.getToken();
+    if (token == null) {
+      throw StateError('Not authenticated.');
+    }
+
+    return _compassService.updateUser(token, profileData);
+  }
+
+  /// Reaproveita o endpoint de login como verificação de senha atual,
+  /// já que não existe um endpoint dedicado de reautenticação no backend.
+  Future<Map<String, dynamic>> verifyPassword(
+    String email,
+    String password,
+  ) {
+    return _compassService.login(email, password);
+  }
 }

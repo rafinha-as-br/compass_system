@@ -18,4 +18,24 @@ class AccountRepositoryImpl implements AccountRepository {
     final data = response['data'] as Map<String, dynamic>;
     return AgentProfileDto.fromJson(data).toDomain();
   }
+
+  @override
+  Future<AgentProfile> updateAgentProfile(AgentProfile profile) async {
+    final payload = AgentProfileDto.fromDomain(profile).toJson();
+    final response = await _dataSource.updateAgentProfile(payload);
+    if (response['status'] != 'success') {
+      throw StateError(response['message'] as String? ?? 'Failed to update profile.');
+    }
+
+    final data = response['data'] as Map<String, dynamic>;
+    return AgentProfileDto.fromJson(data).toDomain();
+  }
+
+  @override
+  Future<void> verifyPassword(String email, String password) async {
+    final response = await _dataSource.verifyPassword(email, password);
+    if (response['status'] != 'success') {
+      throw StateError('Incorrect current password.');
+    }
+  }
 }

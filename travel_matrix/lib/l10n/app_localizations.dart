@@ -686,6 +686,36 @@ abstract class AppLocalizations {
   /// **'New Password'**
   String get newPassword;
 
+  /// No description provided for @invalidCpf.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid CPF.'**
+  String get invalidCpf;
+
+  /// No description provided for @invalidCnpj.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid CNPJ.'**
+  String get invalidCnpj;
+
+  /// No description provided for @invalidEmail.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email.'**
+  String get invalidEmail;
+
+  /// No description provided for @confirmPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your current password to continue.'**
+  String get confirmPasswordRequired;
+
+  /// No description provided for @profileUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully.'**
+  String get profileUpdatedSuccess;
+
   /// No description provided for @digitalConcierge.
   ///
   /// In en, this message translates to:

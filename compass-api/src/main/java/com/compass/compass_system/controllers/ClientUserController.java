@@ -2,6 +2,7 @@ package com.compass.compass_system.controllers;
 
 import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.entities.ClientUser;
+import com.compass.compass_system.exceptions.BusinessException;
 import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import com.compass.compass_system.security.JwtUtil;
@@ -123,30 +124,62 @@ public class ClientUserController {
     }
 
     // ─── PUT /users/{id} ───────────────────────────────────────────────────────
-    // Updates a client user's data.
+    // Updates a client user's data. If the id doesn't match a client, falls back
+    // to updating an agent's own data (self-service profile edit), which requires
+    // the JWT to belong to that same agent.
     @PutMapping("/{id}")
     public ResponseEntity<Map<String, Object>> updateUser(
-            @PathVariable Long id, @RequestBody Map<String, Object> body) {
+            @PathVariable Long id,
+            @RequestBody Map<String, Object> body,
+            @RequestHeader(value = "Authorization", required = false) String authHeader) {
 
         Optional<ClientUser> opt = clientRepository.findById(id);
-        if (opt.isEmpty()) {
-            return ResponseEntity.notFound().build();
+        if (opt.isPresent()) {
+            ClientUser client = opt.get();
+            if (body.containsKey("name")) client.setName((String) body.get("name"));
+            if (body.containsKey("cpf")) client.setCpf((String) body.get("cpf"));
+            if (body.containsKey("sex")) client.setGender((String) body.get("sex"));
+            if (body.containsKey("phoneNumber")) client.setPhone((String) body.get("phoneNumber"));
+            if (body.containsKey("email")) client.setEmail((String) body.get("email"));
+
+            ClientUser saved = clientRepository.save(client);
+
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("status", "success");
+            response.put("data", mapClientToResponse(saved));
+            response.put("message", null);
+            return ResponseEntity.ok(response);
         }
 
-        ClientUser client = opt.get();
-        if (body.containsKey("name")) client.setName((String) body.get("name"));
-        if (body.containsKey("cpf")) client.setCpf((String) body.get("cpf"));
-        if (body.containsKey("sex")) client.setGender((String) body.get("sex"));
-        if (body.containsKey("phoneNumber")) client.setPhone((String) body.get("phoneNumber"));
-        if (body.containsKey("email")) client.setEmail((String) body.get("email"));
+        Optional<AgentUser> agentOpt = agentRepository.findById(id);
+        if (agentOpt.isPresent()) {
+            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+                throw new BusinessException("Autenticação necessária para atualizar estes dados.");
+            }
+            String token = authHeader.replace("Bearer ", "");
+            if (!jwtUtil.isTokenValid(token)
+                    || !"AGENTE".equals(jwtUtil.getUserTypeFromToken(token))
+                    || !id.equals(jwtUtil.getUserIdFromToken(token))) {
+                throw new BusinessException("Você só pode atualizar os seus próprios dados.");
+            }
 
-        ClientUser saved = clientRepository.save(client);
+            AgentUser agent = agentOpt.get();
+            if (body.containsKey("name")) agent.setName((String) body.get("name"));
+            if (body.containsKey("email")) agent.setEmail((String) body.get("email"));
+            if (body.containsKey("cpf")) agent.setCpf((String) body.get("cpf"));
+            if (body.containsKey("cnpj")) agent.setCnpj((String) body.get("cnpj"));
+            if (body.containsKey("phoneNumber")) agent.setPhone((String) body.get("phoneNumber"));
 
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("status", "success");
-        response.put("data", mapClientToResponse(saved));
-        response.put("message", null);
-        return ResponseEntity.ok(response);
+            AgentUser saved = agentRepository.save(agent);
+
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("status", "success");
+            response.put("data", mapAgentToResponse(saved));
+            response.put("message", null);
+            return ResponseEntity.ok(response);
+        }
+
+        return ResponseEntity.notFound().build();
     }
 
     // ─── POST /users/{id}/deactivate ───────────────────────────────────────────
@@ -227,6 +260,18 @@ public class ClientUserController {
         statusObj.put("last_login", null);
         map.put("status", statusObj);
 
+        return map;
+    }
+
+    // ─── Helper: Map agent entity to frontend-compatible response ──────────────
+    private Map<String, Object> mapAgentToResponse(AgentUser agent) {
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("id", String.valueOf(agent.getId()));
+        map.put("name", agent.getName());
+        map.put("email", agent.getEmail());
+        map.put("cpf", agent.getCpf());
+        map.put("cnpj", agent.getCnpj());
+        map.put("phoneNumber", agent.getPhone());
         return map;
     }
 }

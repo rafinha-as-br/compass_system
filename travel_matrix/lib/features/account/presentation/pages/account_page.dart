@@ -5,6 +5,7 @@ import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/app/global_controllers/settings_controller.dart';
 import 'package:travel_matrix/features/account/presentation/controllers/account_controller.dart';
 import 'package:travel_matrix/features/account/presentation/view_models/agent_profile_view_model.dart';
+import 'package:travel_matrix/features/account/presentation/widgets/edit_profile_dialog.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 
 class AccountPage extends StatelessWidget {
@@ -185,45 +186,13 @@ class _AccountContent extends StatelessWidget {
     BuildContext context,
     AgentProfileViewModel profile,
   ) {
+    final controller = context.read<AccountController>();
     showDialog<void>(
       context: context,
-      builder: (context) {
-        return AlertDialog(
-          title: Text(l10n.editAgentData),
-          content: SizedBox(
-            width: 420,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  initialValue: profile.name,
-                  decoration: InputDecoration(labelText: l10n.clientNameColumn),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: profile.email,
-                  decoration: InputDecoration(labelText: l10n.loginEmailLabel),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  initialValue: profile.phoneNumber,
-                  decoration: InputDecoration(labelText: l10n.phoneLabel),
-                ),
-              ],
-            ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.cancelButton),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.saveButton),
-            ),
-          ],
-        );
-      },
+      builder: (dialogContext) => ChangeNotifierProvider.value(
+        value: controller,
+        child: EditProfileDialog(profile: profile),
+      ),
     );
   }
 
