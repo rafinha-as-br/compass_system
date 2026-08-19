@@ -47,4 +47,29 @@ void main() {
       expect(() => JwtPayloadDecoder.decode(token), throwsFormatException);
     });
   });
+
+  group('JwtPayloadDecoder.isExpired', () {
+    int secondsFromNow(Duration offset) =>
+        DateTime.now().toUtc().add(offset).millisecondsSinceEpoch ~/ 1000;
+
+    test('is false when exp is in the future', () {
+      final claims = {'exp': secondsFromNow(const Duration(hours: 1))};
+
+      expect(JwtPayloadDecoder.isExpired(claims), isFalse);
+    });
+
+    test('is true when exp is in the past', () {
+      final claims = {'exp': secondsFromNow(const Duration(hours: -1))};
+
+      expect(JwtPayloadDecoder.isExpired(claims), isTrue);
+    });
+
+    test('is true when exp is missing', () {
+      expect(JwtPayloadDecoder.isExpired(<String, dynamic>{}), isTrue);
+    });
+
+    test('is true when exp is not an int', () {
+      expect(JwtPayloadDecoder.isExpired({'exp': 'not-a-number'}), isTrue);
+    });
+  });
 }

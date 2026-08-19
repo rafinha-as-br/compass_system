@@ -29,9 +29,19 @@ class AuthService {
     await _storage.delete(key: 'auth_token');
   }
 
+  /// True when there is a stored token that is well-formed and not expired.
+  /// An expired or malformed token is treated as no session and is cleared.
   Future<bool> isAuthenticated() async {
     final token = await getToken();
-    return token != null && token.isNotEmpty;
+    if (token == null || token.isEmpty) return false;
+
+    final claims = _decodeClaims(token);
+    if (claims == null || JwtPayloadDecoder.isExpired(claims)) {
+      await clearToken();
+      return false;
+    }
+
+    return true;
   }
 
   /// Reads the `userType` claim (AGENTE/CLIENTE) from the stored JWT.
@@ -40,9 +50,13 @@ class AuthService {
     final token = await getToken();
     if (token == null) return null;
 
+    final claims = _decodeClaims(token);
+    return claims?['userType'] as String?;
+  }
+
+  Map<String, dynamic>? _decodeClaims(String token) {
     try {
-      final claims = JwtPayloadDecoder.decode(token);
-      return claims['userType'] as String?;
+      return JwtPayloadDecoder.decode(token);
     } on FormatException {
       return null;
     }

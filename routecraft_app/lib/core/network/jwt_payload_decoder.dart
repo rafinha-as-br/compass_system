@@ -18,6 +18,16 @@ abstract final class JwtPayloadDecoder {
     return decoded;
   }
 
+  /// True when the `exp` claim (JWT NumericDate: seconds since the Unix
+  /// epoch) is missing, malformed, or in the past.
+  static bool isExpired(Map<String, dynamic> claims) {
+    final exp = claims['exp'];
+    if (exp is! int) return true;
+
+    final expiresAt = DateTime.fromMillisecondsSinceEpoch(exp * 1000, isUtc: true);
+    return DateTime.now().toUtc().isAfter(expiresAt);
+  }
+
   static String _normalize(String input) {
     final remainder = input.length % 4;
     if (remainder == 0) return input;
