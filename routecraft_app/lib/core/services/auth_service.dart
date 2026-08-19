@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:routecraft_app/core/network/jwt_payload_decoder.dart';
 
 class AuthService {
   static AuthService? _instance;
@@ -31,5 +32,19 @@ class AuthService {
   Future<bool> isAuthenticated() async {
     final token = await getToken();
     return token != null && token.isNotEmpty;
+  }
+
+  /// Reads the `userType` claim (AGENTE/CLIENTE) from the stored JWT.
+  /// Returns null when there is no session or the token is malformed.
+  Future<String?> getUserType() async {
+    final token = await getToken();
+    if (token == null) return null;
+
+    try {
+      final claims = JwtPayloadDecoder.decode(token);
+      return claims['userType'] as String?;
+    } on FormatException {
+      return null;
+    }
   }
 }

@@ -18,13 +18,6 @@ class CompassService {
     return _instance!;
   }
 
-  // ─── Auth ───────────────────────────────────────────────────────────
-
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await _apiService.login(email, password);
-    return response.body;
-  }
-
   // ─── Users ──────────────────────────────────────────────────────────
 
   Future<Map<String, dynamic>> getUser(String token) async {
