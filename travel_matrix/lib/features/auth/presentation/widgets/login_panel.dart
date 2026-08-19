@@ -16,6 +16,7 @@ class LoginPanel extends StatefulWidget {
 class _LoginPanelState extends State<LoginPanel> {
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+  final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
@@ -25,8 +26,7 @@ class _LoginPanelState extends State<LoginPanel> {
   }
 
   Future<void> _handleLogin(LoginController controller) async {
-    final formState = controller.state.formKey.currentState as FormState?;
-    if (!(formState?.validate() ?? false)) return;
+    if (!(_formKey.currentState?.validate() ?? false)) return;
 
     final result = await controller.login(
       _emailController.text,
@@ -49,7 +49,7 @@ class _LoginPanelState extends State<LoginPanel> {
         return Padding(
           padding: const EdgeInsets.all(48.0),
           child: Form(
-            key: state.formKey,
+            key: _formKey,
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
@@ -90,6 +90,7 @@ class _LoginBackButton extends StatelessWidget {
       alignment: Alignment.topLeft,
       child: IconButton(
         icon: const Icon(Icons.arrow_back),
+        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         onPressed: onPressed,
       ),
     );

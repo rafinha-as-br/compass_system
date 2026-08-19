@@ -8,14 +8,12 @@ class LoginState {
   final bool isLoading;
   final bool showLogin;
   final String? errorMessage;
-  GlobalKey formKey;
 
-  LoginState({
+  const LoginState({
     this.isLoading = false,
     this.showLogin = false,
     this.errorMessage,
-    GlobalKey<FormState>? formKey,
-  }) : formKey = formKey ?? GlobalKey<FormState>();
+  });
 
   LoginState copyWith({
     bool? isLoading,
@@ -33,7 +31,7 @@ class LoginState {
 class LoginController extends ChangeNotifier {
   final Login _login;
 
-  LoginState _state = LoginState();
+  LoginState _state = const LoginState();
 
   LoginState get state => _state;
 
