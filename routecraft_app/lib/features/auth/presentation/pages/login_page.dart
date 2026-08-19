@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/app/gates/gate_auth.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/login_controller.dart';
+import 'package:routecraft_app/features/auth/presentation/pages/register_page.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -119,6 +120,16 @@ class _LoginViewState extends State<_LoginView> {
                               style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                     ),
+                  ),
+                  const SizedBox(height: 16),
+                  TextButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const RegisterPage()),
+                      );
+                    },
+                    child: const Text('Não tem conta? Cadastre-se'),
                   ),
                 ],
               ),
