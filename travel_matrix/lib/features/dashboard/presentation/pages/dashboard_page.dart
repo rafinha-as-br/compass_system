@@ -8,14 +8,22 @@ import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 class DashboardPage extends StatelessWidget {
-  const DashboardPage({super.key});
+  final DashboardController? controller;
+
+  const DashboardPage({super.key, this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => DashboardController(),
-      child: const _DashboardView(),
-    );
+    final providedController = controller;
+    return providedController != null
+        ? ChangeNotifierProvider.value(
+            value: providedController,
+            child: const _DashboardView(),
+          )
+        : ChangeNotifierProvider(
+            create: (_) => DashboardController(),
+            child: const _DashboardView(),
+          );
   }
 }
 
@@ -32,10 +40,10 @@ class _DashboardView extends StatelessWidget {
       backgroundColor: theme.scaffoldBackgroundColor,
       body: state.isLoading
           ? const Center(child: CircularProgressIndicator())
-          : state.errorMessage != null
+          : state.hasError
               ? Center(
                   child: Text(
-                    state.errorMessage!,
+                    l10n.failedToLoadDashboard,
                     style: TextStyle(color: theme.colorScheme.error),
                   ),
                 )
@@ -55,8 +63,6 @@ class _DashboardContent extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final semantic = theme.semanticColors;
     final agentName =
         context.watch<AuthController>().userName?.split(' ').first ?? 'Agent';
 
@@ -65,96 +71,130 @@ class _DashboardContent extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(32),
-            decoration: BoxDecoration(
-              color: theme.colorScheme.primary,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  l10n.dashboardWelcome(agentName),
-                  style: theme.textTheme.headlineSmall?.copyWith(
-                    color: theme.colorScheme.onPrimary,
-                    fontWeight: FontWeight.bold,
-                  ),
-                ),
-                const SizedBox(height: 12),
-                Text(
-                  l10n.dashboardWelcomeSubtitle(
-                    dashboard.pendingItineraries,
-                    dashboard.completedItineraries,
-                  ),
-                  style: theme.textTheme.bodyLarge?.copyWith(
-                    color: theme.colorScheme.onPrimary.withValues(alpha: 0.78),
-                  ),
-                ),
-              ],
-            ),
-          ),
+          _WelcomeBanner(agentName: agentName, dashboard: dashboard, l10n: l10n),
           const SizedBox(height: 24),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final isNarrow = constraints.maxWidth < 900;
-              final cards = [
-                _KpiCard(
-                  icon: Icons.route,
-                  title: l10n.totalTravels,
-                  value: dashboard.totalTravels.toString(),
-                  color: semantic.info,
-                ),
-                _KpiCard(
-                  icon: Icons.event_available,
-                  title: l10n.itinerariesCompleted,
-                  value: dashboard.completedItineraries.toString(),
-                  color: semantic.success,
-                ),
-                _KpiCard(
-                  icon: Icons.pending_actions,
-                  title: l10n.pendingItineraries,
-                  value: dashboard.pendingItineraries.toString(),
-                  color: semantic.warning,
-                ),
-                _KpiCard(
-                  icon: Icons.people_alt_outlined,
-                  title: l10n.activeClients,
-                  value: dashboard.activeClients.toString(),
-                  color: theme.colorScheme.secondary,
-                ),
-              ];
-
-              if (isNarrow) {
-                return Column(
-                  children: cards
-                      .map(
-                        (card) => Padding(
-                          padding: const EdgeInsets.only(bottom: 12),
-                          child: card,
-                        ),
-                      )
-                      .toList(),
-                );
-              }
-
-              return Row(
-                children: [
-                  for (final card in cards) ...[
-                    Expanded(child: card),
-                    if (card != cards.last) const SizedBox(width: 16),
-                  ],
-                ],
-              );
-            },
-          ),
+          _KpiCardsSection(dashboard: dashboard, l10n: l10n),
           const SizedBox(height: 28),
           _RecentTravelsTable(travels: dashboard.recentTravels, l10n: l10n),
           const SizedBox(height: 28),
           _ActiveClientsList(clients: dashboard.activeClientsList, l10n: l10n),
         ],
       ),
+    );
+  }
+}
+
+class _WelcomeBanner extends StatelessWidget {
+  final String agentName;
+  final DashboardViewModel dashboard;
+  final AppLocalizations l10n;
+
+  const _WelcomeBanner({
+    required this.agentName,
+    required this.dashboard,
+    required this.l10n,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(32),
+      decoration: BoxDecoration(
+        color: theme.colorScheme.primary,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            l10n.dashboardWelcome(agentName),
+            style: theme.textTheme.headlineSmall?.copyWith(
+              color: theme.colorScheme.onPrimary,
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Text(
+            l10n.dashboardWelcomeSubtitle(
+              dashboard.pendingItineraries,
+              dashboard.completedItineraries,
+            ),
+            style: theme.textTheme.bodyLarge?.copyWith(
+              color: theme.colorScheme.onPrimary.withValues(alpha: 0.78),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _KpiCardsSection extends StatelessWidget {
+  final DashboardViewModel dashboard;
+  final AppLocalizations l10n;
+
+  const _KpiCardsSection({required this.dashboard, required this.l10n});
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final semantic = theme.semanticColors;
+
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        final isNarrow = constraints.maxWidth < 900;
+        final cards = [
+          _KpiCard(
+            icon: Icons.route,
+            title: l10n.totalTravels,
+            value: dashboard.totalTravels.toString(),
+            color: semantic.info,
+          ),
+          _KpiCard(
+            icon: Icons.event_available,
+            title: l10n.itinerariesCompleted,
+            value: dashboard.completedItineraries.toString(),
+            color: semantic.success,
+          ),
+          _KpiCard(
+            icon: Icons.pending_actions,
+            title: l10n.pendingItineraries,
+            value: dashboard.pendingItineraries.toString(),
+            color: semantic.warning,
+          ),
+          _KpiCard(
+            icon: Icons.people_alt_outlined,
+            title: l10n.activeClients,
+            value: dashboard.activeClients.toString(),
+            color: theme.colorScheme.secondary,
+          ),
+        ];
+
+        if (isNarrow) {
+          return Column(
+            children: cards
+                .map(
+                  (card) => Padding(
+                    padding: const EdgeInsets.only(bottom: 12),
+                    child: card,
+                  ),
+                )
+                .toList(),
+          );
+        }
+
+        return Row(
+          children: [
+            for (final card in cards) ...[
+              Expanded(child: card),
+              if (card != cards.last) const SizedBox(width: 16),
+            ],
+          ],
+        );
+      },
     );
   }
 }
@@ -273,10 +313,10 @@ class _RecentTravelsTable extends StatelessWidget {
                           return DataRow(
                             cells: [
                               DataCell(Text(travel.travelName)),
-                              DataCell(Text(travel.clientId)),
+                              DataCell(Text(travel.clientName)),
                               DataCell(Text(travel.route)),
                               DataCell(Text(dateFormat.format(travel.startDate))),
-                              DataCell(_StatusChip(travel: travel)),
+                              DataCell(_StatusChip(travel: travel, l10n: l10n)),
                             ],
                           );
                         }).toList(),
@@ -294,8 +334,24 @@ class _RecentTravelsTable extends StatelessWidget {
 
 class _StatusChip extends StatelessWidget {
   final DashboardTravelRowViewModel travel;
+  final AppLocalizations l10n;
 
-  const _StatusChip({required this.travel});
+  const _StatusChip({required this.travel, required this.l10n});
+
+  static String _statusLabel(AppLocalizations l10n, String status) {
+    switch (status) {
+      case 'route_created':
+        return l10n.routeOnly;
+      case 'itinerary_created':
+        return l10n.itineraryReady;
+      case 'travel_started':
+        return l10n.travelInProgress;
+      case 'travel_finished':
+        return l10n.travelCompleted;
+      default:
+        return status;
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -310,7 +366,7 @@ class _StatusChip extends StatelessWidget {
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
-        travel.status,
+        _statusLabel(l10n, travel.status),
         style: theme.textTheme.labelSmall?.copyWith(
           color: color,
           fontWeight: FontWeight.bold,

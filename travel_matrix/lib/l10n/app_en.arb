@@ -20,6 +20,7 @@
   "activeClients": "Active Clients",
   "recentTravelUpdates": "Recent Travel Updates",
   "noTravelsCreated": "No travels created yet.",
+  "failedToLoadDashboard": "Unable to load your dashboard right now. Please try again later.",
   "statusComplete": "COMPLETE",
   "statusPending": "PENDING",
 
@@ -27,6 +28,8 @@
   "createTravel": "Create Travel",
   "itineraryReady": "Itinerary Ready",
   "routeOnly": "Route Only",
+  "travelInProgress": "In Progress",
+  "travelCompleted": "Completed",
   "clientLabel": "Client",
 
   "createTravelTitle": "Create Travel",

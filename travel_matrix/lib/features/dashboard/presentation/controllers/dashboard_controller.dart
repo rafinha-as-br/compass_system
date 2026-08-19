@@ -7,25 +7,24 @@ import 'package:travel_matrix/features/dashboard/presentation/view_models/dashbo
 class DashboardState {
   final bool isLoading;
   final DashboardViewModel? dashboard;
-  final String? errorMessage;
+  final bool hasError;
 
   const DashboardState({
     this.isLoading = true,
     this.dashboard,
-    this.errorMessage,
+    this.hasError = false,
   });
 }
 
 class DashboardController extends ChangeNotifier {
-  late final GetDashboardStats _getDashboardStats;
+  final GetDashboardStats _getDashboardStats;
 
   DashboardState _state = const DashboardState();
   DashboardState get state => _state;
 
-  DashboardController() {
-    _getDashboardStats = GetDashboardStats(
-      DashboardRepositoryImpl(DashboardDataSource()),
-    );
+  DashboardController({GetDashboardStats? getDashboardStats})
+      : _getDashboardStats = getDashboardStats ??
+            GetDashboardStats(DashboardRepositoryImpl(DashboardDataSource())) {
     load();
   }
 
@@ -40,10 +39,8 @@ class DashboardController extends ChangeNotifier {
         dashboard: DashboardViewModel.fromDomain(stats),
       );
     } catch (e) {
-      _state = DashboardState(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
+      debugPrint('DashboardController.load failed: $e');
+      _state = const DashboardState(isLoading: false, hasError: true);
     }
 
     notifyListeners();

@@ -200,6 +200,12 @@ abstract class AppLocalizations {
   /// **'No travels created yet.'**
   String get noTravelsCreated;
 
+  /// No description provided for @failedToLoadDashboard.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load your dashboard right now. Please try again later.'**
+  String get failedToLoadDashboard;
+
   /// No description provided for @statusComplete.
   ///
   /// In en, this message translates to:
@@ -235,6 +241,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Route Only'**
   String get routeOnly;
+
+  /// No description provided for @travelInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get travelInProgress;
+
+  /// No description provided for @travelCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get travelCompleted;
 
   /// No description provided for @clientLabel.
   ///

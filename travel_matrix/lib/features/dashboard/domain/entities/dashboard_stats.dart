@@ -18,7 +18,7 @@ class DashboardStats {
 
 class DashboardTravelSummary {
   final String id;
-  final String clientId;
+  final String clientName;
   final String travelName;
   final String destination;
   final String startLocation;
@@ -28,7 +28,7 @@ class DashboardTravelSummary {
 
   const DashboardTravelSummary({
     required this.id,
-    required this.clientId,
+    required this.clientName,
     required this.travelName,
     required this.destination,
     required this.startLocation,

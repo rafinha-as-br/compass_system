@@ -47,7 +47,7 @@ class DashboardStatsDto {
 
 class DashboardTravelSummaryDto {
   final String id;
-  final String clientId;
+  final String clientName;
   final String travelName;
   final String destination;
   final String startLocation;
@@ -57,7 +57,7 @@ class DashboardTravelSummaryDto {
 
   const DashboardTravelSummaryDto({
     required this.id,
-    required this.clientId,
+    required this.clientName,
     required this.travelName,
     required this.destination,
     required this.startLocation,
@@ -70,7 +70,7 @@ class DashboardTravelSummaryDto {
     final routePlan = json['routePlan'] as Map<String, dynamic>? ?? const {};
     return DashboardTravelSummaryDto(
       id: json['id'] as String? ?? '',
-      clientId: json['clientName'] as String? ?? '',
+      clientName: json['clientName'] as String? ?? '',
       travelName: json['travelName'] as String? ?? '',
       destination: routePlan['destination'] as String? ?? '',
       startLocation: routePlan['startLocation'] as String? ?? '',
@@ -84,7 +84,7 @@ class DashboardTravelSummaryDto {
   DashboardTravelSummary toDomain() {
     return DashboardTravelSummary(
       id: id,
-      clientId: clientId,
+      clientName: clientName,
       travelName: travelName,
       destination: destination,
       startLocation: startLocation,

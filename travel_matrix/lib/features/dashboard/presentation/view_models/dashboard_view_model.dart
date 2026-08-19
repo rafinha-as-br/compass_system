@@ -33,17 +33,21 @@ class DashboardViewModel {
 
 class DashboardTravelRowViewModel {
   final String id;
-  final String clientId;
+  final String clientName;
   final String travelName;
   final String route;
   final String destination;
   final DateTime startDate;
+
+  /// Status bruto vindo do backend (ex.: `route_created`). A tradução para
+  /// texto exibível ao usuário é responsabilidade da camada de apresentação
+  /// (que tem acesso a l10n) — ver `_statusLabel` em `dashboard_page.dart`.
   final String status;
   final bool hasItinerary;
 
   const DashboardTravelRowViewModel({
     required this.id,
-    required this.clientId,
+    required this.clientName,
     required this.travelName,
     required this.route,
     required this.destination,
@@ -55,29 +59,14 @@ class DashboardTravelRowViewModel {
   factory DashboardTravelRowViewModel.fromDomain(DashboardTravelSummary travel) {
     return DashboardTravelRowViewModel(
       id: travel.id,
-      clientId: travel.clientId,
+      clientName: travel.clientName,
       travelName: travel.travelName,
       route: '${travel.startLocation} -> ${travel.destination}',
       destination: travel.destination,
       startDate: travel.startDate,
-      status: _humanizeStatus(travel.status),
+      status: travel.status,
       hasItinerary: travel.hasItinerary,
     );
-  }
-
-  static String _humanizeStatus(String status) {
-    switch (status) {
-      case 'route_created':
-        return 'Route Only';
-      case 'itinerary_created':
-        return 'Itinerary Ready';
-      case 'travel_started':
-        return 'In Progress';
-      case 'travel_finished':
-        return 'Completed';
-      default:
-        return status;
-    }
   }
 }
 

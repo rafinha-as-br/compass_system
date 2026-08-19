@@ -61,6 +61,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noTravelsCreated => 'No travels created yet.';
 
   @override
+  String get failedToLoadDashboard =>
+      'Unable to load your dashboard right now. Please try again later.';
+
+  @override
   String get statusComplete => 'COMPLETE';
 
   @override
@@ -77,6 +81,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get routeOnly => 'Route Only';
+
+  @override
+  String get travelInProgress => 'In Progress';
+
+  @override
+  String get travelCompleted => 'Completed';
 
   @override
   String get clientLabel => 'Client';

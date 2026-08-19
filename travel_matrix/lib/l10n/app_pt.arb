@@ -20,6 +20,7 @@
   "activeClients": "Clientes Ativos",
   "recentTravelUpdates": "Atualizações Recentes",
   "noTravelsCreated": "Nenhuma viagem criada ainda.",
+  "failedToLoadDashboard": "Não foi possível carregar seu painel agora. Tente novamente mais tarde.",
   "statusComplete": "COMPLETO",
   "statusPending": "PENDENTE",
 
@@ -27,6 +28,8 @@
   "createTravel": "Criar Viagem",
   "itineraryReady": "Roteiro Pronto",
   "routeOnly": "Apenas Rota",
+  "travelInProgress": "Em Andamento",
+  "travelCompleted": "Concluída",
   "clientLabel": "Cliente",
 
   "createTravelTitle": "Criar Viagem",

@@ -61,6 +61,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get noTravelsCreated => 'Nenhuma viagem criada ainda.';
 
   @override
+  String get failedToLoadDashboard =>
+      'Não foi possível carregar seu painel agora. Tente novamente mais tarde.';
+
+  @override
   String get statusComplete => 'COMPLETO';
 
   @override
@@ -77,6 +81,12 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get routeOnly => 'Apenas Rota';
+
+  @override
+  String get travelInProgress => 'Em Andamento';
+
+  @override
+  String get travelCompleted => 'Concluída';
 
   @override
   String get clientLabel => 'Cliente';
