@@ -131,6 +131,7 @@
   "phoneLabel": "Phone",
   "editAgentData": "Edit Agent Data",
   "changePassword": "Change Password",
+  "failedToLoadProfile": "Unable to load your profile right now. Please try again later.",
   "currentPassword": "Current Password",
   "newPassword": "New Password",
   "digitalConcierge": "THE DIGITAL CONCIERGE",

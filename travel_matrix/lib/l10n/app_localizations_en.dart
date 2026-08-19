@@ -301,6 +301,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get changePassword => 'Change Password';
 
   @override
+  String get failedToLoadProfile =>
+      'Unable to load your profile right now. Please try again later.';
+
+  @override
   String get currentPassword => 'Current Password';
 
   @override

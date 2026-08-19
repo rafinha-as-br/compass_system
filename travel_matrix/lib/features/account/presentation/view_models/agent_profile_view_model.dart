@@ -34,4 +34,19 @@ class AgentProfileViewModel {
     if (parts.length == 1) return parts.first[0].toUpperCase();
     return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is AgentProfileViewModel &&
+          runtimeType == other.runtimeType &&
+          id == other.id &&
+          name == other.name &&
+          email == other.email &&
+          cpf == other.cpf &&
+          cnpj == other.cnpj &&
+          phoneNumber == other.phoneNumber;
+
+  @override
+  int get hashCode => Object.hash(id, name, email, cpf, cnpj, phoneNumber);
 }

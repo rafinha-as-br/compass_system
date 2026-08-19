@@ -302,6 +302,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get changePassword => 'Trocar Senha';
 
   @override
+  String get failedToLoadProfile =>
+      'Não foi possível carregar seu perfil agora. Tente novamente mais tarde.';
+
+  @override
   String get currentPassword => 'Senha Atual';
 
   @override
