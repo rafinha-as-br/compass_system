@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:routecraft_app/core/mock/mock_repository.dart';
 import 'package:routecraft_app/core/services/compass_service.dart';
 import 'package:routecraft_app/core/services/local_db_service.dart';
 import 'package:routecraft_app/core/services/auth_service.dart';

@@ -1,4 +1,4 @@
-import 'package:mock_repository/mock_repository.dart';
+import 'package:routecraft_app/core/mock/mock_repository.dart';
 
 /// Wraps MockApiService for the RouteCraft client application.
 /// All methods pass through the bearer token for authentication.
