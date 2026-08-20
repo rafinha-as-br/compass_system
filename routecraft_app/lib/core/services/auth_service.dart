@@ -44,16 +44,6 @@ class AuthService {
     return true;
   }
 
-  /// Reads the `userType` claim (AGENTE/CLIENTE) from the stored JWT.
-  /// Returns null when there is no session or the token is malformed.
-  Future<String?> getUserType() async {
-    final token = await getToken();
-    if (token == null) return null;
-
-    final claims = _decodeClaims(token);
-    return claims?['userType'] as String?;
-  }
-
   Map<String, dynamic>? _decodeClaims(String token) {
     try {
       return JwtPayloadDecoder.decode(token);

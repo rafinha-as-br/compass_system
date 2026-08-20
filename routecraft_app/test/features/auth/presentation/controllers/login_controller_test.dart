@@ -18,7 +18,7 @@ class _StubAuthRepository implements AuthRepository {
 void main() {
   group('LoginController.login', () {
     test('on success, saves the token and clears loading/error state', () async {
-      const session = AuthSession(token: 'jwt', userType: 'CLIENTE', email: 'a@b.com');
+      const session = AuthSession(token: 'jwt', email: 'a@b.com');
       final useCase = LoginUseCase(_StubAuthRepository(const Result.success(session)));
       String? savedToken;
 
@@ -67,7 +67,7 @@ void main() {
       expect(controller.state.errorMessage, isNotNull);
 
       repository.result = const Result.success(
-        AuthSession(token: 'jwt', userType: 'CLIENTE', email: 'a@b.com'),
+        AuthSession(token: 'jwt', email: 'a@b.com'),
       );
 
       await controller.login('a@b.com', 'secret');
