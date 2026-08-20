@@ -2,24 +2,18 @@ import 'package:routecraft_app/features/auth/domain/entities/auth_session.dart';
 
 class AuthSessionDto {
   final String token;
-  final String userType;
   final String email;
 
-  const AuthSessionDto({
-    required this.token,
-    required this.userType,
-    required this.email,
-  });
+  const AuthSessionDto({required this.token, required this.email});
 
   factory AuthSessionDto.fromJson(Map<String, dynamic> json) {
     return AuthSessionDto(
       token: json['token'] as String,
-      userType: json['userType'] as String,
       email: json['email'] as String,
     );
   }
 
   AuthSession toDomain() {
-    return AuthSession(token: token, userType: userType, email: email);
+    return AuthSession(token: token, email: email);
   }
 }

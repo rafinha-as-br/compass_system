@@ -2,7 +2,7 @@ import 'dart:convert';
 
 /// Decodes the payload of a JWT without verifying its signature — signature
 /// verification is the backend's responsibility. Only used client-side to
-/// read claims (userType, exp) for UX purposes.
+/// read claims (exp) for UX purposes.
 abstract final class JwtPayloadDecoder {
   static Map<String, dynamic> decode(String token) {
     final parts = token.split('.');

@@ -26,7 +26,6 @@ void main() {
               'userId': '1',
               'name': 'John',
               'email': 'john@example.com',
-              'userType': 'CLIENTE',
             },
             'message': null,
           }),
@@ -39,7 +38,6 @@ void main() {
       expect(result.isSuccess, isTrue);
       final session = (result as Success<AuthSession>).data;
       expect(session.token, 'jwt-token');
-      expect(session.userType, 'CLIENTE');
     });
 
     test('returns Failure with the server message on a 400 response', () async {
