@@ -119,6 +119,7 @@
   "phoneLabel": "Telefone",
   "editAgentData": "Editar Dados do Agente",
   "changePassword": "Trocar Senha",
+  "failedToLoadProfile": "Não foi possível carregar seu perfil agora. Tente novamente mais tarde.",
   "currentPassword": "Senha Atual",
   "newPassword": "Nova Senha",
   "digitalConcierge": "O CONCIERGE DIGITAL",

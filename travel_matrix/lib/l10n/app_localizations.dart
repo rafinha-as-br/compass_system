@@ -674,6 +674,12 @@ abstract class AppLocalizations {
   /// **'Change Password'**
   String get changePassword;
 
+  /// No description provided for @failedToLoadProfile.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load your profile right now. Please try again later.'**
+  String get failedToLoadProfile;
+
   /// No description provided for @currentPassword.
   ///
   /// In en, this message translates to:

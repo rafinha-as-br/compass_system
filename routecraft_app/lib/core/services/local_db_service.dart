@@ -1,7 +1,7 @@
 import 'package:sqflite/sqflite.dart';
 import 'package:path/path.dart';
 
-import 'package:mock_repository/mock_repository.dart';
+import 'package:routecraft_app/core/mock/mock_repository.dart';
 
 class LocalDbService {
   static LocalDbService? _instance;
