@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 
 import '../../../../app/global_controllers/auth_controller.dart';
 import '../controllers/login_controller.dart';
@@ -53,7 +54,7 @@ class _LoginPanelState extends State<LoginPanel> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                _LoginBackButton(onPressed: controller.showLogin),
+                BackIconButton(onPressed: controller.showLogin),
                 const SizedBox(height: 24),
                 const _LoginHeader(),
                 const SizedBox(height: 48),
@@ -75,24 +76,6 @@ class _LoginPanelState extends State<LoginPanel> {
           ),
         );
       },
-    );
-  }
-}
-
-class _LoginBackButton extends StatelessWidget {
-  const _LoginBackButton({required this.onPressed});
-
-  final VoidCallback onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return Align(
-      alignment: Alignment.topLeft,
-      child: IconButton(
-        icon: const Icon(Icons.arrow_back),
-        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
-        onPressed: onPressed,
-      ),
     );
   }
 }
