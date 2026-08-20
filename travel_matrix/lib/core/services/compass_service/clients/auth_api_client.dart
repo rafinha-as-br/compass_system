@@ -17,10 +17,13 @@ class AuthApiClient {
     return _instance!;
   }
 
+  /// Travel Matrix só é usado por Agentes — o backend rejeita o login de um
+  /// Cliente com credenciais válidas através do parâmetro `expectedUserType`.
   Future<Map<String, dynamic>> login(String email, String password) async {
     return HttpApiClient.instance.post('', ApiEndpoints.login, {
       'email': email,
       'password': password,
+      'expectedUserType': 'AGENTE',
     });
   }
 

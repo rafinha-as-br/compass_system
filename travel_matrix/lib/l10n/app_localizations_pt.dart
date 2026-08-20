@@ -18,10 +18,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get loginSubtitle => 'Faça login para continuar';
 
   @override
+  String get loginLabel => 'Acessar o Travel Matrix';
+
+  @override
   String get loginEmailLabel => 'E-mail';
 
   @override
   String get loginPasswordLabel => 'Senha';
+
+  @override
+  String get loginTitlePanel => 'Login do Agente';
+
+  @override
+  String get loginSubtitlePanel => 'Por favor, autentique-se para continuar';
 
   @override
   String get loginButton => 'ENTRAR COMO AGENTE';
@@ -310,6 +319,10 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get changePassword => 'Trocar Senha';
+
+  @override
+  String get failedToLoadProfile =>
+      'Não foi possível carregar seu perfil agora. Tente novamente mais tarde.';
 
   @override
   String get currentPassword => 'Senha Atual';

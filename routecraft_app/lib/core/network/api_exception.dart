@@ -1,0 +1,40 @@
+class ApiException implements Exception {
+  final String message;
+  final int? statusCode;
+
+  ApiException(this.message, [this.statusCode]);
+
+  factory ApiException.fromStatusCode(int? code, dynamic data) {
+    String message;
+    if (data is Map<String, dynamic>) {
+      message = data['message']?.toString() ??
+                data['error']?.toString() ??
+                _defaultMessage(code);
+    } else if (data is String && data.isNotEmpty) {
+      message = data;
+    } else {
+      message = _defaultMessage(code);
+    }
+    return ApiException(message, code);
+  }
+
+  static String _defaultMessage(int? code) {
+    switch (code) {
+      case 400:
+        return "Requisição inválida";
+      case 401:
+        return "Não autorizado";
+      case 403:
+        return "Acesso negado";
+      case 404:
+        return "Não encontrado";
+      case 500:
+        return "Erro no servidor";
+      default:
+        return "Erro desconhecido (código: $code)";
+    }
+  }
+
+  @override
+  String toString() => 'ApiException($statusCode): $message';
+}

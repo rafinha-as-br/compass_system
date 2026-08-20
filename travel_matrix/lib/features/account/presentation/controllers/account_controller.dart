@@ -7,25 +7,24 @@ import 'package:travel_matrix/features/account/presentation/view_models/agent_pr
 class AccountState {
   final bool isLoading;
   final AgentProfileViewModel? profile;
-  final String? errorMessage;
+  final bool hasError;
 
   const AccountState({
     this.isLoading = true,
     this.profile,
-    this.errorMessage,
+    this.hasError = false,
   });
 }
 
 class AccountController extends ChangeNotifier {
-  late final GetAgentProfile _getAgentProfile;
+  final GetAgentProfile _getAgentProfile;
 
   AccountState _state = const AccountState();
   AccountState get state => _state;
 
-  AccountController() {
-    _getAgentProfile = GetAgentProfile(
-      AccountRepositoryImpl(AccountDataSource()),
-    );
+  AccountController({GetAgentProfile? getAgentProfile})
+      : _getAgentProfile = getAgentProfile ??
+            GetAgentProfile(AccountRepositoryImpl(AccountDataSource())) {
     load();
   }
 
@@ -40,10 +39,8 @@ class AccountController extends ChangeNotifier {
         profile: AgentProfileViewModel.fromDomain(profile),
       );
     } catch (e) {
-      _state = AccountState(
-        isLoading: false,
-        errorMessage: e.toString(),
-      );
+      debugPrint('AccountController.load failed: $e');
+      _state = const AccountState(isLoading: false, hasError: true);
     }
 
     notifyListeners();

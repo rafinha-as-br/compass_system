@@ -1,6 +1,11 @@
 import 'package:flutter/material.dart';
+import 'package:routecraft_app/core/entities/result.dart';
+import 'package:routecraft_app/core/network/http_api_client.dart';
 import 'package:routecraft_app/core/services/auth_service.dart';
-import 'package:routecraft_app/core/services/compass_service.dart';
+import 'package:routecraft_app/features/auth/data/datasources/auth_remote_datasource.dart';
+import 'package:routecraft_app/features/auth/data/repositories/auth_repository_impl.dart';
+import 'package:routecraft_app/features/auth/domain/entities/auth_session.dart';
+import 'package:routecraft_app/features/auth/domain/usecases/login_usecase.dart';
 
 class LoginState {
   final bool isLoading;
@@ -17,12 +22,26 @@ class LoginState {
   }) {
     return LoginState(
       isLoading: isLoading ?? this.isLoading,
-      errorMessage: errorMessage ?? this.errorMessage,
+      errorMessage: errorMessage,
     );
   }
 }
 
 class LoginController extends ChangeNotifier {
+  final LoginUseCase _loginUseCase;
+  final Future<void> Function(String token) _saveToken;
+
+  LoginController({
+    LoginUseCase? loginUseCase,
+    Future<void> Function(String token)? saveToken,
+  })  : _loginUseCase = loginUseCase ??
+            LoginUseCase(
+              AuthRepositoryImpl(
+                AuthRemoteDataSource(HttpApiClient.instance),
+              ),
+            ),
+        _saveToken = saveToken ?? AuthService.instance.saveToken;
+
   LoginState _state = const LoginState();
 
   LoginState get state => _state;
@@ -31,32 +50,18 @@ class LoginController extends ChangeNotifier {
     _state = _state.copyWith(isLoading: true, errorMessage: null);
     notifyListeners();
 
-    try {
-      final response = await CompassService.instance.login(email, password);
-      
-      if (response['status'] == 'success') {
-        final data = response['data'] as Map<String, dynamic>;
-        final token = data['token'] as String;
+    final result = await _loginUseCase(email, password);
 
-        await AuthService.instance.saveToken(token);
+    switch (result) {
+      case Success<AuthSession>(data: final session):
+        await _saveToken(session.token);
         _state = _state.copyWith(isLoading: false);
         notifyListeners();
         return true;
-      } else {
-        _state = _state.copyWith(
-          isLoading: false,
-          errorMessage: response['message'] as String? ?? 'Invalid credentials. Please try again.',
-        );
+      case Failure<AuthSession>(message: final message):
+        _state = _state.copyWith(isLoading: false, errorMessage: message);
         notifyListeners();
         return false;
-      }
-    } catch (e) {
-      _state = _state.copyWith(
-        isLoading: false,
-        errorMessage: 'An error occurred during login.',
-      );
-      notifyListeners();
-      return false;
     }
   }
 }

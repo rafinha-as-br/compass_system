@@ -1,4 +1,5 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:routecraft_app/core/network/jwt_payload_decoder.dart';
 
 class AuthService {
   static AuthService? _instance;
@@ -28,8 +29,26 @@ class AuthService {
     await _storage.delete(key: 'auth_token');
   }
 
+  /// True when there is a stored token that is well-formed and not expired.
+  /// An expired or malformed token is treated as no session and is cleared.
   Future<bool> isAuthenticated() async {
     final token = await getToken();
-    return token != null && token.isNotEmpty;
+    if (token == null || token.isEmpty) return false;
+
+    final claims = _decodeClaims(token);
+    if (claims == null || JwtPayloadDecoder.isExpired(claims)) {
+      await clearToken();
+      return false;
+    }
+
+    return true;
+  }
+
+  Map<String, dynamic>? _decodeClaims(String token) {
+    try {
+      return JwtPayloadDecoder.decode(token);
+    } on FormatException {
+      return null;
+    }
   }
 }

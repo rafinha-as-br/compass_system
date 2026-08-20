@@ -18,10 +18,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginSubtitle => 'Please login to continue';
 
   @override
+  String get loginLabel => 'Access Travel Matrix';
+
+  @override
   String get loginEmailLabel => 'Email';
 
   @override
   String get loginPasswordLabel => 'Password';
+
+  @override
+  String get loginTitlePanel => 'Agent Login';
+
+  @override
+  String get loginSubtitlePanel => 'Please authenticate to continue';
 
   @override
   String get loginButton => 'LOGIN AS AGENT';
@@ -309,6 +318,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get changePassword => 'Change Password';
+
+  @override
+  String get failedToLoadProfile =>
+      'Unable to load your profile right now. Please try again later.';
 
   @override
   String get currentPassword => 'Current Password';

@@ -32,6 +32,11 @@ public class AuthController {
     public static class LoginRequest {
         public String email;
         public String password;
+        // Opcional: quando informado ("AGENTE" ou "CLIENTE"), o login unificado
+        // só é aceito se o tipo do usuário encontrado bater com o esperado.
+        // Usado pelo Travel Matrix (só AGENTE); o RouteCraft não envia esse
+        // campo e continua aceitando qualquer tipo, como antes.
+        public String expectedUserType;
     }
 
     // ==================== CADASTRO ====================
@@ -136,6 +141,9 @@ public class AuthController {
         // Tenta como agente primeiro
         Optional<AgentUser> agentOpt = agentRepository.findByEmail(login.email);
         if (agentOpt.isPresent() && BCrypt.checkpw(login.password, agentOpt.get().getPassword())) {
+            if (login.expectedUserType != null && !"AGENTE".equals(login.expectedUserType)) {
+                throw new BusinessException("Acesso negado. Este usuário não tem permissão para acessar esta aplicação.");
+            }
             AgentUser agent = agentOpt.get();
             String token = jwtUtil.generateToken(agent.getEmail(), "AGENTE", agent.getId());
 
@@ -156,6 +164,9 @@ public class AuthController {
         // Tenta como cliente
         Optional<ClientUser> clientOpt = clientRepository.findByEmail(login.email);
         if (clientOpt.isPresent() && BCrypt.checkpw(login.password, clientOpt.get().getPassword())) {
+            if (login.expectedUserType != null && !"CLIENTE".equals(login.expectedUserType)) {
+                throw new BusinessException("Acesso negado. Este usuário não tem permissão para acessar esta aplicação.");
+            }
             ClientUser client = clientOpt.get();
             String token = jwtUtil.generateToken(client.getEmail(), "CLIENTE", client.getId());
 

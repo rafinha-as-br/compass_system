@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:routecraft_app/core/mock/mock_repository.dart';
 
 import 'package:routecraft_app/features/home/presentation/pages/follow_travel_page.dart';
 import 'package:routecraft_app/features/visualization/presentation/controllers/visualization_controller.dart';

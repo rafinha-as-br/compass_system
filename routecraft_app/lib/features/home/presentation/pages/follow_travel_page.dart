@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:mock_repository/mock_repository.dart';
+import 'package:routecraft_app/core/mock/mock_repository.dart';
 
 class FollowTravelPage extends StatefulWidget {
   final Travel? travel;

@@ -1,4 +1,4 @@
-import 'package:mock_repository/mock_repository.dart';
+import 'package:routecraft_app/core/mock/mock_repository.dart';
 
 /// Wraps MockApiService for the RouteCraft client application.
 /// All methods pass through the bearer token for authentication.
@@ -16,13 +16,6 @@ class CompassService {
   static CompassService get instance {
     assert(_instance != null, 'CompassService instance not initialized!');
     return _instance!;
-  }
-
-  // ─── Auth ───────────────────────────────────────────────────────────
-
-  Future<Map<String, dynamic>> login(String email, String password) async {
-    final response = await _apiService.login(email, password);
-    return response.body;
   }
 
   // ─── Users ──────────────────────────────────────────────────────────
