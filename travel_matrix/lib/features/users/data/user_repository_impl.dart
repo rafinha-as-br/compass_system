@@ -33,6 +33,17 @@ class UserClientRepositoryImpl implements UserClientRepository {
   }
 
   @override
+  Future<Result<UserClient>> getAuthenticatedUser() async {
+    try {
+      final response = await _dataSource.getAuthenticatedUser();
+      final dto = UserDTO.fromJson(response);
+      return Result.success(dto.toDomain());
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
+  @override
   Future<Result<List<UserClient>>> getAllUsers() async {
     try {
       final response = await _dataSource.getAllUsers();

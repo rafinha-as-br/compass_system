@@ -1,13 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:travel_matrix/core/services/auth_storage_service.dart';
-import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
+import 'package:travel_matrix/features/travels/data/dtos/itinerary_dto.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/crud_itinerary.dart';
 
 class CreateItineraryController extends ChangeNotifier {
+  final CrudItinerary crudItinerary;
+
   bool _isLoading = false;
   String? _error;
 
   bool get isLoading => _isLoading;
   String? get error => _error;
+
+  CreateItineraryController({required this.crudItinerary});
 
   /// Creates an itinerary for the given travel.
   ///
@@ -16,47 +20,21 @@ class CreateItineraryController extends ChangeNotifier {
     String travelId,
     Map<String, dynamic> itineraryData,
   ) async {
-    _setLoading(true);
-    _clearError();
+    _isLoading = true;
+    _error = null;
+    notifyListeners();
 
-    try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) {
-        _setError('Not authenticated.');
-        _setLoading(false);
-        return false;
-      }
+    final itineraryDto = ItineraryDTO.fromJson(itineraryData);
+    final result = await crudItinerary.upsert(travelId, itineraryDto.toDomain());
 
-      final response = await CompassService.instance
-          .createItinerary(token, travelId, itineraryData);
-
-      _setLoading(false);
-
-      if (response['status'] == 'success') {
-        return true;
-      } else {
-        _setError(
-            response['message'] as String? ?? 'Failed to create itinerary.');
-        return false;
-      }
-    } catch (e) {
-      _setError(e.toString());
-      _setLoading(false);
+    _isLoading = false;
+    if (result.isSuccess) {
+      notifyListeners();
+      return true;
+    } else {
+      _error = result.error ?? 'Failed to create itinerary.';
+      notifyListeners();
       return false;
     }
-  }
-
-  void _setLoading(bool value) {
-    _isLoading = value;
-    notifyListeners();
-  }
-
-  void _setError(String error) {
-    _error = error;
-    notifyListeners();
-  }
-
-  void _clearError() {
-    _error = null;
   }
 }

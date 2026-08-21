@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
-import 'package:travel_matrix/core/services/auth_storage_service.dart';
-import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:travel_matrix/features/travels/data/dtos/itinerary_step_dto.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/build/itinerary_build_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/editor/itinerary_editor_controller.dart';
@@ -11,6 +9,9 @@ import 'package:travel_matrix/features/travels/presentation/controllers/update/i
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/interest_points_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_builder_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_list_panel.dart';
+import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
+import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
+import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
 
 import '../../../data/repository_impl/itinerary_repository_impl.dart';
 import '../../../domain/repository/itinerary_repository.dart';
@@ -60,6 +61,11 @@ class ItineraryBuildPage extends StatelessWidget {
           update: (_, repo, __) => CrudItinerary(repo),
         ),
 
+        // UserUseCases dependency injection (used to resolve the current agent's name)
+        Provider<UserUseCases>(
+          create: (_) => UserUseCases(UserClientRepositoryImpl(UserClientDataSource())),
+        ),
+
         // Editor controller dependency injection
         ChangeNotifierProvider(
           create: (_) => ItineraryEditorController(
@@ -83,7 +89,12 @@ class ItineraryBuildPage extends StatelessWidget {
             update: (_, crud, controller) => controller!,
           )
         else
-          ChangeNotifierProvider(create: (_) => CreateItineraryController()),
+          ChangeNotifierProxyProvider<CrudItinerary, CreateItineraryController>(
+            create: (context) => CreateItineraryController(
+              crudItinerary: context.read<CrudItinerary>(),
+            ),
+            update: (_, crud, controller) => controller!,
+          ),
       ],
       child: _ItineraryBuildView(
         travelId: travelId,
@@ -109,19 +120,12 @@ class _ItineraryBuildView extends StatelessWidget {
   final ItineraryBuildModel buildModel;
   final bool isEditMode;
 
-  Future<String> _resolveAgentName() async {
-    final token = await AuthStorageService.instance.getToken();
-    if (token == null) return '';
+  Future<String> _resolveAgentName(BuildContext context) async {
+    final result = await context.read<UserUseCases>().getAuthenticatedUser();
+    if (!result.isSuccess || result.data == null) return '';
 
-    final response = await CompassService.instance.getUser(token);
-    if (response['status'] != 'success') return '';
-
-    final data = response['data'];
-    if (data is Map<String, dynamic>) {
-      return data['name']?.toString() ?? data['email']?.toString() ?? '';
-    }
-
-    return '';
+    final agent = result.data!;
+    return agent.name.isNotEmpty ? agent.name : agent.email;
   }
 
   Future<void> _saveItinerary(BuildContext context) async {
@@ -134,7 +138,7 @@ class _ItineraryBuildView extends StatelessWidget {
     final createController = isEditMode
         ? null
         : context.read<CreateItineraryController>();
-    final agentName = await _resolveAgentName();
+    final agentName = await _resolveAgentName(context);
 
     final itineraryData = {
       if (buildModel.itineraryId != null)

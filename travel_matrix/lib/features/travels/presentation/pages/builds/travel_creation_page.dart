@@ -2,21 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
-import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
-
-import '../../../../../core/services/auth_storage_service.dart';
+import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
+import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
+import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
 
 /// Simple helper class to populate the client dropdown.
 class _ClientItem {
   final String id;
   final String name;
   _ClientItem({required this.id, required this.name});
-  factory _ClientItem.fromJson(Map<String, dynamic> json) => _ClientItem(
-    id: json['id']?.toString() ?? '',
-    name: json['name']?.toString() ?? '',
-  );
 }
 
 /// Simple helper class for interest point data before API submission.
@@ -48,6 +44,7 @@ class TravelCreationPage extends StatefulWidget {
 }
 
 class _TravelCreationPageState extends State<TravelCreationPage> {
+  final _userUseCases = UserUseCases(UserClientRepositoryImpl(UserClientDataSource()));
   final _formKey = GlobalKey<FormState>();
   final _travelNameCtrl = TextEditingController();
   final _startLocationCtrl = TextEditingController();
@@ -71,13 +68,11 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
   }
 
   Future<void> _loadClients() async {
-    final token = await AuthStorageService.instance.getToken();
-    if (token == null) return;
-    final response = await CompassService.instance.getAllUsers(token);
-    if (response['status'] == 'success' && mounted) {
+    final result = await _userUseCases.getAllUsers();
+    if (result.isSuccess && result.data != null && mounted) {
       setState(() {
-        _clients = (response['data'] as List<dynamic>)
-            .map((e) => _ClientItem.fromJson(e as Map<String, dynamic>))
+        _clients = result.data!
+            .map((user) => _ClientItem(id: user.backEndId ?? user.domainId, name: user.name))
             .toList();
         if (_clients.isNotEmpty) {
           _selectedClientId = _clients.first.id;
@@ -121,13 +116,11 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
     final controller = context.read<TravelsController>();
 
     // Get agent info
-    final token = await AuthStorageService.instance.getToken();
     String agentId = 'agent_1';
-    if (token != null) {
-      final userResp = await CompassService.instance.getUser(token);
-      if (userResp['status'] == 'success') {
-        agentId = (userResp['data'] as Map<String, dynamic>)['id'] as String;
-      }
+    final agentResult = await _userUseCases.getAuthenticatedUser();
+    if (agentResult.isSuccess && agentResult.data != null) {
+      final agent = agentResult.data!;
+      agentId = agent.backEndId ?? agent.domainId;
     }
 
     final success = await controller.createTravel({

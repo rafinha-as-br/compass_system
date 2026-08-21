@@ -19,6 +19,11 @@ class UserUseCases{
     return await _repository.getUser(userId);
   }
 
+  /// Get the currently authenticated user
+  Future<Result<UserClient>> getAuthenticatedUser() async{
+    return await _repository.getAuthenticatedUser();
+  }
+
   /// Get all users method
   Future<Result<List<UserClient>>> getAllUsers() async{
     return await _repository.getAllUsers();

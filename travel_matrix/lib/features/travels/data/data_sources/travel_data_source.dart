@@ -25,6 +25,15 @@ class TravelDataSource {
     return TravelDTO.fromJson(result);
   }
 
+  /// Creates a travel from a raw creation-request payload — see
+  /// [TravelRepository.createTravelFromRequest] for why this doesn't go
+  /// through [TravelDTO] on the way in.
+  Future<TravelDTO> createTravelFromRequest(Map<String, dynamic> request) async {
+    final token = await _authService.getToken() ?? '';
+    final result = await _travelService.createTravel(token, request);
+    return TravelDTO.fromJson(result);
+  }
+
   Future<TravelDTO> updateTravel(String id, TravelDTO travelData) async {
     final token = await _authService.getToken() ?? '';
     final result = await _travelService.updateTravel(token, id, travelData.toJson());

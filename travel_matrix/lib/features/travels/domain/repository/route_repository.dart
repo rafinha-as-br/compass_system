@@ -4,16 +4,11 @@ import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 
 abstract class RouteRepository{
 
-  /// get
-  Future<Result<RoutePlan>> getRoute(String id);
-
-  /// create
-  Future<Result<RoutePlan>> createRoute(Map<String, dynamic> data);
-
-  /// update
-  Future<Result<RoutePlan>> updateRoute(Map<String, dynamic> data);
-
-  /// delete
-  Future<Result<bool>> deleteRute(String id);
+  /// Updates the route plan of an existing travel.
+  ///
+  /// The backend has no isolated route endpoint today — the route only
+  /// travels embedded inside a [Travel] (see CPS-69) — so implementations
+  /// are expected to compose this through the travel update path.
+  Future<Result<RoutePlan>> updateRoute(String travelId, RoutePlan routePlan);
 
 }

@@ -9,6 +9,8 @@ abstract class UserClientRepository{
   Future<Result> createUser(UserClient newUser);
   /// Get User method
   Future<Result<UserClient>> getUser(String userId);
+  /// Get the currently authenticated user
+  Future<Result<UserClient>> getAuthenticatedUser();
   /// Get all users method
   Future<Result<List<UserClient>>> getAllUsers();
   /// Update method
