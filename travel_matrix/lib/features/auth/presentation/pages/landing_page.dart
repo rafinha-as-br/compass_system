@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/features/auth/presentation/controllers/login_controller.dart';
+import 'package:travel_matrix/features/auth/presentation/widgets/forgot_password_panel.dart';
 import 'package:travel_matrix/features/auth/presentation/widgets/login_panel.dart';
+import 'package:travel_matrix/features/auth/presentation/widgets/reset_password_panel.dart';
 import 'package:travel_matrix/features/auth/presentation/widgets/welcome_panel.dart';
 
 class LandingPage extends StatelessWidget {
@@ -40,9 +42,12 @@ class LandingPage extends StatelessWidget {
                     transitionBuilder: (Widget child, Animation<double> animation) {
                       return FadeTransition(opacity: animation, child: child);
                     },
-                    child: Provider.of<LoginController>(context).state.showLogin
-                        ? WelcomePanel()
-                        : LoginPanel(),
+                    child: switch (Provider.of<LoginController>(context).state.panel) {
+                      AuthPanel.welcome => const WelcomePanel(),
+                      AuthPanel.login => const LoginPanel(),
+                      AuthPanel.forgotPassword => const ForgotPasswordPanel(),
+                      AuthPanel.resetPassword => const ResetPasswordPanel(),
+                    },
                   ),
                 ),
               ),

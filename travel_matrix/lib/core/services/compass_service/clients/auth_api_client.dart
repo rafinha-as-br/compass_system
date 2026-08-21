@@ -30,4 +30,17 @@ class AuthApiClient {
   Future<Map<String, dynamic>> register(Map<String, dynamic> userData) async {
     return HttpApiClient.instance.post('', ApiEndpoints.register, userData);
   }
+
+  Future<Map<String, dynamic>> requestPasswordReset(String email) async {
+    return HttpApiClient.instance.post('', ApiEndpoints.forgotPassword, {
+      'email': email,
+    });
+  }
+
+  Future<Map<String, dynamic>> resetPassword(String token, String newPassword) async {
+    return HttpApiClient.instance.post('', ApiEndpoints.resetPassword, {
+      'token': token,
+      'novaSenha': newPassword,
+    });
+  }
 }

@@ -55,6 +55,27 @@ class CompassService {
     }
   }
 
+  /// Requests a password reset email. Backend always responds with a
+  /// generic success message, regardless of whether the e-mail exists.
+  Future<Map<String, dynamic>> requestPasswordReset(String email) async {
+    try {
+      return await _authApiClient.requestPasswordReset(email);
+    } on ApiException catch (e) {
+      return {'status': 'error', 'data': null, 'message': e.message};
+    }
+  }
+
+  /// Resets the password using the token received by e-mail (self-service
+  /// flow). Not to be confused with the admin-initiated [resetPassword]
+  /// below, which resets a client's password to a fixed default.
+  Future<Map<String, dynamic>> resetPasswordWithToken(String token, String newPassword) async {
+    try {
+      return await _authApiClient.resetPassword(token, newPassword);
+    } on ApiException catch (e) {
+      return {'status': 'error', 'data': null, 'message': e.message};
+    }
+  }
+
   // ─── Users ──────────────────────────────────────────────────────────
 
   /// Returns the authenticated user's data.
