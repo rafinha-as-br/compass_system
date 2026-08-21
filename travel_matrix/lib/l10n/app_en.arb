@@ -146,5 +146,66 @@
   "settingsNav": "Settings",
   "supportNav": "Support",
   "logoutNav": "Logout",
-  "travelAgentRole": "Travel Agent"
+  "travelAgentRole": "Travel Agent",
+
+  "clientUsersTitle": "Client Users",
+  "searchUsersHint": "Search users...",
+  "activeStatusLabel": "Active",
+  "inactiveStatusLabel": "Inactive",
+  "noClientUsersFoundMessage": "No client users found.",
+  "backToUsersButton": "Back to Users",
+  "maleGenderLabel": "Male",
+  "femaleGenderLabel": "Female",
+  "otherOptionLabel": "Other",
+  "travelHistoryTitle": "Travel History",
+  "noTravelsForUserMessage": "No travels found for this user.",
+  "securityActionsTitle": "Security Actions",
+  "resetPasswordActionTitle": "Reset Password",
+  "resetPasswordActionDescription": "Send a link to the user's email to securely reset their password.",
+  "forceLogoutActionTitle": "Force Logout",
+  "forceLogoutActionDescription": "Immediately terminate all active sessions for this user.",
+  "resetPasswordSuccessMessage": "Password reset link sent",
+  "resetPasswordFailureMessage": "Failed to send reset link",
+  "forceLogoutSuccessMessage": "User sessions terminated",
+  "forceLogoutFailureMessage": "Failed to terminate sessions",
+  "travelStatsTitle": "Travel Stats",
+  "uniqueDestinationsStatLabel": "UNIQUE DESTINATIONS",
+  "forceLogoutConfirmTitle": "Force Logout?",
+  "forceLogoutConfirmMessage": "This will immediately terminate all active sessions for this user. Continue?",
+  "confirmActionButton": "CONFIRM",
+  "cancelActionButton": "CANCEL",
+  "newClientUserFormTitle": "New Client User",
+  "fullNameFieldLabel": "Full Name",
+  "nameRequiredValidation": "Name is required",
+  "cpfRequiredValidation": "CPF is required",
+  "emailRequiredValidation": "Email is required",
+  "phoneNumberFieldLabel": "Phone Number",
+  "phoneRequiredValidation": "Phone is required",
+  "initialPasswordFieldLabel": "Initial Password",
+  "passwordRequiredValidation": "Password is required",
+  "sexFieldLabel": "Sex",
+  "birthDateFieldLabel": "Birth Date",
+  "createUserSubmitButton": "CREATE USER",
+  "editUserPageSubtitle": "Edit: {name}",
+  "@editUserPageSubtitle": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "saveChangesButton": "SAVE CHANGES",
+  "deactivateUserDialogTitle": "Deactivate User",
+  "deactivateReasonPrompt": "Why are you deactivating {name}?",
+  "@deactivateReasonPrompt": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "deactivateReasonClientRequest": "Client request",
+  "deactivateReasonNonPayment": "Non-payment",
+  "deactivateReasonTermsViolation": "Terms of service violation",
+  "deactivateReasonDuplicateAccount": "Duplicate account",
+  "specifyReasonFieldLabel": "Specify the reason",
+  "deactivateButtonCaps": "DEACTIVATE",
+  "userNotFoundTitle": "User Not Found",
+  "userNotFoundMessage": "The requested user could not be found."
 }

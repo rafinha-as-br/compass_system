@@ -751,6 +751,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Travel Agent'**
   String get travelAgentRole;
+
+  /// No description provided for @clientUsersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Users'**
+  String get clientUsersTitle;
+
+  /// No description provided for @searchUsersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search users...'**
+  String get searchUsersHint;
+
+  /// No description provided for @activeStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activeStatusLabel;
+
+  /// No description provided for @inactiveStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get inactiveStatusLabel;
+
+  /// No description provided for @noClientUsersFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No client users found.'**
+  String get noClientUsersFoundMessage;
+
+  /// No description provided for @backToUsersButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Users'**
+  String get backToUsersButton;
+
+  /// No description provided for @maleGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get maleGenderLabel;
+
+  /// No description provided for @femaleGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get femaleGenderLabel;
+
+  /// No description provided for @otherOptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherOptionLabel;
+
+  /// No description provided for @travelHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel History'**
+  String get travelHistoryTitle;
+
+  /// No description provided for @noTravelsForUserMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No travels found for this user.'**
+  String get noTravelsForUserMessage;
+
+  /// No description provided for @securityActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Actions'**
+  String get securityActionsTitle;
+
+  /// No description provided for @resetPasswordActionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPasswordActionTitle;
+
+  /// No description provided for @resetPasswordActionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a link to the user\'s email to securely reset their password.'**
+  String get resetPasswordActionDescription;
+
+  /// No description provided for @forceLogoutActionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Force Logout'**
+  String get forceLogoutActionTitle;
+
+  /// No description provided for @forceLogoutActionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediately terminate all active sessions for this user.'**
+  String get forceLogoutActionDescription;
+
+  /// No description provided for @resetPasswordSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset link sent'**
+  String get resetPasswordSuccessMessage;
+
+  /// No description provided for @resetPasswordFailureMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send reset link'**
+  String get resetPasswordFailureMessage;
+
+  /// No description provided for @forceLogoutSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'User sessions terminated'**
+  String get forceLogoutSuccessMessage;
+
+  /// No description provided for @forceLogoutFailureMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to terminate sessions'**
+  String get forceLogoutFailureMessage;
+
+  /// No description provided for @travelStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Stats'**
+  String get travelStatsTitle;
+
+  /// No description provided for @uniqueDestinationsStatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'UNIQUE DESTINATIONS'**
+  String get uniqueDestinationsStatLabel;
+
+  /// No description provided for @forceLogoutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Force Logout?'**
+  String get forceLogoutConfirmTitle;
+
+  /// No description provided for @forceLogoutConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will immediately terminate all active sessions for this user. Continue?'**
+  String get forceLogoutConfirmMessage;
+
+  /// No description provided for @confirmActionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIRM'**
+  String get confirmActionButton;
+
+  /// No description provided for @cancelActionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get cancelActionButton;
+
+  /// No description provided for @newClientUserFormTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Client User'**
+  String get newClientUserFormTitle;
+
+  /// No description provided for @fullNameFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullNameFieldLabel;
+
+  /// No description provided for @nameRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get nameRequiredValidation;
+
+  /// No description provided for @cpfRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'CPF is required'**
+  String get cpfRequiredValidation;
+
+  /// No description provided for @emailRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get emailRequiredValidation;
+
+  /// No description provided for @phoneNumberFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumberFieldLabel;
+
+  /// No description provided for @phoneRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone is required'**
+  String get phoneRequiredValidation;
+
+  /// No description provided for @initialPasswordFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Password'**
+  String get initialPasswordFieldLabel;
+
+  /// No description provided for @passwordRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get passwordRequiredValidation;
+
+  /// No description provided for @sexFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sex'**
+  String get sexFieldLabel;
+
+  /// No description provided for @birthDateFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Date'**
+  String get birthDateFieldLabel;
+
+  /// No description provided for @createUserSubmitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CREATE USER'**
+  String get createUserSubmitButton;
+
+  /// No description provided for @editUserPageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit: {name}'**
+  String editUserPageSubtitle(String name);
+
+  /// No description provided for @saveChangesButton.
+  ///
+  /// In en, this message translates to:
+  /// **'SAVE CHANGES'**
+  String get saveChangesButton;
+
+  /// No description provided for @deactivateUserDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate User'**
+  String get deactivateUserDialogTitle;
+
+  /// No description provided for @deactivateReasonPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are you deactivating {name}?'**
+  String deactivateReasonPrompt(String name);
+
+  /// No description provided for @deactivateReasonClientRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Client request'**
+  String get deactivateReasonClientRequest;
+
+  /// No description provided for @deactivateReasonNonPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-payment'**
+  String get deactivateReasonNonPayment;
+
+  /// No description provided for @deactivateReasonTermsViolation.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service violation'**
+  String get deactivateReasonTermsViolation;
+
+  /// No description provided for @deactivateReasonDuplicateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate account'**
+  String get deactivateReasonDuplicateAccount;
+
+  /// No description provided for @specifyReasonFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Specify the reason'**
+  String get specifyReasonFieldLabel;
+
+  /// No description provided for @deactivateButtonCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'DEACTIVATE'**
+  String get deactivateButtonCaps;
+
+  /// No description provided for @userNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'User Not Found'**
+  String get userNotFoundTitle;
+
+  /// No description provided for @userNotFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The requested user could not be found.'**
+  String get userNotFoundMessage;
 }
 
 class _AppLocalizationsDelegate

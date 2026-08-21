@@ -350,4 +350,165 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get travelAgentRole => 'Agente de Viagens';
+
+  @override
+  String get clientUsersTitle => 'Usuários Clientes';
+
+  @override
+  String get searchUsersHint => 'Buscar usuários...';
+
+  @override
+  String get activeStatusLabel => 'Ativo';
+
+  @override
+  String get inactiveStatusLabel => 'Inativo';
+
+  @override
+  String get noClientUsersFoundMessage => 'Nenhum usuário cliente encontrado.';
+
+  @override
+  String get backToUsersButton => 'Voltar para Usuários';
+
+  @override
+  String get maleGenderLabel => 'Masculino';
+
+  @override
+  String get femaleGenderLabel => 'Feminino';
+
+  @override
+  String get otherOptionLabel => 'Outro';
+
+  @override
+  String get travelHistoryTitle => 'Histórico de Viagens';
+
+  @override
+  String get noTravelsForUserMessage =>
+      'Nenhuma viagem encontrada para este usuário.';
+
+  @override
+  String get securityActionsTitle => 'Ações de Segurança';
+
+  @override
+  String get resetPasswordActionTitle => 'Redefinir Senha';
+
+  @override
+  String get resetPasswordActionDescription =>
+      'Envia um link para o e-mail do usuário redefinir a senha com segurança.';
+
+  @override
+  String get forceLogoutActionTitle => 'Forçar Logout';
+
+  @override
+  String get forceLogoutActionDescription =>
+      'Encerra imediatamente todas as sessões ativas deste usuário.';
+
+  @override
+  String get resetPasswordSuccessMessage =>
+      'Link de redefinição de senha enviado';
+
+  @override
+  String get resetPasswordFailureMessage =>
+      'Falha ao enviar link de redefinição';
+
+  @override
+  String get forceLogoutSuccessMessage => 'Sessões do usuário encerradas';
+
+  @override
+  String get forceLogoutFailureMessage => 'Falha ao encerrar sessões';
+
+  @override
+  String get travelStatsTitle => 'Estatísticas de Viagem';
+
+  @override
+  String get uniqueDestinationsStatLabel => 'DESTINOS ÚNICOS';
+
+  @override
+  String get forceLogoutConfirmTitle => 'Forçar Logout?';
+
+  @override
+  String get forceLogoutConfirmMessage =>
+      'Isso encerrará imediatamente todas as sessões ativas deste usuário. Continuar?';
+
+  @override
+  String get confirmActionButton => 'CONFIRMAR';
+
+  @override
+  String get cancelActionButton => 'CANCELAR';
+
+  @override
+  String get newClientUserFormTitle => 'Novo Usuário Cliente';
+
+  @override
+  String get fullNameFieldLabel => 'Nome Completo';
+
+  @override
+  String get nameRequiredValidation => 'Nome é obrigatório';
+
+  @override
+  String get cpfRequiredValidation => 'CPF é obrigatório';
+
+  @override
+  String get emailRequiredValidation => 'Email é obrigatório';
+
+  @override
+  String get phoneNumberFieldLabel => 'Número de Telefone';
+
+  @override
+  String get phoneRequiredValidation => 'Telefone é obrigatório';
+
+  @override
+  String get initialPasswordFieldLabel => 'Senha Inicial';
+
+  @override
+  String get passwordRequiredValidation => 'Senha é obrigatória';
+
+  @override
+  String get sexFieldLabel => 'Sexo';
+
+  @override
+  String get birthDateFieldLabel => 'Data de Nascimento';
+
+  @override
+  String get createUserSubmitButton => 'CRIAR USUÁRIO';
+
+  @override
+  String editUserPageSubtitle(String name) {
+    return 'Editar: $name';
+  }
+
+  @override
+  String get saveChangesButton => 'SALVAR ALTERAÇÕES';
+
+  @override
+  String get deactivateUserDialogTitle => 'Desativar Usuário';
+
+  @override
+  String deactivateReasonPrompt(String name) {
+    return 'Por que você está desativando $name?';
+  }
+
+  @override
+  String get deactivateReasonClientRequest => 'Solicitação do cliente';
+
+  @override
+  String get deactivateReasonNonPayment => 'Inadimplência';
+
+  @override
+  String get deactivateReasonTermsViolation => 'Violação de termos de uso';
+
+  @override
+  String get deactivateReasonDuplicateAccount => 'Conta duplicada';
+
+  @override
+  String get specifyReasonFieldLabel => 'Especifique o motivo';
+
+  @override
+  String get deactivateButtonCaps => 'DESATIVAR';
+
+  @override
+  String get userNotFoundTitle => 'Usuário Não Encontrado';
+
+  @override
+  String get userNotFoundMessage =>
+      'O usuário solicitado não pôde ser encontrado.';
 }

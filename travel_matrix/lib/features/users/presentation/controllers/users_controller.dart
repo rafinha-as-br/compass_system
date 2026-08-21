@@ -17,27 +17,40 @@ class UsersState {
     this.users = const [],
     this.errorMessage,
   });
+
+  UsersState copyWith({
+    bool? isLoading,
+    List<UserClientViewModel>? users,
+    String? errorMessage,
+  }) {
+    return UsersState(
+      isLoading: isLoading ?? this.isLoading,
+      users: users ?? this.users,
+      errorMessage: errorMessage,
+    );
+  }
 }
 
 class UsersController extends ChangeNotifier {
-  late final UserUseCases _useCases;
+  final UserUseCases _useCases;
 
   UsersState _state = const UsersState();
   UsersState get state => _state;
 
-  UsersController() {
-    _useCases = UserUseCases(UserClientRepositoryImpl(UserClientDataSource()));
+  UsersController({UserUseCases? useCases})
+      : _useCases =
+            useCases ?? UserUseCases(UserClientRepositoryImpl(UserClientDataSource())) {
     fetchUsers();
   }
 
   Future<void> fetchUsers() async {
-    _state = const UsersState(isLoading: true);
+    _state = _state.copyWith(isLoading: true);
     notifyListeners();
 
     try {
       final token = await AuthStorageService.instance.getToken();
       if (token == null) {
-        _state = const UsersState(
+        _state = _state.copyWith(
             isLoading: false,
             errorMessage: 'Not authenticated.');
         notifyListeners();
@@ -52,14 +65,14 @@ class UsersController extends ChangeNotifier {
             .toList();
         _state = UsersState(isLoading: false, users: clients);
       } else {
-        _state = UsersState(
+        _state = _state.copyWith(
           isLoading: false,
           errorMessage: result.error,
         );
       }
       notifyListeners();
     } catch (e) {
-      _state = UsersState(
+      _state = _state.copyWith(
         isLoading: false,
         errorMessage: 'Failed to fetch users: $e',
       );
@@ -74,8 +87,12 @@ class UsersController extends ChangeNotifier {
         await fetchUsers();
         return true;
       }
+      _state = _state.copyWith(errorMessage: result.error);
+      notifyListeners();
       return false;
-    } catch (_) {
+    } catch (e) {
+      _state = _state.copyWith(errorMessage: 'Failed to deactivate user: $e');
+      notifyListeners();
       return false;
     }
   }
@@ -83,8 +100,14 @@ class UsersController extends ChangeNotifier {
   Future<bool> resetPassword(String userId) async {
     try {
       final result = await _useCases.resetPassword(userId);
+      if (!result.isSuccess) {
+        _state = _state.copyWith(errorMessage: result.error);
+        notifyListeners();
+      }
       return result.isSuccess;
-    } catch (_) {
+    } catch (e) {
+      _state = _state.copyWith(errorMessage: 'Failed to reset password: $e');
+      notifyListeners();
       return false;
     }
   }
@@ -92,8 +115,14 @@ class UsersController extends ChangeNotifier {
   Future<bool> forceLogout(String userId) async {
     try {
       final result = await _useCases.forceLogout(userId);
+      if (!result.isSuccess) {
+        _state = _state.copyWith(errorMessage: result.error);
+        notifyListeners();
+      }
       return result.isSuccess;
-    } catch (_) {
+    } catch (e) {
+      _state = _state.copyWith(errorMessage: 'Failed to force logout: $e');
+      notifyListeners();
       return false;
     }
   }
@@ -109,9 +138,8 @@ class UsersController extends ChangeNotifier {
         await fetchUsers();
         return true;
       }
-      _state = UsersState(
+      _state = _state.copyWith(
         isLoading: false,
-        users: _state.users,
         errorMessage: response['message'] as String?,
       );
       notifyListeners();

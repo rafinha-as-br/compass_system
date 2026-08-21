@@ -7,6 +7,7 @@ import 'package:travel_matrix/features/users/presentation/view_models/client_vie
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/users/presentation/pages/deactivate_user_dialog.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 import '../view_models/client_status_view_model.dart';
 
@@ -39,16 +40,19 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
     final controller = context.watch<UsersController>();
     final state = controller.state;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final activeLabel = l10n.activeStatusLabel;
+    final inactiveLabel = l10n.inactiveStatusLabel;
 
     // Apply filters
     var filteredUsers = state.users.where((user) {
       final matchesSearch = user.name.toLowerCase().contains(_searchQuery.toLowerCase()) ||
           user.email.toLowerCase().contains(_searchQuery.toLowerCase());
-      
+
       bool matchesStatus = true;
-      if (_statusFilter == 'Active') {
+      if (_statusFilter == activeLabel) {
         matchesStatus = user.status.status is ActiveStatusViewModel;
-      } else if (_statusFilter == 'Inactive') {
+      } else if (_statusFilter == inactiveLabel) {
         matchesStatus = user.status.status is! ActiveStatusViewModel;
       }
 
@@ -62,7 +66,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
         children: [
           // Header Row 1
           Text(
-            'Client Users',
+            l10n.clientUsersTitle,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -77,7 +81,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                 flex: 2,
                 child: TextField(
                   decoration: InputDecoration(
-                    hintText: 'Search users...',
+                    hintText: l10n.searchUsersHint,
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
@@ -111,13 +115,13 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      hint: const Text('Status'),
+                      hint: Text(l10n.statusColumn),
                       value: _statusFilter,
                       icon: const Icon(Icons.keyboard_arrow_down),
-                      items: const [
-                        DropdownMenuItem(value: null, child: Text('All Status')),
-                        DropdownMenuItem(value: 'Active', child: Text('Active')),
-                        DropdownMenuItem(value: 'Inactive', child: Text('Inactive')),
+                      items: [
+                        DropdownMenuItem(value: null, child: Text(l10n.allStatus)),
+                        DropdownMenuItem(value: activeLabel, child: Text(activeLabel)),
+                        DropdownMenuItem(value: inactiveLabel, child: Text(inactiveLabel)),
                       ],
                       onChanged: (value) {
                         setState(() {
@@ -129,7 +133,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                 ),
               ),
               const SizedBox(width: 16),
-              
+
               // Spacer
               const Spacer(flex: 2),
 
@@ -142,7 +146,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                   );
                 },
                 icon: const Icon(Icons.add),
-                label: const Text('Create User'),
+                label: Text(l10n.createUser),
                 style: ElevatedButton.styleFrom(
                   backgroundColor: theme.colorScheme.secondary,
                   foregroundColor: theme.colorScheme.onSecondary,
@@ -172,7 +176,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                 : filteredUsers.isEmpty
                     ? Center(
                         child: Text(
-                          'No client users found.',
+                          l10n.noClientUsersFoundMessage,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface
                                 .withValues(alpha: 0.6),
@@ -199,6 +203,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
     UsersController controller,
   ) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return LayoutBuilder(
       builder: (context, constraints) {
@@ -214,11 +219,11 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
               dataRowMaxHeight: 64,
               dataRowMinHeight: 64,
               columns: [
-                DataColumn(label: Text('Name', style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text('Email', style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text('Phone', style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text('Status', style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text('Actions', style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.clientNameColumn, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.loginEmailLabel, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.phoneLabel, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.statusColumn, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.actionsColumn, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
               ],
               rows: users.map((user) {
                 return DataRow(
@@ -268,7 +273,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                             ),
                             const SizedBox(width: 4),
                             Text(
-                              user.status.status is ActiveStatusViewModel ? 'Active' : 'Inactive',
+                              user.status.status is ActiveStatusViewModel ? l10n.activeStatusLabel : l10n.inactiveStatusLabel,
                               style: TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -288,13 +293,13 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                           IconButton(
                             icon: const Icon(Icons.remove_red_eye_outlined, size: 20),
                             color: TravelAppColors.textSecondary,
-                            tooltip: 'View User',
+                            tooltip: l10n.viewUser,
                             onPressed: () => _navigateToUser(context, user, controller),
                           ),
                           IconButton(
                             icon: const Icon(Icons.block, size: 20),
                             color: TravelAppColors.textSecondary,
-                            tooltip: 'Deactivate User',
+                            tooltip: l10n.deactivateUserDialogTitle,
                             onPressed: () async {
                               final reason = await showDeactivateUserDialog(context, user.name);
                               if (reason != null) {

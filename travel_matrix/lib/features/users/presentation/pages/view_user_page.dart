@@ -3,7 +3,9 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
+import 'package:travel_matrix/features/users/presentation/pages/confirmation_dialog.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 import '../view_models/client_status_view_model.dart';
@@ -17,6 +19,7 @@ class ViewUserPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final controller = context.read<UsersController>();
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: TravelAppColors.background,
@@ -28,7 +31,7 @@ class ViewUserPage extends StatelessWidget {
           padding: const EdgeInsets.only(left: 24, top: 8, bottom: 8),
           child: OutlinedButton.icon(
             icon: const Icon(Icons.arrow_back, size: 18),
-            label: const Text('Back to Users'),
+            label: Text(l10n.backToUsersButton),
             style: OutlinedButton.styleFrom(
               foregroundColor: TravelAppColors.textPrimary,
               side: BorderSide(color: TravelAppColors.border),
@@ -49,7 +52,7 @@ class ViewUserPage extends StatelessWidget {
             padding: const EdgeInsets.only(right: 24, top: 8, bottom: 8),
             child: ElevatedButton.icon(
               icon: const Icon(Icons.edit, size: 18),
-              label: const Text('Edit User'),
+              label: Text(l10n.editUser),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.secondary,
                 foregroundColor: theme.colorScheme.onSecondary,
@@ -76,11 +79,11 @@ class ViewUserPage extends StatelessWidget {
                 children: [
                   SizedBox(
                     width: 300,
-                    child: _buildSidebar(theme),
+                    child: _buildSidebar(theme, l10n),
                   ),
                   const SizedBox(width: 24),
                   Expanded(
-                    child: _buildMainContent(theme, controller, context),
+                    child: _buildMainContent(theme, controller, context, l10n),
                   ),
                 ],
               );
@@ -88,9 +91,9 @@ class ViewUserPage extends StatelessWidget {
               return Column(
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _buildSidebar(theme),
+                  _buildSidebar(theme, l10n),
                   const SizedBox(height: 24),
-                  _buildMainContent(theme, controller, context),
+                  _buildMainContent(theme, controller, context, l10n),
                 ],
               );
             }
@@ -100,7 +103,7 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSidebar(ThemeData theme) {
+  Widget _buildSidebar(ThemeData theme, AppLocalizations l10n) {
     final isActive = user.status.status is ActiveStatusViewModel;
 
     return Container(
@@ -161,7 +164,7 @@ class ViewUserPage extends StatelessWidget {
                 ),
                 const SizedBox(width: 4),
                 Text(
-                  isActive ? 'Active' : 'Inactive',
+                  isActive ? l10n.activeStatusLabel : l10n.inactiveStatusLabel,
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
@@ -174,11 +177,18 @@ class ViewUserPage extends StatelessWidget {
           const SizedBox(height: 32),
           const Divider(),
           const SizedBox(height: 24),
-          _buildInfoItem('PHONE', user.phoneNumber),
+          _buildInfoItem(l10n.phoneLabel.toUpperCase(), user.phoneNumber),
           const SizedBox(height: 16),
-          _buildInfoItem('CPF', user.cpf),
+          _buildInfoItem(l10n.cpfLabel, user.cpf),
           const SizedBox(height: 16),
-          _buildInfoItem('SEX', user.sex == 'M' ? 'Male' : user.sex == 'F' ? 'Female' : 'Other'),
+          _buildInfoItem(
+            l10n.sexFieldLabel.toUpperCase(),
+            user.sex == 'M'
+                ? l10n.maleGenderLabel
+                : user.sex == 'F'
+                    ? l10n.femaleGenderLabel
+                    : l10n.otherOptionLabel,
+          ),
           const SizedBox(height: 16),
         ],
       ),
@@ -211,20 +221,20 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMainContent(ThemeData theme, UsersController controller, BuildContext context) {
+  Widget _buildMainContent(ThemeData theme, UsersController controller, BuildContext context, AppLocalizations l10n) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildTravelHistory(theme),
+        _buildTravelHistory(theme, l10n),
         const SizedBox(height: 24),
-        _buildSecurityActions(theme, controller, context),
+        _buildSecurityActions(theme, controller, context, l10n),
         const SizedBox(height: 24),
-        _buildTravelStats(theme),
+        _buildTravelStats(theme, l10n),
       ],
     );
   }
 
-  Widget _buildTravelHistory(ThemeData theme) {
+  Widget _buildTravelHistory(ThemeData theme, AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
         color: TravelAppColors.surface,
@@ -237,7 +247,7 @@ class ViewUserPage extends StatelessWidget {
           Padding(
             padding: const EdgeInsets.all(24),
             child: Text(
-              'Travel History',
+              l10n.travelHistoryTitle,
               style: theme.textTheme.titleLarge?.copyWith(
                 fontWeight: FontWeight.bold,
               ),
@@ -245,20 +255,20 @@ class ViewUserPage extends StatelessWidget {
           ),
           const Divider(height: 1),
           if (user.travels.isEmpty)
-            const Padding(
-              padding: EdgeInsets.all(32),
+            Padding(
+              padding: const EdgeInsets.all(32),
               child: Center(
-                child: Text('No travels found for this user.'),
+                child: Text(l10n.noTravelsForUserMessage),
               ),
             )
           else
             DataTable(
               headingRowColor: WidgetStateProperty.all(TravelAppColors.background),
-              columns: const [
-                DataColumn(label: Text('TRAVEL NAME', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
-                DataColumn(label: Text('DESTINATION', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
-                DataColumn(label: Text('STATUS', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
-                DataColumn(label: Text('START DATE', style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
+              columns: [
+                DataColumn(label: Text(l10n.travelNameColumn.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
+                DataColumn(label: Text(l10n.destinationLabel.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
+                DataColumn(label: Text(l10n.statusColumn.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
+                DataColumn(label: Text(l10n.startDateLabel.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
               ],
               rows: user.travels.map((travel) {
                 return DataRow(
@@ -315,7 +325,7 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildSecurityActions(ThemeData theme, UsersController controller, BuildContext context) {
+  Widget _buildSecurityActions(ThemeData theme, UsersController controller, BuildContext context, AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
         color: TravelAppColors.surface,
@@ -327,7 +337,7 @@ class ViewUserPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Security Actions',
+            l10n.securityActionsTitle,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -337,15 +347,15 @@ class ViewUserPage extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildActionCard(
-                  title: 'Reset Password',
-                  description: 'Send a link to the user\'s email to securely reset their password.',
+                  title: l10n.resetPasswordActionTitle,
+                  description: l10n.resetPasswordActionDescription,
                   icon: Icons.key_outlined,
                   iconColor: TravelAppColors.primary,
                   onTap: () async {
                     final success = await controller.resetPassword(user.localId);
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(success ? 'Password reset link sent' : 'Failed to send reset link')),
+                        SnackBar(content: Text(success ? l10n.resetPasswordSuccessMessage : l10n.resetPasswordFailureMessage)),
                       );
                     }
                   },
@@ -354,15 +364,24 @@ class ViewUserPage extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: _buildActionCard(
-                  title: 'Force Logout',
-                  description: 'Immediately terminate all active sessions for this user.',
+                  title: l10n.forceLogoutActionTitle,
+                  description: l10n.forceLogoutActionDescription,
                   icon: Icons.power_settings_new,
                   iconColor: TravelAppColors.error,
                   onTap: () async {
+                    final confirmed = await showConfirmationDialog(
+                      context,
+                      title: l10n.forceLogoutConfirmTitle,
+                      message: l10n.forceLogoutConfirmMessage,
+                      confirmLabel: l10n.confirmActionButton,
+                      cancelLabel: l10n.cancelActionButton,
+                    );
+                    if (confirmed != true || !context.mounted) return;
+
                     final success = await controller.forceLogout(user.localId);
                     if (context.mounted) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(success ? 'User sessions terminated' : 'Failed to terminate sessions')),
+                        SnackBar(content: Text(success ? l10n.forceLogoutSuccessMessage : l10n.forceLogoutFailureMessage)),
                       );
                     }
                   },
@@ -422,7 +441,7 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTravelStats(ThemeData theme) {
+  Widget _buildTravelStats(ThemeData theme, AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
         color: TravelAppColors.surface,
@@ -434,7 +453,7 @@ class ViewUserPage extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(
-            'Travel Stats',
+            l10n.travelStatsTitle,
             style: theme.textTheme.titleLarge?.copyWith(
               fontWeight: FontWeight.bold,
             ),
@@ -443,11 +462,11 @@ class ViewUserPage extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _buildStatCard('TOTAL TRAVELS', user.stats.totalTravels),
+                child: _buildStatCard(l10n.totalTravels.toUpperCase(), user.stats.totalTravels),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildStatCard('UNIQUE DESTINATIONS', user.stats.uniqueDestinationsCount),
+                child: _buildStatCard(l10n.uniqueDestinationsStatLabel, user.stats.uniqueDestinationsCount),
               ),
             ],
           ),

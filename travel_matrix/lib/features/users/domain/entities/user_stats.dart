@@ -8,7 +8,8 @@ class UserStats{
   UserStats({
     required this.totalTravels,
     required this.uniqueDestinationsCount,
-  });
-
+  })  : assert(totalTravels >= 0, 'totalTravels cannot be negative'),
+        assert(uniqueDestinationsCount >= 0,
+            'uniqueDestinationsCount cannot be negative');
 
 }

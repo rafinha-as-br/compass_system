@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 Future<String?> showDeactivateUserDialog(
   BuildContext context,
@@ -23,14 +24,6 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
   String? _selectedReason;
   final TextEditingController _otherReasonController = TextEditingController();
 
-  final List<String> _reasons = [
-    'Solicitação do cliente',
-    'Inadimplência',
-    'Violação de termos de uso',
-    'Conta duplicada',
-    'Outro',
-  ];
-
   @override
   void dispose() {
     _otherReasonController.dispose();
@@ -40,13 +33,22 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final otherReason = l10n.otherOptionLabel;
+    final reasons = [
+      l10n.deactivateReasonClientRequest,
+      l10n.deactivateReasonNonPayment,
+      l10n.deactivateReasonTermsViolation,
+      l10n.deactivateReasonDuplicateAccount,
+      otherReason,
+    ];
 
     return AlertDialog(
       title: Row(
         children: [
           Icon(Icons.block, color: theme.colorScheme.error),
           const SizedBox(width: 8),
-          const Text('Desativar Usuário'),
+          Text(l10n.deactivateUserDialogTitle),
         ],
       ),
       content: SizedBox(
@@ -55,18 +57,9 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            RichText(
-              text: TextSpan(
-                style: theme.textTheme.bodyMedium,
-                children: [
-                  const TextSpan(text: 'Por que você está desativando '),
-                  TextSpan(
-                    text: widget.userName,
-                    style: const TextStyle(fontWeight: FontWeight.bold),
-                  ),
-                  const TextSpan(text: '?'),
-                ],
-              ),
+            Text(
+              l10n.deactivateReasonPrompt(widget.userName),
+              style: theme.textTheme.bodyMedium,
             ),
             const SizedBox(height: 16),
             RadioGroup<String>(
@@ -78,7 +71,7 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
               },
               child: Column(
                 mainAxisSize: MainAxisSize.min,
-                children: _reasons.map((reason) {
+                children: reasons.map((reason) {
                   return RadioListTile<String>(
                     title: Text(reason),
                     value: reason,
@@ -88,14 +81,14 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
                 }).toList(),
               ),
             ),
-            if (_selectedReason == 'Outro')
+            if (_selectedReason == otherReason)
               Padding(
                 padding: const EdgeInsets.only(top: 8.0, left: 32.0),
                 child: TextField(
                   controller: _otherReasonController,
-                  decoration: const InputDecoration(
-                    labelText: 'Especifique o motivo',
-                    border: OutlineInputBorder(),
+                  decoration: InputDecoration(
+                    labelText: l10n.specifyReasonFieldLabel,
+                    border: const OutlineInputBorder(),
                   ),
                   onChanged: (value) => setState(() {}),
                 ),
@@ -106,16 +99,16 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(null),
-          child: const Text('CANCELAR'),
+          child: Text(l10n.cancelActionButton),
         ),
         ElevatedButton(
           onPressed:
               _selectedReason == null ||
-                  (_selectedReason == 'Outro' &&
+                  (_selectedReason == otherReason &&
                       _otherReasonController.text.trim().isEmpty)
               ? null
               : () {
-                  final reason = _selectedReason == 'Outro'
+                  final reason = _selectedReason == otherReason
                       ? _otherReasonController.text.trim()
                       : _selectedReason!;
                   Navigator.of(context).pop(reason);
@@ -124,7 +117,7 @@ class _DeactivateUserDialogState extends State<_DeactivateUserDialog> {
             backgroundColor: theme.colorScheme.error,
             foregroundColor: theme.colorScheme.onError,
           ),
-          child: const Text('DESATIVAR'),
+          child: Text(l10n.deactivateButtonCaps),
         ),
       ],
     );

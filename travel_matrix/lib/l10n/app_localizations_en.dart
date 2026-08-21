@@ -349,4 +349,161 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get travelAgentRole => 'Travel Agent';
+
+  @override
+  String get clientUsersTitle => 'Client Users';
+
+  @override
+  String get searchUsersHint => 'Search users...';
+
+  @override
+  String get activeStatusLabel => 'Active';
+
+  @override
+  String get inactiveStatusLabel => 'Inactive';
+
+  @override
+  String get noClientUsersFoundMessage => 'No client users found.';
+
+  @override
+  String get backToUsersButton => 'Back to Users';
+
+  @override
+  String get maleGenderLabel => 'Male';
+
+  @override
+  String get femaleGenderLabel => 'Female';
+
+  @override
+  String get otherOptionLabel => 'Other';
+
+  @override
+  String get travelHistoryTitle => 'Travel History';
+
+  @override
+  String get noTravelsForUserMessage => 'No travels found for this user.';
+
+  @override
+  String get securityActionsTitle => 'Security Actions';
+
+  @override
+  String get resetPasswordActionTitle => 'Reset Password';
+
+  @override
+  String get resetPasswordActionDescription =>
+      'Send a link to the user\'s email to securely reset their password.';
+
+  @override
+  String get forceLogoutActionTitle => 'Force Logout';
+
+  @override
+  String get forceLogoutActionDescription =>
+      'Immediately terminate all active sessions for this user.';
+
+  @override
+  String get resetPasswordSuccessMessage => 'Password reset link sent';
+
+  @override
+  String get resetPasswordFailureMessage => 'Failed to send reset link';
+
+  @override
+  String get forceLogoutSuccessMessage => 'User sessions terminated';
+
+  @override
+  String get forceLogoutFailureMessage => 'Failed to terminate sessions';
+
+  @override
+  String get travelStatsTitle => 'Travel Stats';
+
+  @override
+  String get uniqueDestinationsStatLabel => 'UNIQUE DESTINATIONS';
+
+  @override
+  String get forceLogoutConfirmTitle => 'Force Logout?';
+
+  @override
+  String get forceLogoutConfirmMessage =>
+      'This will immediately terminate all active sessions for this user. Continue?';
+
+  @override
+  String get confirmActionButton => 'CONFIRM';
+
+  @override
+  String get cancelActionButton => 'CANCEL';
+
+  @override
+  String get newClientUserFormTitle => 'New Client User';
+
+  @override
+  String get fullNameFieldLabel => 'Full Name';
+
+  @override
+  String get nameRequiredValidation => 'Name is required';
+
+  @override
+  String get cpfRequiredValidation => 'CPF is required';
+
+  @override
+  String get emailRequiredValidation => 'Email is required';
+
+  @override
+  String get phoneNumberFieldLabel => 'Phone Number';
+
+  @override
+  String get phoneRequiredValidation => 'Phone is required';
+
+  @override
+  String get initialPasswordFieldLabel => 'Initial Password';
+
+  @override
+  String get passwordRequiredValidation => 'Password is required';
+
+  @override
+  String get sexFieldLabel => 'Sex';
+
+  @override
+  String get birthDateFieldLabel => 'Birth Date';
+
+  @override
+  String get createUserSubmitButton => 'CREATE USER';
+
+  @override
+  String editUserPageSubtitle(String name) {
+    return 'Edit: $name';
+  }
+
+  @override
+  String get saveChangesButton => 'SAVE CHANGES';
+
+  @override
+  String get deactivateUserDialogTitle => 'Deactivate User';
+
+  @override
+  String deactivateReasonPrompt(String name) {
+    return 'Why are you deactivating $name?';
+  }
+
+  @override
+  String get deactivateReasonClientRequest => 'Client request';
+
+  @override
+  String get deactivateReasonNonPayment => 'Non-payment';
+
+  @override
+  String get deactivateReasonTermsViolation => 'Terms of service violation';
+
+  @override
+  String get deactivateReasonDuplicateAccount => 'Duplicate account';
+
+  @override
+  String get specifyReasonFieldLabel => 'Specify the reason';
+
+  @override
+  String get deactivateButtonCaps => 'DEACTIVATE';
+
+  @override
+  String get userNotFoundTitle => 'User Not Found';
+
+  @override
+  String get userNotFoundMessage => 'The requested user could not be found.';
 }
