@@ -13,6 +13,16 @@ class _StubAuthRepository implements AuthRepository {
   Future<Result<AuthSession>> login(String email, String password) async {
     return result;
   }
+
+  @override
+  Future<Result<void>> requestPasswordReset(String email) async {
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<void>> resetPassword(String token, String newPassword) async {
+    throw UnimplementedError();
+  }
 }
 
 void main() {

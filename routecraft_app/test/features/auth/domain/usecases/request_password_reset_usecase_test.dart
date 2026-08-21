@@ -2,23 +2,21 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/auth/domain/entities/auth_session.dart';
 import 'package:routecraft_app/features/auth/domain/repositories/auth_repository.dart';
-import 'package:routecraft_app/features/auth/domain/usecases/login_usecase.dart';
+import 'package:routecraft_app/features/auth/domain/usecases/request_password_reset_usecase.dart';
 
 class _FakeAuthRepository implements AuthRepository {
-  Result<AuthSession>? nextResult;
+  Result<void>? nextResult;
   String? capturedEmail;
-  String? capturedPassword;
 
   @override
   Future<Result<AuthSession>> login(String email, String password) async {
-    capturedEmail = email;
-    capturedPassword = password;
-    return nextResult!;
+    throw UnimplementedError();
   }
 
   @override
   Future<Result<void>> requestPasswordReset(String email) async {
-    throw UnimplementedError();
+    capturedEmail = email;
+    return nextResult!;
   }
 
   @override
@@ -28,30 +26,29 @@ class _FakeAuthRepository implements AuthRepository {
 }
 
 void main() {
-  group('LoginUseCase', () {
-    test('delegates to the repository with the given credentials', () async {
-      final repository = _FakeAuthRepository()
-        ..nextResult = const Result.success(
-          AuthSession(token: 't', email: 'a@b.com'),
-        );
-      final useCase = LoginUseCase(repository);
+  group('RequestPasswordResetUseCase', () {
+    test('delegates to the repository with the given e-mail', () async {
+      final repository = _FakeAuthRepository()..nextResult = const Result.success(null);
+      final useCase = RequestPasswordResetUseCase(repository);
 
-      final result = await useCase('a@b.com', 'secret');
+      final result = await useCase('a@b.com');
 
       expect(repository.capturedEmail, 'a@b.com');
-      expect(repository.capturedPassword, 'secret');
       expect(result.isSuccess, isTrue);
     });
 
     test('propagates a failure result from the repository', () async {
       final repository = _FakeAuthRepository()
-        ..nextResult = const Result.failure('E-mail ou senha incorretos.');
-      final useCase = LoginUseCase(repository);
+        ..nextResult = const Result.failure('Não foi possível completar a solicitação.');
+      final useCase = RequestPasswordResetUseCase(repository);
 
-      final result = await useCase('a@b.com', 'wrong');
+      final result = await useCase('a@b.com');
 
       expect(result.isSuccess, isFalse);
-      expect((result as Failure<AuthSession>).message, 'E-mail ou senha incorretos.');
+      expect(
+        (result as Failure<void>).message,
+        'Não foi possível completar a solicitação.',
+      );
     });
   });
 }

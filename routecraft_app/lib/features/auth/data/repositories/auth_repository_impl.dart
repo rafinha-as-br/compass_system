@@ -20,4 +20,28 @@ class AuthRepositoryImpl implements AuthRepository {
       return const Result.failure('Não foi possível completar o login.');
     }
   }
+
+  @override
+  Future<Result<void>> requestPasswordReset(String email) async {
+    try {
+      await _dataSource.requestPasswordReset(email);
+      return const Result.success(null);
+    } on ApiException catch (e) {
+      return Result.failure(e.message);
+    } catch (_) {
+      return const Result.failure('Não foi possível completar a solicitação.');
+    }
+  }
+
+  @override
+  Future<Result<void>> resetPassword(String token, String newPassword) async {
+    try {
+      await _dataSource.resetPassword(token, newPassword);
+      return const Result.success(null);
+    } on ApiException catch (e) {
+      return Result.failure(e.message);
+    } catch (_) {
+      return const Result.failure('Não foi possível redefinir a senha.');
+    }
+  }
 }
