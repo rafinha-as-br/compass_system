@@ -6,47 +6,49 @@ import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 import 'package:travel_matrix/shared/widgets/form_error_message.dart';
 import 'package:travel_matrix/shared/widgets/primary_submit_button.dart';
 
-import '../../../../app/global_controllers/auth_controller.dart';
 import '../controllers/login_controller.dart';
 
-/// Responsible for displaying login forms
-class LoginPanel extends StatefulWidget {
-  const LoginPanel({super.key});
+/// Asks for the token received by e-mail and a new password to complete
+/// the password reset flow.
+class ResetPasswordPanel extends StatefulWidget {
+  const ResetPasswordPanel({super.key});
 
   @override
-  State<LoginPanel> createState() => _LoginPanelState();
+  State<ResetPasswordPanel> createState() => _ResetPasswordPanelState();
 }
 
-class _LoginPanelState extends State<LoginPanel> {
-  final _emailController = TextEditingController();
-  final _passwordController = TextEditingController();
+class _ResetPasswordPanelState extends State<ResetPasswordPanel> {
+  final _tokenController = TextEditingController();
+  final _newPasswordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
 
   @override
   void dispose() {
-    _emailController.dispose();
-    _passwordController.dispose();
+    _tokenController.dispose();
+    _newPasswordController.dispose();
     super.dispose();
   }
 
-  Future<void> _handleLogin(LoginController controller) async {
+  Future<void> _handleSubmit(LoginController controller) async {
     if (!(_formKey.currentState?.validate() ?? false)) return;
 
-    final result = await controller.login(
-      _emailController.text,
-      _passwordController.text,
+    final result = await controller.resetPassword(
+      _tokenController.text,
+      _newPasswordController.text,
     );
 
     if (result.isSuccess && mounted) {
-      // AuthController will trigger router redirect
-      context.read<AuthController>().login(result.data!);
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(AppLocalizations.of(context)!.resetPasswordSuccess)),
+      );
+      controller.showLoginPanel();
     }
   }
 
   @override
   Widget build(BuildContext context) {
     return Consumer<LoginController>(
-      key: const ValueKey('login'),
+      key: const ValueKey('resetPassword'),
       builder: (context, controller, child) {
         final state = controller.state;
         final l10n = AppLocalizations.of(context)!;
@@ -58,31 +60,23 @@ class _LoginPanelState extends State<LoginPanel> {
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                BackIconButton(onPressed: controller.showLogin),
+                BackIconButton(onPressed: controller.showLoginPanel),
                 const SizedBox(height: 24),
-                const _LoginHeader(),
+                const _ResetPasswordHeader(),
                 const SizedBox(height: 48),
                 if (state.errorMessage != null) ...[
                   FormErrorMessage(message: state.errorMessage!),
                   const SizedBox(height: 16),
                 ],
-                _LoginFormFields(
-                  emailController: _emailController,
-                  passwordController: _passwordController,
-                ),
-                const SizedBox(height: 8),
-                Align(
-                  alignment: Alignment.centerRight,
-                  child: TextButton(
-                    onPressed: controller.showForgotPassword,
-                    child: Text(l10n.forgotPasswordLink),
-                  ),
+                _ResetPasswordFormFields(
+                  tokenController: _tokenController,
+                  newPasswordController: _newPasswordController,
                 ),
                 const SizedBox(height: 32),
                 PrimarySubmitButton(
-                  label: l10n.loginButton,
+                  label: l10n.resetPasswordSubmitButton,
                   isLoading: state.isLoading,
-                  onPressed: () => _handleLogin(controller),
+                  onPressed: () => _handleSubmit(controller),
                 ),
               ],
             ),
@@ -93,8 +87,8 @@ class _LoginPanelState extends State<LoginPanel> {
   }
 }
 
-class _LoginHeader extends StatelessWidget {
-  const _LoginHeader();
+class _ResetPasswordHeader extends StatelessWidget {
+  const _ResetPasswordHeader();
 
   @override
   Widget build(BuildContext context) {
@@ -103,31 +97,33 @@ class _LoginHeader extends StatelessWidget {
     return Column(
       children: [
         Text(
-          l10n.loginTitlePanel,
+          l10n.resetPasswordTitle,
           style: Theme.of(
             context,
           ).textTheme.headlineMedium?.copyWith(fontWeight: FontWeight.bold),
+          textAlign: TextAlign.center,
         ),
         const SizedBox(height: 8),
         Text(
-          l10n.loginSubtitlePanel,
+          l10n.resetPasswordSubtitle,
           style: Theme.of(context).textTheme.bodyLarge?.copyWith(
             color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
           ),
+          textAlign: TextAlign.center,
         ),
       ],
     );
   }
 }
 
-class _LoginFormFields extends StatelessWidget {
-  const _LoginFormFields({
-    required this.emailController,
-    required this.passwordController,
+class _ResetPasswordFormFields extends StatelessWidget {
+  const _ResetPasswordFormFields({
+    required this.tokenController,
+    required this.newPasswordController,
   });
 
-  final TextEditingController emailController;
-  final TextEditingController passwordController;
+  final TextEditingController tokenController;
+  final TextEditingController newPasswordController;
 
   @override
   Widget build(BuildContext context) {
@@ -138,25 +134,26 @@ class _LoginFormFields extends StatelessWidget {
         SizedBox(
           height: 50,
           child: TextFormField(
-            controller: emailController,
+            controller: tokenController,
             decoration: InputDecoration(
-              labelText: l10n.loginEmailLabel,
+              labelText: l10n.resetPasswordTokenLabel,
               border: const OutlineInputBorder(),
             ),
-            validator: (value) => Validators.required(value, l10n.loginEmailRequired),
+            validator: (value) => Validators.required(value, l10n.resetPasswordTokenRequired),
           ),
         ),
         const SizedBox(height: 16),
         SizedBox(
           height: 50,
           child: TextFormField(
-            controller: passwordController,
+            controller: newPasswordController,
             decoration: InputDecoration(
-              labelText: l10n.loginPasswordLabel,
+              labelText: l10n.resetPasswordNewPasswordLabel,
               border: const OutlineInputBorder(),
             ),
             obscureText: true,
-            validator: (value) => Validators.required(value, l10n.loginPasswordRequired),
+            validator: (value) =>
+                Validators.required(value, l10n.resetPasswordNewPasswordRequired),
           ),
         ),
       ],
