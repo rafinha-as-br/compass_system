@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/core/services/compass_service/api_response_status.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 
 class CreateTravelController extends ChangeNotifier {
@@ -29,7 +30,7 @@ class CreateTravelController extends ChangeNotifier {
 
       _setLoading(false);
 
-      if (response['status'] == 'success') {
+      if (response['status'] == kApiSuccessStatus) {
         return true;
       } else {
         _setError(response['message'] as String? ?? 'Failed to create travel.');

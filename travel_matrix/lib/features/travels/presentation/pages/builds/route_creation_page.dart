@@ -6,6 +6,8 @@ import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 
 /// Page for editing the [RoutePlan] of an existing travel.
 ///
@@ -104,12 +106,12 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Edit Route'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+        title: Text(l10n.editRouteTitle),
+        leading: BackIconButton(
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -130,7 +132,7 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'Route Details',
+                    l10n.routeDetails,
                     style: theme.textTheme.titleLarge
                         ?.copyWith(fontWeight: FontWeight.bold),
                   ),
@@ -142,24 +144,24 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                       Expanded(
                         child: TextFormField(
                           controller: _startLocationCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Start Location',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.startLocationLabel,
+                            border: const OutlineInputBorder(),
                           ),
                           validator: (v) =>
-                              v!.isEmpty ? 'Required' : null,
+                              v!.isEmpty ? l10n.requiredField : null,
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: TextFormField(
                           controller: _destinationCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Destination',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.destinationLabel,
+                            border: const OutlineInputBorder(),
                           ),
                           validator: (v) =>
-                              v!.isEmpty ? 'Required' : null,
+                              v!.isEmpty ? l10n.requiredField : null,
                         ),
                       ),
                     ],
@@ -172,12 +174,13 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                       Expanded(
                         child: ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text('Start Date'),
+                          title: Text(l10n.startDateLabel),
                           subtitle: Text(
                             '${_startDate.day}/${_startDate.month}/${_startDate.year}',
                           ),
                           trailing: IconButton(
                             icon: const Icon(Icons.calendar_today),
+                            tooltip: l10n.selectDateTooltip,
                             onPressed: () async {
                               final picked = await showDatePicker(
                                 context: context,
@@ -195,12 +198,13 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                       Expanded(
                         child: ListTile(
                           contentPadding: EdgeInsets.zero,
-                          title: const Text('End Date'),
+                          title: Text(l10n.endDateLabel),
                           subtitle: Text(
                             '${_endDate.day}/${_endDate.month}/${_endDate.year}',
                           ),
                           trailing: IconButton(
                             icon: const Icon(Icons.calendar_today),
+                            tooltip: l10n.selectDateTooltip,
                             onPressed: () async {
                               final picked = await showDatePicker(
                                 context: context,
@@ -223,7 +227,7 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
 
                   // ─── Interest Points ─────────────────────────────────
                   Text(
-                    'Interest Points',
+                    l10n.interestPointsTitle,
                     style: theme.textTheme.titleMedium
                         ?.copyWith(fontWeight: FontWeight.w600),
                   ),
@@ -233,9 +237,9 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                       Expanded(
                         child: TextField(
                           controller: _poiNameCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Point Name',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.pointNameLabel,
+                            border: const OutlineInputBorder(),
                           ),
                         ),
                       ),
@@ -243,9 +247,9 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                       Expanded(
                         child: TextField(
                           controller: _poiDescCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Description',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.descriptionLabel,
+                            border: const OutlineInputBorder(),
                           ),
                         ),
                       ),
@@ -254,6 +258,7 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                         onPressed: _addInterestPoint,
                         icon: const Icon(Icons.add_circle),
                         color: theme.colorScheme.secondary,
+                        tooltip: l10n.addInterestPointTooltip,
                       ),
                     ],
                   ),
@@ -266,6 +271,7 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                         subtitle: Text(p.description),
                         trailing: IconButton(
                           icon: const Icon(Icons.close, size: 18),
+                          tooltip: l10n.removeInterestPointTooltip,
                           onPressed: () =>
                               setState(() => _interestPoints.remove(p)),
                         ),
@@ -289,7 +295,7 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                               height: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('UPDATE ROUTE'),
+                          : Text(l10n.updateRouteButton),
                     ),
                   ),
                 ],

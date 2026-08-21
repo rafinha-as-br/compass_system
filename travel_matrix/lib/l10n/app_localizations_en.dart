@@ -349,4 +349,130 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get travelAgentRole => 'Travel Agent';
+
+  @override
+  String get buildItineraryTitle => 'Build Itinerary';
+
+  @override
+  String get cannotMoveStep => 'Cannot move this step to that position.';
+
+  @override
+  String get cannotDeleteStepMessage => 'Cannot delete this step.';
+
+  @override
+  String get itineraryUpdatedSuccess => 'Itinerary updated.';
+
+  @override
+  String get itineraryCreatedSuccess => 'Itinerary created.';
+
+  @override
+  String get couldNotSaveItinerary => 'Could not save itinerary.';
+
+  @override
+  String get editRouteTitle => 'Edit Route';
+
+  @override
+  String get updateRouteButton => 'UPDATE ROUTE';
+
+  @override
+  String get createTravelButton => 'CREATE TRAVEL';
+
+  @override
+  String get editRoutePlanButton => 'Edit Route Plan';
+
+  @override
+  String get markAsReadyButton => 'Mark as Ready';
+
+  @override
+  String get markAsReadyConfirm =>
+      'Are you sure you want to mark this travel as ready?';
+
+  @override
+  String get confirmButton => 'Confirm';
+
+  @override
+  String get markAsReadySuccess => 'Travel marked as ready successfully';
+
+  @override
+  String get markAsReadyFailure => 'Failed to mark travel as ready';
+
+  @override
+  String get needsItineraryFirstTooltip =>
+      'You need to create an itinerary first';
+
+  @override
+  String get markAsReadyTooltip => 'Mark travel as ready';
+
+  @override
+  String get routeViewTab => 'Route View';
+
+  @override
+  String get itineraryViewTab => 'Itinerary View';
+
+  @override
+  String travelersCount(int count) {
+    return '$count Travelers';
+  }
+
+  @override
+  String get travelNotFoundTitle => 'Travel Not Found';
+
+  @override
+  String get travelNotFoundBody => 'The requested travel could not be found.';
+
+  @override
+  String get changeStepTypeTitle => 'Change Step Type?';
+
+  @override
+  String get changeStepTypeBody =>
+      'Changing the step type will result in the loss of specific data entered for the current step. Do you wish to proceed?';
+
+  @override
+  String get changeTransportTypeTitle => 'Change Transport Type?';
+
+  @override
+  String get changeTransportTypeBody =>
+      'Changing the transport type will result in the loss of specific data entered for the current transport. Do you wish to proceed?';
+
+  @override
+  String get proceedButton => 'Proceed';
+
+  @override
+  String get noStepsYet => 'No steps yet';
+
+  @override
+  String get noItineraryAvailable => 'No itinerary available.';
+
+  @override
+  String get stepDetailsUnavailable =>
+      'Additional details for this step are not yet available.';
+
+  @override
+  String get draftStepTitle => 'Draft Step';
+
+  @override
+  String get unknownStepTitle => 'Unknown Step';
+
+  @override
+  String get noItineraryYetTitle => 'No Itinerary Yet';
+
+  @override
+  String stepsCountLabel(int count) {
+    return 'Steps ($count)';
+  }
+
+  @override
+  String get noInterestPointsPanel => 'No interest points';
+
+  @override
+  String get selectDateTooltip => 'Select date';
+
+  @override
+  String get addInterestPointTooltip => 'Add interest point';
+
+  @override
+  String get removeInterestPointTooltip => 'Remove interest point';
+
+  @override
+  String get addExperienceTooltip => 'Add experience';
 }

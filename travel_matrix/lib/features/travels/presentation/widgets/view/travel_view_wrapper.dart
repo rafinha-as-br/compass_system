@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/core/services/compass_service/api_response_status.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:travel_matrix/features/travels/data/dtos/travel_dto.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/views/travel_view_page.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 class TravelViewWrapper extends StatefulWidget {
   final String travelId;
@@ -54,7 +56,7 @@ class _TravelViewWrapperState extends State<TravelViewWrapper> {
     if (token == null) return null;
     
     final response = await CompassService.instance.getTravel(token, id);
-    if (response['status'] == 'success') {
+    if (response['status'] == kApiSuccessStatus) {
       final dto = TravelDTO.fromJson(response['data'] as Map<String, dynamic>);
       return TravelViewModel.fromDomain(dto.toDomain());
     }
@@ -75,10 +77,11 @@ class _TravelViewWrapperState extends State<TravelViewWrapper> {
           }
           
           if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+            final l10n = AppLocalizations.of(context)!;
             return Scaffold(
-              appBar: AppBar(title: const Text('Travel Not Found')),
-              body: const Center(
-                child: Text('The requested travel could not be found.'),
+              appBar: AppBar(title: Text(l10n.travelNotFoundTitle)),
+              body: Center(
+                child: Text(l10n.travelNotFoundBody),
               ),
             );
           }

@@ -751,6 +751,240 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Travel Agent'**
   String get travelAgentRole;
+
+  /// No description provided for @buildItineraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Build Itinerary'**
+  String get buildItineraryTitle;
+
+  /// No description provided for @cannotMoveStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot move this step to that position.'**
+  String get cannotMoveStep;
+
+  /// No description provided for @cannotDeleteStepMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete this step.'**
+  String get cannotDeleteStepMessage;
+
+  /// No description provided for @itineraryUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary updated.'**
+  String get itineraryUpdatedSuccess;
+
+  /// No description provided for @itineraryCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary created.'**
+  String get itineraryCreatedSuccess;
+
+  /// No description provided for @couldNotSaveItinerary.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save itinerary.'**
+  String get couldNotSaveItinerary;
+
+  /// No description provided for @editRouteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Route'**
+  String get editRouteTitle;
+
+  /// No description provided for @updateRouteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'UPDATE ROUTE'**
+  String get updateRouteButton;
+
+  /// No description provided for @createTravelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CREATE TRAVEL'**
+  String get createTravelButton;
+
+  /// No description provided for @editRoutePlanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Route Plan'**
+  String get editRoutePlanButton;
+
+  /// No description provided for @markAsReadyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Ready'**
+  String get markAsReadyButton;
+
+  /// No description provided for @markAsReadyConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to mark this travel as ready?'**
+  String get markAsReadyConfirm;
+
+  /// No description provided for @confirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirmButton;
+
+  /// No description provided for @markAsReadySuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel marked as ready successfully'**
+  String get markAsReadySuccess;
+
+  /// No description provided for @markAsReadyFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to mark travel as ready'**
+  String get markAsReadyFailure;
+
+  /// No description provided for @needsItineraryFirstTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to create an itinerary first'**
+  String get needsItineraryFirstTooltip;
+
+  /// No description provided for @markAsReadyTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark travel as ready'**
+  String get markAsReadyTooltip;
+
+  /// No description provided for @routeViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Route View'**
+  String get routeViewTab;
+
+  /// No description provided for @itineraryViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary View'**
+  String get itineraryViewTab;
+
+  /// No description provided for @travelersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Travelers'**
+  String travelersCount(int count);
+
+  /// No description provided for @travelNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Not Found'**
+  String get travelNotFoundTitle;
+
+  /// No description provided for @travelNotFoundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The requested travel could not be found.'**
+  String get travelNotFoundBody;
+
+  /// No description provided for @changeStepTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Step Type?'**
+  String get changeStepTypeTitle;
+
+  /// No description provided for @changeStepTypeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the step type will result in the loss of specific data entered for the current step. Do you wish to proceed?'**
+  String get changeStepTypeBody;
+
+  /// No description provided for @changeTransportTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Transport Type?'**
+  String get changeTransportTypeTitle;
+
+  /// No description provided for @changeTransportTypeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the transport type will result in the loss of specific data entered for the current transport. Do you wish to proceed?'**
+  String get changeTransportTypeBody;
+
+  /// No description provided for @proceedButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed'**
+  String get proceedButton;
+
+  /// No description provided for @noStepsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No steps yet'**
+  String get noStepsYet;
+
+  /// No description provided for @noItineraryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No itinerary available.'**
+  String get noItineraryAvailable;
+
+  /// No description provided for @stepDetailsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional details for this step are not yet available.'**
+  String get stepDetailsUnavailable;
+
+  /// No description provided for @draftStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft Step'**
+  String get draftStepTitle;
+
+  /// No description provided for @unknownStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Step'**
+  String get unknownStepTitle;
+
+  /// No description provided for @noItineraryYetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Itinerary Yet'**
+  String get noItineraryYetTitle;
+
+  /// No description provided for @stepsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps ({count})'**
+  String stepsCountLabel(int count);
+
+  /// No description provided for @noInterestPointsPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'No interest points'**
+  String get noInterestPointsPanel;
+
+  /// No description provided for @selectDateTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get selectDateTooltip;
+
+  /// No description provided for @addInterestPointTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add interest point'**
+  String get addInterestPointTooltip;
+
+  /// No description provided for @removeInterestPointTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove interest point'**
+  String get removeInterestPointTooltip;
+
+  /// No description provided for @addExperienceTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add experience'**
+  String get addExperienceTooltip;
 }
 
 class _AppLocalizationsDelegate

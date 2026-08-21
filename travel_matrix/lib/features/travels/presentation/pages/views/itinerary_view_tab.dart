@@ -5,6 +5,7 @@ import 'package:travel_matrix/features/travels/presentation/models/build_models/
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/itinerary_timeline.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/no_itinerary_page.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// Displays itinerary data or a prompt to create one.
 ///
@@ -64,7 +65,7 @@ class ItineraryViewTab extends StatelessWidget {
                     );
                   },
                   icon: const Icon(Icons.edit_calendar),
-                  label: const Text('Edit Itinerary'),
+                  label: Text(AppLocalizations.of(context)!.editItineraryTitle),
                 ),
               ),
               const SizedBox(height: 16),

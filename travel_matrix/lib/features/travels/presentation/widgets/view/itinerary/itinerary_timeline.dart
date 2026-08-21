@@ -10,6 +10,7 @@ import 'package:travel_matrix/features/travels/presentation/widgets/view/itinera
 import 'package:travel_matrix/features/travels/presentation/widgets/view/itinerary/step_icon.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/view/timeline_step_item.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 
 /// Timeline widget displaying the itinerary steps.
@@ -32,7 +33,7 @@ class ItineraryTimeline extends StatelessWidget {
     final itinerary = travel.itinerary;
     
     if (itinerary == null) {
-      return const Center(child: Text('No itinerary available.'));
+      return Center(child: Text(AppLocalizations.of(context)!.noItineraryAvailable));
     }
 
     final baseSteps = itinerary.steps;

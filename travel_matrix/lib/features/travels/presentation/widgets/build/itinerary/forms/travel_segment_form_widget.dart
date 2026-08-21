@@ -5,6 +5,7 @@ import 'package:travel_matrix/features/travels/presentation/widgets/build/itiner
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment/bus_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment/rental_car_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/change_type_dialog.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 import '../../../../../../../shared/widgets/text_fields.dart';
 import 'field_state.dart';
@@ -257,7 +258,7 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
           OutlinedButton.icon(
             onPressed: widget.onDelete,
             icon: const Icon(Icons.delete),
-            label: const Text('Delete Step'),
+            label: Text(AppLocalizations.of(context)!.deleteStep),
           ),
         ],
       ),

@@ -146,5 +146,55 @@
   "settingsNav": "Settings",
   "supportNav": "Support",
   "logoutNav": "Logout",
-  "travelAgentRole": "Travel Agent"
+  "travelAgentRole": "Travel Agent",
+
+  "buildItineraryTitle": "Build Itinerary",
+  "cannotMoveStep": "Cannot move this step to that position.",
+  "cannotDeleteStepMessage": "Cannot delete this step.",
+  "itineraryUpdatedSuccess": "Itinerary updated.",
+  "itineraryCreatedSuccess": "Itinerary created.",
+  "couldNotSaveItinerary": "Could not save itinerary.",
+  "editRouteTitle": "Edit Route",
+  "updateRouteButton": "UPDATE ROUTE",
+  "createTravelButton": "CREATE TRAVEL",
+  "editRoutePlanButton": "Edit Route Plan",
+  "markAsReadyButton": "Mark as Ready",
+  "markAsReadyConfirm": "Are you sure you want to mark this travel as ready?",
+  "confirmButton": "Confirm",
+  "markAsReadySuccess": "Travel marked as ready successfully",
+  "markAsReadyFailure": "Failed to mark travel as ready",
+  "needsItineraryFirstTooltip": "You need to create an itinerary first",
+  "markAsReadyTooltip": "Mark travel as ready",
+  "routeViewTab": "Route View",
+  "itineraryViewTab": "Itinerary View",
+  "travelersCount": "{count} Travelers",
+  "@travelersCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "travelNotFoundTitle": "Travel Not Found",
+  "travelNotFoundBody": "The requested travel could not be found.",
+  "changeStepTypeTitle": "Change Step Type?",
+  "changeStepTypeBody": "Changing the step type will result in the loss of specific data entered for the current step. Do you wish to proceed?",
+  "changeTransportTypeTitle": "Change Transport Type?",
+  "changeTransportTypeBody": "Changing the transport type will result in the loss of specific data entered for the current transport. Do you wish to proceed?",
+  "proceedButton": "Proceed",
+  "noStepsYet": "No steps yet",
+  "noItineraryAvailable": "No itinerary available.",
+  "stepDetailsUnavailable": "Additional details for this step are not yet available.",
+  "draftStepTitle": "Draft Step",
+  "unknownStepTitle": "Unknown Step",
+  "noItineraryYetTitle": "No Itinerary Yet",
+  "stepsCountLabel": "Steps ({count})",
+  "@stepsCountLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noInterestPointsPanel": "No interest points",
+  "selectDateTooltip": "Select date",
+  "addInterestPointTooltip": "Add interest point",
+  "removeInterestPointTooltip": "Remove interest point",
+  "addExperienceTooltip": "Add experience"
 }

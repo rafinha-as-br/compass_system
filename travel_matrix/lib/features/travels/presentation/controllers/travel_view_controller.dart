@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/core/services/compass_service/api_response_status.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:travel_matrix/features/travels/data/dtos/travel_dto.dart';
 import '../models/view_models/travel_view_model.dart';
@@ -41,7 +42,7 @@ class TravelViewController extends ChangeNotifier {
       final response =
           await CompassService.instance.getTravel(token, travelId);
 
-      if (response['status'] == 'success') {
+      if (response['status'] == kApiSuccessStatus) {
         final travel = TravelDTO.fromJson(response['data'] as Map<String, dynamic>).toDomain();
         _state = TravelViewState(isLoading: false, travel: TravelViewModel.fromDomain(travel));
       } else {

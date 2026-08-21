@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/core/services/compass_service/api_response_status.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:travel_matrix/features/travels/data/dtos/itinerary_step_dto.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/build/itinerary_build_controller.dart';
@@ -11,6 +12,8 @@ import 'package:travel_matrix/features/travels/presentation/controllers/update/i
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/interest_points_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_builder_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_list_panel.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 
 import '../../../data/repository_impl/itinerary_repository_impl.dart';
 import '../../../domain/repository/itinerary_repository.dart';
@@ -114,7 +117,7 @@ class _ItineraryBuildView extends StatelessWidget {
     if (token == null) return '';
 
     final response = await CompassService.instance.getUser(token);
-    if (response['status'] != 'success') return '';
+    if (response['status'] != kApiSuccessStatus) return '';
 
     final data = response['data'];
     if (data is Map<String, dynamic>) {
@@ -167,11 +170,13 @@ class _ItineraryBuildView extends StatelessWidget {
 
     if (!context.mounted) return;
 
+    final l10n = AppLocalizations.of(context)!;
+
     if (success) {
       messenger.showSnackBar(
         SnackBar(
           content: Text(
-            isEditMode ? 'Itinerary updated.' : 'Itinerary created.',
+            isEditMode ? l10n.itineraryUpdatedSuccess : l10n.itineraryCreatedSuccess,
           ),
         ),
       );
@@ -181,7 +186,7 @@ class _ItineraryBuildView extends StatelessWidget {
       );
     } else {
       messenger.showSnackBar(
-        SnackBar(content: Text(error ?? 'Could not save itinerary.')),
+        SnackBar(content: Text(error ?? l10n.couldNotSaveItinerary)),
       );
     }
   }
@@ -194,13 +199,13 @@ class _ItineraryBuildView extends StatelessWidget {
     final isSaving = isEditMode
         ? context.watch<UpdateItineraryController>().isLoading
         : context.watch<CreateItineraryController>().isLoading;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       /// TODO: CREATE AN APP BAR ON A SEPARATED FILE
       appBar: AppBar(
-        title: const Text('Build Itinerary'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+        title: Text(l10n.buildItineraryTitle),
+        leading: BackIconButton(
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -224,7 +229,7 @@ class _ItineraryBuildView extends StatelessWidget {
                       ),
                     )
                   : const Icon(Icons.check),
-              label: Text(isEditMode ? 'Update' : 'Save'),
+              label: Text(isEditMode ? l10n.updateButton : l10n.saveButton),
               style: FilledButton.styleFrom(
                 backgroundColor: Theme.of(context).colorScheme.primary,
                 foregroundColor: Theme.of(context).colorScheme.onPrimary,
@@ -268,9 +273,7 @@ class _ItineraryBuildView extends StatelessWidget {
               final success = editor.reorderSteps(oldIndex, newIndex);
               if (!success) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(
-                    content: Text('Cannot move this step to that position.'),
-                  ),
+                  SnackBar(content: Text(l10n.cannotMoveStep)),
                 );
               }
             },
@@ -278,7 +281,7 @@ class _ItineraryBuildView extends StatelessWidget {
               final success = editor.deleteStep(index);
               if (!success) {
                 ScaffoldMessenger.of(context).showSnackBar(
-                  const SnackBar(content: Text('Cannot delete this step.')),
+                  SnackBar(content: Text(l10n.cannotDeleteStepMessage)),
                 );
               }
             },
