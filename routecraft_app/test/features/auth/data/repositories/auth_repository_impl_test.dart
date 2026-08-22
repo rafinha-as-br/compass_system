@@ -86,4 +86,60 @@ void main() {
       expect((result as Failure<AuthSession>).message, isNotEmpty);
     });
   });
+
+  group('AuthRepositoryImpl.requestPasswordReset', () {
+    test('returns Success on a 200 response regardless of the body', () async {
+      final repository = _repositoryWith(MockClient((request) async {
+        return http.Response(
+          'Se o e-mail informado estiver cadastrado, você receberá instruções...',
+          200,
+        );
+      }));
+
+      final result = await repository.requestPasswordReset('john@example.com');
+
+      expect(result.isSuccess, isTrue);
+    });
+
+    test('returns Failure with a friendly message on a network error', () async {
+      final repository = _repositoryWith(MockClient((request) async {
+        throw http.ClientException('connection refused');
+      }));
+
+      final result = await repository.requestPasswordReset('john@example.com');
+
+      expect(result.isSuccess, isFalse);
+      expect((result as Failure<void>).message, isNotEmpty);
+    });
+  });
+
+  group('AuthRepositoryImpl.resetPassword', () {
+    test('returns Success on a 200 response regardless of the body', () async {
+      final repository = _repositoryWith(MockClient((request) async {
+        return http.Response('Senha redefinida com sucesso.', 200);
+      }));
+
+      final result = await repository.resetPassword('token-123', 'novaSenha456');
+
+      expect(result.isSuccess, isTrue);
+    });
+
+    test('returns Failure with the server message for an invalid/expired token', () async {
+      final repository = _repositoryWith(MockClient((request) async {
+        return http.Response(
+          jsonEncode({
+            'status': 400,
+            'error': 'Erro de negócio',
+            'message': 'Token inválido ou expirado.',
+          }),
+          400,
+        );
+      }));
+
+      final result = await repository.resetPassword('token-invalido', 'novaSenha456');
+
+      expect(result.isSuccess, isFalse);
+      expect((result as Failure<void>).message, 'Token inválido ou expirado.');
+    });
+  });
 }

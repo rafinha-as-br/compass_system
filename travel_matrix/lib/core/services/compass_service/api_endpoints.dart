@@ -26,6 +26,8 @@ abstract final class ApiEndpoints {
   // Auth
   static const String login = '/api/auth/login';
   static const String register = '/api/auth/cadastrar/cliente';
+  static const String forgotPassword = '/api/auth/esqueci-senha';
+  static const String resetPassword = '/api/auth/redefinir-senha';
 
   // Dashboard
   static const String dashboardStats = '/dashboard/stats';
