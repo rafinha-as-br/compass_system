@@ -1,34 +1,16 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
-import 'package:travel_matrix/core/entities/result.dart';
+import 'package:travel_matrix/features/travels/data/data_sources/route_data_source.dart';
+import 'package:travel_matrix/features/travels/data/dtos/route_dto.dart';
 import 'package:travel_matrix/features/travels/data/repository_impl/route_repository_impl.dart';
-import 'package:travel_matrix/features/travels/domain/entities/person.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
-import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
-import 'package:travel_matrix/features/travels/domain/repository/travel_repository.dart';
 
-class _MockTravelRepository extends Mock implements TravelRepository {}
+class _MockRouteDataSource extends Mock implements RouteDataSource {}
 
-Travel _buildTravel(RoutePlan routePlan) {
-  return Travel(
-    domainId: 'travel-1',
-    backEndId: 'travel-1',
-    clientName: 'client-1',
-    travelName: 'Paris Trip',
-    travelStatus: TravelStatus.routeCreated,
-    participantsList: const <Person>[],
-    routePlan: routePlan,
-  );
-}
-
-RoutePlan _buildRoute({
-  String destination = 'Paris',
-  String? domainId = 'route-1',
-  String? backEndId = 'route-1',
-}) {
+RoutePlan _buildRoute({String destination = 'Paris'}) {
   return RoutePlan(
-    domainId: domainId ?? 'route-1',
-    backEndId: backEndId,
+    domainId: 'route-1',
+    backEndId: 'route-1',
     startDate: DateTime(2026, 1, 1),
     endDate: DateTime(2026, 1, 10),
     startLocation: 'SP',
@@ -37,65 +19,43 @@ RoutePlan _buildRoute({
   );
 }
 
+RoutePlanDTO _buildRouteDto({String destination = 'Paris'}) {
+  return RoutePlanDTO.fromDomain(routePlan: _buildRoute(destination: destination));
+}
+
 void main() {
-  late _MockTravelRepository travelRepository;
+  late _MockRouteDataSource dataSource;
   late RouteRepositoryImpl repository;
 
   setUpAll(() {
-    registerFallbackValue(_buildTravel(_buildRoute()));
+    registerFallbackValue(_buildRouteDto());
   });
 
   setUp(() {
-    travelRepository = _MockTravelRepository();
-    repository = RouteRepositoryImpl(travelRepository: travelRepository);
+    dataSource = _MockRouteDataSource();
+    repository = RouteRepositoryImpl(dataSource: dataSource);
   });
 
-  test('fetches the travel, replaces its routePlan, updates it, and returns the new route', () async {
-    final oldRoute = _buildRoute(destination: 'Paris', backEndId: 'route-1');
-    // The incoming plan carries no backend id of its own (as freshly built
-    // form data would) — the repository must keep the existing route's
-    // identity so the backend updates it in place instead of creating a new one.
-    final newRoute = _buildRoute(destination: 'Rome', domainId: 'form-temp', backEndId: null);
-    final travel = _buildTravel(oldRoute);
+  test('upserts the route through the isolated endpoint and returns the updated plan', () async {
+    when(() => dataSource.updateRoute('travel-1', any()))
+        .thenAnswer((_) async => _buildRouteDto(destination: 'Rome'));
 
-    when(() => travelRepository.getTravel('travel-1')).thenAnswer((_) async => Result.success(travel));
-    when(() => travelRepository.updateTravel(any())).thenAnswer(
-      (invocation) async => Result.success(invocation.positionalArguments.first as Travel),
-    );
-
-    final result = await repository.updateRoute('travel-1', newRoute);
+    final result = await repository.updateRoute('travel-1', _buildRoute(destination: 'Rome'));
 
     expect(result.isSuccess, isTrue);
     expect(result.data!.destination, 'Rome');
 
-    final updatedTravel = verify(() => travelRepository.updateTravel(captureAny())).captured.single as Travel;
-    expect(updatedTravel.routePlan.destination, 'Rome');
-    expect(updatedTravel.routePlan.backEndId, 'route-1');
-    expect(updatedTravel.routePlan.domainId, oldRoute.domainId);
-    expect(updatedTravel.backEndId, 'travel-1');
-    expect(updatedTravel.travelStatus, TravelStatus.routeCreated);
+    final sentDto = verify(() => dataSource.updateRoute('travel-1', captureAny())).captured.single as RoutePlanDTO;
+    expect(sentDto.destination, 'Rome');
+    expect(sentDto.startLocation, 'SP');
   });
 
-  test('returns failure without updating when the travel cannot be fetched', () async {
-    when(() => travelRepository.getTravel('missing'))
-        .thenAnswer((_) async => const Result.failure('Travel not found.'));
+  test('returns failure without throwing when the data source fails', () async {
+    when(() => dataSource.updateRoute('travel-1', any())).thenThrow(Exception('Network error'));
 
-    final result = await repository.updateRoute('missing', _buildRoute());
-
-    expect(result.isSuccess, isFalse);
-    expect(result.error, 'Travel not found.');
-    verifyNever(() => travelRepository.updateTravel(any()));
-  });
-
-  test('returns failure when the travel update itself fails', () async {
-    final travel = _buildTravel(_buildRoute());
-    when(() => travelRepository.getTravel('travel-1')).thenAnswer((_) async => Result.success(travel));
-    when(() => travelRepository.updateTravel(any()))
-        .thenAnswer((_) async => const Result.failure('Network error'));
-
-    final result = await repository.updateRoute('travel-1', _buildRoute(destination: 'Rome'));
+    final result = await repository.updateRoute('travel-1', _buildRoute());
 
     expect(result.isSuccess, isFalse);
-    expect(result.error, 'Network error');
+    expect(result.error, contains('Network error'));
   });
 }

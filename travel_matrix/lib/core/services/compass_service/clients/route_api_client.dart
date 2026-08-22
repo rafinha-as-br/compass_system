@@ -1,3 +1,4 @@
+import 'package:travel_matrix/core/services/compass_service/api_endpoints.dart';
 import 'package:travel_matrix/core/services/compass_service/http_api_client.dart';
 
 class RouteApiClient {
@@ -30,8 +31,10 @@ class RouteApiClient {
     return HttpApiClient.instance.post(token, '/routes', routeData);
   }
 
-  Future<Map<String, dynamic>> updateRoute(String token, String routeId, Map<String, dynamic> routeData) async {
-    return HttpApiClient.instance.put(token, '/routes/$routeId', routeData);
+  /// Upserts the [RoutePlan] of a travel through the isolated route endpoint
+  /// (`PUT /travels/{travelId}/route`), instead of the whole-Travel PUT.
+  Future<Map<String, dynamic>> updateRoute(String token, String travelId, Map<String, dynamic> routeData) async {
+    return HttpApiClient.instance.put(token, ApiEndpoints.travelRoute(travelId), routeData);
   }
 
   Future<Map<String, dynamic>> deleteRoute(String token, String routeId) async {
