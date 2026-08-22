@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/data/dtos/itinerary_step_dto.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/build/itinerary_build_controller.dart';
@@ -9,9 +10,6 @@ import 'package:travel_matrix/features/travels/presentation/controllers/update/i
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/interest_points_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_builder_panel.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/steps_list_panel.dart';
-import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
-import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
-import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
 
 import '../../../data/repository_impl/itinerary_repository_impl.dart';
 import '../../../domain/repository/itinerary_repository.dart';
@@ -38,6 +36,7 @@ class ItineraryBuildPage extends StatelessWidget {
     super.key,
     required this.itineraryBuildModel,
     required this.travelId,
+    this.itineraryRepository,
   });
 
   /// Constructor build model class for [ItineraryBuildPage]
@@ -45,6 +44,9 @@ class ItineraryBuildPage extends StatelessWidget {
 
   /// travel id for creating the itinerary
   final String travelId;
+
+  /// Overrides the default [ItineraryRepositoryImpl]. Exposed for widget tests.
+  final ItineraryRepository? itineraryRepository;
 
   /// True when editing an existing itinerary.
   bool get isEditMode => itineraryBuildModel.hasExistingItinerary;
@@ -54,16 +56,13 @@ class ItineraryBuildPage extends StatelessWidget {
     return MultiProvider(
       providers: [
         // ItineraryRepository dependency injection
-        Provider<ItineraryRepository>(create: (_) => ItineraryRepositoryImpl()),
+        Provider<ItineraryRepository>(
+          create: (_) => itineraryRepository ?? ItineraryRepositoryImpl(),
+        ),
 
         // CrudItinerary use cases dependency injection
         ProxyProvider<ItineraryRepository, CrudItinerary>(
           update: (_, repo, __) => CrudItinerary(repo),
-        ),
-
-        // UserUseCases dependency injection (used to resolve the current agent's name)
-        Provider<UserUseCases>(
-          create: (_) => UserUseCases(UserClientRepositoryImpl(UserClientDataSource())),
         ),
 
         // Editor controller dependency injection
@@ -120,14 +119,6 @@ class _ItineraryBuildView extends StatelessWidget {
   final ItineraryBuildModel buildModel;
   final bool isEditMode;
 
-  Future<String> _resolveAgentName(BuildContext context) async {
-    final result = await context.read<UserUseCases>().getAuthenticatedUser();
-    if (!result.isSuccess || result.data == null) return '';
-
-    final agent = result.data!;
-    return agent.name.isNotEmpty ? agent.name : agent.email;
-  }
-
   Future<void> _saveItinerary(BuildContext context) async {
     final editor = context.read<ItineraryEditorController>();
     final messenger = ScaffoldMessenger.of(context);
@@ -138,7 +129,7 @@ class _ItineraryBuildView extends StatelessWidget {
     final createController = isEditMode
         ? null
         : context.read<CreateItineraryController>();
-    final agentName = await _resolveAgentName(context);
+    final agentName = context.read<AuthController>().agentDisplayName;
 
     final itineraryData = {
       if (buildModel.itineraryId != null)

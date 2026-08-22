@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
 import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
@@ -37,14 +38,18 @@ class _InterestPointItem {
 /// Note: itinerary creation happens separately via [ItineraryBuildPage]
 /// after the travel has been created.
 class TravelCreationPage extends StatefulWidget {
-  const TravelCreationPage({super.key});
+  const TravelCreationPage({super.key, this.userUseCases});
+
+  /// Overrides the default [UserUseCases]. Exposed for widget tests.
+  final UserUseCases? userUseCases;
 
   @override
   State<TravelCreationPage> createState() => _TravelCreationPageState();
 }
 
 class _TravelCreationPageState extends State<TravelCreationPage> {
-  final _userUseCases = UserUseCases(UserClientRepositoryImpl(UserClientDataSource()));
+  late final _userUseCases =
+      widget.userUseCases ?? UserUseCases(UserClientRepositoryImpl(UserClientDataSource()));
   final _formKey = GlobalKey<FormState>();
   final _travelNameCtrl = TextEditingController();
   final _startLocationCtrl = TextEditingController();
@@ -114,14 +119,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
     setState(() => _isSubmitting = true);
 
     final controller = context.read<TravelsController>();
-
-    // Get agent info
-    String agentId = 'agent_1';
-    final agentResult = await _userUseCases.getAuthenticatedUser();
-    if (agentResult.isSuccess && agentResult.data != null) {
-      final agent = agentResult.data!;
-      agentId = agent.backEndId ?? agent.domainId;
-    }
+    final agentId = context.read<AuthController>().userId ?? 'agent_1';
 
     final success = await controller.createTravel({
       'clientId': _selectedClientId,

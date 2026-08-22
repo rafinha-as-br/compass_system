@@ -1,4 +1,5 @@
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/foundation.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 
@@ -20,6 +21,15 @@ class AuthController extends ChangeNotifier {
   Map<String, dynamic>? get userData => _userData;
   String? get userName => _userData?['name'] as String?;
   String? get userEmail => _userData?['email'] as String?;
+  String? get userId => _userData?['id'] as String?;
+
+  /// Display name for the authenticated agent: the name when set, the
+  /// email otherwise. Empty string when neither is available.
+  String get agentDisplayName {
+    final name = userName;
+    if (name != null && name.isNotEmpty) return name;
+    return userEmail ?? '';
+  }
 
   Future<void> initialize() async {
     _token = await _storage.getToken();
@@ -60,5 +70,14 @@ class AuthController extends ChangeNotifier {
     _userData = null;
     await _storage.clearToken();
     notifyListeners();
+  }
+
+  /// Seeds [userData] directly, bypassing [initialize]/[login]'s network
+  /// call. Only meant for widget tests that need an authenticated agent.
+  @visibleForTesting
+  void debugSetUserData(Map<String, dynamic>? data) {
+    _token = data != null ? 'debug-token' : null;
+    _userData = data;
+    _initialized = true;
   }
 }
