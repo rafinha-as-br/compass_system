@@ -22,6 +22,12 @@ class _FakeAuthRepository implements AuthRepository {
     if (errorToThrow != null) throw errorToThrow!;
     return sessionToReturn!;
   }
+
+  @override
+  Future<void> requestPasswordReset(String email) async {}
+
+  @override
+  Future<void> resetPassword(String token, String newPassword) async {}
 }
 
 void main() {
