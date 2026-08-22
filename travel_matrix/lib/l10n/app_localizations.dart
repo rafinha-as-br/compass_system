@@ -176,6 +176,84 @@ abstract class AppLocalizations {
   /// **'An error occurred during login.'**
   String get loginError;
 
+  /// No description provided for @forgotPasswordLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPasswordLink;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset your password'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you a code to reset your password.'**
+  String get forgotPasswordSubtitle;
+
+  /// No description provided for @forgotPasswordSubmitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'SEND CODE'**
+  String get forgotPasswordSubmitButton;
+
+  /// No description provided for @forgotPasswordConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'If this email is registered, you will receive a code to reset your password.'**
+  String get forgotPasswordConfirmation;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your code'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code you received by email and choose a new password.'**
+  String get resetPasswordSubtitle;
+
+  /// No description provided for @resetPasswordTokenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get resetPasswordTokenLabel;
+
+  /// No description provided for @resetPasswordTokenRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code'**
+  String get resetPasswordTokenRequired;
+
+  /// No description provided for @resetPasswordNewPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get resetPasswordNewPasswordLabel;
+
+  /// No description provided for @resetPasswordNewPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a new password'**
+  String get resetPasswordNewPasswordRequired;
+
+  /// No description provided for @resetPasswordSubmitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'RESET PASSWORD'**
+  String get resetPasswordSubmitButton;
+
+  /// No description provided for @resetPasswordSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset successfully. You can now log in.'**
+  String get resetPasswordSuccess;
+
   /// No description provided for @dashboardTitle.
   ///
   /// In en, this message translates to:
@@ -751,6 +829,540 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Travel Agent'**
   String get travelAgentRole;
+
+  /// No description provided for @clientUsersTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Client Users'**
+  String get clientUsersTitle;
+
+  /// No description provided for @searchUsersHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search users...'**
+  String get searchUsersHint;
+
+  /// No description provided for @activeStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Active'**
+  String get activeStatusLabel;
+
+  /// No description provided for @inactiveStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Inactive'**
+  String get inactiveStatusLabel;
+
+  /// No description provided for @noClientUsersFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No client users found.'**
+  String get noClientUsersFoundMessage;
+
+  /// No description provided for @backToUsersButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Users'**
+  String get backToUsersButton;
+
+  /// No description provided for @maleGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get maleGenderLabel;
+
+  /// No description provided for @femaleGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get femaleGenderLabel;
+
+  /// No description provided for @otherOptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherOptionLabel;
+
+  /// No description provided for @travelHistoryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel History'**
+  String get travelHistoryTitle;
+
+  /// No description provided for @noTravelsForUserMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No travels found for this user.'**
+  String get noTravelsForUserMessage;
+
+  /// No description provided for @securityActionsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Security Actions'**
+  String get securityActionsTitle;
+
+  /// No description provided for @resetPasswordActionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset Password'**
+  String get resetPasswordActionTitle;
+
+  /// No description provided for @resetPasswordActionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Send a link to the user\'s email to securely reset their password.'**
+  String get resetPasswordActionDescription;
+
+  /// No description provided for @forceLogoutActionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Force Logout'**
+  String get forceLogoutActionTitle;
+
+  /// No description provided for @forceLogoutActionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Immediately terminate all active sessions for this user.'**
+  String get forceLogoutActionDescription;
+
+  /// No description provided for @resetPasswordSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset link sent'**
+  String get resetPasswordSuccessMessage;
+
+  /// No description provided for @resetPasswordFailureMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send reset link'**
+  String get resetPasswordFailureMessage;
+
+  /// No description provided for @forceLogoutSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'User sessions terminated'**
+  String get forceLogoutSuccessMessage;
+
+  /// No description provided for @forceLogoutFailureMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to terminate sessions'**
+  String get forceLogoutFailureMessage;
+
+  /// No description provided for @travelStatsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Stats'**
+  String get travelStatsTitle;
+
+  /// No description provided for @uniqueDestinationsStatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'UNIQUE DESTINATIONS'**
+  String get uniqueDestinationsStatLabel;
+
+  /// No description provided for @forceLogoutConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Force Logout?'**
+  String get forceLogoutConfirmTitle;
+
+  /// No description provided for @forceLogoutConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This will immediately terminate all active sessions for this user. Continue?'**
+  String get forceLogoutConfirmMessage;
+
+  /// No description provided for @confirmActionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CONFIRM'**
+  String get confirmActionButton;
+
+  /// No description provided for @cancelActionButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CANCEL'**
+  String get cancelActionButton;
+
+  /// No description provided for @newClientUserFormTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Client User'**
+  String get newClientUserFormTitle;
+
+  /// No description provided for @fullNameFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Full Name'**
+  String get fullNameFieldLabel;
+
+  /// No description provided for @nameRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get nameRequiredValidation;
+
+  /// No description provided for @cpfRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'CPF is required'**
+  String get cpfRequiredValidation;
+
+  /// No description provided for @emailRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get emailRequiredValidation;
+
+  /// No description provided for @phoneNumberFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone Number'**
+  String get phoneNumberFieldLabel;
+
+  /// No description provided for @phoneRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone is required'**
+  String get phoneRequiredValidation;
+
+  /// No description provided for @initialPasswordFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Initial Password'**
+  String get initialPasswordFieldLabel;
+
+  /// No description provided for @passwordRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get passwordRequiredValidation;
+
+  /// No description provided for @sexFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sex'**
+  String get sexFieldLabel;
+
+  /// No description provided for @birthDateFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Birth Date'**
+  String get birthDateFieldLabel;
+
+  /// No description provided for @createUserSubmitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CREATE USER'**
+  String get createUserSubmitButton;
+
+  /// No description provided for @editUserPageSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit: {name}'**
+  String editUserPageSubtitle(String name);
+
+  /// No description provided for @saveChangesButton.
+  ///
+  /// In en, this message translates to:
+  /// **'SAVE CHANGES'**
+  String get saveChangesButton;
+
+  /// No description provided for @deactivateUserDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate User'**
+  String get deactivateUserDialogTitle;
+
+  /// No description provided for @deactivateReasonPrompt.
+  ///
+  /// In en, this message translates to:
+  /// **'Why are you deactivating {name}?'**
+  String deactivateReasonPrompt(String name);
+
+  /// No description provided for @deactivateReasonClientRequest.
+  ///
+  /// In en, this message translates to:
+  /// **'Client request'**
+  String get deactivateReasonClientRequest;
+
+  /// No description provided for @deactivateReasonNonPayment.
+  ///
+  /// In en, this message translates to:
+  /// **'Non-payment'**
+  String get deactivateReasonNonPayment;
+
+  /// No description provided for @deactivateReasonTermsViolation.
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of service violation'**
+  String get deactivateReasonTermsViolation;
+
+  /// No description provided for @deactivateReasonDuplicateAccount.
+  ///
+  /// In en, this message translates to:
+  /// **'Duplicate account'**
+  String get deactivateReasonDuplicateAccount;
+
+  /// No description provided for @specifyReasonFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Specify the reason'**
+  String get specifyReasonFieldLabel;
+
+  /// No description provided for @deactivateButtonCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'DEACTIVATE'**
+  String get deactivateButtonCaps;
+
+  /// No description provided for @userNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'User Not Found'**
+  String get userNotFoundTitle;
+
+  /// No description provided for @userNotFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'The requested user could not be found.'**
+  String get userNotFoundMessage;
+
+  /// No description provided for @buildItineraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Build Itinerary'**
+  String get buildItineraryTitle;
+
+  /// No description provided for @cannotMoveStep.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot move this step to that position.'**
+  String get cannotMoveStep;
+
+  /// No description provided for @cannotDeleteStepMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Cannot delete this step.'**
+  String get cannotDeleteStepMessage;
+
+  /// No description provided for @itineraryUpdatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary updated.'**
+  String get itineraryUpdatedSuccess;
+
+  /// No description provided for @itineraryCreatedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary created.'**
+  String get itineraryCreatedSuccess;
+
+  /// No description provided for @couldNotSaveItinerary.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save itinerary.'**
+  String get couldNotSaveItinerary;
+
+  /// No description provided for @editRouteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Route'**
+  String get editRouteTitle;
+
+  /// No description provided for @updateRouteButton.
+  ///
+  /// In en, this message translates to:
+  /// **'UPDATE ROUTE'**
+  String get updateRouteButton;
+
+  /// No description provided for @createTravelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'CREATE TRAVEL'**
+  String get createTravelButton;
+
+  /// No description provided for @editRoutePlanButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Route Plan'**
+  String get editRoutePlanButton;
+
+  /// No description provided for @markAsReadyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark as Ready'**
+  String get markAsReadyButton;
+
+  /// No description provided for @markAsReadyConfirm.
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to mark this travel as ready?'**
+  String get markAsReadyConfirm;
+
+  /// No description provided for @confirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm'**
+  String get confirmButton;
+
+  /// No description provided for @markAsReadySuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel marked as ready successfully'**
+  String get markAsReadySuccess;
+
+  /// No description provided for @markAsReadyFailure.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to mark travel as ready'**
+  String get markAsReadyFailure;
+
+  /// No description provided for @needsItineraryFirstTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'You need to create an itinerary first'**
+  String get needsItineraryFirstTooltip;
+
+  /// No description provided for @markAsReadyTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark travel as ready'**
+  String get markAsReadyTooltip;
+
+  /// No description provided for @routeViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Route View'**
+  String get routeViewTab;
+
+  /// No description provided for @itineraryViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary View'**
+  String get itineraryViewTab;
+
+  /// No description provided for @travelersCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} Travelers'**
+  String travelersCount(int count);
+
+  /// No description provided for @travelNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Not Found'**
+  String get travelNotFoundTitle;
+
+  /// No description provided for @travelNotFoundBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The requested travel could not be found.'**
+  String get travelNotFoundBody;
+
+  /// No description provided for @changeStepTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Step Type?'**
+  String get changeStepTypeTitle;
+
+  /// No description provided for @changeStepTypeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the step type will result in the loss of specific data entered for the current step. Do you wish to proceed?'**
+  String get changeStepTypeBody;
+
+  /// No description provided for @changeTransportTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Change Transport Type?'**
+  String get changeTransportTypeTitle;
+
+  /// No description provided for @changeTransportTypeBody.
+  ///
+  /// In en, this message translates to:
+  /// **'Changing the transport type will result in the loss of specific data entered for the current transport. Do you wish to proceed?'**
+  String get changeTransportTypeBody;
+
+  /// No description provided for @proceedButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Proceed'**
+  String get proceedButton;
+
+  /// No description provided for @noStepsYet.
+  ///
+  /// In en, this message translates to:
+  /// **'No steps yet'**
+  String get noStepsYet;
+
+  /// No description provided for @noItineraryAvailable.
+  ///
+  /// In en, this message translates to:
+  /// **'No itinerary available.'**
+  String get noItineraryAvailable;
+
+  /// No description provided for @stepDetailsUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Additional details for this step are not yet available.'**
+  String get stepDetailsUnavailable;
+
+  /// No description provided for @draftStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Draft Step'**
+  String get draftStepTitle;
+
+  /// No description provided for @unknownStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Unknown Step'**
+  String get unknownStepTitle;
+
+  /// No description provided for @noItineraryYetTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No Itinerary Yet'**
+  String get noItineraryYetTitle;
+
+  /// No description provided for @stepsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps ({count})'**
+  String stepsCountLabel(int count);
+
+  /// No description provided for @noInterestPointsPanel.
+  ///
+  /// In en, this message translates to:
+  /// **'No interest points'**
+  String get noInterestPointsPanel;
+
+  /// No description provided for @selectDateTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Select date'**
+  String get selectDateTooltip;
+
+  /// No description provided for @addInterestPointTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add interest point'**
+  String get addInterestPointTooltip;
+
+  /// No description provided for @removeInterestPointTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove interest point'**
+  String get removeInterestPointTooltip;
+
+  /// No description provided for @addExperienceTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Add experience'**
+  String get addExperienceTooltip;
 }
 
 class _AppLocalizationsDelegate

@@ -37,6 +37,49 @@ class AppLocalizationsPt extends AppLocalizations {
   String get loginError => 'Ocorreu um erro durante o login.';
 
   @override
+  String get forgotPasswordLink => 'Esqueceu a senha?';
+
+  @override
+  String get forgotPasswordTitle => 'Redefinir sua senha';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Informe seu e-mail e enviaremos um código para redefinir sua senha.';
+
+  @override
+  String get forgotPasswordSubmitButton => 'ENVIAR CÓDIGO';
+
+  @override
+  String get forgotPasswordConfirmation =>
+      'Se este e-mail estiver cadastrado, você receberá um código para redefinir sua senha.';
+
+  @override
+  String get resetPasswordTitle => 'Informe o código';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Informe o código recebido por e-mail e escolha uma nova senha.';
+
+  @override
+  String get resetPasswordTokenLabel => 'Código';
+
+  @override
+  String get resetPasswordTokenRequired => 'Informe o código';
+
+  @override
+  String get resetPasswordNewPasswordLabel => 'Nova senha';
+
+  @override
+  String get resetPasswordNewPasswordRequired => 'Informe uma nova senha';
+
+  @override
+  String get resetPasswordSubmitButton => 'REDEFINIR SENHA';
+
+  @override
+  String get resetPasswordSuccess =>
+      'Senha redefinida com sucesso. Você já pode fazer login.';
+
+  @override
   String get homeTitle => 'Início RouteCraft';
 
   @override

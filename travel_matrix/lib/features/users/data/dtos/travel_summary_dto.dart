@@ -1,6 +1,5 @@
 
 import 'package:travel_matrix/features/users/domain/entities/travel_summary.dart';
-import 'package:uuid/uuid.dart';
 
 /// DTO for [TravelSummary]
 class TravelSummaryDTO{
@@ -30,10 +29,15 @@ class TravelSummaryDTO{
   }
 
   /// to Domain mapper method
+  ///
+  /// [domainId] is derived from [backEndId] instead of a freshly generated
+  /// UUID so the same backend record keeps a stable local identity across
+  /// repeated fetches (selection/diffing by id would otherwise treat every
+  /// refresh as a brand new item).
   TravelSummary toDomain(){
     return TravelSummary(
       backEndId: backEndId,
-      domainId: Uuid().v4(),
+      domainId: backEndId,
       travelName: travelName,
       destination: destination,
       status: status,

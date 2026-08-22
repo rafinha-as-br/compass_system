@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 
 class NoItineraryPage extends StatelessWidget {
@@ -12,6 +13,8 @@ class NoItineraryPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Center(
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
@@ -20,7 +23,7 @@ class NoItineraryPage extends StatelessWidget {
               size: 64, color: Theme.of(context).disabledColor),
           const SizedBox(height: 16),
           Text(
-            'No Itinerary Yet',
+            l10n.noItineraryYetTitle,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 24),
@@ -39,7 +42,7 @@ class NoItineraryPage extends StatelessWidget {
               );
             },
             icon: const Icon(Icons.add),
-            label: const Text('Create Itinerary'),
+            label: Text(l10n.createItineraryTitle),
             style: ElevatedButton.styleFrom(
               backgroundColor: Theme.of(context).colorScheme.secondary,
               foregroundColor: Theme.of(context).colorScheme.onSecondary,

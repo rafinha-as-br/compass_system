@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 /// build model class for [InterestPointsPanel]
 class InterestPointPanelBuildModel{
@@ -28,6 +30,7 @@ class InterestPointsPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return SizedBox(
       width: 250,
@@ -39,17 +42,17 @@ class InterestPointsPanel extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             color: theme.colorScheme.primary.withValues(alpha: 0.05),
             child: Text(
-              'Interest Points',
+              l10n.interestPointsTitle,
               style: theme.textTheme.titleSmall
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
           ),
           Expanded(
             child: interestPoints.isEmpty
-                ? const Center(
+                ? Center(
               child: Padding(
-                padding: EdgeInsets.all(16),
-                child: Text('No interest points'),
+                padding: const EdgeInsets.all(16),
+                child: Text(l10n.noInterestPointsPanel),
               ),
             )
                 : ListView.builder(
@@ -65,7 +68,7 @@ class InterestPointsPanel extends StatelessWidget {
                         : Icons.radio_button_unchecked,
                     size: 20,
                     color: poi.isChecked
-                        ? const Color(0xFF2E7D5B)
+                        ? theme.semanticColors.success
                         : theme.colorScheme.secondary,
                   ),
                   title: Text(

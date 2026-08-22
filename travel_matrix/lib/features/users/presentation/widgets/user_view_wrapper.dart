@@ -6,6 +6,7 @@ import 'package:travel_matrix/features/users/presentation/view_models/client_vie
 import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
 import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
 import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 class UserViewWrapper extends StatefulWidget {
   final String userId;
@@ -72,10 +73,11 @@ class _UserViewWrapperState extends State<UserViewWrapper> {
           }
           
           if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+            final l10n = AppLocalizations.of(context)!;
             return Scaffold(
-              appBar: AppBar(title: const Text('User Not Found')),
-              body: const Center(
-                child: Text('The requested user could not be found.'),
+              appBar: AppBar(title: Text(l10n.userNotFoundTitle)),
+              body: Center(
+                child: Text(l10n.userNotFoundMessage),
               ),
             );
           }

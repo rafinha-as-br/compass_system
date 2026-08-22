@@ -8,7 +8,6 @@ import 'package:travel_matrix/app/app_injector.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/features/auth/domain/auth_repository.dart';
 import 'package:travel_matrix/features/auth/domain/entities/auth_session.dart';
-import 'package:travel_matrix/features/auth/domain/login.dart';
 import 'package:travel_matrix/features/auth/presentation/controllers/login_controller.dart';
 import 'package:travel_matrix/features/auth/presentation/widgets/login_panel.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
@@ -46,7 +45,7 @@ void main() {
     SharedPreferences.setMockInitialValues({});
     await AppInjector.init();
     repository = _MockAuthRepository();
-    controller = LoginController(login: Login(repository));
+    controller = LoginController(repository: repository);
   });
 
   testWidgets('valida os campos obrigatórios sem chamar o repositório', (tester) async {

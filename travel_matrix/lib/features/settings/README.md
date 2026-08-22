@@ -1,44 +1,54 @@
 # Settings Feature (Travel Matrix)
 
-Este módulo é responsável por gerenciar as configurações locais e as preferências de interface do usuário do painel do agente (Travel Matrix). Diferentemente do módulo `account` (que gerencia dados de identidade e credenciais via API), o módulo `settings` é **100% local** e foca em customizações da experiência no dispositivo atual.
+Este módulo é responsável por gerenciar as preferências locais de interface do
+usuário do painel do agente (Travel Matrix): tema (claro/escuro) e idioma
+(Português/Inglês). É **100% local** — sem chamada de API, sem `domain`/`data`,
+consistente com a decisão original da CPS-13.
 
-## Estrutura do Módulo
+> **Nota (auditoria CPS-36):** este diretório não contém nenhum arquivo Dart —
+> a funcionalidade não vive em `features/settings/`, e sim distribuída em dois
+> lugares, descritos abaixo. Uma versão anterior deste README descrevia uma
+> `SettingsPage` dedicada (com `RadioListTile` de tema e seletor de idioma
+> próprio) que nunca chegou a ser implementada; o texto foi corrigido para
+> refletir o que existe de fato no código.
 
-O módulo segue a arquitetura padrão do projeto, atualmente contendo apenas a camada de apresentação (`presentation`), uma vez que o controle de estado global e persistência residem nos controladores base da aplicação.
+## Onde a funcionalidade vive
 
-```text
-lib/features/settings/
-└── presentation/
-    └── pages/
-        └── settings_page.dart  # Tela principal de configurações
-```
+* **Estado global:** `SettingsController`
+  (`lib/app/global_controllers/settings_controller.dart`) — `ChangeNotifier`
+  injetado no topo da árvore (`AppBootstrap`), pois tema e idioma precisam
+  afetar a raiz do `MaterialApp` inteiro.
+* **UI:** `PreferencesCard`
+  (`lib/features/account/presentation/widgets/preferences_card.dart`),
+  renderizada dentro da `AccountPage`. Não existe uma tela dedicada nem rota
+  `/settings` — o item de navegação lateral rotulado "Settings" leva à mesma
+  rota `/account` (`AppRoutes.account`, Branch 3 do `StatefulShellRoute`).
 
-## Componentes Principais
+A UI atual é bem mais simples do que a descrita anteriormente:
+* Um `SwitchListTile` alterna entre `ThemeMode.light` e `ThemeMode.dark` (sem
+  opção "Seguir sistema").
+* Um `ListTile` alterna o idioma entre `en`/`pt` a cada toque (sem tela de
+  seleção dedicada).
 
-### 1. `SettingsPage` (`presentation/pages/settings_page.dart`)
-A tela de configurações apresenta uma interface dividida em "Cards" minimalistas, seguindo a linguagem visual *Midnight Terminal* do Compass System (bordas sutis `outlineVariant` e `elevation: 0`). 
+## Persistência
 
-A tela possui duas seções principais:
-- **Aparência**: Permite a seleção do tema da aplicação com três opções através de `RadioListTile`:
-  - **Claro** (`ThemeMode.light`)
-  - **Escuro** (`ThemeMode.dark`)
-  - **Seguir sistema** (`ThemeMode.system`)
-- **Idioma**: Permite a seleção explícita da linguagem da interface (Português/Inglês).
-
-### 2. Integração com o `SettingsController` (Global)
-Embora a tela resida nesta feature, o estado que ela manipula vive no controlador global `SettingsController` (`lib/app/global_controllers/settings_controller.dart`). 
-- **Motivação**: O tema e o idioma precisam afetar toda a raiz da árvore do Flutter (`MaterialApp`), logo, o controlador precisa estar acessível globalmente (injetado no `AppBootstrap`).
-- **Persistência**: O controlador utiliza o pacote `shared_preferences` para salvar a escolha do usuário (`theme_mode` e `locale`), garantindo que as preferências sejam mantidas entre sessões.
-
-## Rotas
-O módulo de configurações é acessado através da rota `/settings`, sendo registrado como uma *Branch* independente (`Branch 4`) no sistema de navegação `StatefulShellRoute` do `GoRouter` (`lib/app/router/private_shell.dart`).
+O `SettingsController` persiste a escolha do usuário via
+`SettingsStorageService` (`lib/core/services/settings_storage_service.dart`),
+que envolve `shared_preferences` (mesmo padrão do `AuthStorageService`,
+usado para o token de autenticação). As chaves salvas são `theme_mode`
+(nome do enum `ThemeMode`) e `locale` (código do idioma). A leitura ocorre em
+`SettingsController.initialize()`, aguardado em `AppBootstrap` antes do
+primeiro frame, para que o tema/idioma corretos já apareçam sem "flash" do
+valor padrão.
 
 ## Localização (i18n)
-O módulo utiliza as strings de tradução através da classe `AppLocalizations`, extraídas dos arquivos `.arb` (`app_en.arb` e `app_pt.arb`):
-- `settingsTitle`
-- `appearanceSection`
-- `themeLight` / `themeDark` / `themeSystem`
-- `languageSection`
+
+O módulo utiliza as strings de tradução através da classe `AppLocalizations`,
+extraídas dos arquivos `.arb` (`app_en.arb` e `app_pt.arb`):
+- `systemPreferences`, `adminDarkMode`, `languageLabel`.
 
 ---
-*Módulo criado como parte da issue CPS-13.*
+*Módulo originado na issue CPS-13; README corrigido na auditoria CPS-36 para
+refletir o estado real do código (a persistência descrita aqui foi
+implementada nessa mesma auditoria, antes disso o tema/idioma resetavam a
+cada reinício do app).*

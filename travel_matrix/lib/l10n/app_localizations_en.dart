@@ -49,6 +49,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get loginError => 'An error occurred during login.';
 
   @override
+  String get forgotPasswordLink => 'Forgot password?';
+
+  @override
+  String get forgotPasswordTitle => 'Reset your password';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Enter your email and we\'ll send you a code to reset your password.';
+
+  @override
+  String get forgotPasswordSubmitButton => 'SEND CODE';
+
+  @override
+  String get forgotPasswordConfirmation =>
+      'If this email is registered, you will receive a code to reset your password.';
+
+  @override
+  String get resetPasswordTitle => 'Enter your code';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Enter the code you received by email and choose a new password.';
+
+  @override
+  String get resetPasswordTokenLabel => 'Code';
+
+  @override
+  String get resetPasswordTokenRequired => 'Enter the code';
+
+  @override
+  String get resetPasswordNewPasswordLabel => 'New password';
+
+  @override
+  String get resetPasswordNewPasswordRequired => 'Enter a new password';
+
+  @override
+  String get resetPasswordSubmitButton => 'RESET PASSWORD';
+
+  @override
+  String get resetPasswordSuccess =>
+      'Password reset successfully. You can now log in.';
+
+  @override
   String get dashboardTitle => 'Dashboard Overview';
 
   @override
@@ -349,4 +392,287 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get travelAgentRole => 'Travel Agent';
+
+  @override
+  String get clientUsersTitle => 'Client Users';
+
+  @override
+  String get searchUsersHint => 'Search users...';
+
+  @override
+  String get activeStatusLabel => 'Active';
+
+  @override
+  String get inactiveStatusLabel => 'Inactive';
+
+  @override
+  String get noClientUsersFoundMessage => 'No client users found.';
+
+  @override
+  String get backToUsersButton => 'Back to Users';
+
+  @override
+  String get maleGenderLabel => 'Male';
+
+  @override
+  String get femaleGenderLabel => 'Female';
+
+  @override
+  String get otherOptionLabel => 'Other';
+
+  @override
+  String get travelHistoryTitle => 'Travel History';
+
+  @override
+  String get noTravelsForUserMessage => 'No travels found for this user.';
+
+  @override
+  String get securityActionsTitle => 'Security Actions';
+
+  @override
+  String get resetPasswordActionTitle => 'Reset Password';
+
+  @override
+  String get resetPasswordActionDescription =>
+      'Send a link to the user\'s email to securely reset their password.';
+
+  @override
+  String get forceLogoutActionTitle => 'Force Logout';
+
+  @override
+  String get forceLogoutActionDescription =>
+      'Immediately terminate all active sessions for this user.';
+
+  @override
+  String get resetPasswordSuccessMessage => 'Password reset link sent';
+
+  @override
+  String get resetPasswordFailureMessage => 'Failed to send reset link';
+
+  @override
+  String get forceLogoutSuccessMessage => 'User sessions terminated';
+
+  @override
+  String get forceLogoutFailureMessage => 'Failed to terminate sessions';
+
+  @override
+  String get travelStatsTitle => 'Travel Stats';
+
+  @override
+  String get uniqueDestinationsStatLabel => 'UNIQUE DESTINATIONS';
+
+  @override
+  String get forceLogoutConfirmTitle => 'Force Logout?';
+
+  @override
+  String get forceLogoutConfirmMessage =>
+      'This will immediately terminate all active sessions for this user. Continue?';
+
+  @override
+  String get confirmActionButton => 'CONFIRM';
+
+  @override
+  String get cancelActionButton => 'CANCEL';
+
+  @override
+  String get newClientUserFormTitle => 'New Client User';
+
+  @override
+  String get fullNameFieldLabel => 'Full Name';
+
+  @override
+  String get nameRequiredValidation => 'Name is required';
+
+  @override
+  String get cpfRequiredValidation => 'CPF is required';
+
+  @override
+  String get emailRequiredValidation => 'Email is required';
+
+  @override
+  String get phoneNumberFieldLabel => 'Phone Number';
+
+  @override
+  String get phoneRequiredValidation => 'Phone is required';
+
+  @override
+  String get initialPasswordFieldLabel => 'Initial Password';
+
+  @override
+  String get passwordRequiredValidation => 'Password is required';
+
+  @override
+  String get sexFieldLabel => 'Sex';
+
+  @override
+  String get birthDateFieldLabel => 'Birth Date';
+
+  @override
+  String get createUserSubmitButton => 'CREATE USER';
+
+  @override
+  String editUserPageSubtitle(String name) {
+    return 'Edit: $name';
+  }
+
+  @override
+  String get saveChangesButton => 'SAVE CHANGES';
+
+  @override
+  String get deactivateUserDialogTitle => 'Deactivate User';
+
+  @override
+  String deactivateReasonPrompt(String name) {
+    return 'Why are you deactivating $name?';
+  }
+
+  @override
+  String get deactivateReasonClientRequest => 'Client request';
+
+  @override
+  String get deactivateReasonNonPayment => 'Non-payment';
+
+  @override
+  String get deactivateReasonTermsViolation => 'Terms of service violation';
+
+  @override
+  String get deactivateReasonDuplicateAccount => 'Duplicate account';
+
+  @override
+  String get specifyReasonFieldLabel => 'Specify the reason';
+
+  @override
+  String get deactivateButtonCaps => 'DEACTIVATE';
+
+  @override
+  String get userNotFoundTitle => 'User Not Found';
+
+  @override
+  String get userNotFoundMessage => 'The requested user could not be found.';
+
+  @override
+  String get buildItineraryTitle => 'Build Itinerary';
+
+  @override
+  String get cannotMoveStep => 'Cannot move this step to that position.';
+
+  @override
+  String get cannotDeleteStepMessage => 'Cannot delete this step.';
+
+  @override
+  String get itineraryUpdatedSuccess => 'Itinerary updated.';
+
+  @override
+  String get itineraryCreatedSuccess => 'Itinerary created.';
+
+  @override
+  String get couldNotSaveItinerary => 'Could not save itinerary.';
+
+  @override
+  String get editRouteTitle => 'Edit Route';
+
+  @override
+  String get updateRouteButton => 'UPDATE ROUTE';
+
+  @override
+  String get createTravelButton => 'CREATE TRAVEL';
+
+  @override
+  String get editRoutePlanButton => 'Edit Route Plan';
+
+  @override
+  String get markAsReadyButton => 'Mark as Ready';
+
+  @override
+  String get markAsReadyConfirm =>
+      'Are you sure you want to mark this travel as ready?';
+
+  @override
+  String get confirmButton => 'Confirm';
+
+  @override
+  String get markAsReadySuccess => 'Travel marked as ready successfully';
+
+  @override
+  String get markAsReadyFailure => 'Failed to mark travel as ready';
+
+  @override
+  String get needsItineraryFirstTooltip =>
+      'You need to create an itinerary first';
+
+  @override
+  String get markAsReadyTooltip => 'Mark travel as ready';
+
+  @override
+  String get routeViewTab => 'Route View';
+
+  @override
+  String get itineraryViewTab => 'Itinerary View';
+
+  @override
+  String travelersCount(int count) {
+    return '$count Travelers';
+  }
+
+  @override
+  String get travelNotFoundTitle => 'Travel Not Found';
+
+  @override
+  String get travelNotFoundBody => 'The requested travel could not be found.';
+
+  @override
+  String get changeStepTypeTitle => 'Change Step Type?';
+
+  @override
+  String get changeStepTypeBody =>
+      'Changing the step type will result in the loss of specific data entered for the current step. Do you wish to proceed?';
+
+  @override
+  String get changeTransportTypeTitle => 'Change Transport Type?';
+
+  @override
+  String get changeTransportTypeBody =>
+      'Changing the transport type will result in the loss of specific data entered for the current transport. Do you wish to proceed?';
+
+  @override
+  String get proceedButton => 'Proceed';
+
+  @override
+  String get noStepsYet => 'No steps yet';
+
+  @override
+  String get noItineraryAvailable => 'No itinerary available.';
+
+  @override
+  String get stepDetailsUnavailable =>
+      'Additional details for this step are not yet available.';
+
+  @override
+  String get draftStepTitle => 'Draft Step';
+
+  @override
+  String get unknownStepTitle => 'Unknown Step';
+
+  @override
+  String get noItineraryYetTitle => 'No Itinerary Yet';
+
+  @override
+  String stepsCountLabel(int count) {
+    return 'Steps ($count)';
+  }
+
+  @override
+  String get noInterestPointsPanel => 'No interest points';
+
+  @override
+  String get selectDateTooltip => 'Select date';
+
+  @override
+  String get addInterestPointTooltip => 'Add interest point';
+
+  @override
+  String get removeInterestPointTooltip => 'Remove interest point';
+
+  @override
+  String get addExperienceTooltip => 'Add experience';
 }

@@ -5,6 +5,8 @@ import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 
 /// This appBar is used in the Travel_View_page, responsible for showing:
 /// - Travel Name
@@ -21,12 +23,16 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+    final mutedColor = theme.colorScheme.onSurface.withValues(alpha: 0.6);
+
     return Container(
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        color: theme.colorScheme.surface,
         border: Border(
           bottom: BorderSide(
-            color: Theme.of(context).colorScheme.outlineVariant,
+            color: theme.colorScheme.outlineVariant,
             width: 1,
           ),
         ),
@@ -44,8 +50,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                 spacing: 16,
                 children: [
                   // Back button
-                  IconButton(
-                    icon: const Icon(Icons.arrow_back),
+                  BackIconButton(
                     onPressed: () {
                       if (context.canPop()) {
                         context.pop();
@@ -58,10 +63,10 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                   Expanded(
                     child: Text(
                       travel.travelTitle,
-                      style: const TextStyle(
+                      style: TextStyle(
                         fontSize: 32,
                         fontWeight: FontWeight.w700,
-                        color: Color(0xFF1A2C3A),
+                        color: theme.colorScheme.onSurface,
                         letterSpacing: -0.5,
                       ),
                       overflow: TextOverflow.ellipsis,
@@ -80,7 +85,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                       );
                     },
                     icon: const Icon(Icons.edit_road, size: 16),
-                    label: const Text('Edit Route'),
+                    label: Text(l10n.editRouteTitle),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
@@ -116,7 +121,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                       );
                     },
                     icon: const Icon(Icons.edit_calendar, size: 16),
-                    label: const Text('Edit Itinerary'),
+                    label: Text(l10n.editItineraryTitle),
                     style: ElevatedButton.styleFrom(
                       padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
@@ -126,24 +131,24 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                   // Mark as Ready Button (only visible if notReady)
                   if (travel.status == TravelStatusViewModel.notReady)
                     Tooltip(
-                      message: travel.itinerary == null 
-                          ? 'You need to create an itinerary first' 
-                          : 'Mark travel as ready',
+                      message: travel.itinerary == null
+                          ? l10n.needsItineraryFirstTooltip
+                          : l10n.markAsReadyTooltip,
                       child: ElevatedButton.icon(
                         onPressed: travel.itinerary == null ? null : () async {
                           final confirm = await showDialog<bool>(
                             context: context,
                             builder: (context) => AlertDialog(
-                              title: const Text('Mark as Ready'),
-                              content: const Text('Are you sure you want to mark this travel as ready?'),
+                              title: Text(l10n.markAsReadyButton),
+                              content: Text(l10n.markAsReadyConfirm),
                               actions: [
                                 TextButton(
                                   onPressed: () => Navigator.of(context).pop(false),
-                                  child: const Text('Cancel'),
+                                  child: Text(l10n.cancelButton),
                                 ),
                                 ElevatedButton(
                                   onPressed: () => Navigator.of(context).pop(true),
-                                  child: const Text('Confirm'),
+                                  child: Text(l10n.confirmButton),
                                 ),
                               ],
                             ),
@@ -154,16 +159,16 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                             final controller = context.read<TravelsController>();
                             final success = await controller.markTravelAsReady(travel.backEndId!);
                             if (!context.mounted) return;
-                            
+
                             if (success) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Travel marked as ready successfully')),
+                                SnackBar(content: Text(l10n.markAsReadySuccess)),
                               );
                               context.go(AppRoutes.travels);
                             } else {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(
-                                  content: Text('Failed to mark travel as ready'),
+                                SnackBar(
+                                  content: Text(l10n.markAsReadyFailure),
                                   backgroundColor: Colors.red,
                                 ),
                               );
@@ -171,12 +176,12 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                           }
                         },
                         icon: const Icon(Icons.check_circle_outline, size: 16),
-                        label: const Text('Mark as Ready'),
+                        label: Text(l10n.markAsReadyButton),
                         style: ElevatedButton.styleFrom(
                           padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                           textStyle: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold),
-                          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-                          foregroundColor: Theme.of(context).colorScheme.onPrimaryContainer,
+                          backgroundColor: theme.colorScheme.primaryContainer,
+                          foregroundColor: theme.colorScheme.onPrimaryContainer,
                         ),
                       ),
                     ),
@@ -208,25 +213,25 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
               // Date and travelers row
               Row(
                 children: [
-                  const Icon(
+                  Icon(
                     Icons.calendar_today_outlined,
                     size: 14,
-                    color: Color(0xFF8E9AAB),
+                    color: mutedColor,
                   ),
                   const SizedBox(width: 4),
                   Text(
                     '${_formatDate(travel.route.startDate)} - ${_formatDate(travel.route.endDate)}',
-                    style: const TextStyle(
-                      color: Color(0xFF8E9AAB),
+                    style: TextStyle(
+                      color: mutedColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Text(
-                    '• ${travel.participants.length} Travelers',
-                    style: const TextStyle(
-                      color: Color(0xFF8E9AAB),
+                    '• ${l10n.travelersCount(travel.participants.length)}',
+                    style: TextStyle(
+                      color: mutedColor,
                       fontWeight: FontWeight.w600,
                       fontSize: 12,
                     ),
@@ -234,13 +239,13 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                 ],
               ),
               const SizedBox(height: 16),
-              const TabBar(
+              TabBar(
                 dividerColor: Colors.transparent,
                 indicatorSize: TabBarIndicatorSize.tab,
-                unselectedLabelColor: Color(0xFF8E9AAB),
+                unselectedLabelColor: mutedColor,
                 tabs: [
-                  Tab(icon: Icon(Icons.map), text: 'Route View'),
-                  Tab(icon: Icon(Icons.view_timeline), text: 'Itinerary View'),
+                  Tab(icon: const Icon(Icons.map), text: l10n.routeViewTab),
+                  Tab(icon: const Icon(Icons.view_timeline), text: l10n.itineraryViewTab),
                 ],
               ),
             ],

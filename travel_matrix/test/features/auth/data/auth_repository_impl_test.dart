@@ -78,4 +78,66 @@ void main() {
       );
     });
   });
+
+  group('AuthRepositoryImpl.requestPasswordReset', () {
+    test('completa sem erro quando a resposta não tem status "error"', () async {
+      when(() => dataSource.requestPasswordReset('agente@matrix.com')).thenAnswer(
+        (_) async => {
+          'data': 'Se o e-mail informado estiver cadastrado, você receberá instruções...',
+        },
+      );
+
+      await expectLater(
+        repository.requestPasswordReset('agente@matrix.com'),
+        completes,
+      );
+    });
+
+    test('lança StateError com a mensagem da API quando a resposta tem status "error"', () async {
+      when(() => dataSource.requestPasswordReset('agente@matrix.com')).thenAnswer(
+        (_) async => {
+          'status': 'error',
+          'data': null,
+          'message': 'Erro de rede.',
+        },
+      );
+
+      expect(
+        () => repository.requestPasswordReset('agente@matrix.com'),
+        throwsA(
+          isA<StateError>().having((e) => e.message, 'message', 'Erro de rede.'),
+        ),
+      );
+    });
+  });
+
+  group('AuthRepositoryImpl.resetPassword', () {
+    test('completa sem erro quando a resposta não tem status "error"', () async {
+      when(() => dataSource.resetPassword('token-123', 'novaSenha456')).thenAnswer(
+        (_) async => {'data': 'Senha redefinida com sucesso.'},
+      );
+
+      await expectLater(
+        repository.resetPassword('token-123', 'novaSenha456'),
+        completes,
+      );
+    });
+
+    test('lança StateError com a mensagem da API para token inválido/expirado', () async {
+      when(() => dataSource.resetPassword('token-invalido', 'novaSenha456')).thenAnswer(
+        (_) async => {
+          'status': 'error',
+          'data': null,
+          'message': 'Token inválido ou expirado.',
+        },
+      );
+
+      expect(
+        () => repository.resetPassword('token-invalido', 'novaSenha456'),
+        throwsA(
+          isA<StateError>().having((e) => e.message, 'message', 'Token inválido ou expirado.'),
+        ),
+      );
+    });
+  });
 }

@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// Displays route data for the selected travel.
 ///
@@ -20,6 +21,7 @@ class RouteViewTab extends StatelessWidget {
   Widget build(BuildContext context) {
     final route = travel.route;
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return SingleChildScrollView(
       padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 16),
@@ -39,7 +41,7 @@ class RouteViewTab extends StatelessWidget {
                 );
               },
               icon: const Icon(Icons.edit_road),
-              label: const Text('Edit Route Plan'),
+              label: Text(l10n.editRoutePlanButton),
               style: ElevatedButton.styleFrom(
                 backgroundColor: theme.colorScheme.secondary,
                 foregroundColor: theme.colorScheme.onSecondary,
@@ -47,32 +49,32 @@ class RouteViewTab extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          Text('Route Details',
+          Text(l10n.routeDetails,
               style: theme.textTheme.titleLarge
                   ?.copyWith(fontWeight: FontWeight.bold)),
           const SizedBox(height: 24),
-          _infoTile(theme, Icons.location_on, 'From',
+          _infoTile(theme, Icons.location_on, l10n.fromLabel,
               route.start),
-          _infoTile(theme, Icons.flag, 'To', route.destination),
+          _infoTile(theme, Icons.flag, l10n.toLabel, route.destination),
           _infoTile(
             theme,
             Icons.calendar_today,
-            'Start Date',
+            l10n.startDateLabel,
             '${route.startDate.day}/${route.startDate.month}/${route.startDate.year}',
           ),
           _infoTile(
             theme,
             Icons.event,
-            'End Date',
+            l10n.endDateLabel,
             '${route.endDate.day}/${route.endDate.month}/${route.endDate.year}',
           ),
           const SizedBox(height: 24),
-          Text('Interest Points (${route.interests.length})',
+          Text(l10n.interestPointsCount(route.interests.length),
               style: theme.textTheme.titleMedium
                   ?.copyWith(fontWeight: FontWeight.w600)),
           const SizedBox(height: 8),
           if (route.interests.isEmpty)
-            const Text('No interest points defined.')
+            Text(l10n.noInterestPoints)
           else
             ...route.interests.map(
                   (poi) => Card(

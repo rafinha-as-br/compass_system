@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// User creation form page.
 class CreateUserPage extends StatefulWidget {
@@ -62,10 +63,11 @@ class _CreateUserPageState extends State<CreateUserPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create User'),
+        title: Text(l10n.createUser),
         leading: IconButton(
           icon: const Icon(Icons.arrow_back),
           onPressed: () {
@@ -88,7 +90,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
                   Text(
-                    'New Client User',
+                    l10n.newClientUserFormTitle,
                     style: theme.textTheme.titleLarge?.copyWith(
                       fontWeight: FontWeight.bold,
                     ),
@@ -96,68 +98,68 @@ class _CreateUserPageState extends State<CreateUserPage> {
                   const SizedBox(height: 24),
                   TextFormField(
                     controller: _nameCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Full Name',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.fullNameFieldLabel,
+                      border: const OutlineInputBorder(),
                     ),
-                    validator: (v) => v!.isEmpty ? 'Name is required' : null,
+                    validator: (v) => v!.isEmpty ? l10n.nameRequiredValidation : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _cpfCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'CPF',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.cpfLabel,
+                      border: const OutlineInputBorder(),
                     ),
-                    validator: (v) => v!.isEmpty ? 'CPF is required' : null,
+                    validator: (v) => v!.isEmpty ? l10n.cpfRequiredValidation : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _emailCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.loginEmailLabel,
+                      border: const OutlineInputBorder(),
                     ),
-                    validator: (v) => v!.isEmpty ? 'Email is required' : null,
+                    validator: (v) => v!.isEmpty ? l10n.emailRequiredValidation : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _phoneCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Phone Number',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.phoneNumberFieldLabel,
+                      border: const OutlineInputBorder(),
                     ),
-                    validator: (v) => v!.isEmpty ? 'Phone is required' : null,
+                    validator: (v) => v!.isEmpty ? l10n.phoneRequiredValidation : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordCtrl,
-                    decoration: const InputDecoration(
-                      labelText: 'Initial Password',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.initialPasswordFieldLabel,
+                      border: const OutlineInputBorder(),
                     ),
                     obscureText: true,
                     validator: (v) =>
-                        v!.isEmpty ? 'Password is required' : null,
+                        v!.isEmpty ? l10n.passwordRequiredValidation : null,
                   ),
                   const SizedBox(height: 16),
                   DropdownButtonFormField<String>(
                     initialValue: _sex,
-                    decoration: const InputDecoration(
-                      labelText: 'Sex',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.sexFieldLabel,
+                      border: const OutlineInputBorder(),
                     ),
-                    items: const [
-                      DropdownMenuItem(value: 'M', child: Text('Male')),
-                      DropdownMenuItem(value: 'F', child: Text('Female')),
-                      DropdownMenuItem(value: 'O', child: Text('Other')),
+                    items: [
+                      DropdownMenuItem(value: 'M', child: Text(l10n.maleGenderLabel)),
+                      DropdownMenuItem(value: 'F', child: Text(l10n.femaleGenderLabel)),
+                      DropdownMenuItem(value: 'O', child: Text(l10n.otherOptionLabel)),
                     ],
                     onChanged: (v) => setState(() => _sex = v ?? 'M'),
                   ),
                   const SizedBox(height: 16),
                   ListTile(
                     contentPadding: EdgeInsets.zero,
-                    title: const Text('Birth Date'),
+                    title: Text(l10n.birthDateFieldLabel),
                     subtitle: Text(
                       '${_birthDate.day}/${_birthDate.month}/${_birthDate.year}',
                     ),
@@ -191,7 +193,7 @@ class _CreateUserPageState extends State<CreateUserPage> {
                               height: 20,
                               child: CircularProgressIndicator(strokeWidth: 2),
                             )
-                          : const Text('CREATE USER'),
+                          : Text(l10n.createUserSubmitButton),
                     ),
                   ),
                 ],

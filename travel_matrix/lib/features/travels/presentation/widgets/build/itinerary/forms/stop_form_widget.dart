@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/itinerary_steps_view_models.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/widgets/text_fields.dart';
 import 'field_state.dart';
 
@@ -172,6 +173,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
                 onPressed: _addExperience,
                 icon: const Icon(Icons.add_circle),
                 color: theme.colorScheme.secondary,
+                tooltip: AppLocalizations.of(context)!.addExperienceTooltip,
               ),
             ],
           ),
@@ -191,7 +193,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
           OutlinedButton.icon(
             onPressed: widget.onDelete,
             icon: const Icon(Icons.delete),
-            label: const Text('Delete Step'),
+            label: Text(AppLocalizations.of(context)!.deleteStep),
           ),
         ],
       ),

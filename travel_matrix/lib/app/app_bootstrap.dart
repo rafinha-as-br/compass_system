@@ -14,9 +14,13 @@ class AppBootstrap extends StatelessWidget {
   Widget build(BuildContext context) {
 
     final authController = AuthController();
+    final settingsController = SettingsController();
 
     return FutureBuilder(
-      future: authController.initialize(),
+      future: Future.wait([
+        authController.initialize(),
+        settingsController.initialize(),
+      ]),
       builder: (context, snapshot) {
 
         if (snapshot.connectionState != ConnectionState.done) {
@@ -33,8 +37,8 @@ class AppBootstrap extends StatelessWidget {
 
         return MultiProvider(
           providers: [
-            ChangeNotifierProvider(
-              create: (_) => SettingsController(),
+            ChangeNotifierProvider.value(
+              value: settingsController,
             ),
             ChangeNotifierProvider.value(
               value: authController,

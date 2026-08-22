@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/app/gates/gate_auth.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/login_controller.dart';
+import 'package:routecraft_app/features/auth/presentation/pages/forgot_password_page.dart';
+import 'package:routecraft_app/l10n/app_localizations.dart';
 
 class LoginPage extends StatelessWidget {
   const LoginPage({super.key});
@@ -103,7 +105,17 @@ class _LoginViewState extends State<_LoginView> {
                     obscureText: true,
                     validator: (v) => v!.isEmpty ? 'Enter password' : null,
                   ),
-                  const SizedBox(height: 32),
+                  Align(
+                    alignment: Alignment.centerRight,
+                    child: TextButton(
+                      onPressed: () => Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
+                      ),
+                      child: Text(AppLocalizations.of(context)!.forgotPasswordLink),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
                   SizedBox(
                     height: 50,
                     child: ElevatedButton(
