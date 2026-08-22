@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/step_card_view_models.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 import '../../../expandable_section.dart';
 
@@ -35,6 +36,7 @@ class _GenericStepCardState extends State<GenericStepCard> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
     final isPlaceholder = widget.step.isDraft;
 
     return Card(
@@ -68,7 +70,9 @@ class _GenericStepCardState extends State<GenericStepCard> {
               const SizedBox(width: 16),
               Expanded(
                 child: Text(
-                  widget.step.title.isNotEmpty ? widget.step.title : (isPlaceholder ? 'Draft Step' : 'Unknown Step'),
+                  widget.step.title.isNotEmpty
+                      ? widget.step.title
+                      : (isPlaceholder ? l10n.draftStepTitle : l10n.unknownStepTitle),
                   style: theme.textTheme.titleMedium?.copyWith(
                     fontWeight: isPlaceholder ? FontWeight.normal : FontWeight.bold,
                     fontStyle: isPlaceholder ? FontStyle.italic : null,
@@ -82,13 +86,13 @@ class _GenericStepCardState extends State<GenericStepCard> {
             ],
           ),
         ),
-        content: const Padding(
-          padding: EdgeInsets.fromLTRB(16, 0, 16, 16),
+        content: Padding(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
           child: Column(
             children: [
-              Divider(),
-              SizedBox(height: 8),
-              Text('Additional details for this step are not yet available.'),
+              const Divider(),
+              const SizedBox(height: 8),
+              Text(l10n.stepDetailsUnavailable),
             ],
           ),
         ),

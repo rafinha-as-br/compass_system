@@ -20,4 +20,24 @@ class AuthRepositoryImpl implements AuthRepository {
     final data = response['data'] as Map<String, dynamic>;
     return AuthSessionDto.fromJson(data).toDomain();
   }
+
+  @override
+  Future<void> requestPasswordReset(String email) async {
+    final response = await _dataSource.requestPasswordReset(email);
+    if (response['status'] == 'error') {
+      throw StateError(
+        response['message'] as String? ?? 'An error occurred. Please try again.',
+      );
+    }
+  }
+
+  @override
+  Future<void> resetPassword(String token, String newPassword) async {
+    final response = await _dataSource.resetPassword(token, newPassword);
+    if (response['status'] == 'error') {
+      throw StateError(
+        response['message'] as String? ?? 'An error occurred. Please try again.',
+      );
+    }
+  }
 }

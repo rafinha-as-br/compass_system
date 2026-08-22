@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 import '../../../../models/view_models/itinerary_steps_view_models.dart';
 
 /// Right panel displaying the ordered list of itinerary steps with
@@ -33,6 +34,7 @@ class StepsListPanel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final stepsList = steps.stepsList;
+    final l10n = AppLocalizations.of(context)!;
 
     return SizedBox(
       width: 280,
@@ -45,7 +47,7 @@ class StepsListPanel extends StatelessWidget {
             padding: const EdgeInsets.all(16),
             color: Theme.of(context).colorScheme.primary.withValues(alpha: 0.05),
             child: Text(
-              'Steps (${stepsList.length})',
+              l10n.stepsCountLabel(stepsList.length),
               style: Theme.of(context).textTheme.titleSmall
                   ?.copyWith(fontWeight: FontWeight.w600),
             ),
@@ -54,10 +56,10 @@ class StepsListPanel extends StatelessWidget {
           // Reorderable list of steps
           Expanded(
             child: stepsList.isEmpty
-                ? const Center(
+                ? Center(
                     child: Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text('No steps yet'),
+                      padding: const EdgeInsets.all(16),
+                      child: Text(l10n.noStepsYet),
                     ),
                   )
                 : ReorderableListView.builder(
@@ -92,7 +94,7 @@ class StepsListPanel extends StatelessWidget {
                 )
               );
             },
-            child: const Text('Add Step'),
+            child: Text(l10n.addStep),
           ),
 
         ],

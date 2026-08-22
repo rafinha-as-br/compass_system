@@ -152,6 +152,84 @@ abstract class AppLocalizations {
   /// **'An error occurred during login.'**
   String get loginError;
 
+  /// No description provided for @forgotPasswordLink.
+  ///
+  /// In en, this message translates to:
+  /// **'Forgot password?'**
+  String get forgotPasswordLink;
+
+  /// No description provided for @forgotPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset your password'**
+  String get forgotPasswordTitle;
+
+  /// No description provided for @forgotPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your email and we\'ll send you a code to reset your password.'**
+  String get forgotPasswordSubtitle;
+
+  /// No description provided for @forgotPasswordSubmitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'SEND CODE'**
+  String get forgotPasswordSubmitButton;
+
+  /// No description provided for @forgotPasswordConfirmation.
+  ///
+  /// In en, this message translates to:
+  /// **'If this email is registered, you will receive a code to reset your password.'**
+  String get forgotPasswordConfirmation;
+
+  /// No description provided for @resetPasswordTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your code'**
+  String get resetPasswordTitle;
+
+  /// No description provided for @resetPasswordSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code you received by email and choose a new password.'**
+  String get resetPasswordSubtitle;
+
+  /// No description provided for @resetPasswordTokenLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Code'**
+  String get resetPasswordTokenLabel;
+
+  /// No description provided for @resetPasswordTokenRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter the code'**
+  String get resetPasswordTokenRequired;
+
+  /// No description provided for @resetPasswordNewPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'New password'**
+  String get resetPasswordNewPasswordLabel;
+
+  /// No description provided for @resetPasswordNewPasswordRequired.
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a new password'**
+  String get resetPasswordNewPasswordRequired;
+
+  /// No description provided for @resetPasswordSubmitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'RESET PASSWORD'**
+  String get resetPasswordSubmitButton;
+
+  /// No description provided for @resetPasswordSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset successfully. You can now log in.'**
+  String get resetPasswordSuccess;
+
   /// No description provided for @homeTitle.
   ///
   /// In en, this message translates to:

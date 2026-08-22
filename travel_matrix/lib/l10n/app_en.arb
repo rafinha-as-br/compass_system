@@ -16,6 +16,20 @@
   "loginAccessDenied": "Access denied. Only Travel Agents can access Travel Matrix.",
   "loginError": "An error occurred during login.",
 
+  "forgotPasswordLink": "Forgot password?",
+  "forgotPasswordTitle": "Reset your password",
+  "forgotPasswordSubtitle": "Enter your email and we'll send you a code to reset your password.",
+  "forgotPasswordSubmitButton": "SEND CODE",
+  "forgotPasswordConfirmation": "If this email is registered, you will receive a code to reset your password.",
+  "resetPasswordTitle": "Enter your code",
+  "resetPasswordSubtitle": "Enter the code you received by email and choose a new password.",
+  "resetPasswordTokenLabel": "Code",
+  "resetPasswordTokenRequired": "Enter the code",
+  "resetPasswordNewPasswordLabel": "New password",
+  "resetPasswordNewPasswordRequired": "Enter a new password",
+  "resetPasswordSubmitButton": "RESET PASSWORD",
+  "resetPasswordSuccess": "Password reset successfully. You can now log in.",
+
   "dashboardTitle": "Dashboard Overview",
   "totalTravels": "Total Travels",
   "itinerariesCompleted": "Itineraries Completed",
@@ -207,5 +221,55 @@
   "specifyReasonFieldLabel": "Specify the reason",
   "deactivateButtonCaps": "DEACTIVATE",
   "userNotFoundTitle": "User Not Found",
-  "userNotFoundMessage": "The requested user could not be found."
+  "userNotFoundMessage": "The requested user could not be found.",
+
+  "buildItineraryTitle": "Build Itinerary",
+  "cannotMoveStep": "Cannot move this step to that position.",
+  "cannotDeleteStepMessage": "Cannot delete this step.",
+  "itineraryUpdatedSuccess": "Itinerary updated.",
+  "itineraryCreatedSuccess": "Itinerary created.",
+  "couldNotSaveItinerary": "Could not save itinerary.",
+  "editRouteTitle": "Edit Route",
+  "updateRouteButton": "UPDATE ROUTE",
+  "createTravelButton": "CREATE TRAVEL",
+  "editRoutePlanButton": "Edit Route Plan",
+  "markAsReadyButton": "Mark as Ready",
+  "markAsReadyConfirm": "Are you sure you want to mark this travel as ready?",
+  "confirmButton": "Confirm",
+  "markAsReadySuccess": "Travel marked as ready successfully",
+  "markAsReadyFailure": "Failed to mark travel as ready",
+  "needsItineraryFirstTooltip": "You need to create an itinerary first",
+  "markAsReadyTooltip": "Mark travel as ready",
+  "routeViewTab": "Route View",
+  "itineraryViewTab": "Itinerary View",
+  "travelersCount": "{count} Travelers",
+  "@travelersCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "travelNotFoundTitle": "Travel Not Found",
+  "travelNotFoundBody": "The requested travel could not be found.",
+  "changeStepTypeTitle": "Change Step Type?",
+  "changeStepTypeBody": "Changing the step type will result in the loss of specific data entered for the current step. Do you wish to proceed?",
+  "changeTransportTypeTitle": "Change Transport Type?",
+  "changeTransportTypeBody": "Changing the transport type will result in the loss of specific data entered for the current transport. Do you wish to proceed?",
+  "proceedButton": "Proceed",
+  "noStepsYet": "No steps yet",
+  "noItineraryAvailable": "No itinerary available.",
+  "stepDetailsUnavailable": "Additional details for this step are not yet available.",
+  "draftStepTitle": "Draft Step",
+  "unknownStepTitle": "Unknown Step",
+  "noItineraryYetTitle": "No Itinerary Yet",
+  "stepsCountLabel": "Steps ({count})",
+  "@stepsCountLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "noInterestPointsPanel": "No interest points",
+  "selectDateTooltip": "Select date",
+  "addInterestPointTooltip": "Add interest point",
+  "removeInterestPointTooltip": "Remove interest point",
+  "addExperienceTooltip": "Add experience"
 }

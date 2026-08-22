@@ -20,4 +20,15 @@ class AuthRemoteDataSource {
     }
     return AuthSessionDto.fromJson(data);
   }
+
+  Future<void> requestPasswordReset(String email) async {
+    await _client.post('', ApiEndpoints.forgotPassword, {'email': email});
+  }
+
+  Future<void> resetPassword(String token, String newPassword) async {
+    await _client.post('', ApiEndpoints.resetPassword, {
+      'token': token,
+      'novaSenha': newPassword,
+    });
+  }
 }

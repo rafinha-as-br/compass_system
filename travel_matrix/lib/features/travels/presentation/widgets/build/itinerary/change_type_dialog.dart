@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// Dialog for change of Step Type
 class ChangeStepTypeDialog extends StatelessWidget {
@@ -6,17 +7,19 @@ class ChangeStepTypeDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: const Text('Change Step Type?'),
-      content: const Text('Changing the step type will result in the loss of specific data entered for the current step. Do you wish to proceed?'),
+      title: Text(l10n.changeStepTypeTitle),
+      content: Text(l10n.changeStepTypeBody),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelButton),
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(true),
-          child: const Text('Proceed'),
+          child: Text(l10n.proceedButton),
         ),
       ],
     );
@@ -29,17 +32,19 @@ class ChangeTransportTypeDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return AlertDialog(
-      title: const Text('Change Transport Type?'),
-      content: const Text('Changing the transport type will result in the loss of specific data entered for the current transport. Do you wish to proceed?'),
+      title: Text(l10n.changeTransportTypeTitle),
+      content: Text(l10n.changeTransportTypeBody),
       actions: [
         TextButton(
           onPressed: () => Navigator.of(context).pop(false),
-          child: const Text('Cancel'),
+          child: Text(l10n.cancelButton),
         ),
         TextButton(
           onPressed: () => Navigator.of(context).pop(true),
-          child: const Text('Proceed'),
+          child: Text(l10n.proceedButton),
         ),
       ],
     );

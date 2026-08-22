@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/core/services/compass_service/api_response_status.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:travel_matrix/features/travels/data/dtos/travel_dto.dart';
+import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
 
 import '../../../../core/services/auth_storage_service.dart';
 import '../models/view_models/travel_view_model.dart';
@@ -41,7 +43,7 @@ class TravelsController extends ChangeNotifier {
 
       final response = await CompassService.instance.getAllTravels(token);
 
-      if (response['status'] == 'success') {
+      if (response['status'] == kApiSuccessStatus) {
         final data = response['data'] as List<dynamic>;
         final travels = data
             .map((e) => TravelDTO.fromJson(e as Map<String, dynamic>).toDomain())
@@ -71,7 +73,7 @@ class TravelsController extends ChangeNotifier {
 
       final response =
           await CompassService.instance.createTravel(token, travelData);
-      if (response['status'] == 'success') {
+      if (response['status'] == kApiSuccessStatus) {
         await fetchTravels();
         return true;
       }
@@ -88,7 +90,7 @@ class TravelsController extends ChangeNotifier {
 
       final response =
           await CompassService.instance.deleteTravel(token, travelId);
-      if (response['status'] == 'success') {
+      if (response['status'] == kApiSuccessStatus) {
         await fetchTravels();
         return true;
       }
@@ -106,7 +108,7 @@ class TravelsController extends ChangeNotifier {
 
       final response = await CompassService.instance
           .updateRoute(token, travelId, routeData);
-      if (response['status'] == 'success') {
+      if (response['status'] == kApiSuccessStatus) {
         await fetchTravels();
         return true;
       }
@@ -124,7 +126,7 @@ class TravelsController extends ChangeNotifier {
 
       final response = await CompassService.instance
           .createItinerary(token, travelId, itineraryData);
-      if (response['status'] == 'success') {
+      if (response['status'] == kApiSuccessStatus) {
         await fetchTravels();
         return true;
       }
@@ -142,7 +144,7 @@ class TravelsController extends ChangeNotifier {
 
       final response = await CompassService.instance
           .updateItinerary(token, travelId, itineraryData);
-      if (response['status'] == 'success') {
+      if (response['status'] == kApiSuccessStatus) {
         await fetchTravels();
         return true;
       }
@@ -158,14 +160,14 @@ class TravelsController extends ChangeNotifier {
       if (token == null) return false;
 
       final getResponse = await CompassService.instance.getTravel(token, travelId);
-      if (getResponse['status'] != 'success') return false;
+      if (getResponse['status'] != kApiSuccessStatus) return false;
 
       final travelData = getResponse['data'] as Map<String, dynamic>;
-      travelData['travelStatus'] = 'itinerary_created';
+      travelData['travelStatus'] = TravelStatus.itineraryCreated.toApiValue();
 
       final updateResponse = await CompassService.instance.updateTravel(token, travelId, travelData);
-      
-      if (updateResponse['status'] == 'success') {
+
+      if (updateResponse['status'] == kApiSuccessStatus) {
         await fetchTravels();
         return true;
       }

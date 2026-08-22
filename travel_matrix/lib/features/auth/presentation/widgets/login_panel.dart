@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/utils/validators.dart';
 import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
+import 'package:travel_matrix/shared/widgets/form_error_message.dart';
+import 'package:travel_matrix/shared/widgets/primary_submit_button.dart';
 
 import '../../../../app/global_controllers/auth_controller.dart';
 import '../controllers/login_controller.dart';
@@ -46,6 +49,7 @@ class _LoginPanelState extends State<LoginPanel> {
       key: const ValueKey('login'),
       builder: (context, controller, child) {
         final state = controller.state;
+        final l10n = AppLocalizations.of(context)!;
 
         return Padding(
           padding: const EdgeInsets.all(48.0),
@@ -59,15 +63,24 @@ class _LoginPanelState extends State<LoginPanel> {
                 const _LoginHeader(),
                 const SizedBox(height: 48),
                 if (state.errorMessage != null) ...[
-                  _LoginErrorMessage(message: state.errorMessage!),
+                  FormErrorMessage(message: state.errorMessage!),
                   const SizedBox(height: 16),
                 ],
                 _LoginFormFields(
                   emailController: _emailController,
                   passwordController: _passwordController,
                 ),
-                const SizedBox(height: 48),
-                _LoginSubmitButton(
+                const SizedBox(height: 8),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: controller.showForgotPassword,
+                    child: Text(l10n.forgotPasswordLink),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                PrimarySubmitButton(
+                  label: l10n.loginButton,
                   isLoading: state.isLoading,
                   onPressed: () => _handleLogin(controller),
                 ),
@@ -107,21 +120,6 @@ class _LoginHeader extends StatelessWidget {
   }
 }
 
-class _LoginErrorMessage extends StatelessWidget {
-  const _LoginErrorMessage({required this.message});
-
-  final String message;
-
-  @override
-  Widget build(BuildContext context) {
-    return Text(
-      message,
-      style: TextStyle(color: Theme.of(context).colorScheme.error),
-      textAlign: TextAlign.center,
-    );
-  }
-}
-
 class _LoginFormFields extends StatelessWidget {
   const _LoginFormFields({
     required this.emailController,
@@ -145,8 +143,7 @@ class _LoginFormFields extends StatelessWidget {
               labelText: l10n.loginEmailLabel,
               border: const OutlineInputBorder(),
             ),
-            validator: (value) =>
-                (value == null || value.isEmpty) ? l10n.loginEmailRequired : null,
+            validator: (value) => Validators.required(value, l10n.loginEmailRequired),
           ),
         ),
         const SizedBox(height: 16),
@@ -159,46 +156,10 @@ class _LoginFormFields extends StatelessWidget {
               border: const OutlineInputBorder(),
             ),
             obscureText: true,
-            validator: (value) =>
-                (value == null || value.isEmpty) ? l10n.loginPasswordRequired : null,
+            validator: (value) => Validators.required(value, l10n.loginPasswordRequired),
           ),
         ),
       ],
-    );
-  }
-}
-
-class _LoginSubmitButton extends StatelessWidget {
-  const _LoginSubmitButton({required this.isLoading, required this.onPressed});
-
-  final bool isLoading;
-  final VoidCallback? onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      height: 50,
-      width: double.infinity,
-      child: ElevatedButton(
-        onPressed: isLoading ? null : onPressed,
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Theme.of(context).colorScheme.primary,
-          foregroundColor: Theme.of(context).colorScheme.onPrimary,
-        ),
-        child: isLoading
-            ? const SizedBox(
-                width: 20,
-                height: 20,
-                child: CircularProgressIndicator(
-                  strokeWidth: 2,
-                  color: Colors.white,
-                ),
-              )
-            : Text(
-                AppLocalizations.of(context)!.loginButton,
-                style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-              ),
-      ),
     );
   }
 }

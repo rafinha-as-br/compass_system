@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/core/services/compass_service/api_response_status.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 
 class UpdateTravelController extends ChangeNotifier {
@@ -32,7 +33,7 @@ class UpdateTravelController extends ChangeNotifier {
 
       _setLoading(false);
 
-      if (response['status'] == 'success') {
+      if (response['status'] == kApiSuccessStatus) {
         return true;
       } else {
         _setError(

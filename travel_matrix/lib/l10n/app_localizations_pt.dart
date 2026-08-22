@@ -49,6 +49,49 @@ class AppLocalizationsPt extends AppLocalizations {
   String get loginError => 'Ocorreu um erro durante o login.';
 
   @override
+  String get forgotPasswordLink => 'Esqueceu a senha?';
+
+  @override
+  String get forgotPasswordTitle => 'Redefinir sua senha';
+
+  @override
+  String get forgotPasswordSubtitle =>
+      'Informe seu e-mail e enviaremos um código para redefinir sua senha.';
+
+  @override
+  String get forgotPasswordSubmitButton => 'ENVIAR CÓDIGO';
+
+  @override
+  String get forgotPasswordConfirmation =>
+      'Se este e-mail estiver cadastrado, você receberá um código para redefinir sua senha.';
+
+  @override
+  String get resetPasswordTitle => 'Informe o código';
+
+  @override
+  String get resetPasswordSubtitle =>
+      'Informe o código recebido por e-mail e escolha uma nova senha.';
+
+  @override
+  String get resetPasswordTokenLabel => 'Código';
+
+  @override
+  String get resetPasswordTokenRequired => 'Informe o código';
+
+  @override
+  String get resetPasswordNewPasswordLabel => 'Nova senha';
+
+  @override
+  String get resetPasswordNewPasswordRequired => 'Informe uma nova senha';
+
+  @override
+  String get resetPasswordSubmitButton => 'REDEFINIR SENHA';
+
+  @override
+  String get resetPasswordSuccess =>
+      'Senha redefinida com sucesso. Você já pode fazer login.';
+
+  @override
   String get dashboardTitle => 'Visão Geral';
 
   @override
@@ -511,4 +554,132 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get userNotFoundMessage =>
       'O usuário solicitado não pôde ser encontrado.';
+
+  @override
+  String get buildItineraryTitle => 'Montar Roteiro';
+
+  @override
+  String get cannotMoveStep =>
+      'Não é possível mover esta etapa para essa posição.';
+
+  @override
+  String get cannotDeleteStepMessage => 'Não é possível excluir esta etapa.';
+
+  @override
+  String get itineraryUpdatedSuccess => 'Roteiro atualizado.';
+
+  @override
+  String get itineraryCreatedSuccess => 'Roteiro criado.';
+
+  @override
+  String get couldNotSaveItinerary => 'Não foi possível salvar o roteiro.';
+
+  @override
+  String get editRouteTitle => 'Editar Rota';
+
+  @override
+  String get updateRouteButton => 'ATUALIZAR ROTA';
+
+  @override
+  String get createTravelButton => 'CRIAR VIAGEM';
+
+  @override
+  String get editRoutePlanButton => 'Editar Plano de Rota';
+
+  @override
+  String get markAsReadyButton => 'Marcar como Pronta';
+
+  @override
+  String get markAsReadyConfirm =>
+      'Tem certeza que deseja marcar esta viagem como pronta?';
+
+  @override
+  String get confirmButton => 'Confirmar';
+
+  @override
+  String get markAsReadySuccess => 'Viagem marcada como pronta com sucesso';
+
+  @override
+  String get markAsReadyFailure => 'Falha ao marcar viagem como pronta';
+
+  @override
+  String get needsItineraryFirstTooltip =>
+      'Você precisa criar um roteiro primeiro';
+
+  @override
+  String get markAsReadyTooltip => 'Marcar viagem como pronta';
+
+  @override
+  String get routeViewTab => 'Ver Rota';
+
+  @override
+  String get itineraryViewTab => 'Ver Roteiro';
+
+  @override
+  String travelersCount(int count) {
+    return '$count Viajantes';
+  }
+
+  @override
+  String get travelNotFoundTitle => 'Viagem Não Encontrada';
+
+  @override
+  String get travelNotFoundBody =>
+      'A viagem solicitada não pôde ser encontrada.';
+
+  @override
+  String get changeStepTypeTitle => 'Alterar Tipo de Etapa?';
+
+  @override
+  String get changeStepTypeBody =>
+      'Alterar o tipo da etapa resultará na perda dos dados específicos inseridos para a etapa atual. Deseja continuar?';
+
+  @override
+  String get changeTransportTypeTitle => 'Alterar Tipo de Transporte?';
+
+  @override
+  String get changeTransportTypeBody =>
+      'Alterar o tipo de transporte resultará na perda dos dados específicos inseridos para o transporte atual. Deseja continuar?';
+
+  @override
+  String get proceedButton => 'Continuar';
+
+  @override
+  String get noStepsYet => 'Nenhuma etapa ainda';
+
+  @override
+  String get noItineraryAvailable => 'Nenhum roteiro disponível.';
+
+  @override
+  String get stepDetailsUnavailable =>
+      'Detalhes adicionais desta etapa ainda não estão disponíveis.';
+
+  @override
+  String get draftStepTitle => 'Etapa Rascunho';
+
+  @override
+  String get unknownStepTitle => 'Etapa Desconhecida';
+
+  @override
+  String get noItineraryYetTitle => 'Ainda Sem Roteiro';
+
+  @override
+  String stepsCountLabel(int count) {
+    return 'Etapas ($count)';
+  }
+
+  @override
+  String get noInterestPointsPanel => 'Nenhum ponto de interesse';
+
+  @override
+  String get selectDateTooltip => 'Selecionar data';
+
+  @override
+  String get addInterestPointTooltip => 'Adicionar ponto de interesse';
+
+  @override
+  String get removeInterestPointTooltip => 'Remover ponto de interesse';
+
+  @override
+  String get addExperienceTooltip => 'Adicionar experiência';
 }

@@ -3,8 +3,10 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/app/global_controllers/settings_controller.dart';
+import 'package:travel_matrix/core/services/settings_storage_service.dart';
 import 'package:travel_matrix/features/account/domain/entities/agent_profile.dart';
 import 'package:travel_matrix/features/account/domain/get_agent_profile.dart';
 import 'package:travel_matrix/features/account/presentation/controllers/account_controller.dart';
@@ -44,7 +46,9 @@ Widget _wrap(AccountController controller) {
 void main() {
   late _MockGetAgentProfile getAgentProfile;
 
-  setUp(() {
+  setUp(() async {
+    SharedPreferences.setMockInitialValues({});
+    await SettingsStorageService.init();
     getAgentProfile = _MockGetAgentProfile();
   });
 

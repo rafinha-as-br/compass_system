@@ -2,9 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
+import 'package:travel_matrix/core/services/compass_service/api_response_status.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 
 import '../../../../../core/services/auth_storage_service.dart';
 
@@ -74,7 +77,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
     final token = await AuthStorageService.instance.getToken();
     if (token == null) return;
     final response = await CompassService.instance.getAllUsers(token);
-    if (response['status'] == 'success' && mounted) {
+    if (response['status'] == kApiSuccessStatus && mounted) {
       setState(() {
         _clients = (response['data'] as List<dynamic>)
             .map((e) => _ClientItem.fromJson(e as Map<String, dynamic>))
@@ -152,12 +155,12 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Create Travel'),
-        leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+        title: Text(l10n.createTravelTitle),
+        leading: BackIconButton(
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -180,14 +183,14 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          'Step 1: Create Route',
+                          l10n.stepCreateRoute,
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          'Define the route first. An itinerary can be created after.',
+                          l10n.stepCreateRouteHint,
                           style: TextStyle(
                             color: theme.colorScheme.onSurface.withValues(
                               alpha: 0.6,
@@ -197,21 +200,21 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                         const SizedBox(height: 24),
                         TextFormField(
                           controller: _travelNameCtrl,
-                          decoration: const InputDecoration(
-                            labelText: 'Travel Name',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.travelNameLabel,
+                            border: const OutlineInputBorder(),
                           ),
                           validator: (v) =>
-                              v!.isEmpty ? 'Travel name is required' : null,
+                              v!.isEmpty ? l10n.travelNameRequired : null,
                         ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           initialValue: _selectedClientId.isEmpty
                               ? null
                               : _selectedClientId,
-                          decoration: const InputDecoration(
-                            labelText: 'Client',
-                            border: OutlineInputBorder(),
+                          decoration: InputDecoration(
+                            labelText: l10n.clientLabel,
+                            border: const OutlineInputBorder(),
                           ),
                           items: _clients
                               .map(
@@ -230,24 +233,24 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: TextFormField(
                                 controller: _startLocationCtrl,
-                                decoration: const InputDecoration(
-                                  labelText: 'Start Location',
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  labelText: l10n.startLocationLabel,
+                                  border: const OutlineInputBorder(),
                                 ),
                                 validator: (v) =>
-                                    v!.isEmpty ? 'Required' : null,
+                                    v!.isEmpty ? l10n.requiredField : null,
                               ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: TextFormField(
                                 controller: _destinationCtrl,
-                                decoration: const InputDecoration(
-                                  labelText: 'Destination',
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  labelText: l10n.destinationLabel,
+                                  border: const OutlineInputBorder(),
                                 ),
                                 validator: (v) =>
-                                    v!.isEmpty ? 'Required' : null,
+                                    v!.isEmpty ? l10n.requiredField : null,
                               ),
                             ),
                           ],
@@ -258,12 +261,13 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: ListTile(
                                 contentPadding: EdgeInsets.zero,
-                                title: const Text('Start Date'),
+                                title: Text(l10n.startDateLabel),
                                 subtitle: Text(
                                   '${_startDate.day}/${_startDate.month}/${_startDate.year}',
                                 ),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.calendar_today),
+                                  tooltip: l10n.selectDateTooltip,
                                   onPressed: () async {
                                     final picked = await showDatePicker(
                                       context: context,
@@ -281,12 +285,13 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: ListTile(
                                 contentPadding: EdgeInsets.zero,
-                                title: const Text('End Date'),
+                                title: Text(l10n.endDateLabel),
                                 subtitle: Text(
                                   '${_endDate.day}/${_endDate.month}/${_endDate.year}',
                                 ),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.calendar_today),
+                                  tooltip: l10n.selectDateTooltip,
                                   onPressed: () async {
                                     final picked = await showDatePicker(
                                       context: context,
@@ -307,7 +312,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                         const Divider(),
                         const SizedBox(height: 16),
                         Text(
-                          'Interest Points',
+                          l10n.interestPointsTitle,
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -318,9 +323,9 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: TextField(
                                 controller: _poiNameCtrl,
-                                decoration: const InputDecoration(
-                                  labelText: 'Point Name',
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  labelText: l10n.pointNameLabel,
+                                  border: const OutlineInputBorder(),
                                 ),
                               ),
                             ),
@@ -328,9 +333,9 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: TextField(
                                 controller: _poiDescCtrl,
-                                decoration: const InputDecoration(
-                                  labelText: 'Description',
-                                  border: OutlineInputBorder(),
+                                decoration: InputDecoration(
+                                  labelText: l10n.descriptionLabel,
+                                  border: const OutlineInputBorder(),
                                 ),
                               ),
                             ),
@@ -339,6 +344,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                               onPressed: _addInterestPoint,
                               icon: const Icon(Icons.add_circle),
                               color: theme.colorScheme.secondary,
+                              tooltip: l10n.addInterestPointTooltip,
                             ),
                           ],
                         ),
@@ -351,6 +357,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                               subtitle: Text(p.description),
                               trailing: IconButton(
                                 icon: const Icon(Icons.close, size: 18),
+                                tooltip: l10n.removeInterestPointTooltip,
                                 onPressed: () {
                                   setState(() => _interestPoints.remove(p));
                                 },
@@ -375,7 +382,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : const Text('CREATE TRAVEL'),
+                                : Text(l10n.createTravelButton),
                           ),
                         ),
                       ],
