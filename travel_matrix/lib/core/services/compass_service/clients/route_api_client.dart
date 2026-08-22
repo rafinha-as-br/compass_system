@@ -30,8 +30,8 @@ class RouteApiClient {
     return HttpApiClient.instance.post(token, '/routes', routeData);
   }
 
-  Future<Map<String, dynamic>> updateRoute(String token, String routeId, Map<String, dynamic> routeData) async {
-    return HttpApiClient.instance.put(token, '/routes/$routeId', routeData);
+  Future<Map<String, dynamic>> updateRoute(String token, String travelId, Map<String, dynamic> routeData) async {
+    return HttpApiClient.instance.put(token, '/travels/$travelId/route', routeData);
   }
 
   Future<Map<String, dynamic>> deleteRoute(String token, String routeId) async {

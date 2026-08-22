@@ -198,6 +198,37 @@ class TravelControllerTest {
 
     @Test
     @Order(6)
+    void shouldUpsertRoutePlan() throws Exception {
+        RoutePlan routePlan = new RoutePlan();
+        routePlan.setStartDate("2025-09-01T00:00:00.000Z");
+        routePlan.setFinishDate("2025-09-10T00:00:00.000Z");
+        routePlan.setStartLocation("Rio de Janeiro");
+        routePlan.setDestination("Porto");
+
+        InterestPoint ip = new InterestPoint();
+        ip.setName("Livraria Lello");
+        ip.setDescription("Historic bookstore in Porto");
+        routePlan.setInterestPoints(List.of(ip));
+
+        mockMvc.perform(put("/travels/" + createdTravelId + "/route")
+                .header("Authorization", authHeader())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(routePlan)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").isNotEmpty())
+                .andExpect(jsonPath("$.startLocation").value("Rio de Janeiro"))
+                .andExpect(jsonPath("$.destination").value("Porto"))
+                .andExpect(jsonPath("$.interestPoints[0].name").value("Livraria Lello"));
+
+        mockMvc.perform(get("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.routePlan.destination").value("Porto"))
+                .andExpect(jsonPath("$.travelStatus").value("itinerary_created"));
+    }
+
+    @Test
+    @Order(7)
     void shouldDeleteTravel() throws Exception {
         mockMvc.perform(delete("/travels/" + createdTravelId)
                 .header("Authorization", authHeader()))
