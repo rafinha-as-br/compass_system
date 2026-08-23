@@ -19,6 +19,12 @@ class RouteDataSource{
     return result.map((e) => InterestPointDTO.fromJson(e)).toList();
   }
 
+  Future<RoutePlanDTO> updateRoute(String travelId, RoutePlanDTO data) async {
+    final token = await _authService.getToken() ?? '';
+    final result = await _routeService.updateRoute(token, travelId, data.toJson());
+    return RoutePlanDTO.fromJson(result);
+  }
+
 }
 
 
