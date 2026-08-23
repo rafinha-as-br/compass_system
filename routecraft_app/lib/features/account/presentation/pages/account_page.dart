@@ -4,6 +4,7 @@ import 'package:provider/provider.dart';
 import 'package:routecraft_app/app/controllers/settings_controller.dart';
 import 'package:routecraft_app/core/services/auth_service.dart';
 import 'package:routecraft_app/app/gates/gate_auth.dart';
+import 'package:routecraft_app/shared/widgets/app_button.dart';
 
 class AccountPage extends StatelessWidget {
   const AccountPage({super.key});
@@ -54,14 +55,9 @@ class AccountPage extends StatelessWidget {
             },
           ),
           const SizedBox(height: 32),
-          ElevatedButton.icon(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Theme.of(context).colorScheme.error,
-              foregroundColor: Theme.of(context).colorScheme.onError,
-              padding: const EdgeInsets.symmetric(vertical: 16),
-            ),
+          AppButton(
+            variant: AppButtonVariant.danger,
             icon: const Icon(Icons.logout),
-            label: const Text('Log Out'),
             onPressed: () async {
               await AuthService.instance.clearToken();
               if (context.mounted) {
@@ -71,6 +67,7 @@ class AccountPage extends StatelessWidget {
                 );
               }
             },
+            child: const Text('Log Out'),
           ),
         ],
       ),
