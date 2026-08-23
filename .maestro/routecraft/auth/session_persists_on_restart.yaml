@@ -1,0 +1,17 @@
+appId: com.example.routecraft_app
+---
+- launchApp:
+    clearState: true
+- tapOn: "Email"
+- eraseText
+- inputText: "joao.teste@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- assertVisible: "RouteCraft Home"
+- launchApp:
+    clearState: false
+- assertVisible: "RouteCraft Home"
+- assertNotVisible: "RouteCraft Login"
+- takeScreenshot: session_persists_on_restart
