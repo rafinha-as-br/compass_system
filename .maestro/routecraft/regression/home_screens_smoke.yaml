@@ -1,0 +1,22 @@
+appId: com.example.routecraft_app
+---
+- launchApp:
+    clearState: true
+- tapOn: "Email"
+- eraseText
+- inputText: "joao.teste@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- assertVisible: "RouteCraft Home"
+- tapOn: "Visualize Routes & Itineraries"
+- takeScreenshot: visualize_routes_screen
+- back
+- assertVisible: "RouteCraft Home"
+- tapOn: "Follow a Travel"
+- takeScreenshot: follow_travel_screen
+- back
+- assertVisible: "RouteCraft Home"
+- tapOn: "User Account & Settings"
+- takeScreenshot: user_account_screen

@@ -101,4 +101,25 @@ public class TravelController {
         Travel saved = travelRepository.save(travel);
         return ResponseEntity.ok(saved.getItinerary());
     }
+
+    // ─── PUT /travels/{travelId}/route ─────────────────────────────────────────
+    // Upsert: creates or fully replaces the RoutePlan on a Travel.
+    @PutMapping("/{travelId}/route")
+    public ResponseEntity<RoutePlan> upsertRoutePlan(
+            @PathVariable String travelId,
+            @RequestBody RoutePlan incoming) {
+
+        Optional<Travel> opt = travelRepository.findById(travelId);
+        if (opt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Travel travel = opt.get();
+
+        // Fully replace the route plan (orphanRemoval handles deleting the old one).
+        travel.setRoutePlan(incoming);
+
+        Travel saved = travelRepository.save(travel);
+        return ResponseEntity.ok(saved.getRoutePlan());
+    }
 }

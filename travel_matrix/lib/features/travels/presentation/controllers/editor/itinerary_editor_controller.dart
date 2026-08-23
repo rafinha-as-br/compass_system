@@ -102,11 +102,11 @@ class ItineraryEditorController extends ChangeNotifier {
   void createFirstAndLastSteps() {
     final firstStep = ItineraryStepViewModel.newPlaceHolder(
       position: StepPosition.start,
-      currentIndex: _selectedStepIndex,
+      currentIndex: 0,
     );
     final lastStep = ItineraryStepViewModel.newPlaceHolder(
       position: StepPosition.finish,
-      currentIndex: _selectedStepIndex,
+      currentIndex: 1,
     );
     addStep(newStep: firstStep);
     addStep(newStep: lastStep);
