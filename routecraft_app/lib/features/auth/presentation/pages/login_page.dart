@@ -4,14 +4,20 @@ import 'package:routecraft_app/app/gates/gate_auth.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/login_controller.dart';
 import 'package:routecraft_app/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
+import 'package:routecraft_app/shared/theme/app_theme.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.controller});
+
+  /// Injectable for widget tests with a fake use case, without depending on
+  /// the real network/singleton wiring. In production, the call site
+  /// (`LoginPage()`) is unaffected — the default wiring is used.
+  final LoginController? controller;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => LoginController(),
+      create: (_) => controller ?? LoginController(),
       child: const _LoginView(),
     );
   }
@@ -56,9 +62,11 @@ class _LoginViewState extends State<_LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('RouteCraft Login'),
+        title: Text(l10n.loginTitle),
         centerTitle: true,
       ),
       body: Consumer<LoginController>(
@@ -73,10 +81,9 @@ class _LoginViewState extends State<_LoginView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(
-                    Icons.explore,
-                    size: 80,
-                    color: Theme.of(context).primaryColor,
+                  Image.asset(
+                    'assets/images/logo.png',
+                    height: 80,
                   ),
                   const SizedBox(height: 32),
                   if (state.errorMessage != null) ...[
@@ -89,21 +96,27 @@ class _LoginViewState extends State<_LoginView> {
                   ],
                   TextFormField(
                     controller: _emailController,
-                    decoration: const InputDecoration(
-                      labelText: 'Email',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.loginEmailLabel,
+                      labelStyle: const TextStyle(color: TravelAppColors.textSecondary),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: TravelAppColors.border),
+                      ),
                     ),
-                    validator: (v) => v!.isEmpty ? 'Enter email' : null,
+                    validator: (v) => v!.isEmpty ? l10n.loginEmailRequired : null,
                   ),
                   const SizedBox(height: 16),
                   TextFormField(
                     controller: _passwordController,
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      border: OutlineInputBorder(),
+                    decoration: InputDecoration(
+                      labelText: l10n.loginPasswordLabel,
+                      labelStyle: const TextStyle(color: TravelAppColors.textSecondary),
+                      border: const OutlineInputBorder(
+                        borderSide: BorderSide(color: TravelAppColors.border),
+                      ),
                     ),
                     obscureText: true,
-                    validator: (v) => v!.isEmpty ? 'Enter password' : null,
+                    validator: (v) => v!.isEmpty ? l10n.loginPasswordRequired : null,
                   ),
                   Align(
                     alignment: Alignment.centerRight,
@@ -112,7 +125,7 @@ class _LoginViewState extends State<_LoginView> {
                         context,
                         MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
                       ),
-                      child: Text(AppLocalizations.of(context)!.forgotPasswordLink),
+                      child: Text(l10n.forgotPasswordLink),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -126,9 +139,9 @@ class _LoginViewState extends State<_LoginView> {
                       ),
                       child: state.isLoading
                           ? const CircularProgressIndicator()
-                          : const Text(
-                              'LOGIN',
-                              style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                          : Text(
+                              l10n.loginButton,
+                              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                             ),
                     ),
                   ),
