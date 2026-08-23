@@ -98,7 +98,21 @@ The system uses the `TravelAppColors` palette for consistency across all platfor
 
 ---
 
-## 5. Design Constraints for AI Generation
+## 5. Map Screen Color Tokens (Planned)
+
+A map screen (origin/destination pins with a route line) is planned for a future
+epic — no map SDK is integrated and no corresponding screen exists in the
+codebase yet. These tokens are documented ahead of implementation so the map
+screen, whenever built, launches consistent with the brand instead of
+improvising its own palette.
+
+- **Origin pin**: `primary` — `#4B0082` (Deep Violet)
+- **Destination pin**: `success` — `#2EBB57` (Secondary Green)
+- **Route line**: `accentGold` — `#DAA520` (Luminous Gold)
+
+---
+
+## 6. Design Constraints for AI Generation
 - **Maintain Contrast**: Ensure `accentGold` is used sparingly for maximum impact.
 - **Glassmorphism**: Use subtle blurs on overlays or sidebars where premium feel is needed.
 - **Animations**: Prefer micro-interactions (hover scale, fade-in lists) over heavy transitions.
