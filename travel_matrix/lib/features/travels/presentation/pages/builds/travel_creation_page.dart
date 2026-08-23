@@ -116,10 +116,17 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedClientId.isEmpty) return;
 
+    final agentId = context.read<AuthController>().userId;
+    if (agentId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Session expired. Please sign in again.')),
+      );
+      return;
+    }
+
     setState(() => _isSubmitting = true);
 
     final controller = context.read<TravelsController>();
-    final agentId = context.read<AuthController>().userId ?? 'agent_1';
 
     final success = await controller.createTravel({
       'clientId': _selectedClientId,

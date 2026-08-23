@@ -113,6 +113,27 @@ void main() {
     final request = captured.single as Map<String, dynamic>;
     expect(request['agentId'], 'agent-9');
   });
+
+  testWidgets('submitting without an authenticated agent shows an error and never calls the backend', (
+    tester,
+  ) async {
+    final auth = AuthController();
+    auth.debugSetUserData(null);
+
+    await tester.pumpWidget(wrap(auth));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.widgetWithText(TextFormField, 'Travel Name'), 'Lisbon 2025');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Start Location'), 'Sao Paulo');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Destination'), 'Lisbon');
+
+    await tester.ensureVisible(find.text('CREATE TRAVEL'));
+    await tester.tap(find.text('CREATE TRAVEL'));
+    await tester.pumpAndSettle();
+
+    verifyNever(() => travelUseCases.createFromRequest(any()));
+    expect(find.text('Session expired. Please sign in again.'), findsOneWidget);
+  });
 }
 
 Travel _fakeTravel() {
