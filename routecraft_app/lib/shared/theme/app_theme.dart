@@ -108,25 +108,18 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: TravelAppColors.primary,
         secondary: TravelAppColors.accentGold,
-        tertiary: TravelAppColors.tertiary,
         surface: TravelAppColors.surface,
         error: TravelAppColors.error,
         onPrimary: TravelAppColors.textOnPrimary,
         // accentGold é um tom claro — texto escuro garante contraste AA (branco falha, ~2.2:1).
         onSecondary: TravelAppColors.textPrimary,
-        onTertiary: TravelAppColors.textOnPrimary,
         onSurface: TravelAppColors.textPrimary,
         onError: TravelAppColors.textOnPrimary,
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: TravelAppColors.primary,
         foregroundColor: TravelAppColors.textOnPrimary,
         elevation: 0,
-        titleTextStyle: GoogleFonts.poppins(
-          fontWeight: FontWeight.w600,
-          fontSize: 20,
-          color: TravelAppColors.textOnPrimary,
-        ),
       ),
     );
   }
@@ -140,25 +133,18 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: TravelAppColors.primaryLight,
         secondary: TravelAppColors.accentGoldLight,
-        tertiary: TravelAppColors.tertiary,
         surface: TravelAppColors.surfaceDark,
         error: TravelAppColors.error,
         onPrimary: TravelAppColors.textOnPrimary,
         // accentGoldLight também é claro — mesma correção de contraste do tema light.
         onSecondary: TravelAppColors.textPrimary,
-        onTertiary: TravelAppColors.textOnPrimary,
         onSurface: TravelAppColors.textOnDark,
         onError: TravelAppColors.textOnPrimary,
       ),
-      appBarTheme: AppBarTheme(
+      appBarTheme: const AppBarTheme(
         backgroundColor: TravelAppColors.surfaceDark,
         foregroundColor: TravelAppColors.textOnDark,
         elevation: 0,
-        titleTextStyle: GoogleFonts.poppins(
-          fontWeight: FontWeight.w600,
-          fontSize: 20,
-          color: TravelAppColors.textOnDark,
-        ),
       ),
     );
   }
