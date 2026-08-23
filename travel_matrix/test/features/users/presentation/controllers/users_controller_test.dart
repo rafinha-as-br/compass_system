@@ -30,6 +30,10 @@ UserClient _buildUser(String id) {
 void main() {
   late _MockUserUseCases useCases;
 
+  setUpAll(() {
+    registerFallbackValue(_buildUser('fallback'));
+  });
+
   setUp(() async {
     SharedPreferences.setMockInitialValues({'auth_token': 'test-token'});
     await AuthStorageService.init();
@@ -130,5 +134,91 @@ void main() {
 
     expect(success, isFalse);
     expect(controller.state.errorMessage, contains('timeout'));
+  });
+
+  group('createUser', () {
+    test('builds a UserClient from the raw form map and delegates to the use case', () async {
+      when(() => useCases.getAllUsers()).thenAnswer((_) async => Result.success(const []));
+      final controller = UsersController(useCases: useCases);
+      await pumpEventQueue();
+
+      when(() => useCases.createUser(any())).thenAnswer((_) async => const Result.success());
+
+      final success = await controller.createUser({
+        'name': 'New Client',
+        'cpf': '111.111.111-11',
+        'email': 'new@client.com',
+        'phoneNumber': '11988887777',
+        'password': 'secret123',
+        'sex': 'F',
+        'birthDate': '2000-05-10T00:00:00.000',
+        'isActive': true,
+      });
+
+      expect(success, isTrue);
+      final captured = verify(() => useCases.createUser(captureAny())).captured.single as UserClient;
+      expect(captured.name, 'New Client');
+      expect(captured.email, 'new@client.com');
+      expect(captured.password, 'secret123');
+      expect(captured.birthDate, DateTime.parse('2000-05-10T00:00:00.000'));
+      expect(captured.status.status, isA<ActiveStatus>());
+      verify(() => useCases.getAllUsers()).called(2); // once on construction, once on refetch
+    });
+
+    test('surfaces the failure reason instead of only returning false', () async {
+      when(() => useCases.getAllUsers()).thenAnswer((_) async => Result.success(const []));
+      final controller = UsersController(useCases: useCases);
+      await pumpEventQueue();
+
+      when(() => useCases.createUser(any()))
+          .thenAnswer((_) async => const Result.failure('E-mail already in use'));
+
+      final success = await controller.createUser({'name': 'New Client'});
+
+      expect(success, isFalse);
+      expect(controller.state.errorMessage, 'E-mail already in use');
+    });
+  });
+
+  group('updateUser', () {
+    test('carries over status/travels/stats from the currently loaded user', () async {
+      when(() => useCases.getAllUsers())
+          .thenAnswer((_) async => Result.success([_buildUser('1')]));
+      final controller = UsersController(useCases: useCases);
+      await pumpEventQueue();
+
+      when(() => useCases.updateUser(any())).thenAnswer((_) async => const Result.success());
+
+      final success = await controller.updateUser({
+        'id': '1',
+        'name': 'Updated Name',
+        'cpf': '000.000.000-00',
+        'email': 'updated@example.com',
+        'phoneNumber': '11999999999',
+        'sex': 'M',
+      });
+
+      expect(success, isTrue);
+      final captured = verify(() => useCases.updateUser(captureAny())).captured.single as UserClient;
+      expect(captured.name, 'Updated Name');
+      expect(captured.email, 'updated@example.com');
+      expect(captured.backEndId, '1');
+      expect(captured.status.status, isA<ActiveStatus>()); // carried over, not touched by the form
+    });
+
+    test('surfaces the failure reason instead of only returning false', () async {
+      when(() => useCases.getAllUsers())
+          .thenAnswer((_) async => Result.success([_buildUser('1')]));
+      final controller = UsersController(useCases: useCases);
+      await pumpEventQueue();
+
+      when(() => useCases.updateUser(any()))
+          .thenAnswer((_) async => const Result.failure('CPF already registered'));
+
+      final success = await controller.updateUser({'id': '1', 'name': 'X'});
+
+      expect(success, isFalse);
+      expect(controller.state.errorMessage, 'CPF already registered');
+    });
   });
 }

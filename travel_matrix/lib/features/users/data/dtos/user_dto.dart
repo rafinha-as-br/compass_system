@@ -17,6 +17,9 @@ class UserDTO{
   final String email;
   final List<TravelSummaryDTO> travels;
   final UserStatsDTO stats;
+  /// Only set (and sent to the API) when creating a new user.
+  final String? password;
+  final DateTime? birthDate;
 
   UserDTO({
     required this.id,
@@ -28,6 +31,8 @@ class UserDTO{
     required this.email,
     required this.travels,
     required this.stats,
+    this.password,
+    this.birthDate,
   });
 
   /// to domain mapper method
@@ -43,6 +48,8 @@ class UserDTO{
         email: email,
         travels: travels.map((travel) => travel.toDomain()).toList(),
         stats: stats.toDomain(),
+        password: password,
+        birthDate: birthDate,
     );
   }
 
@@ -58,10 +65,15 @@ class UserDTO{
       email: user.email,
       travels: user.travels.map((travel) => TravelSummaryDTO.fromDomain(travel)).toList(),
       stats: UserStatsDTO.fromDomain(user.stats),
+      password: user.password,
+      birthDate: user.birthDate,
     );
   }
 
-  /// To json method, only parses the user fields, not the travels
+  /// To json method, only parses the user fields, not the travels.
+  /// [password]/[birthDate] are only included when set (new-user creation);
+  /// [isActive] is derived from [status] — the API's create endpoint reads
+  /// it as a flat boolean, ignoring the nested status object.
   Map<String, dynamic> toJson(){
     return {
       'id': id,
@@ -70,7 +82,10 @@ class UserDTO{
       'sex': sex,
       'phoneNumber': phoneNumber,
       'status': status.toJson(),
+      'isActive': status.status.type == 'active',
       'email': email,
+      if (password != null) 'password': password,
+      if (birthDate != null) 'birthDate': birthDate!.toIso8601String(),
     };
   }
 
