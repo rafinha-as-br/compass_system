@@ -98,7 +98,10 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
     if (mounted) {
       setState(() => _isSubmitting = false);
       if (success) {
-        context.go('${AppRoutes.travels}/${widget.travel.localId}');
+        context.go(
+          '${AppRoutes.travels}/${widget.travel.localId}',
+          extra: {'refresh': true},
+        );
       }
     }
   }
