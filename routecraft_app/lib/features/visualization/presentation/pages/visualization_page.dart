@@ -4,14 +4,20 @@ import 'package:routecraft_app/core/mock/mock_repository.dart';
 
 import 'package:routecraft_app/features/home/presentation/pages/follow_travel_page.dart';
 import 'package:routecraft_app/features/visualization/presentation/controllers/visualization_controller.dart';
+import 'package:routecraft_app/shared/theme/app_theme.dart';
 
 class VisualizationPage extends StatelessWidget {
-  const VisualizationPage({super.key});
+  const VisualizationPage({super.key, this.controller});
+
+  /// Injectable for widget tests with a fixed state, without depending on
+  /// the real network/singleton wiring. In production, the call site
+  /// (`VisualizationPage()`) is unaffected — the default wiring is used.
+  final VisualizationController? controller;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => VisualizationController(),
+      create: (_) => controller ?? VisualizationController(),
       child: const _VisualizationView(),
     );
   }
@@ -55,7 +61,7 @@ class _VisualizationView extends StatelessWidget {
       child: ListTile(
         leading: Icon(
           travel.hasItinerary ? Icons.flight_takeoff : Icons.map,
-          color: travel.hasItinerary ? Colors.green : Theme.of(context).primaryColor,
+          color: travel.hasItinerary ? TravelAppColors.success : Theme.of(context).primaryColor,
         ),
         title: Text(
           travel.travelName,
@@ -67,9 +73,9 @@ class _VisualizationView extends StatelessWidget {
         trailing: Chip(
           label: Text(
             travel.hasItinerary ? 'ITINERARY READY' : 'ROUTE ONLY',
-            style: const TextStyle(fontSize: 10, color: Colors.white),
+            style: const TextStyle(fontSize: 10, color: TravelAppColors.textOnDark),
           ),
-          backgroundColor: travel.hasItinerary ? Colors.green : Colors.orange,
+          backgroundColor: travel.hasItinerary ? TravelAppColors.success : TravelAppColors.warning,
         ),
         onTap: () {
           Navigator.of(context).push(

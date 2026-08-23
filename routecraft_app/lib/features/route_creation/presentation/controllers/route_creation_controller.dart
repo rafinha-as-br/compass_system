@@ -36,6 +36,14 @@ class RouteCreationController extends ChangeNotifier {
   RouteCreationState _state = const RouteCreationState();
   RouteCreationState get state => _state;
 
+  RouteCreationController();
+
+  /// Test-only: starts from a fixed state instead of the default (empty)
+  /// one, without going through `submitRoute()`'s real network/singleton
+  /// wiring (`AuthService.instance`/`CompassService.instance`).
+  @visibleForTesting
+  RouteCreationController.withState(RouteCreationState state) : _state = state;
+
   // Form Fields
   final tripNameController = TextEditingController();
   final startLocationController = TextEditingController();
