@@ -1,0 +1,14 @@
+appId: com.example.routecraft_app
+---
+- launchApp:
+    clearState: true
+- tapOn: "Email"
+- eraseText
+- inputText: "joao.teste@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- assertVisible: "RouteCraft Home"
+- tapOn: "Create a Route"
+- takeScreenshot: create_route_screen
