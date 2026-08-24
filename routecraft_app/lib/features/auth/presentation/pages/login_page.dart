@@ -8,12 +8,17 @@ import 'package:routecraft_app/shared/widgets/app_button.dart';
 import 'package:routecraft_app/shared/widgets/app_text_field.dart';
 
 class LoginPage extends StatelessWidget {
-  const LoginPage({super.key});
+  const LoginPage({super.key, this.controller});
+
+  /// Injectable for widget tests with a fake use case, without depending on
+  /// the real network/singleton wiring. In production, the call site
+  /// (`LoginPage()`) is unaffected — the default wiring is used.
+  final LoginController? controller;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => LoginController(),
+      create: (_) => controller ?? LoginController(),
       child: const _LoginView(),
     );
   }
@@ -58,9 +63,11 @@ class _LoginViewState extends State<_LoginView> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       appBar: AppBar(
-        title: const Text('RouteCraft Login'),
+        title: Text(l10n.loginTitle),
         centerTitle: true,
       ),
       body: Consumer<LoginController>(
@@ -75,10 +82,9 @@ class _LoginViewState extends State<_LoginView> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  Icon(
-                    Icons.explore,
-                    size: 80,
-                    color: Theme.of(context).primaryColor,
+                  Image.asset(
+                    'assets/images/logo.png',
+                    height: 80,
                   ),
                   const SizedBox(height: 32),
                   if (state.errorMessage != null) ...[
@@ -91,15 +97,15 @@ class _LoginViewState extends State<_LoginView> {
                   ],
                   AppTextField(
                     controller: _emailController,
-                    labelText: 'Email',
-                    validator: (v) => v!.isEmpty ? 'Enter email' : null,
+                    labelText: l10n.loginEmailLabel,
+                    validator: (v) => v!.isEmpty ? l10n.loginEmailRequired : null,
                   ),
                   const SizedBox(height: 16),
                   AppTextField(
                     controller: _passwordController,
-                    labelText: 'Password',
+                    labelText: l10n.loginPasswordLabel,
                     obscureText: true,
-                    validator: (v) => v!.isEmpty ? 'Enter password' : null,
+                    validator: (v) => v!.isEmpty ? l10n.loginPasswordRequired : null,
                   ),
                   Align(
                     alignment: Alignment.centerRight,
@@ -108,7 +114,7 @@ class _LoginViewState extends State<_LoginView> {
                         context,
                         MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
                       ),
-                      child: Text(AppLocalizations.of(context)!.forgotPasswordLink),
+                      child: Text(l10n.forgotPasswordLink),
                     ),
                   ),
                   const SizedBox(height: 16),
@@ -117,9 +123,9 @@ class _LoginViewState extends State<_LoginView> {
                     child: AppButton(
                       onPressed: _handleLogin,
                       isLoading: state.isLoading,
-                      child: const Text(
-                        'LOGIN',
-                        style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                      child: Text(
+                        l10n.loginButton,
+                        style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
                       ),
                     ),
                   ),
