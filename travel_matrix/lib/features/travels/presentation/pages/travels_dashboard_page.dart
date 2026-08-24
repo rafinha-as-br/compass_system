@@ -10,14 +10,22 @@ import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 class TravelsDashboardPage extends StatelessWidget {
-  const TravelsDashboardPage({super.key});
+  final TravelsController? controller;
+
+  const TravelsDashboardPage({super.key, this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => TravelsController(),
-      child: const _TravelsDashboardView(),
-    );
+    final providedController = controller;
+    return providedController != null
+        ? ChangeNotifierProvider.value(
+            value: providedController,
+            child: const _TravelsDashboardView(),
+          )
+        : ChangeNotifierProvider(
+            create: (_) => TravelsController(),
+            child: const _TravelsDashboardView(),
+          );
   }
 }
 
@@ -88,6 +96,7 @@ class _TravelsDashboardViewState extends State<_TravelsDashboardView> {
                 width: 220,
                 child: DropdownButtonFormField<_TravelFilter>(
                   initialValue: _filter,
+                  isExpanded: true,
                   decoration: const InputDecoration(
                     border: OutlineInputBorder(),
                     contentPadding: EdgeInsets.symmetric(horizontal: 12),

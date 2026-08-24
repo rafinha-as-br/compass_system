@@ -1,5 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
+import 'package:shared_preferences/shared_preferences.dart';
+import 'package:travel_matrix/app/app_injector.dart';
 import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/features/travels/domain/entities/person.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
@@ -174,6 +176,24 @@ void main() {
 
       expect(success, isFalse);
       verify(() => travelUseCases.readAll()).called(1); // only the initial fetch
+    });
+  });
+
+  group('default construction (no injected use cases)', () {
+    setUp(() async {
+      SharedPreferences.setMockInitialValues({});
+      await AppInjector.init();
+    });
+
+    test('builds its real Repository/UseCase chain without throwing', () {
+      // Regression test: TravelsController's default constructor eagerly
+      // builds RouteRepositoryImpl -> RouteDataSource, whose field initializer
+      // reads RouteApiClient.instance synchronously. If RouteApiClient.init()
+      // is ever dropped from CompassService.init() again, that getter's
+      // `assert(_instance != null)` is stripped in release builds and the
+      // trailing `!` throws "Null check operator used on a null value" the
+      // instant this page is opened — before any network request fires.
+      expect(() => TravelsController(), returnsNormally);
     });
   });
 }
