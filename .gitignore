@@ -1,9 +1,8 @@
 
 ## for ai context
 /contexts
-
-## fake api for testing
-/fake_api
+.claude
 
 ## for flutter context
 .idea/
+.vscode
