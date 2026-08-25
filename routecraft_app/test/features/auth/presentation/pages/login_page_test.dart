@@ -2,35 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:routecraft_app/core/entities/result.dart';
-import 'package:routecraft_app/features/auth/domain/entities/auth_session.dart';
-import 'package:routecraft_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:routecraft_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/login_controller.dart';
 import 'package:routecraft_app/features/auth/presentation/pages/login_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 
-class _StubAuthRepository implements AuthRepository {
-  _StubAuthRepository(this.result);
-
-  final Result<AuthSession> result;
-  String? capturedEmail;
-
-  @override
-  Future<Result<AuthSession>> login(String email, String password) async {
-    capturedEmail = email;
-    return result;
-  }
-
-  @override
-  Future<Result<void>> requestPasswordReset(String email) async {
-    throw UnimplementedError();
-  }
-
-  @override
-  Future<Result<void>> resetPassword(String token, String newPassword) async {
-    throw UnimplementedError();
-  }
-}
+import '../../../../support/stub_auth_repository.dart';
 
 Widget _wrap(LoginController controller, {Locale? locale}) {
   return MaterialApp(
@@ -49,7 +26,7 @@ Widget _wrap(LoginController controller, {Locale? locale}) {
 void main() {
   testWidgets('renders every UI string from AppLocalizations (en)', (tester) async {
     final controller = LoginController(
-      loginUseCase: LoginUseCase(_StubAuthRepository(const Result.failure(''))),
+      loginUseCase: LoginUseCase(StubAuthRepository(const Result.failure(''))),
       saveToken: (_) async {},
     );
 
@@ -63,7 +40,7 @@ void main() {
 
   testWidgets('renders every UI string from AppLocalizations (pt)', (tester) async {
     final controller = LoginController(
-      loginUseCase: LoginUseCase(_StubAuthRepository(const Result.failure(''))),
+      loginUseCase: LoginUseCase(StubAuthRepository(const Result.failure(''))),
       saveToken: (_) async {},
     );
 
@@ -76,7 +53,7 @@ void main() {
   });
 
   testWidgets('validates required fields without calling the use case', (tester) async {
-    final repository = _StubAuthRepository(const Result.failure(''));
+    final repository = StubAuthRepository(const Result.failure(''));
     final controller = LoginController(
       loginUseCase: LoginUseCase(repository),
       saveToken: (_) async {},
@@ -95,7 +72,7 @@ void main() {
   });
 
   testWidgets('submits valid credentials and surfaces a login failure message', (tester) async {
-    final repository = _StubAuthRepository(const Result.failure('Invalid credentials.'));
+    final repository = StubAuthRepository(const Result.failure('Invalid credentials.'));
     final controller = LoginController(
       loginUseCase: LoginUseCase(repository),
       saveToken: (_) async {},
