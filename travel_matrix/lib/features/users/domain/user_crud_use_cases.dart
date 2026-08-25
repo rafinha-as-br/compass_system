@@ -1,5 +1,6 @@
 
 import 'package:travel_matrix/core/entities/result.dart';
+import 'package:travel_matrix/features/users/domain/entities/new_user.dart';
 import 'package:travel_matrix/features/users/domain/entities/user.dart';
 import 'package:travel_matrix/features/users/domain/user_client_repository.dart';
 
@@ -10,7 +11,7 @@ class UserUseCases{
   UserUseCases(this._repository);
 
   /// Create user method
-  Future<Result> createUser(UserClient newUser) async{
+  Future<Result> createUser(NewUser newUser) async{
     return await _repository.createUser(newUser);
   }
 

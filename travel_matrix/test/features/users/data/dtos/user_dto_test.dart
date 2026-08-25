@@ -3,37 +3,35 @@ import 'package:travel_matrix/features/users/data/dtos/user_dto.dart';
 import 'package:travel_matrix/features/users/data/dtos/user_stats_dto.dart';
 import 'package:travel_matrix/features/users/data/dtos/user_status_dto.dart';
 
-UserDTO _dto({String? password, DateTime? birthDate}) => UserDTO(
+UserDTO _dto({String statusType = 'active'}) => UserDTO(
       id: 'user-1',
       name: 'Maria Silva',
       cpf: '000.000.000-00',
       sex: 'F',
       phoneNumber: '11999999999',
-      status: UserClientStatusDto(status: ClientStatusDto(type: 'active')),
+      status: UserClientStatusDto(status: ClientStatusDto(type: statusType)),
       email: 'maria@example.com',
       travels: const [],
       stats: UserStatsDTO(totalTravels: '0', uniqueDestinationsCount: '0'),
-      password: password,
-      birthDate: birthDate,
     );
 
 void main() {
-  test('toJson includes password/birthDate only when set, plus isActive derived from status', () {
-    final withoutExtras = _dto().toJson();
-    expect(withoutExtras.containsKey('password'), isFalse);
-    expect(withoutExtras.containsKey('birthDate'), isFalse);
-    expect(withoutExtras['isActive'], isTrue);
+  test('toJson derives isActive from status and never leaks a password/birthDate key', () {
+    final active = _dto().toJson();
+    expect(active['isActive'], isTrue);
+    expect(active.containsKey('password'), isFalse);
+    expect(active.containsKey('birthDate'), isFalse);
 
-    final withExtras = _dto(password: 'secret123', birthDate: DateTime(2000, 5, 10)).toJson();
-    expect(withExtras['password'], 'secret123');
-    expect(withExtras['birthDate'], DateTime(2000, 5, 10).toIso8601String());
+    final inactive = _dto(statusType: 'inactive').toJson();
+    expect(inactive['isActive'], isFalse);
   });
 
-  test('round-trips password/birthDate through fromDomain/toDomain', () {
-    final dto = _dto(password: 'secret123', birthDate: DateTime(2000, 5, 10));
+  test('round-trips the user fields through fromDomain/toDomain', () {
+    final dto = _dto();
     final roundTripped = UserDTO.fromDomain(dto.toDomain());
 
-    expect(roundTripped.password, 'secret123');
-    expect(roundTripped.birthDate, DateTime(2000, 5, 10));
+    expect(roundTripped.id, 'user-1');
+    expect(roundTripped.name, 'Maria Silva');
+    expect(roundTripped.email, 'maria@example.com');
   });
 }

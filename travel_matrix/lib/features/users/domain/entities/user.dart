@@ -14,9 +14,6 @@ class UserClient{
   final String email;
   final List<TravelSummary> travels;
   final UserStats stats;
-  /// Only set (and sent to the API) when creating a new user.
-  final String? password;
-  final DateTime? birthDate;
 
   UserClient({
     required this.backEndId,
@@ -29,8 +26,6 @@ class UserClient{
     required this.email,
     required this.travels,
     required this.stats,
-    this.password,
-    this.birthDate,
   });
 
   UserClient copyWith({

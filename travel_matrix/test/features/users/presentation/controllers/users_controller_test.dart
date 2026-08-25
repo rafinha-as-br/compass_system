@@ -3,6 +3,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/features/users/domain/entities/new_user.dart';
 import 'package:travel_matrix/features/users/domain/entities/travel_summary.dart';
 import 'package:travel_matrix/features/users/domain/entities/user.dart';
 import 'package:travel_matrix/features/users/domain/entities/user_stats.dart';
@@ -27,11 +28,23 @@ UserClient _buildUser(String id) {
   );
 }
 
+NewUser _buildNewUser() {
+  return NewUser(
+    name: 'fallback',
+    cpf: '000.000.000-00',
+    sex: 'M',
+    phoneNumber: '11999999999',
+    email: 'fallback@example.com',
+    password: 'fallback',
+  );
+}
+
 void main() {
   late _MockUserUseCases useCases;
 
   setUpAll(() {
     registerFallbackValue(_buildUser('fallback'));
+    registerFallbackValue(_buildNewUser());
   });
 
   setUp(() async {
@@ -137,7 +150,7 @@ void main() {
   });
 
   group('createUser', () {
-    test('builds a UserClient from the raw form map and delegates to the use case', () async {
+    test('builds a NewUser from the raw form map and delegates to the use case', () async {
       when(() => useCases.getAllUsers()).thenAnswer((_) async => Result.success(const []));
       final controller = UsersController(useCases: useCases);
       await pumpEventQueue();
@@ -152,16 +165,14 @@ void main() {
         'password': 'secret123',
         'sex': 'F',
         'birthDate': '2000-05-10T00:00:00.000',
-        'isActive': true,
       });
 
       expect(success, isTrue);
-      final captured = verify(() => useCases.createUser(captureAny())).captured.single as UserClient;
+      final captured = verify(() => useCases.createUser(captureAny())).captured.single as NewUser;
       expect(captured.name, 'New Client');
       expect(captured.email, 'new@client.com');
       expect(captured.password, 'secret123');
       expect(captured.birthDate, DateTime.parse('2000-05-10T00:00:00.000'));
-      expect(captured.status.status, isA<ActiveStatus>());
       verify(() => useCases.getAllUsers()).called(2); // once on construction, once on refetch
     });
 
