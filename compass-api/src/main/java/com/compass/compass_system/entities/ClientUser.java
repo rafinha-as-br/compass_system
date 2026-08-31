@@ -5,6 +5,8 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 
+import java.time.Instant;
+
 @Entity
 public class ClientUser {
 
@@ -21,7 +23,13 @@ public class ClientUser {
     private String password;
     private boolean isActive = true;
     private String deactivationReason;
-    
+
+    // Tokens emitidos antes deste instante são rejeitados pelo
+    // JwtAuthenticationFilter — é o que dá efeito real ao force-logout
+    // (JWT é stateless, então isso é a única forma de invalidar uma sessão
+    // já emitida antes do seu vencimento natural).
+    private Instant sessionInvalidatedAt;
+
     public ClientUser() {
     }
 
@@ -104,5 +112,13 @@ public class ClientUser {
 
     public void setDeactivationReason(String deactivationReason) {
         this.deactivationReason = deactivationReason;
+    }
+
+    public Instant getSessionInvalidatedAt() {
+        return sessionInvalidatedAt;
+    }
+
+    public void setSessionInvalidatedAt(Instant sessionInvalidatedAt) {
+        this.sessionInvalidatedAt = sessionInvalidatedAt;
     }
 }

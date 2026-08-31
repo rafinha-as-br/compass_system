@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.*;
 
 /**
@@ -193,12 +194,19 @@ public class ClientUserController {
     }
 
     // ─── POST /users/{id}/force-logout ─────────────────────────────────────────
-    // Placeholder: JWT is stateless, no server-side session to invalidate.
+    // Marca o instante atual como "sessão invalidada" para o cliente: qualquer
+    // token JWT emitido antes disso passa a ser rejeitado pelo
+    // JwtAuthenticationFilter, mesmo sem ter expirado naturalmente.
     @PostMapping("/{id}/force-logout")
     public ResponseEntity<Map<String, Object>> forceLogout(@PathVariable Long id) {
-        if (!clientRepository.existsById(id)) {
+        Optional<ClientUser> clientOpt = clientRepository.findById(id);
+        if (clientOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
+        ClientUser client = clientOpt.get();
+        client.setSessionInvalidatedAt(Instant.now());
+        clientRepository.save(client);
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", "success");

@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.nio.charset.StandardCharsets;
+import java.time.Instant;
 import java.util.Date;
 
 /**
@@ -60,6 +61,13 @@ public class JwtUtil {
      */
     public Long getUserIdFromToken(String token) {
         return getClaims(token).get("userId", Long.class);
+    }
+
+    /**
+     * Extrai o instante de emissão (claim "iat") do token.
+     */
+    public Instant getIssuedAtFromToken(String token) {
+        return getClaims(token).getIssuedAt().toInstant();
     }
 
     /**
