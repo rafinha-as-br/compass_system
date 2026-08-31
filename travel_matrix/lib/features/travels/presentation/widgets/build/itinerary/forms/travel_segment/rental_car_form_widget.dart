@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/field_state.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 import '../../../../../../../../shared/widgets/text_fields.dart';
 
@@ -91,6 +92,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
       decoration: BoxDecoration(
@@ -106,7 +108,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
 
               Expanded(
                 child: CustomFormField.text(
-                  label: 'Vehicle Model',
+                  label: l10n.vehicleModelLabel,
                   enabled: true,
                   controller: _vehicleModelCtrl,
                   errorText: _showError(
@@ -120,7 +122,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
 
               Expanded(
                 child: CustomFormField.text(
-                  label: 'License Plate',
+                  label: l10n.licensePlateLabel,
                   enabled: true,
                   controller: _vehicleLicensePlateCtrl,
                   errorText: _showError(
@@ -136,7 +138,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
           const SizedBox(height: 12),
 
           CustomFormField.text(
-            label: 'Company Name',
+            label: l10n.companyNameLabel,
             enabled: true,
             controller: _companyNameCtrl,
             errorText: _showError(
@@ -152,7 +154,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
 
               Expanded(
                 child: CustomFormField.date(
-                  label: 'Check In Date',
+                  label: l10n.checkInDateLabel,
                   enabled: true,
                   controller: _checkInDateCtrl,
                   errorText: _showError(
@@ -166,7 +168,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
 
               Expanded(
                 child: CustomFormField.date(
-                  label: 'Check Out Date',
+                  label: l10n.checkOutDateLabel,
                   enabled: true,
                   controller: _checkOutDateCtrl,
                   errorText: _showError(
@@ -194,7 +196,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
 
   void _onVehicleModelChanged(String value) {
     final error = value.trim().isEmpty
-        ? 'Vehicle model is required'
+        ? AppLocalizations.of(context)!.vehicleModelRequiredValidation
         : null;
 
     setState(() {
@@ -212,7 +214,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
 
   void _onVehicleLicensePlateChanged(String value) {
     final error = value.trim().isEmpty
-        ? 'License plate is required'
+        ? AppLocalizations.of(context)!.licensePlateRequiredValidation
         : null;
 
     setState(() {
@@ -230,7 +232,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
 
   void _onCompanyNameChanged(String value) {
     final error = value.trim().isEmpty
-        ? 'Company name is required'
+        ? AppLocalizations.of(context)!.companyNameRequiredValidation
         : null;
 
     setState(() {
@@ -254,14 +256,14 @@ class _RentalCarFormState extends State<RentalCarForm> {
       lastDate: DateTime(2100),
     );
 
-    if (date == null) {
+    if (date == null || !mounted) {
       return;
     }
 
     _checkInDateCtrl.text = _dateFormat.format(date);
 
     final error = _formState.checkOutDate.value.isBefore(date)
-        ? 'Check in cannot be after check out'
+        ? AppLocalizations.of(context)!.checkInAfterCheckOutError
         : null;
 
     setState(() {
@@ -289,14 +291,14 @@ class _RentalCarFormState extends State<RentalCarForm> {
       lastDate: DateTime(2100),
     );
 
-    if (date == null) {
+    if (date == null || !mounted) {
       return;
     }
 
     _checkOutDateCtrl.text = _dateFormat.format(date);
 
     final error = date.isBefore(_formState.checkInDate.value)
-        ? 'Check out cannot be before check in'
+        ? AppLocalizations.of(context)!.checkOutBeforeCheckInError
         : null;
 
     setState(() {

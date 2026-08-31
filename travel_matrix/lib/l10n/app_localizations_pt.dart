@@ -682,4 +682,193 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get addExperienceTooltip => 'Adicionar experiência';
+
+  @override
+  String get chooseStepTypeLabel => 'Escolha o tipo de etapa:';
+
+  @override
+  String get placeholderStepTitle => 'Indefinido';
+
+  @override
+  String get undecidedStepSubtitle => 'Etapa indefinida';
+
+  @override
+  String get stopStepTypeTitle => 'Parada';
+
+  @override
+  String get placeToVisitSubtitle => 'Local para visitar';
+
+  @override
+  String get hostingStepTypeTitle => 'Hospedagem';
+
+  @override
+  String get placeToStaySubtitle => 'Local para ficar';
+
+  @override
+  String get travelSegmentStepTypeTitle => 'Trecho de Viagem';
+
+  @override
+  String get movingAroundSubtitle => 'Deslocamento';
+
+  @override
+  String get stepTitleLabel => 'Título da Etapa';
+
+  @override
+  String get chooseStepTypeEmptyStateMessage =>
+      'Escolha um tipo de etapa para continuar editando esta etapa do roteiro.';
+
+  @override
+  String get defaultPlaceNameValue => 'Nome do local';
+
+  @override
+  String get defaultPlaceAddressValue => 'Endereço do local';
+
+  @override
+  String get defaultStartingPointValue => 'Ponto de partida';
+
+  @override
+  String get defaultFinishPointValue => 'Ponto de chegada';
+
+  @override
+  String get hostingNameLabel => 'Nome da Hospedagem';
+
+  @override
+  String get addressLabel => 'Endereço';
+
+  @override
+  String get checkInLabel => 'Check-in';
+
+  @override
+  String get checkOutLabel => 'Check-out';
+
+  @override
+  String get fieldRequiredError => 'O campo não pode ficar vazio';
+
+  @override
+  String get stopNameLabel => 'Nome da Parada';
+
+  @override
+  String get addExperienceLabel => 'Adicionar Experiência';
+
+  @override
+  String get startPointLabel => 'Ponto de Partida';
+
+  @override
+  String get finishPointLabel => 'Ponto de Chegada';
+
+  @override
+  String get transportTypeLabel => 'Tipo de Transporte';
+
+  @override
+  String get airplaneTransportLabel => 'Avião';
+
+  @override
+  String get busTransportLabel => 'Ônibus';
+
+  @override
+  String get rentalCarTransportLabel => 'Carro Alugado';
+
+  @override
+  String get travelNumberLabel => 'Número da Viagem';
+
+  @override
+  String get travelCompanyLabel => 'Empresa de Viagem';
+
+  @override
+  String get departureGateLabel => 'Portão de Embarque';
+
+  @override
+  String get departureDateLabel => 'Data de Partida';
+
+  @override
+  String get busStationLabel => 'Estação de Ônibus';
+
+  @override
+  String get detailsOptionalLabel => 'Detalhes (Opcional)';
+
+  @override
+  String get travelNumberRequiredValidation => 'Número da viagem é obrigatório';
+
+  @override
+  String get travelCompanyRequiredValidation =>
+      'Empresa de viagem é obrigatória';
+
+  @override
+  String get departureGateRequiredValidation =>
+      'Portão de embarque é obrigatório';
+
+  @override
+  String get busStationRequiredValidation =>
+      'Nome da estação de ônibus é obrigatório';
+
+  @override
+  String get descriptionRequiredValidation => 'Descrição é obrigatória';
+
+  @override
+  String get flightNumberLabel => 'Número do Voo';
+
+  @override
+  String get flightCompanyLabel => 'Companhia Aérea';
+
+  @override
+  String get flightDateLabel => 'Data do Voo';
+
+  @override
+  String get departureAirportLabel => 'Aeroporto de Partida';
+
+  @override
+  String get arrivalAirportLabel => 'Aeroporto de Chegada';
+
+  @override
+  String get flightNumberRequiredValidation => 'Número do voo é obrigatório';
+
+  @override
+  String get flightCompanyRequiredValidation => 'Companhia aérea é obrigatória';
+
+  @override
+  String get departureAirportRequiredValidation =>
+      'Aeroporto de partida é obrigatório';
+
+  @override
+  String get arrivalAirportRequiredValidation =>
+      'Aeroporto de chegada é obrigatório';
+
+  @override
+  String get vehicleModelLabel => 'Modelo do Veículo';
+
+  @override
+  String get licensePlateLabel => 'Placa';
+
+  @override
+  String get companyNameLabel => 'Nome da Empresa';
+
+  @override
+  String get checkInDateLabel => 'Data de Check-in';
+
+  @override
+  String get checkOutDateLabel => 'Data de Check-out';
+
+  @override
+  String get vehicleModelRequiredValidation =>
+      'Modelo do veículo é obrigatório';
+
+  @override
+  String get licensePlateRequiredValidation => 'Placa é obrigatória';
+
+  @override
+  String get companyNameRequiredValidation => 'Nome da empresa é obrigatório';
+
+  @override
+  String get checkInAfterCheckOutError =>
+      'O check-in não pode ser depois do check-out';
+
+  @override
+  String get checkOutBeforeCheckInError =>
+      'O check-out não pode ser antes do check-in';
+
+  @override
+  String get deleteStepTooltip => 'Excluir etapa';
+
+  @override
+  String get sessionExpiredMessage => 'Sessão expirada. Faça login novamente.';
 }

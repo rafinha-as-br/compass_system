@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/field_state.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 import '../../../../../../../../shared/widgets/text_fields.dart';
 
@@ -98,6 +99,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
 
@@ -112,7 +114,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
           /// Flight number
           CustomFormField.text(
-            label: 'Flight Number',
+            label: l10n.flightNumberLabel,
             enabled: true,
             controller: _flightNumberCtrl,
             errorText: _showError(_formState.flightNumber),
@@ -123,7 +125,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
           /// Flight company
           CustomFormField.text(
-            label: 'Flight Company',
+            label: l10n.flightCompanyLabel,
             enabled: true,
             controller: _flightCompanyCtrl,
             errorText: _showError(_formState.flightCompany),
@@ -134,7 +136,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
           /// Flight date
           CustomFormField.date(
-            label: 'Flight Date',
+            label: l10n.flightDateLabel,
             enabled: true,
             controller: _flightDateCtrl,
             errorText: _showError(_formState.flightDate),
@@ -145,7 +147,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
           /// Departure gate
           CustomFormField.text(
-            label: 'Departure Gate',
+            label: l10n.departureGateLabel,
             enabled: true,
             controller: _departureGateCtrl,
             errorText: _showError(_formState.departureGate),
@@ -159,7 +161,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
               Expanded(
                 child: CustomFormField.text(
-                  label: 'Departure Airport',
+                  label: l10n.departureAirportLabel,
                   enabled: true,
                   controller: _departureAirportCtrl,
                   errorText: _showError(_formState.departureAirport),
@@ -171,7 +173,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
               Expanded(
                 child: CustomFormField.text(
-                  label: 'Arrival Airport',
+                  label: l10n.arrivalAirportLabel,
                   enabled: true,
                   controller: _arrivalAirportCtrl,
                   errorText: _showError(_formState.arrivalAirport),
@@ -191,7 +193,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
   void _onFlightNumberChanged(String value) {
     final error = value.trim().isEmpty
-        ? 'Flight number is required'
+        ? AppLocalizations.of(context)!.flightNumberRequiredValidation
         : null;
 
     setState(() {
@@ -209,7 +211,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
   void _onFlightCompanyChanged(String value) {
     final error = value.trim().isEmpty
-        ? 'Flight company is required'
+        ? AppLocalizations.of(context)!.flightCompanyRequiredValidation
         : null;
 
     setState(() {
@@ -227,7 +229,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
   void _onDepartureGateChanged(String value) {
     final error = value.trim().isEmpty
-        ? 'Departure gate is required'
+        ? AppLocalizations.of(context)!.departureGateRequiredValidation
         : null;
 
     setState(() {
@@ -245,7 +247,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
   void _onDepartureAirportChanged(String value) {
     final error = value.trim().isEmpty
-        ? 'Departure airport is required'
+        ? AppLocalizations.of(context)!.departureAirportRequiredValidation
         : null;
 
     setState(() {
@@ -263,7 +265,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
   void _onArrivalAirportChanged(String value) {
     final error = value.trim().isEmpty
-        ? 'Arrival airport is required'
+        ? AppLocalizations.of(context)!.arrivalAirportRequiredValidation
         : null;
 
     setState(() {
