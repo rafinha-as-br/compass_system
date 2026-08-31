@@ -15,9 +15,9 @@ class AuthRepositoryImpl implements AuthRepository {
       final dto = await _dataSource.login(email, password);
       return Result.success(dto.toDomain());
     } on ApiException catch (e) {
-      return Result.failure(e.message);
+      return Result.failure(e.message, isConnectivityError: e.isConnectivityError);
     } catch (_) {
-      return const Result.failure('Não foi possível completar o login.');
+      return const Result.failure('Não foi possível completar o login.', isConnectivityError: true);
     }
   }
 
