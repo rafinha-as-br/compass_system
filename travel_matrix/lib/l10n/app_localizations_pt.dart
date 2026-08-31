@@ -383,7 +383,7 @@ class AppLocalizationsPt extends AppLocalizations {
   String get bookingNav => 'Reservas';
 
   @override
-  String get settingsNav => 'Configuracoes';
+  String get settingsNav => 'Configurações';
 
   @override
   String get supportNav => 'Suporte';
