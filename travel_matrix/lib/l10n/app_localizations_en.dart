@@ -123,6 +123,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statusPending => 'PENDING';
 
   @override
+  String get failedToLoadTravels =>
+      'Unable to load travels right now. Please try again later.';
+
+  @override
   String get allTravels => 'All Travels';
 
   @override
@@ -407,6 +411,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get noClientUsersFoundMessage => 'No client users found.';
+
+  @override
+  String get failedToLoadUsers =>
+      'Unable to load users right now. Please try again later.';
 
   @override
   String get backToUsersButton => 'Back to Users';

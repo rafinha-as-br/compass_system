@@ -66,7 +66,7 @@ void main() {
   });
 
   test(
-    'fetchUsers keeps the previously loaded users when a refetch fails',
+    'fetchUsers keeps the previously loaded users and flags a load error when a refetch fails',
     () async {
       when(() => useCases.getAllUsers())
           .thenAnswer((_) async => Result.success([_buildUser('1')]));
@@ -80,12 +80,12 @@ void main() {
       await controller.fetchUsers();
 
       expect(controller.state.users, hasLength(1));
-      expect(controller.state.errorMessage, 'Network error');
+      expect(controller.state.hasLoadError, isTrue);
     },
   );
 
   test(
-    'fetchUsers keeps the previously loaded users when an unexpected exception is thrown',
+    'fetchUsers keeps the previously loaded users and flags a load error when an unexpected exception is thrown',
     () async {
       when(() => useCases.getAllUsers())
           .thenAnswer((_) async => Result.success([_buildUser('1')]));
@@ -98,7 +98,7 @@ void main() {
       await controller.fetchUsers();
 
       expect(controller.state.users, hasLength(1));
-      expect(controller.state.errorMessage, contains('boom'));
+      expect(controller.state.hasLoadError, isTrue);
     },
   );
 

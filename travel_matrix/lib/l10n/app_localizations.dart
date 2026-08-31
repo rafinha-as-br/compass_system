@@ -314,6 +314,12 @@ abstract class AppLocalizations {
   /// **'PENDING'**
   String get statusPending;
 
+  /// No description provided for @failedToLoadTravels.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load travels right now. Please try again later.'**
+  String get failedToLoadTravels;
+
   /// No description provided for @allTravels.
   ///
   /// In en, this message translates to:
@@ -859,6 +865,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'No client users found.'**
   String get noClientUsersFoundMessage;
+
+  /// No description provided for @failedToLoadUsers.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load users right now. Please try again later.'**
+  String get failedToLoadUsers;
 
   /// No description provided for @backToUsersButton.
   ///

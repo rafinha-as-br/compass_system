@@ -13,21 +13,29 @@ class TravelsState {
   final List<TravelViewModel> travels;
   final String? errorMessage;
 
+  /// Set when the listing itself failed to load (network/API down) — the UI
+  /// shows a localized generic message for this instead of [errorMessage],
+  /// which may contain raw, untranslated exception/backend text.
+  final bool hasLoadError;
+
   const TravelsState({
     this.isLoading = true,
     this.travels = const [],
     this.errorMessage,
+    this.hasLoadError = false,
   });
 
   TravelsState copyWith({
     bool? isLoading,
     List<TravelViewModel>? travels,
     String? errorMessage,
+    bool? hasLoadError,
   }) {
     return TravelsState(
       isLoading: isLoading ?? this.isLoading,
       travels: travels ?? this.travels,
       errorMessage: errorMessage,
+      hasLoadError: hasLoadError ?? false,
     );
   }
 }
@@ -58,14 +66,11 @@ class TravelsController extends ChangeNotifier {
         final travels = result.data!.map((t) => TravelViewModel.fromDomain(t)).toList();
         _state = TravelsState(isLoading: false, travels: travels);
       } else {
-        _state = _state.copyWith(isLoading: false, errorMessage: result.error);
+        _state = _state.copyWith(isLoading: false, hasLoadError: true);
       }
       notifyListeners();
     } catch (e) {
-      _state = _state.copyWith(
-        isLoading: false,
-        errorMessage: 'Failed to fetch travels: $e',
-      );
+      _state = _state.copyWith(isLoading: false, hasLoadError: true);
       notifyListeners();
     }
   }

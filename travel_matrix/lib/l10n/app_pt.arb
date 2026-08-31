@@ -41,6 +41,8 @@
   "statusComplete": "COMPLETO",
   "statusPending": "PENDENTE",
 
+  "failedToLoadTravels": "Não foi possível carregar as viagens agora. Tente novamente mais tarde.",
+
   "allTravels": "Todas as Viagens",
   "createTravel": "Criar Viagem",
   "itineraryReady": "Roteiro Pronto",
@@ -152,6 +154,7 @@
   "activeStatusLabel": "Ativo",
   "inactiveStatusLabel": "Inativo",
   "noClientUsersFoundMessage": "Nenhum usuário cliente encontrado.",
+  "failedToLoadUsers": "Não foi possível carregar os usuários agora. Tente novamente mais tarde.",
   "backToUsersButton": "Voltar para Usuários",
   "maleGenderLabel": "Masculino",
   "femaleGenderLabel": "Feminino",

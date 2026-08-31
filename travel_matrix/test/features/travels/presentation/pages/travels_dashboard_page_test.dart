@@ -103,4 +103,24 @@ void main() {
     await tester.pumpWidget(_wrap(controller));
     await tester.pumpAndSettle();
   });
+
+  testWidgets('shows a localized generic message instead of raw text when loading fails', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    when(() => travelRepository.getAllTravels())
+        .thenAnswer((_) async => const Result.failure('ClientException: Failed to fetch, uri=http://api'));
+    final controller = TravelsController(
+      travelUseCases: CrudTravelUseCases(travelRepository),
+      routeUseCases: CrudRoute(routeRepository),
+    );
+
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Unable to load travels right now. Please try again later.'), findsOneWidget);
+    expect(find.textContaining('ClientException'), findsNothing);
+  });
 }

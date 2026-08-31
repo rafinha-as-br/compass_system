@@ -12,21 +12,29 @@ class UsersState {
   final List<UserClientViewModel> users;
   final String? errorMessage;
 
+  /// Set when the listing itself failed to load (network/API down) — the UI
+  /// shows a localized generic message for this instead of [errorMessage],
+  /// which may contain raw, untranslated exception/backend text.
+  final bool hasLoadError;
+
   const UsersState({
     this.isLoading = true,
     this.users = const [],
     this.errorMessage,
+    this.hasLoadError = false,
   });
 
   UsersState copyWith({
     bool? isLoading,
     List<UserClientViewModel>? users,
     String? errorMessage,
+    bool? hasLoadError,
   }) {
     return UsersState(
       isLoading: isLoading ?? this.isLoading,
       users: users ?? this.users,
       errorMessage: errorMessage,
+      hasLoadError: hasLoadError ?? false,
     );
   }
 }
@@ -65,17 +73,11 @@ class UsersController extends ChangeNotifier {
             .toList();
         _state = UsersState(isLoading: false, users: clients);
       } else {
-        _state = _state.copyWith(
-          isLoading: false,
-          errorMessage: result.error,
-        );
+        _state = _state.copyWith(isLoading: false, hasLoadError: true);
       }
       notifyListeners();
     } catch (e) {
-      _state = _state.copyWith(
-        isLoading: false,
-        errorMessage: 'Failed to fetch users: $e',
-      );
+      _state = _state.copyWith(isLoading: false, hasLoadError: true);
       notifyListeners();
     }
   }

@@ -41,6 +41,8 @@
   "statusComplete": "COMPLETE",
   "statusPending": "PENDING",
 
+  "failedToLoadTravels": "Unable to load travels right now. Please try again later.",
+
   "allTravels": "All Travels",
   "createTravel": "Create Travel",
   "itineraryReady": "Itinerary Ready",
@@ -167,6 +169,7 @@
   "activeStatusLabel": "Active",
   "inactiveStatusLabel": "Inactive",
   "noClientUsersFoundMessage": "No client users found.",
+  "failedToLoadUsers": "Unable to load users right now. Please try again later.",
   "backToUsersButton": "Back to Users",
   "maleGenderLabel": "Male",
   "femaleGenderLabel": "Female",
