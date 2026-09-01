@@ -23,7 +23,7 @@ class KpiCardsSection extends StatelessWidget {
             icon: Icons.route,
             title: l10n.totalTravels,
             value: dashboard.totalTravels.toString(),
-            color: semantic.info,
+            color: theme.colorScheme.secondary,
           ),
           _KpiCard(
             icon: Icons.event_available,
@@ -41,7 +41,7 @@ class KpiCardsSection extends StatelessWidget {
             icon: Icons.people_alt_outlined,
             title: l10n.activeClients,
             value: dashboard.activeClients.toString(),
-            color: theme.colorScheme.secondary,
+            color: theme.colorScheme.tertiary,
           ),
         ];
 

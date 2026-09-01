@@ -12,6 +12,11 @@ class TravelAppColors {
   static const Color accentGoldLight = Color(0xFFE3BC58);
   static const Color accentGoldDark = Color(0xFFA47C18);
 
+  // Contraste com onTertiary (branco) ~5.3:1 — acima do mínimo AA (4.5:1)
+  // para texto normal, não só do 3:1 de componentes grandes.
+  static const Color tertiary = Color(0xFF177A62);
+  static const Color tertiaryLight = Color(0xFF3DAF95);
+
   static const Color background = Color(0xFFF8F9FA);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceDark = Color(0xFF101820);
@@ -110,11 +115,13 @@ class AppTheme {
       colorScheme: const ColorScheme.light(
         primary: TravelAppColors.primary,
         secondary: TravelAppColors.accentGold,
+        tertiary: TravelAppColors.tertiary,
         surface: TravelAppColors.surface,
         error: TravelAppColors.error,
         onPrimary: TravelAppColors.textOnPrimary,
         // accentGold é um tom claro — texto escuro garante contraste AA (branco falha, ~2.2:1).
         onSecondary: TravelAppColors.textPrimary,
+        onTertiary: TravelAppColors.textOnPrimary,
         onSurface: TravelAppColors.textPrimary,
         onError: TravelAppColors.textOnPrimary,
       ),
@@ -147,11 +154,14 @@ class AppTheme {
       colorScheme: const ColorScheme.dark(
         primary: TravelAppColors.primaryLight,
         secondary: TravelAppColors.accentGoldLight,
+        tertiary: TravelAppColors.tertiaryLight,
         surface: TravelAppColors.surfaceDark,
         error: TravelAppColors.error,
         onPrimary: TravelAppColors.textOnPrimary,
         // accentGoldLight também é claro — mesma correção de contraste do tema light.
         onSecondary: TravelAppColors.textPrimary,
+        // tertiaryLight também é claro — mesma correção de contraste.
+        onTertiary: TravelAppColors.textPrimary,
         onSurface: TravelAppColors.textOnDark,
         onError: TravelAppColors.textOnPrimary,
       ),
