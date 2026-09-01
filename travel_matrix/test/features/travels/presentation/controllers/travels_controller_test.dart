@@ -67,7 +67,7 @@ void main() {
     expect(controller.state.travels, hasLength(1));
   });
 
-  test('fetchTravels keeps the previously loaded travels when a refetch fails', () async {
+  test('fetchTravels keeps the previously loaded travels and flags a load error when a refetch fails', () async {
     final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
     await pumpEventQueue();
     expect(controller.state.travels, hasLength(1));
@@ -76,7 +76,7 @@ void main() {
     await controller.fetchTravels();
 
     expect(controller.state.travels, hasLength(1));
-    expect(controller.state.errorMessage, 'Network error');
+    expect(controller.state.hasLoadError, isTrue);
   });
 
   test('createTravel forwards the raw request map and refetches on success', () async {

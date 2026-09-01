@@ -160,7 +160,15 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
           ),
           const SizedBox(height: 24),
           
-          if (state.errorMessage != null)
+          if (state.hasLoadError)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                l10n.failedToLoadUsers,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+            )
+          else if (state.errorMessage != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(

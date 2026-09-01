@@ -9,6 +9,7 @@ import 'package:travel_matrix/features/travels/presentation/widgets/build/itiner
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment_form_widget.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/timeline_warning_box.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/step_type_selector.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// This panel is responsible for building/editing an [ItineraryStepViewModel] list,
 /// receiving a [ItineraryStepsBuildModel] as input for consuming.
@@ -98,6 +99,7 @@ class _StepNavigator extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
 
     final isFirstStep = step.position == StepPosition.start;
     final isLastStep = step.position == StepPosition.finish;
@@ -112,7 +114,7 @@ class _StepNavigator extends StatelessWidget {
           IconButton(
             onPressed: (){},
             icon: const Icon(Icons.arrow_back),
-            tooltip: 'Previous Step',
+            tooltip: l10n.previousStep,
             disabledColor: Theme.of(context).colorScheme.secondary,
             isSelected: false,
           )
@@ -120,7 +122,7 @@ class _StepNavigator extends StatelessWidget {
           IconButton(
             onPressed: goToPreviousStep,
             icon: const Icon(Icons.arrow_back),
-            tooltip: 'Previous Step',
+            tooltip: l10n.previousStep,
           ),
 
         /// Step title
@@ -142,14 +144,14 @@ class _StepNavigator extends StatelessWidget {
               );
             },
             icon: const Icon(Icons.add),
-            tooltip: 'Add Step',
+            tooltip: l10n.addStep,
             color: Theme.of(context).colorScheme.secondary,
           )
             :
           IconButton(
             onPressed: goToNextStep,
             icon: const Icon(Icons.arrow_forward),
-            tooltip: 'Next Step',
+            tooltip: l10n.nextStep,
           ),
       ],
     );
@@ -180,6 +182,7 @@ class _StepFormRender extends StatelessWidget {
 
   /// Type changer handler, called when the user changes the step type, verifying if the change is valid.
   Future<void> _handleTypeChange(BuildContext context, Type newType) async {
+    final l10n = AppLocalizations.of(context)!;
     if (step.runtimeType == newType) return;
 
     // Show dialog if not a PlaceHolderStepViewModel
@@ -205,7 +208,7 @@ class _StepFormRender extends StatelessWidget {
           title: title,
           startDate: startDate,
           finishDate: finishDate,
-          name: 'Place name',
+          name: l10n.defaultPlaceNameValue,
           position: position,
           description: '',
           experiences: [],
@@ -216,8 +219,8 @@ class _StepFormRender extends StatelessWidget {
           startDate: startDate,
           finishDate: finishDate,
           position: position,
-          placeName: 'Place name',
-          address: 'Place address',
+          placeName: l10n.defaultPlaceNameValue,
+          address: l10n.defaultPlaceAddressValue,
           checkIn: DateTime.now(),
           checkOut: DateTime.now().add(const Duration(days: 1)),
       );
@@ -228,8 +231,8 @@ class _StepFormRender extends StatelessWidget {
           startDate: startDate,
           finishDate: finishDate,
           position: position,
-          startPoint: 'Starting point',
-          finishPoint: 'Finish point',
+          startPoint: l10n.defaultStartingPointValue,
+          finishPoint: l10n.defaultFinishPointValue,
           transport: defaultTransport
       );
     } else {
@@ -382,11 +385,12 @@ class _BasicStepFormState extends State<_BasicStepForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         CustomFormField.text(
-          label: 'Step Title',
+          label: l10n.stepTitleLabel,
           enabled: true,
           controller: _titleCtrl,
           onChanged: _onTitleChanged,
@@ -396,7 +400,7 @@ class _BasicStepFormState extends State<_BasicStepForm> {
           children: [
             Expanded(
               child: CustomFormField.date(
-                label: 'Start Date',
+                label: l10n.startDateLabel,
                 enabled: true,
                 controller: _startDateCtrl,
                 onTap: () => _pickDate(isStart: true),
@@ -405,7 +409,7 @@ class _BasicStepFormState extends State<_BasicStepForm> {
             const SizedBox(width: 12),
             Expanded(
               child: CustomFormField.date(
-                label: 'End Date',
+                label: l10n.endDateLabel,
                 enabled: true,
                 controller: _finishDateCtrl,
                 onTap: () => _pickDate(isStart: false),
@@ -443,7 +447,7 @@ class _StepTypeEmptyState extends StatelessWidget {
           const SizedBox(width: 12),
           Expanded(
             child: Text(
-              'Choose a step type to continue editing this itinerary step.',
+              AppLocalizations.of(context)!.chooseStepTypeEmptyStateMessage,
               style: theme.textTheme.bodyMedium?.copyWith(
                 color: colorScheme.onSurfaceVariant,
               ),

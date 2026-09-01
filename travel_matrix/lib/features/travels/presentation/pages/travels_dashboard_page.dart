@@ -123,7 +123,15 @@ class _TravelsDashboardViewState extends State<_TravelsDashboardView> {
             ],
           ),
           const SizedBox(height: 20),
-          if (state.errorMessage != null)
+          if (state.hasLoadError)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 12),
+              child: Text(
+                l10n.failedToLoadTravels,
+                style: TextStyle(color: theme.colorScheme.error),
+              ),
+            )
+          else if (state.errorMessage != null)
             Padding(
               padding: const EdgeInsets.only(bottom: 12),
               child: Text(

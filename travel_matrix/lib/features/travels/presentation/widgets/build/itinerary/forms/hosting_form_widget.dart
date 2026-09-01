@@ -79,11 +79,11 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
   String _formatDate(DateTime dt) =>
       '${dt.day.toString().padLeft(2, '0')}/${dt.month.toString().padLeft(2, '0')}/${dt.year}';
 
-  FieldState<String> _validateRequiredField(String value) {
+  FieldState<String> _validateRequiredField(BuildContext context, String value) {
     if (value.trim().isEmpty) {
       return FieldState(
         value: value,
-        error: 'Field cannot be empty',
+        error: AppLocalizations.of(context)!.fieldRequiredError,
         isTouched: true,
       );
     }
@@ -91,7 +91,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
   }
 
   void _onNameChanged(String value) {
-    final validatedField = _validateRequiredField(value);
+    final validatedField = _validateRequiredField(context, value);
     setState(() {
       _formState = _formState.copyWith(placeName: validatedField);
     });
@@ -99,7 +99,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
   }
 
   void _onAddressChanged(String value) {
-    final validatedField = _validateRequiredField(value);
+    final validatedField = _validateRequiredField(context, value);
     setState(() {
       _formState = _formState.copyWith(address: validatedField);
     });
@@ -146,6 +146,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -156,7 +157,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomFormField.text(
-            label: 'Hosting Name',
+            label: l10n.hostingNameLabel,
             enabled: true,
             controller: _nameCtrl,
             errorText: _formState.placeName.isTouched
@@ -166,7 +167,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
           ),
           const SizedBox(height: 12),
           CustomFormField.text(
-            label: 'Address',
+            label: l10n.addressLabel,
             enabled: true,
             controller: _addressCtrl,
             errorText: _formState.address.isTouched
@@ -179,7 +180,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
             children: [
               Expanded(
                 child: CustomFormField.date(
-                  label: 'Check-in',
+                  label: l10n.checkInLabel,
                   enabled: true,
                   controller: _checkInCtrl,
                   onTap: () => _pickDate(isCheckIn: true),
@@ -188,7 +189,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
               const SizedBox(width: 12),
               Expanded(
                 child: CustomFormField.date(
-                  label: 'Check-out',
+                  label: l10n.checkOutLabel,
                   enabled: true,
                   controller: _checkOutCtrl,
                   onTap: () => _pickDate(isCheckIn: false),

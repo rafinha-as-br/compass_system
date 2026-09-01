@@ -183,7 +183,7 @@ class _StepListTile extends StatelessWidget {
             color: Theme.of(context).colorScheme.error,
           ),
           onPressed: onDeleteStep,
-          tooltip: 'Delete step',
+          tooltip: AppLocalizations.of(context)!.deleteStepTooltip,
         ),
         onTap: () => onSelectStep(index),
       ),

@@ -14,6 +14,7 @@ import 'package:travel_matrix/features/users/presentation/view_models/client_sta
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/user_stats_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 class _MockUserUseCases extends Mock implements UserUseCases {}
 
@@ -98,5 +99,33 @@ void main() {
     await tester.pumpAndSettle();
 
     verifyNever(() => useCases.forceLogout(any()));
+  });
+
+  testWidgets('active status icon follows the dark theme semantic color, not a fixed light color', (tester) async {
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: controller,
+        child: MaterialApp(
+          theme: AppTheme.lightTheme,
+          darkTheme: AppTheme.darkTheme,
+          themeMode: ThemeMode.dark,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ViewUserPage(user: _testUser),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    final icon = tester.widget<Icon>(find.byIcon(Icons.check_circle_outline));
+    expect(icon.color, AppTheme.darkTheme.semanticColors.success);
+    expect(icon.color, isNot(TravelAppColors.success));
   });
 }
