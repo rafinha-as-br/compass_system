@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// Widget used for showing the logo and a progress bar, to represent loading states
 class LoadingWidget extends StatelessWidget {
@@ -13,7 +14,7 @@ class LoadingWidget extends StatelessWidget {
         Column(
           children: [
             Text(
-              'Travel Matrix App',
+              AppLocalizations.of(context)!.appTitle,
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,

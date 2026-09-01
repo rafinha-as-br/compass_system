@@ -89,7 +89,7 @@ class _LoginViewState extends State<_LoginView> {
                   const SizedBox(height: 32),
                   if (state.errorMessage != null) ...[
                     Text(
-                      state.errorMessage!,
+                      state.isConnectivityError ? l10n.loginError : state.errorMessage!,
                       style: TextStyle(color: Theme.of(context).colorScheme.error),
                       textAlign: TextAlign.center,
                     ),

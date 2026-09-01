@@ -73,11 +73,11 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
     }
   }
 
-  FieldState<String> _validateRequiredField(String value) {
+  FieldState<String> _validateRequiredField(BuildContext context, String value) {
     if (value.trim().isEmpty) {
       return FieldState(
         value: value,
-        error: 'Field cannot be empty',
+        error: AppLocalizations.of(context)!.fieldRequiredError,
         isTouched: true,
       );
     }
@@ -86,7 +86,7 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
   }
 
   void _onStartPointChanged(String value) {
-    final validatedField = _validateRequiredField(value);
+    final validatedField = _validateRequiredField(context, value);
 
     setState(() {
       _formState = _formState.copyWith(startPoint: validatedField);
@@ -96,7 +96,7 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
   }
 
   void _onFinishPointChanged(String value) {
-    final validatedField = _validateRequiredField(value);
+    final validatedField = _validateRequiredField(context, value);
 
     setState(() {
       _formState = _formState.copyWith(finishPoint: validatedField);
@@ -198,6 +198,7 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
 
@@ -212,7 +213,7 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
             children: [
               Expanded(
                 child: CustomFormField.text(
-                  label: 'Start Point',
+                  label: l10n.startPointLabel,
                   enabled: true,
                   controller: _startPointCtrl,
                   errorText: _formState.startPoint.isTouched
@@ -226,7 +227,7 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
 
               Expanded(
                 child: CustomFormField.text(
-                  label: 'Finish Point',
+                  label: l10n.finishPointLabel,
                   enabled: true,
                   controller: _finishPointCtrl,
                   errorText: _formState.finishPoint.isTouched
@@ -354,12 +355,13 @@ class _TransportTypeSelector extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final colorScheme = theme.colorScheme;
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Transport Type',
+          l10n.transportTypeLabel,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: colorScheme.onSurface.withValues(alpha: 0.6),
           ),
@@ -371,19 +373,19 @@ class _TransportTypeSelector extends StatelessWidget {
           children: [
             _TransportCard(
               icon: Icons.flight_takeoff,
-              title: 'Airplane',
+              title: l10n.airplaneTransportLabel,
               isSelected: selectedType == 'airplane',
               onTap: () => onTypeSelected('airplane'),
             ),
             _TransportCard(
               icon: Icons.directions_bus,
-              title: 'Bus',
+              title: l10n.busTransportLabel,
               isSelected: selectedType == 'bus',
               onTap: () => onTypeSelected('bus'),
             ),
             _TransportCard(
               icon: Icons.car_rental,
-              title: 'Rental Car',
+              title: l10n.rentalCarTransportLabel,
               isSelected: selectedType == 'rental_car',
               onTap: () => onTypeSelected('rental_car'),
             ),

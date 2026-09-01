@@ -1,6 +1,7 @@
 
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 import '../../../../../../../../shared/widgets/text_fields.dart';
 import '../field_state.dart';
 import 'package:intl/intl.dart';
@@ -112,6 +113,7 @@ class _BusFormState extends State<BusForm> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(16),
 
@@ -126,7 +128,7 @@ class _BusFormState extends State<BusForm> {
 
           /// Travel number
           CustomFormField.text(
-            label: 'Travel Number',
+            label: l10n.travelNumberLabel,
             enabled: true,
             controller: _travelNumberCtrl,
             errorText: _showError(_formState.travelNumber),
@@ -137,7 +139,7 @@ class _BusFormState extends State<BusForm> {
 
           /// Travel company
           CustomFormField.text(
-            label: 'Travel Company',
+            label: l10n.travelCompanyLabel,
             enabled: true,
             controller: _travelCompanyCtrl,
             errorText: _showError(_formState.travelCompany),
@@ -148,7 +150,7 @@ class _BusFormState extends State<BusForm> {
 
           /// Departure gate
           CustomFormField.text(
-            label: 'Departure Gate',
+            label: l10n.departureGateLabel,
             enabled: true,
             controller: _departureGateCtrl,
             errorText: _showError(_formState.departureGate),
@@ -159,7 +161,7 @@ class _BusFormState extends State<BusForm> {
 
           /// Departure date
           CustomFormField.date(
-            label: 'Departure Date',
+            label: l10n.departureDateLabel,
             enabled: true,
             controller: _departureDateTimeCtrl,
             errorText: _showError(_formState.departureDateTime),
@@ -170,7 +172,7 @@ class _BusFormState extends State<BusForm> {
 
           /// Bus station
           CustomFormField.text(
-            label: 'Bus Station',
+            label: l10n.busStationLabel,
             enabled: true,
             controller: _busStationNameCtrl,
             errorText: _showError(_formState.busStationName),
@@ -181,7 +183,7 @@ class _BusFormState extends State<BusForm> {
 
           /// Description
           CustomFormField.text(
-            label: 'Description',
+            label: l10n.descriptionLabel,
             enabled: true,
             controller: _descriptionCtrl,
             errorText: _showError(_formState.description),
@@ -192,7 +194,7 @@ class _BusFormState extends State<BusForm> {
 
           /// Optional details
           CustomFormField.text(
-            label: 'Details (Optional)',
+            label: l10n.detailsOptionalLabel,
             enabled: true,
             controller: _detailsCtrl,
             errorText: null,
@@ -214,7 +216,7 @@ class _BusFormState extends State<BusForm> {
       updater: (field) => _formState = _formState.copyWith(
         travelNumber: field,
       ),
-      errorMessage: 'Travel number is required',
+      errorMessage: AppLocalizations.of(context)!.travelNumberRequiredValidation,
     );
   }
 
@@ -225,7 +227,7 @@ class _BusFormState extends State<BusForm> {
       updater: (field) => _formState = _formState.copyWith(
         travelCompany: field,
       ),
-      errorMessage: 'Travel company is required',
+      errorMessage: AppLocalizations.of(context)!.travelCompanyRequiredValidation,
     );
   }
 
@@ -236,7 +238,7 @@ class _BusFormState extends State<BusForm> {
       updater: (field) => _formState = _formState.copyWith(
         departureGate: field,
       ),
-      errorMessage: 'Departure gate is required',
+      errorMessage: AppLocalizations.of(context)!.departureGateRequiredValidation,
     );
   }
 
@@ -247,7 +249,7 @@ class _BusFormState extends State<BusForm> {
       updater: (field) => _formState = _formState.copyWith(
         busStationName: field,
       ),
-      errorMessage: 'Bus station name is required',
+      errorMessage: AppLocalizations.of(context)!.busStationRequiredValidation,
     );
   }
 
@@ -258,7 +260,7 @@ class _BusFormState extends State<BusForm> {
       updater: (field) => _formState = _formState.copyWith(
         description: field,
       ),
-      errorMessage: 'Description is required',
+      errorMessage: AppLocalizations.of(context)!.descriptionRequiredValidation,
     );
   }
 

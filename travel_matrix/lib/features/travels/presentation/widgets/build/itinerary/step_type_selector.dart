@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/itinerary_steps_view_models.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// Renders the UI for selecting a step type.
 class StepTypeSelector extends StatelessWidget {
@@ -17,12 +18,13 @@ class StepTypeSelector extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(
-          'Choose step type:',
+          l10n.chooseStepTypeLabel,
           style: theme.textTheme.bodyMedium?.copyWith(
             color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
           ),
@@ -35,29 +37,29 @@ class StepTypeSelector extends StatelessWidget {
             if (allowPlaceholder)
               _TypeCard(
                 icon: Icons.help_outline,
-                title: 'Placeholder',
-                subtitle: 'Undecided step',
+                title: l10n.placeholderStepTitle,
+                subtitle: l10n.undecidedStepSubtitle,
                 isSelected: selectedType == PlaceHolderStepViewModel,
                 onTap: () => onTypeSelected(PlaceHolderStepViewModel),
               ),
             _TypeCard(
               icon: Icons.place,
-              title: 'Stop',
-              subtitle: 'Place to visit',
+              title: l10n.stopStepTypeTitle,
+              subtitle: l10n.placeToVisitSubtitle,
               isSelected: selectedType == StopStepViewModel,
               onTap: () => onTypeSelected(StopStepViewModel),
             ),
             _TypeCard(
               icon: Icons.hotel,
-              title: 'Hosting',
-              subtitle: 'Place to stay',
+              title: l10n.hostingStepTypeTitle,
+              subtitle: l10n.placeToStaySubtitle,
               isSelected: selectedType == HostingStepViewModel,
               onTap: () => onTypeSelected(HostingStepViewModel),
             ),
             _TypeCard(
               icon: Icons.route,
-              title: 'Travel Segment',
-              subtitle: 'Moving around',
+              title: l10n.travelSegmentStepTypeTitle,
+              subtitle: l10n.movingAroundSubtitle,
               isSelected: selectedType == TravelSegmentStepViewModel,
               onTap: () => onTypeSelected(TravelSegmentStepViewModel),
             ),

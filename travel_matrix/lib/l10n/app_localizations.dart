@@ -1375,6 +1375,366 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Add experience'**
   String get addExperienceTooltip;
+
+  /// No description provided for @chooseStepTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose step type:'**
+  String get chooseStepTypeLabel;
+
+  /// No description provided for @placeholderStepTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Placeholder'**
+  String get placeholderStepTitle;
+
+  /// No description provided for @undecidedStepSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Undecided step'**
+  String get undecidedStepSubtitle;
+
+  /// No description provided for @stopStepTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stopStepTypeTitle;
+
+  /// No description provided for @placeToVisitSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Place to visit'**
+  String get placeToVisitSubtitle;
+
+  /// No description provided for @hostingStepTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Hosting'**
+  String get hostingStepTypeTitle;
+
+  /// No description provided for @placeToStaySubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Place to stay'**
+  String get placeToStaySubtitle;
+
+  /// No description provided for @travelSegmentStepTypeTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Segment'**
+  String get travelSegmentStepTypeTitle;
+
+  /// No description provided for @movingAroundSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Moving around'**
+  String get movingAroundSubtitle;
+
+  /// No description provided for @stepTitleLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Step Title'**
+  String get stepTitleLabel;
+
+  /// No description provided for @chooseStepTypeEmptyStateMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a step type to continue editing this itinerary step.'**
+  String get chooseStepTypeEmptyStateMessage;
+
+  /// No description provided for @defaultPlaceNameValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Place name'**
+  String get defaultPlaceNameValue;
+
+  /// No description provided for @defaultPlaceAddressValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Place address'**
+  String get defaultPlaceAddressValue;
+
+  /// No description provided for @defaultStartingPointValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Starting point'**
+  String get defaultStartingPointValue;
+
+  /// No description provided for @defaultFinishPointValue.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish point'**
+  String get defaultFinishPointValue;
+
+  /// No description provided for @hostingNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Hosting Name'**
+  String get hostingNameLabel;
+
+  /// No description provided for @addressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get addressLabel;
+
+  /// No description provided for @checkInLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in'**
+  String get checkInLabel;
+
+  /// No description provided for @checkOutLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-out'**
+  String get checkOutLabel;
+
+  /// No description provided for @fieldRequiredError.
+  ///
+  /// In en, this message translates to:
+  /// **'Field cannot be empty'**
+  String get fieldRequiredError;
+
+  /// No description provided for @stopNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop Name'**
+  String get stopNameLabel;
+
+  /// No description provided for @addExperienceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Add Experience'**
+  String get addExperienceLabel;
+
+  /// No description provided for @startPointLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start Point'**
+  String get startPointLabel;
+
+  /// No description provided for @finishPointLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Finish Point'**
+  String get finishPointLabel;
+
+  /// No description provided for @transportTypeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Transport Type'**
+  String get transportTypeLabel;
+
+  /// No description provided for @airplaneTransportLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Airplane'**
+  String get airplaneTransportLabel;
+
+  /// No description provided for @busTransportLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus'**
+  String get busTransportLabel;
+
+  /// No description provided for @rentalCarTransportLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental Car'**
+  String get rentalCarTransportLabel;
+
+  /// No description provided for @travelNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Number'**
+  String get travelNumberLabel;
+
+  /// No description provided for @travelCompanyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel Company'**
+  String get travelCompanyLabel;
+
+  /// No description provided for @departureGateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Departure Gate'**
+  String get departureGateLabel;
+
+  /// No description provided for @departureDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Departure Date'**
+  String get departureDateLabel;
+
+  /// No description provided for @busStationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus Station'**
+  String get busStationLabel;
+
+  /// No description provided for @detailsOptionalLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Details (Optional)'**
+  String get detailsOptionalLabel;
+
+  /// No description provided for @travelNumberRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel number is required'**
+  String get travelNumberRequiredValidation;
+
+  /// No description provided for @travelCompanyRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel company is required'**
+  String get travelCompanyRequiredValidation;
+
+  /// No description provided for @departureGateRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Departure gate is required'**
+  String get departureGateRequiredValidation;
+
+  /// No description provided for @busStationRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus station name is required'**
+  String get busStationRequiredValidation;
+
+  /// No description provided for @descriptionRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Description is required'**
+  String get descriptionRequiredValidation;
+
+  /// No description provided for @flightNumberLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Flight Number'**
+  String get flightNumberLabel;
+
+  /// No description provided for @flightCompanyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Flight Company'**
+  String get flightCompanyLabel;
+
+  /// No description provided for @flightDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Flight Date'**
+  String get flightDateLabel;
+
+  /// No description provided for @departureAirportLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Departure Airport'**
+  String get departureAirportLabel;
+
+  /// No description provided for @arrivalAirportLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival Airport'**
+  String get arrivalAirportLabel;
+
+  /// No description provided for @flightNumberRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Flight number is required'**
+  String get flightNumberRequiredValidation;
+
+  /// No description provided for @flightCompanyRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Flight company is required'**
+  String get flightCompanyRequiredValidation;
+
+  /// No description provided for @departureAirportRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Departure airport is required'**
+  String get departureAirportRequiredValidation;
+
+  /// No description provided for @arrivalAirportRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Arrival airport is required'**
+  String get arrivalAirportRequiredValidation;
+
+  /// No description provided for @vehicleModelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle Model'**
+  String get vehicleModelLabel;
+
+  /// No description provided for @licensePlateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'License Plate'**
+  String get licensePlateLabel;
+
+  /// No description provided for @companyNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Company Name'**
+  String get companyNameLabel;
+
+  /// No description provided for @checkInDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Check In Date'**
+  String get checkInDateLabel;
+
+  /// No description provided for @checkOutDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Check Out Date'**
+  String get checkOutDateLabel;
+
+  /// No description provided for @vehicleModelRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Vehicle model is required'**
+  String get vehicleModelRequiredValidation;
+
+  /// No description provided for @licensePlateRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'License plate is required'**
+  String get licensePlateRequiredValidation;
+
+  /// No description provided for @companyNameRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Company name is required'**
+  String get companyNameRequiredValidation;
+
+  /// No description provided for @checkInAfterCheckOutError.
+  ///
+  /// In en, this message translates to:
+  /// **'Check in cannot be after check out'**
+  String get checkInAfterCheckOutError;
+
+  /// No description provided for @checkOutBeforeCheckInError.
+  ///
+  /// In en, this message translates to:
+  /// **'Check out cannot be before check in'**
+  String get checkOutBeforeCheckInError;
+
+  /// No description provided for @deleteStepTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Delete step'**
+  String get deleteStepTooltip;
+
+  /// No description provided for @sessionExpiredMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Session expired. Please sign in again.'**
+  String get sessionExpiredMessage;
 }
 
 class _AppLocalizationsDelegate

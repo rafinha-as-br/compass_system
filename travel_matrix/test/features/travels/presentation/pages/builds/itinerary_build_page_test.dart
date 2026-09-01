@@ -28,6 +28,7 @@ void main() {
   Widget wrap({
     required ItineraryRepository repository,
     required AuthController auth,
+    Locale? locale,
   }) {
     final router = GoRouter(
       initialLocation: '/build',
@@ -52,6 +53,7 @@ void main() {
       value: auth,
       child: MaterialApp.router(
         routerConfig: router,
+        locale: locale,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -105,5 +107,22 @@ void main() {
     final captured = verify(() => repository.upsertItinerary('travel-1', captureAny())).captured;
     final sentItinerary = captured.single as Itinerary;
     expect(sentItinerary.agentName, 'carlos@compass.com');
+  });
+
+  testWidgets('renders the app bar and step type selector in Portuguese, not English', (tester) async {
+    final repository = _MockItineraryRepository();
+    final auth = AuthController();
+    auth.debugSetUserData({'id': 'agent-9', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    await tester.pumpWidget(wrap(repository: repository, auth: auth, locale: const Locale('pt')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Montar Roteiro'), findsOneWidget);
+    expect(find.text('Escolha o tipo de etapa:'), findsOneWidget);
+    expect(find.text('Salvar'), findsOneWidget);
+
+    expect(find.text('Build Itinerary'), findsNothing);
+    expect(find.text('Choose step type:'), findsNothing);
+    expect(find.text('Save'), findsNothing);
   });
 }

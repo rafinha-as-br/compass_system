@@ -89,6 +89,26 @@ void main() {
     expect(find.text('Invalid credentials.'), findsOneWidget);
   });
 
+  testWidgets('shows a localized generic message instead of the raw one on a connectivity failure', (tester) async {
+    final repository = StubAuthRepository(
+      const Result.failure('Não foi possível conectar ao servidor.', isConnectivityError: true),
+    );
+    final controller = LoginController(
+      loginUseCase: LoginUseCase(repository),
+      saveToken: (_) async {},
+    );
+
+    await tester.pumpWidget(_wrap(controller, locale: const Locale('en')));
+
+    await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'a@b.com');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'secret123');
+    await tester.tap(find.text('LOGIN'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('An error occurred during login.'), findsOneWidget);
+    expect(find.text('Não foi possível conectar ao servidor.'), findsNothing);
+  });
+
   // The success path (saveToken called, navigation to GateAuth) is covered
   // at the controller level in login_controller_test.dart — reproducing it
   // here would require bootstrapping GateAuth's AuthService/secure storage,

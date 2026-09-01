@@ -683,4 +683,187 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get addExperienceTooltip => 'Add experience';
+
+  @override
+  String get chooseStepTypeLabel => 'Choose step type:';
+
+  @override
+  String get placeholderStepTitle => 'Placeholder';
+
+  @override
+  String get undecidedStepSubtitle => 'Undecided step';
+
+  @override
+  String get stopStepTypeTitle => 'Stop';
+
+  @override
+  String get placeToVisitSubtitle => 'Place to visit';
+
+  @override
+  String get hostingStepTypeTitle => 'Hosting';
+
+  @override
+  String get placeToStaySubtitle => 'Place to stay';
+
+  @override
+  String get travelSegmentStepTypeTitle => 'Travel Segment';
+
+  @override
+  String get movingAroundSubtitle => 'Moving around';
+
+  @override
+  String get stepTitleLabel => 'Step Title';
+
+  @override
+  String get chooseStepTypeEmptyStateMessage =>
+      'Choose a step type to continue editing this itinerary step.';
+
+  @override
+  String get defaultPlaceNameValue => 'Place name';
+
+  @override
+  String get defaultPlaceAddressValue => 'Place address';
+
+  @override
+  String get defaultStartingPointValue => 'Starting point';
+
+  @override
+  String get defaultFinishPointValue => 'Finish point';
+
+  @override
+  String get hostingNameLabel => 'Hosting Name';
+
+  @override
+  String get addressLabel => 'Address';
+
+  @override
+  String get checkInLabel => 'Check-in';
+
+  @override
+  String get checkOutLabel => 'Check-out';
+
+  @override
+  String get fieldRequiredError => 'Field cannot be empty';
+
+  @override
+  String get stopNameLabel => 'Stop Name';
+
+  @override
+  String get addExperienceLabel => 'Add Experience';
+
+  @override
+  String get startPointLabel => 'Start Point';
+
+  @override
+  String get finishPointLabel => 'Finish Point';
+
+  @override
+  String get transportTypeLabel => 'Transport Type';
+
+  @override
+  String get airplaneTransportLabel => 'Airplane';
+
+  @override
+  String get busTransportLabel => 'Bus';
+
+  @override
+  String get rentalCarTransportLabel => 'Rental Car';
+
+  @override
+  String get travelNumberLabel => 'Travel Number';
+
+  @override
+  String get travelCompanyLabel => 'Travel Company';
+
+  @override
+  String get departureGateLabel => 'Departure Gate';
+
+  @override
+  String get departureDateLabel => 'Departure Date';
+
+  @override
+  String get busStationLabel => 'Bus Station';
+
+  @override
+  String get detailsOptionalLabel => 'Details (Optional)';
+
+  @override
+  String get travelNumberRequiredValidation => 'Travel number is required';
+
+  @override
+  String get travelCompanyRequiredValidation => 'Travel company is required';
+
+  @override
+  String get departureGateRequiredValidation => 'Departure gate is required';
+
+  @override
+  String get busStationRequiredValidation => 'Bus station name is required';
+
+  @override
+  String get descriptionRequiredValidation => 'Description is required';
+
+  @override
+  String get flightNumberLabel => 'Flight Number';
+
+  @override
+  String get flightCompanyLabel => 'Flight Company';
+
+  @override
+  String get flightDateLabel => 'Flight Date';
+
+  @override
+  String get departureAirportLabel => 'Departure Airport';
+
+  @override
+  String get arrivalAirportLabel => 'Arrival Airport';
+
+  @override
+  String get flightNumberRequiredValidation => 'Flight number is required';
+
+  @override
+  String get flightCompanyRequiredValidation => 'Flight company is required';
+
+  @override
+  String get departureAirportRequiredValidation =>
+      'Departure airport is required';
+
+  @override
+  String get arrivalAirportRequiredValidation => 'Arrival airport is required';
+
+  @override
+  String get vehicleModelLabel => 'Vehicle Model';
+
+  @override
+  String get licensePlateLabel => 'License Plate';
+
+  @override
+  String get companyNameLabel => 'Company Name';
+
+  @override
+  String get checkInDateLabel => 'Check In Date';
+
+  @override
+  String get checkOutDateLabel => 'Check Out Date';
+
+  @override
+  String get vehicleModelRequiredValidation => 'Vehicle model is required';
+
+  @override
+  String get licensePlateRequiredValidation => 'License plate is required';
+
+  @override
+  String get companyNameRequiredValidation => 'Company name is required';
+
+  @override
+  String get checkInAfterCheckOutError => 'Check in cannot be after check out';
+
+  @override
+  String get checkOutBeforeCheckInError =>
+      'Check out cannot be before check in';
+
+  @override
+  String get deleteStepTooltip => 'Delete step';
+
+  @override
+  String get sessionExpiredMessage => 'Session expired. Please sign in again.';
 }
