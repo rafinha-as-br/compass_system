@@ -66,9 +66,9 @@ class HttpApiClient {
     try {
       response = await request().timeout(_timeout);
     } on TimeoutException {
-      throw ApiException('Tempo de conexão esgotado. Tente novamente.');
+      throw ApiException('Tempo de conexão esgotado. Tente novamente.', null, true);
     } catch (_) {
-      throw ApiException('Não foi possível conectar ao servidor.');
+      throw ApiException('Não foi possível conectar ao servidor.', null, true);
     }
     return _handleResponse(response);
   }
