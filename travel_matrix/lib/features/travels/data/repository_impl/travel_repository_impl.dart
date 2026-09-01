@@ -39,6 +39,16 @@ class TravelRepositoryImpl implements TravelRepository {
   }
 
   @override
+  Future<Result<Travel>> createTravelFromRequest(Map<String, dynamic> request) async {
+    try {
+      final createdDto = await _travelDataSource.createTravelFromRequest(request);
+      return Result.success(createdDto.toDomain());
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
+  @override
   Future<Result<bool>> deleteTravel(String id) async {
     try {
       await _travelDataSource.deleteTravel(id);

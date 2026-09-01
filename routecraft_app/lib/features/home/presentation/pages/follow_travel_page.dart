@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:routecraft_app/core/mock/mock_repository.dart';
+import 'package:routecraft_app/shared/theme/app_theme.dart';
+import 'package:routecraft_app/shared/widgets/app_button.dart';
+import 'package:routecraft_app/shared/widgets/app_text_field.dart';
 
 class FollowTravelPage extends StatefulWidget {
   final Travel? travel;
@@ -51,22 +54,16 @@ class _FollowTravelPageState extends State<FollowTravelPage> {
           style: TextStyle(fontSize: 16),
         ),
         const SizedBox(height: 24),
-        TextField(
+        AppTextField(
           controller: _travelIdController,
-          decoration: const InputDecoration(
-            labelText: 'Travel ID',
-            border: OutlineInputBorder(),
-            prefixIcon: Icon(Icons.search),
-          ),
+          labelText: 'Travel ID',
+          prefixIcon: const Icon(Icons.search),
           textInputAction: TextInputAction.done,
-          onSubmitted: (_) => _followTravel(),
+          onFieldSubmitted: (_) => _followTravel(),
         ),
         const SizedBox(height: 32),
-        ElevatedButton(
+        AppButton(
           onPressed: _followTravel,
-          style: ElevatedButton.styleFrom(
-            padding: const EdgeInsets.symmetric(vertical: 16),
-          ),
           child: const Text('Follow Travel', style: TextStyle(fontSize: 16)),
         ),
       ],
@@ -78,7 +75,7 @@ class _FollowTravelPageState extends State<FollowTravelPage> {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        const Icon(Icons.check_circle_outline, color: Colors.green, size: 64),
+        const Icon(Icons.check_circle_outline, color: TravelAppColors.success, size: 64),
         const SizedBox(height: 16),
         Text(
           'Following: ${t.travelName}',
@@ -89,7 +86,7 @@ class _FollowTravelPageState extends State<FollowTravelPage> {
         Text(
           '${t.routePlan.startLocation} ➔ ${t.routePlan.destination}',
           textAlign: TextAlign.center,
-          style: const TextStyle(fontSize: 18, color: Colors.grey),
+          style: const TextStyle(fontSize: 18, color: TravelAppColors.textSecondary),
         ),
         const SizedBox(height: 32),
         Card(

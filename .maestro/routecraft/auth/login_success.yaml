@@ -1,0 +1,14 @@
+appId: com.example.routecraft_app
+---
+- launchApp:
+    clearState: true
+- clearKeychain
+- tapOn: "Email"
+- eraseText
+- inputText: "joao.teste@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- assertNotVisible: "RouteCraft Login"
+- takeScreenshot: login_success

@@ -1,5 +1,6 @@
 
 import 'package:travel_matrix/core/entities/result.dart';
+import 'package:travel_matrix/features/users/domain/entities/new_user.dart';
 import 'package:travel_matrix/features/users/domain/entities/user.dart';
 import 'package:travel_matrix/features/users/domain/user_client_repository.dart';
 
@@ -10,13 +11,18 @@ class UserUseCases{
   UserUseCases(this._repository);
 
   /// Create user method
-  Future<Result> createUser(UserClient newUser) async{
+  Future<Result> createUser(NewUser newUser) async{
     return await _repository.createUser(newUser);
   }
 
   /// Get user method
   Future<Result<UserClient>> getUser(String userId) async{
     return await _repository.getUser(userId);
+  }
+
+  /// Get the currently authenticated user
+  Future<Result<UserClient>> getAuthenticatedUser() async{
+    return await _repository.getAuthenticatedUser();
   }
 
   /// Get all users method

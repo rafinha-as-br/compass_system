@@ -61,7 +61,9 @@ class UserDTO{
     );
   }
 
-  /// To json method, only parses the user fields, not the travels
+  /// To json method, only parses the user fields, not the travels.
+  /// [isActive] is derived from [status] — the API's create endpoint reads
+  /// it as a flat boolean, ignoring the nested status object.
   Map<String, dynamic> toJson(){
     return {
       'id': id,
@@ -70,6 +72,7 @@ class UserDTO{
       'sex': sex,
       'phoneNumber': phoneNumber,
       'status': status.toJson(),
+      'isActive': status.status.type == 'active',
       'email': email,
     };
   }

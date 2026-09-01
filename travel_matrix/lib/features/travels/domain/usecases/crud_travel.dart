@@ -11,6 +11,11 @@ class CrudTravelUseCases {
     return await repository.createTravel(travel);
   }
 
+  /// See [TravelRepository.createTravelFromRequest].
+  Future<Result<Travel>> createFromRequest(Map<String, dynamic> request) async {
+    return await repository.createTravelFromRequest(request);
+  }
+
   Future<Result<Travel>> read(String id) async {
     return await repository.getTravel(id);
   }
@@ -25,5 +30,18 @@ class CrudTravelUseCases {
 
   Future<Result<bool>> delete(String id) async {
     return await repository.deleteTravel(id);
+  }
+
+  /// Marks a travel as ready (moves it from [TravelStatus.routeCreated] to
+  /// [TravelStatus.itineraryCreated]) by fetching the current travel and
+  /// resubmitting it with the updated status.
+  Future<Result<Travel>> markAsReady(String id) async {
+    final travelResult = await repository.getTravel(id);
+    if (!travelResult.isSuccess || travelResult.data == null) {
+      return Result.failure(travelResult.error ?? 'Travel not found.');
+    }
+
+    travelResult.data!.travelStatus = TravelStatus.itineraryCreated;
+    return await repository.updateTravel(travelResult.data!);
   }
 }

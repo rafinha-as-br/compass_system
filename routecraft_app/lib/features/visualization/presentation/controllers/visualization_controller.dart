@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:routecraft_app/core/mock/mock_repository.dart';
 import 'package:routecraft_app/core/services/compass_service.dart';
@@ -20,6 +21,11 @@ class VisualizationController extends ChangeNotifier {
   VisualizationController() {
     _fetchData();
   }
+
+  /// Test-only: starts from a fixed state instead of hitting the real
+  /// network/singleton wiring (`AuthService.instance`/`CompassService.instance`).
+  @visibleForTesting
+  VisualizationController.withState(VisualizationState state) : _state = state;
 
   Future<void> _fetchData() async {
     _state = const VisualizationState(isLoading: true);

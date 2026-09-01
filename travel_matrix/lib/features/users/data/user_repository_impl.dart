@@ -1,6 +1,8 @@
 import 'package:travel_matrix/core/entities/result.dart';
+import 'package:travel_matrix/features/users/data/dtos/new_user_dto.dart';
 import 'package:travel_matrix/features/users/data/dtos/user_dto.dart';
 import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
+import 'package:travel_matrix/features/users/domain/entities/new_user.dart';
 import 'package:travel_matrix/features/users/domain/entities/user.dart';
 import 'package:travel_matrix/features/users/domain/user_client_repository.dart';
 
@@ -10,9 +12,9 @@ class UserClientRepositoryImpl implements UserClientRepository {
   UserClientRepositoryImpl(this._dataSource);
 
   @override
-  Future<Result> createUser(UserClient newUser) async {
+  Future<Result> createUser(NewUser newUser) async {
     try {
-      final dto = UserDTO.fromDomain(newUser);
+      final dto = NewUserDTO.fromDomain(newUser);
       await _dataSource.createUser(dto.toJson());
       return const Result.success();
     } catch (e) {
@@ -26,6 +28,17 @@ class UserClientRepositoryImpl implements UserClientRepository {
       final response = await _dataSource.getUser(userId);
       final data = response['data'] as Map<String, dynamic>;
       final dto = UserDTO.fromJson(data);
+      return Result.success(dto.toDomain());
+    } catch (e) {
+      return Result.failure(e.toString());
+    }
+  }
+
+  @override
+  Future<Result<UserClient>> getAuthenticatedUser() async {
+    try {
+      final response = await _dataSource.getAuthenticatedUser();
+      final dto = UserDTO.fromJson(response);
       return Result.success(dto.toDomain());
     } catch (e) {
       return Result.failure(e.toString());

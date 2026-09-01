@@ -1,0 +1,19 @@
+appId: com.example.routecraft_app
+---
+- launchApp:
+    clearState: true
+- tapOn: "Email"
+- eraseText
+- inputText: "joao.teste@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senhaErrada999"
+- tapOn: "LOGIN"
+- assertVisible: "E-mail ou senha incorretos."
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- assertNotVisible: "RouteCraft Login"
+- assertVisible: "RouteCraft Home"
+- takeScreenshot: login_retry_after_error

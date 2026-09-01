@@ -49,7 +49,6 @@ class _CreateUserPageState extends State<CreateUserPage> {
       'password': _passwordCtrl.text,
       'sex': _sex,
       'birthDate': _birthDate.toIso8601String(),
-      'isActive': true,
     });
 
     if (mounted) {

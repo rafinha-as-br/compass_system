@@ -2,24 +2,18 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
-import 'package:travel_matrix/core/services/compass_service/api_response_status.dart';
-import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:go_router/go_router.dart';
+import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
-import 'package:travel_matrix/l10n/app_localizations.dart';
-import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
-
-import '../../../../../core/services/auth_storage_service.dart';
+import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
+import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
+import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
 
 /// Simple helper class to populate the client dropdown.
 class _ClientItem {
   final String id;
   final String name;
   _ClientItem({required this.id, required this.name});
-  factory _ClientItem.fromJson(Map<String, dynamic> json) => _ClientItem(
-    id: json['id']?.toString() ?? '',
-    name: json['name']?.toString() ?? '',
-  );
 }
 
 /// Simple helper class for interest point data before API submission.
@@ -44,13 +38,18 @@ class _InterestPointItem {
 /// Note: itinerary creation happens separately via [ItineraryBuildPage]
 /// after the travel has been created.
 class TravelCreationPage extends StatefulWidget {
-  const TravelCreationPage({super.key});
+  const TravelCreationPage({super.key, this.userUseCases});
+
+  /// Overrides the default [UserUseCases]. Exposed for widget tests.
+  final UserUseCases? userUseCases;
 
   @override
   State<TravelCreationPage> createState() => _TravelCreationPageState();
 }
 
 class _TravelCreationPageState extends State<TravelCreationPage> {
+  late final _userUseCases =
+      widget.userUseCases ?? UserUseCases(UserClientRepositoryImpl(UserClientDataSource()));
   final _formKey = GlobalKey<FormState>();
   final _travelNameCtrl = TextEditingController();
   final _startLocationCtrl = TextEditingController();
@@ -74,13 +73,11 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
   }
 
   Future<void> _loadClients() async {
-    final token = await AuthStorageService.instance.getToken();
-    if (token == null) return;
-    final response = await CompassService.instance.getAllUsers(token);
-    if (response['status'] == kApiSuccessStatus && mounted) {
+    final result = await _userUseCases.getAllUsers();
+    if (result.isSuccess && result.data != null && mounted) {
       setState(() {
-        _clients = (response['data'] as List<dynamic>)
-            .map((e) => _ClientItem.fromJson(e as Map<String, dynamic>))
+        _clients = result.data!
+            .map((user) => _ClientItem(id: user.backEndId ?? user.domainId, name: user.name))
             .toList();
         if (_clients.isNotEmpty) {
           _selectedClientId = _clients.first.id;
@@ -119,19 +116,17 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
     if (!_formKey.currentState!.validate()) return;
     if (_selectedClientId.isEmpty) return;
 
+    final agentId = context.read<AuthController>().userId;
+    if (agentId == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Session expired. Please sign in again.')),
+      );
+      return;
+    }
+
     setState(() => _isSubmitting = true);
 
     final controller = context.read<TravelsController>();
-
-    // Get agent info
-    final token = await AuthStorageService.instance.getToken();
-    String agentId = 'agent_1';
-    if (token != null) {
-      final userResp = await CompassService.instance.getUser(token);
-      if (userResp['status'] == 'success') {
-        agentId = (userResp['data'] as Map<String, dynamic>)['id'] as String;
-      }
-    }
 
     final success = await controller.createTravel({
       'clientId': _selectedClientId,
@@ -155,12 +150,12 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(l10n.createTravelTitle),
-        leading: BackIconButton(
+        title: const Text('Create Travel'),
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back),
           onPressed: () {
             if (context.canPop()) {
               context.pop();
@@ -183,14 +178,14 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
                         Text(
-                          l10n.stepCreateRoute,
+                          'Step 1: Create Route',
                           style: theme.textTheme.titleLarge?.copyWith(
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          l10n.stepCreateRouteHint,
+                          'Define the route first. An itinerary can be created after.',
                           style: TextStyle(
                             color: theme.colorScheme.onSurface.withValues(
                               alpha: 0.6,
@@ -200,21 +195,21 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                         const SizedBox(height: 24),
                         TextFormField(
                           controller: _travelNameCtrl,
-                          decoration: InputDecoration(
-                            labelText: l10n.travelNameLabel,
-                            border: const OutlineInputBorder(),
+                          decoration: const InputDecoration(
+                            labelText: 'Travel Name',
+                            border: OutlineInputBorder(),
                           ),
                           validator: (v) =>
-                              v!.isEmpty ? l10n.travelNameRequired : null,
+                              v!.isEmpty ? 'Travel name is required' : null,
                         ),
                         const SizedBox(height: 16),
                         DropdownButtonFormField<String>(
                           initialValue: _selectedClientId.isEmpty
                               ? null
                               : _selectedClientId,
-                          decoration: InputDecoration(
-                            labelText: l10n.clientLabel,
-                            border: const OutlineInputBorder(),
+                          decoration: const InputDecoration(
+                            labelText: 'Client',
+                            border: OutlineInputBorder(),
                           ),
                           items: _clients
                               .map(
@@ -233,24 +228,24 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: TextFormField(
                                 controller: _startLocationCtrl,
-                                decoration: InputDecoration(
-                                  labelText: l10n.startLocationLabel,
-                                  border: const OutlineInputBorder(),
+                                decoration: const InputDecoration(
+                                  labelText: 'Start Location',
+                                  border: OutlineInputBorder(),
                                 ),
                                 validator: (v) =>
-                                    v!.isEmpty ? l10n.requiredField : null,
+                                    v!.isEmpty ? 'Required' : null,
                               ),
                             ),
                             const SizedBox(width: 16),
                             Expanded(
                               child: TextFormField(
                                 controller: _destinationCtrl,
-                                decoration: InputDecoration(
-                                  labelText: l10n.destinationLabel,
-                                  border: const OutlineInputBorder(),
+                                decoration: const InputDecoration(
+                                  labelText: 'Destination',
+                                  border: OutlineInputBorder(),
                                 ),
                                 validator: (v) =>
-                                    v!.isEmpty ? l10n.requiredField : null,
+                                    v!.isEmpty ? 'Required' : null,
                               ),
                             ),
                           ],
@@ -261,13 +256,12 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: ListTile(
                                 contentPadding: EdgeInsets.zero,
-                                title: Text(l10n.startDateLabel),
+                                title: const Text('Start Date'),
                                 subtitle: Text(
                                   '${_startDate.day}/${_startDate.month}/${_startDate.year}',
                                 ),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.calendar_today),
-                                  tooltip: l10n.selectDateTooltip,
                                   onPressed: () async {
                                     final picked = await showDatePicker(
                                       context: context,
@@ -285,13 +279,12 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: ListTile(
                                 contentPadding: EdgeInsets.zero,
-                                title: Text(l10n.endDateLabel),
+                                title: const Text('End Date'),
                                 subtitle: Text(
                                   '${_endDate.day}/${_endDate.month}/${_endDate.year}',
                                 ),
                                 trailing: IconButton(
                                   icon: const Icon(Icons.calendar_today),
-                                  tooltip: l10n.selectDateTooltip,
                                   onPressed: () async {
                                     final picked = await showDatePicker(
                                       context: context,
@@ -312,7 +305,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                         const Divider(),
                         const SizedBox(height: 16),
                         Text(
-                          l10n.interestPointsTitle,
+                          'Interest Points',
                           style: theme.textTheme.titleMedium?.copyWith(
                             fontWeight: FontWeight.w600,
                           ),
@@ -323,9 +316,9 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: TextField(
                                 controller: _poiNameCtrl,
-                                decoration: InputDecoration(
-                                  labelText: l10n.pointNameLabel,
-                                  border: const OutlineInputBorder(),
+                                decoration: const InputDecoration(
+                                  labelText: 'Point Name',
+                                  border: OutlineInputBorder(),
                                 ),
                               ),
                             ),
@@ -333,9 +326,9 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                             Expanded(
                               child: TextField(
                                 controller: _poiDescCtrl,
-                                decoration: InputDecoration(
-                                  labelText: l10n.descriptionLabel,
-                                  border: const OutlineInputBorder(),
+                                decoration: const InputDecoration(
+                                  labelText: 'Description',
+                                  border: OutlineInputBorder(),
                                 ),
                               ),
                             ),
@@ -344,7 +337,6 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                               onPressed: _addInterestPoint,
                               icon: const Icon(Icons.add_circle),
                               color: theme.colorScheme.secondary,
-                              tooltip: l10n.addInterestPointTooltip,
                             ),
                           ],
                         ),
@@ -357,7 +349,6 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                               subtitle: Text(p.description),
                               trailing: IconButton(
                                 icon: const Icon(Icons.close, size: 18),
-                                tooltip: l10n.removeInterestPointTooltip,
                                 onPressed: () {
                                   setState(() => _interestPoints.remove(p));
                                 },
@@ -382,7 +373,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                                       strokeWidth: 2,
                                     ),
                                   )
-                                : Text(l10n.createTravelButton),
+                                : const Text('CREATE TRAVEL'),
                           ),
                         ),
                       ],

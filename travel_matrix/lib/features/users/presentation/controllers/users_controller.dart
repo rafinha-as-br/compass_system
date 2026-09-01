@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
 import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
 import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
+import 'package:travel_matrix/features/users/domain/entities/new_user.dart';
 import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
 
@@ -127,41 +127,68 @@ class UsersController extends ChangeNotifier {
     }
   }
 
+  /// Creates a client user from the raw form data built by
+  /// [CreateUserPage] (`name`, `cpf`, `email`, `phoneNumber`, `password`,
+  /// `sex`, `birthDate`).
   Future<bool> createUser(Map<String, dynamic> userData) async {
     try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) return false;
+      final newUser = NewUser(
+        name: userData['name'] as String? ?? '',
+        cpf: userData['cpf'] as String? ?? '',
+        sex: userData['sex'] as String? ?? 'M',
+        phoneNumber: userData['phoneNumber'] as String? ?? '',
+        email: userData['email'] as String? ?? '',
+        password: userData['password'] as String? ?? '',
+        birthDate: userData['birthDate'] != null
+            ? DateTime.parse(userData['birthDate'] as String)
+            : null,
+      );
 
-      final response =
-          await CompassService.instance.createUser(token, userData);
-      if (response['status'] == 'success') {
+      final result = await _useCases.createUser(newUser);
+      if (result.isSuccess) {
         await fetchUsers();
         return true;
       }
-      _state = _state.copyWith(
-        isLoading: false,
-        errorMessage: response['message'] as String?,
-      );
+      _state = _state.copyWith(isLoading: false, errorMessage: result.error);
       notifyListeners();
       return false;
-    } catch (_) {
+    } catch (e) {
+      _state = _state.copyWith(errorMessage: 'Failed to create user: $e');
+      notifyListeners();
       return false;
     }
   }
 
+  /// Updates a client user from the raw form data built by [EditUserPage]
+  /// (`id`, `name`, `cpf`, `email`, `phoneNumber`, `sex`) — looks up the
+  /// currently loaded user by `id` to carry over the fields the edit form
+  /// doesn't touch (`status`, `travels`, `stats`).
   Future<bool> updateUser(Map<String, dynamic> userData) async {
     try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) return false;
+      final id = userData['id'] as String?;
+      final existing = _state.users.firstWhere(
+        (u) => u.backEndId == id,
+        orElse: () => throw StateError('User not found: $id'),
+      );
+      final updatedUser = existing.toDomain().copyWith(
+            name: userData['name'] as String?,
+            cpf: userData['cpf'] as String?,
+            email: userData['email'] as String?,
+            phoneNumber: userData['phoneNumber'] as String?,
+            sex: userData['sex'] as String?,
+          );
 
-      final response =
-          await CompassService.instance.updateUser(token, userData);
-      if (response['status'] == 'success') {
+      final result = await _useCases.updateUser(updatedUser);
+      if (result.isSuccess) {
         await fetchUsers();
         return true;
       }
+      _state = _state.copyWith(errorMessage: result.error);
+      notifyListeners();
       return false;
-    } catch (_) {
+    } catch (e) {
+      _state = _state.copyWith(errorMessage: 'Failed to update user: $e');
+      notifyListeners();
       return false;
     }
   }

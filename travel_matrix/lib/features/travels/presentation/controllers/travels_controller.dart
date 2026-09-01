@@ -1,10 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:travel_matrix/core/services/compass_service/api_response_status.dart';
-import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
-import 'package:travel_matrix/features/travels/data/dtos/travel_dto.dart';
-import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
+import 'package:uuid/uuid.dart';
+import 'package:travel_matrix/features/travels/data/repository_impl/route_repository_impl.dart';
+import 'package:travel_matrix/features/travels/data/repository_impl/travel_repository_impl.dart';
+import 'package:travel_matrix/features/travels/domain/entities/route.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
 
-import '../../../../core/services/auth_storage_service.dart';
 import '../models/view_models/travel_view_model.dart';
 
 class TravelsState {
@@ -17,48 +18,51 @@ class TravelsState {
     this.travels = const [],
     this.errorMessage,
   });
+
+  TravelsState copyWith({
+    bool? isLoading,
+    List<TravelViewModel>? travels,
+    String? errorMessage,
+  }) {
+    return TravelsState(
+      isLoading: isLoading ?? this.isLoading,
+      travels: travels ?? this.travels,
+      errorMessage: errorMessage,
+    );
+  }
 }
 
 class TravelsController extends ChangeNotifier {
+  final CrudTravelUseCases _travelUseCases;
+  final CrudRoute _routeUseCases;
+
   TravelsState _state = const TravelsState();
   TravelsState get state => _state;
 
-  TravelsController() {
+  TravelsController({
+    CrudTravelUseCases? travelUseCases,
+    CrudRoute? routeUseCases,
+  })  : _travelUseCases = travelUseCases ?? CrudTravelUseCases(TravelRepositoryImpl()),
+        _routeUseCases = routeUseCases ?? CrudRoute(RouteRepositoryImpl()) {
     fetchTravels();
   }
 
   Future<void> fetchTravels() async {
-    _state = const TravelsState(isLoading: true);
+    _state = _state.copyWith(isLoading: true);
     notifyListeners();
 
     try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) {
-        _state = const TravelsState(
-            isLoading: false,
-            errorMessage: 'Not authenticated.');
-        notifyListeners();
-        return;
-      }
+      final result = await _travelUseCases.readAll();
 
-      final response = await CompassService.instance.getAllTravels(token);
-
-      if (response['status'] == kApiSuccessStatus) {
-        final data = response['data'] as List<dynamic>;
-        final travels = data
-            .map((e) => TravelDTO.fromJson(e as Map<String, dynamic>).toDomain())
-            .map((t) => TravelViewModel.fromDomain(t))
-            .toList();
+      if (result.isSuccess && result.data != null) {
+        final travels = result.data!.map((t) => TravelViewModel.fromDomain(t)).toList();
         _state = TravelsState(isLoading: false, travels: travels);
       } else {
-        _state = TravelsState(
-          isLoading: false,
-          errorMessage: response['message'] as String?,
-        );
+        _state = _state.copyWith(isLoading: false, errorMessage: result.error);
       }
       notifyListeners();
     } catch (e) {
-      _state = TravelsState(
+      _state = _state.copyWith(
         isLoading: false,
         errorMessage: 'Failed to fetch travels: $e',
       );
@@ -66,14 +70,13 @@ class TravelsController extends ChangeNotifier {
     }
   }
 
+  /// Creates a travel from a raw creation-request payload (as built by
+  /// [TravelCreationPage]: `clientId`, `agentId`, `travelName`, and a nested
+  /// `routePlan` map) — see [CrudTravelUseCases.createFromRequest].
   Future<bool> createTravel(Map<String, dynamic> travelData) async {
     try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) return false;
-
-      final response =
-          await CompassService.instance.createTravel(token, travelData);
-      if (response['status'] == kApiSuccessStatus) {
+      final result = await _travelUseCases.createFromRequest(travelData);
+      if (result.isSuccess) {
         await fetchTravels();
         return true;
       }
@@ -85,12 +88,8 @@ class TravelsController extends ChangeNotifier {
 
   Future<bool> deleteTravel(String travelId) async {
     try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) return false;
-
-      final response =
-          await CompassService.instance.deleteTravel(token, travelId);
-      if (response['status'] == kApiSuccessStatus) {
+      final result = await _travelUseCases.delete(travelId);
+      if (result.isSuccess) {
         await fetchTravels();
         return true;
       }
@@ -100,51 +99,38 @@ class TravelsController extends ChangeNotifier {
     }
   }
 
-  Future<bool> updateRoute(
-      String travelId, Map<String, dynamic> routeData) async {
+  /// Updates the route of an existing travel from the raw form data built by
+  /// [RouteCreationPage] (`startDate`, `endDate`, `startLocation`,
+  /// `destination`, `interestsList`) — kept separate from [RoutePlanDTO]'s
+  /// json mapping since the two use different key names for the same data.
+  Future<bool> updateRoute(String travelId, Map<String, dynamic> routeData) async {
     try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) return false;
+      final interestPoints = ((routeData['interestsList'] as List<dynamic>?) ?? const [])
+          .map((raw) {
+            final map = raw as Map<String, dynamic>;
+            final rawId = map['id']?.toString();
+            final isTemporaryId = rawId == null || rawId.startsWith('poi_');
+            return InterestPoint(
+              domainId: rawId ?? const Uuid().v4(),
+              backEndId: isTemporaryId ? null : rawId,
+              name: map['name']?.toString() ?? '',
+              description: map['description']?.toString() ?? '',
+            );
+          })
+          .toList();
 
-      final response = await CompassService.instance
-          .updateRoute(token, travelId, routeData);
-      if (response['status'] == kApiSuccessStatus) {
-        await fetchTravels();
-        return true;
-      }
-      return false;
-    } catch (_) {
-      return false;
-    }
-  }
+      final routePlan = RoutePlan(
+        domainId: const Uuid().v4(),
+        backEndId: null,
+        startDate: DateTime.parse(routeData['startDate'] as String),
+        endDate: DateTime.parse(routeData['endDate'] as String),
+        startLocation: routeData['startLocation']?.toString() ?? '',
+        destination: routeData['destination']?.toString() ?? '',
+        interestsList: interestPoints,
+      );
 
-  Future<bool> createItinerary(
-      String travelId, Map<String, dynamic> itineraryData) async {
-    try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) return false;
-
-      final response = await CompassService.instance
-          .createItinerary(token, travelId, itineraryData);
-      if (response['status'] == kApiSuccessStatus) {
-        await fetchTravels();
-        return true;
-      }
-      return false;
-    } catch (_) {
-      return false;
-    }
-  }
-
-  Future<bool> updateItinerary(
-      String travelId, Map<String, dynamic> itineraryData) async {
-    try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) return false;
-
-      final response = await CompassService.instance
-          .updateItinerary(token, travelId, itineraryData);
-      if (response['status'] == kApiSuccessStatus) {
+      final result = await _routeUseCases.updateRoute(travelId, routePlan);
+      if (result.isSuccess) {
         await fetchTravels();
         return true;
       }
@@ -156,18 +142,8 @@ class TravelsController extends ChangeNotifier {
 
   Future<bool> markTravelAsReady(String travelId) async {
     try {
-      final token = await AuthStorageService.instance.getToken();
-      if (token == null) return false;
-
-      final getResponse = await CompassService.instance.getTravel(token, travelId);
-      if (getResponse['status'] != kApiSuccessStatus) return false;
-
-      final travelData = getResponse['data'] as Map<String, dynamic>;
-      travelData['travelStatus'] = TravelStatus.itineraryCreated.toApiValue();
-
-      final updateResponse = await CompassService.instance.updateTravel(token, travelId, travelData);
-
-      if (updateResponse['status'] == kApiSuccessStatus) {
+      final result = await _travelUseCases.markAsReady(travelId);
+      if (result.isSuccess) {
         await fetchTravels();
         return true;
       }

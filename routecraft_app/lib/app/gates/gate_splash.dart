@@ -1,5 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:routecraft_app/app/gates/gate_auth.dart';
+import 'package:routecraft_app/l10n/app_localizations.dart';
+import 'package:routecraft_app/shared/theme/app_theme.dart';
 
 class GateSplash extends StatefulWidget {
   const GateSplash({super.key});
@@ -9,22 +13,28 @@ class GateSplash extends StatefulWidget {
 }
 
 class _GateSplashState extends State<GateSplash> {
+  Timer? _navigationTimer;
+
   @override
   void initState() {
     super.initState();
-    _checkAppStatus();
+    // Artificial delay for splash screen.
+    _navigationTimer = Timer(const Duration(seconds: 2), _goToAuthGate);
   }
 
-  Future<void> _checkAppStatus() async {
-    // Artificial delay for splash screen
-    await Future.delayed(const Duration(seconds: 2));
-    
+  void _goToAuthGate() {
     if (mounted) {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (_) => const GateAuth()),
       );
     }
+  }
+
+  @override
+  void dispose() {
+    _navigationTimer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -40,14 +50,14 @@ class _GateSplashState extends State<GateSplash> {
             Expanded(
               flex: 2,
               child: Container(
-                color: Color(0xFF081C2C),
+                color: TravelAppColors.primaryDark,
                 child: Image.asset('assets/images/logo.png', width: 400),
               ),
             ),
 
             const SizedBox(height: 24),
             Text(
-              'RouteCraft App',
+              AppLocalizations.of(context)!.appTitle,
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,

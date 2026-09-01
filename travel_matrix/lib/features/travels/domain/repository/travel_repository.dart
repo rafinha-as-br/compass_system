@@ -12,6 +12,14 @@ abstract class TravelRepository{
   /// create
   Future<Result<Travel>> createTravel(Travel travel);
 
+  /// Creates a travel from a raw creation-request payload (client id, agent
+  /// id, travel name, route plan) — the backend's create endpoint takes a
+  /// different shape than the full [Travel] representation (e.g. a
+  /// `clientId` reference rather than the resolved `clientName`), so this
+  /// bypasses the [Travel] domain mapping on the way in while still
+  /// returning a fully mapped [Travel] from the response.
+  Future<Result<Travel>> createTravelFromRequest(Map<String, dynamic> request);
+
   /// update
   Future<Result<Travel>> updateTravel(Travel travel);
 

@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
+import 'package:routecraft_app/shared/theme/app_theme.dart';
+import 'package:routecraft_app/shared/widgets/app_button.dart';
+import 'package:routecraft_app/shared/widgets/app_text_field.dart';
 
 class RouteCreationPage extends StatelessWidget {
-  const RouteCreationPage({super.key});
+  const RouteCreationPage({super.key, this.controller});
+
+  /// Injectable for widget tests with a fixed state, without depending on
+  /// the real network/singleton wiring. In production, the call site
+  /// (`RouteCreationPage()`) is unaffected — the default wiring is used.
+  final RouteCreationController? controller;
 
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => RouteCreationController(),
+      create: (_) => controller ?? RouteCreationController(),
       child: const _RouteCreationView(),
     );
   }
@@ -29,11 +37,11 @@ class _RouteCreationView extends StatelessWidget {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.check_circle, color: Colors.green, size: 80),
+              const Icon(Icons.check_circle, color: TravelAppColors.success, size: 80),
               const SizedBox(height: 16),
               const Text('Route created successfully!', style: TextStyle(fontSize: 20)),
               const SizedBox(height: 32),
-              ElevatedButton(
+              AppButton(
                 onPressed: () => Navigator.pop(context),
                 child: const Text('Back to Home'),
               ),
@@ -58,14 +66,13 @@ class _RouteCreationView extends StatelessWidget {
             child: Row(
               children: [
                 if (isLastStep)
-                  ElevatedButton(
-                    onPressed: state.isSubmitting ? null : () => controller.submitRoute(),
-                    child: state.isSubmitting
-                        ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                        : const Text('SUBMIT ROUTE'),
+                  AppButton(
+                    onPressed: () => controller.submitRoute(),
+                    isLoading: state.isSubmitting,
+                    child: const Text('SUBMIT ROUTE'),
                   )
                 else
-                  ElevatedButton(
+                  AppButton(
                     onPressed: details.onStepContinue,
                     child: const Text('NEXT'),
                   ),
@@ -87,9 +94,9 @@ class _RouteCreationView extends StatelessWidget {
             title: const Text('Trip Info'),
             content: Column(
               children: [
-                TextField(
+                AppTextField(
                   controller: controller.tripNameController,
-                  decoration: const InputDecoration(labelText: 'Trip Name'),
+                  labelText: 'Trip Name',
                 ),
               ],
             ),
@@ -100,13 +107,13 @@ class _RouteCreationView extends StatelessWidget {
             title: const Text('Locations'),
             content: Column(
               children: [
-                TextField(
+                AppTextField(
                   controller: controller.startLocationController,
-                  decoration: const InputDecoration(labelText: 'Start Location'),
+                  labelText: 'Start Location',
                 ),
-                TextField(
+                AppTextField(
                   controller: controller.destinationController,
-                  decoration: const InputDecoration(labelText: 'Destination'),
+                  labelText: 'Destination',
                 ),
               ],
             ),
@@ -132,7 +139,7 @@ class _RouteCreationView extends StatelessWidget {
                 if (state.errorMessage != null)
                   Padding(
                     padding: const EdgeInsets.all(8.0),
-                    child: Text(state.errorMessage!, style: const TextStyle(color: Colors.red)),
+                    child: Text(state.errorMessage!, style: const TextStyle(color: TravelAppColors.error)),
                   )
               ],
             ),

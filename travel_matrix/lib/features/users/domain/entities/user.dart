@@ -28,5 +28,25 @@ class UserClient{
     required this.stats,
   });
 
+  UserClient copyWith({
+    String? name,
+    String? cpf,
+    String? sex,
+    String? phoneNumber,
+    String? email,
+  }) {
+    return UserClient(
+      backEndId: backEndId,
+      domainId: domainId,
+      name: name ?? this.name,
+      cpf: cpf ?? this.cpf,
+      sex: sex ?? this.sex,
+      phoneNumber: phoneNumber ?? this.phoneNumber,
+      status: status,
+      email: email ?? this.email,
+      travels: travels,
+      stats: stats,
+    );
+  }
 
 }
