@@ -55,13 +55,12 @@ void main() {
       final result = await repository.login('john@example.com', 'wrong');
 
       expect(result.isSuccess, isFalse);
-      expect(
-        (result as Failure<AuthSession>).message,
-        'E-mail ou senha incorretos.',
-      );
+      final failure = result as Failure<AuthSession>;
+      expect(failure.message, 'E-mail ou senha incorretos.');
+      expect(failure.isConnectivityError, isFalse);
     });
 
-    test('returns Failure with a friendly message on a network error', () async {
+    test('returns Failure flagged as a connectivity error on a network error', () async {
       final repository = _repositoryWith(MockClient((request) async {
         throw http.ClientException('connection refused');
       }));
@@ -69,7 +68,9 @@ void main() {
       final result = await repository.login('john@example.com', 'secret');
 
       expect(result.isSuccess, isFalse);
-      expect((result as Failure<AuthSession>).message, isNotEmpty);
+      final failure = result as Failure<AuthSession>;
+      expect(failure.message, isNotEmpty);
+      expect(failure.isConnectivityError, isTrue);
     });
 
     test('returns Failure instead of throwing when the response shape is unexpected', () async {

@@ -10,19 +10,23 @@ import 'package:routecraft_app/features/auth/domain/usecases/login_usecase.dart'
 class LoginState {
   final bool isLoading;
   final String? errorMessage;
+  final bool isConnectivityError;
 
   const LoginState({
     this.isLoading = false,
     this.errorMessage,
+    this.isConnectivityError = false,
   });
 
   LoginState copyWith({
     bool? isLoading,
     String? errorMessage,
+    bool? isConnectivityError,
   }) {
     return LoginState(
       isLoading: isLoading ?? this.isLoading,
       errorMessage: errorMessage,
+      isConnectivityError: isConnectivityError ?? false,
     );
   }
 }
@@ -58,8 +62,12 @@ class LoginController extends ChangeNotifier {
         _state = _state.copyWith(isLoading: false);
         notifyListeners();
         return true;
-      case Failure<AuthSession>(message: final message):
-        _state = _state.copyWith(isLoading: false, errorMessage: message);
+      case Failure<AuthSession>(message: final message, isConnectivityError: final isConnectivityError):
+        _state = _state.copyWith(
+          isLoading: false,
+          errorMessage: message,
+          isConnectivityError: isConnectivityError,
+        );
         notifyListeners();
         return false;
     }

@@ -2,7 +2,13 @@ class ApiException implements Exception {
   final String message;
   final int? statusCode;
 
-  ApiException(this.message, [this.statusCode]);
+  /// True when this came from a client-side network failure (timeout, no
+  /// connection) rather than a message the backend actually returned — the
+  /// UI should show a localized generic message instead of [message], which
+  /// is not translated.
+  final bool isConnectivityError;
+
+  ApiException(this.message, [this.statusCode, this.isConnectivityError = false]);
 
   factory ApiException.fromStatusCode(int? code, dynamic data) {
     String message;

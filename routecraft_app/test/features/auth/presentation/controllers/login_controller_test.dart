@@ -64,6 +64,23 @@ void main() {
       expect(controller.state.errorMessage, 'E-mail ou senha incorretos.');
     });
 
+    test('on a connectivity failure, flags the state so the UI can localize the message', () async {
+      final useCase = LoginUseCase(
+        _StubAuthRepository(
+          const Result.failure('Não foi possível conectar ao servidor.', isConnectivityError: true),
+        ),
+      );
+
+      final controller = LoginController(
+        loginUseCase: useCase,
+        saveToken: (token) async {},
+      );
+
+      await controller.login('a@b.com', 'secret');
+
+      expect(controller.state.isConnectivityError, isTrue);
+    });
+
     test('a new attempt clears the previous error message', () async {
       final repository = _StubAuthRepository(
         const Result.failure('E-mail ou senha incorretos.'),

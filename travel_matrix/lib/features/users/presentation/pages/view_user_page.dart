@@ -22,7 +22,6 @@ class ViewUserPage extends StatelessWidget {
     final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
-      backgroundColor: TravelAppColors.background,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
@@ -33,8 +32,8 @@ class ViewUserPage extends StatelessWidget {
             icon: const Icon(Icons.arrow_back, size: 18),
             label: Text(l10n.backToUsersButton),
             style: OutlinedButton.styleFrom(
-              foregroundColor: TravelAppColors.textPrimary,
-              side: BorderSide(color: TravelAppColors.border),
+              foregroundColor: theme.colorScheme.onSurface,
+              side: BorderSide(color: theme.colorScheme.outlineVariant),
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
             ),
             onPressed: () {
@@ -105,12 +104,14 @@ class ViewUserPage extends StatelessWidget {
 
   Widget _buildSidebar(ThemeData theme, AppLocalizations l10n) {
     final isActive = user.status.status is ActiveStatusViewModel;
+    final onSurfaceMuted = theme.colorScheme.onSurface.withValues(alpha: 0.6);
+    final statusColor = isActive ? theme.semanticColors.success : theme.colorScheme.error;
 
     return Container(
       decoration: BoxDecoration(
-        color: TravelAppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: BoxBorder.fromBorderSide(BorderSide(color: TravelAppColors.border)),
+        border: BoxBorder.fromBorderSide(BorderSide(color: theme.colorScheme.outlineVariant)),
       ),
       padding: const EdgeInsets.all(32),
       child: Column(
@@ -133,7 +134,7 @@ class ViewUserPage extends StatelessWidget {
             user.name,
             style: theme.textTheme.headlineSmall?.copyWith(
               fontWeight: FontWeight.bold,
-              color: TravelAppColors.textPrimary,
+              color: theme.colorScheme.onSurface,
             ),
             textAlign: TextAlign.center,
           ),
@@ -141,7 +142,7 @@ class ViewUserPage extends StatelessWidget {
           Text(
             user.email,
             style: TextStyle(
-              color: TravelAppColors.textSecondary,
+              color: onSurfaceMuted,
               fontSize: 14,
             ),
           ),
@@ -149,9 +150,7 @@ class ViewUserPage extends StatelessWidget {
           Container(
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
             decoration: BoxDecoration(
-              color: isActive
-                  ? TravelAppColors.success.withValues(alpha: 0.1)
-                  : TravelAppColors.error.withValues(alpha: 0.1),
+              color: statusColor.withValues(alpha: 0.1),
               borderRadius: BorderRadius.circular(16),
             ),
             child: Row(
@@ -160,7 +159,7 @@ class ViewUserPage extends StatelessWidget {
                 Icon(
                   isActive ? Icons.check_circle_outline : Icons.highlight_off,
                   size: 14,
-                  color: isActive ? TravelAppColors.success : TravelAppColors.error,
+                  color: statusColor,
                 ),
                 const SizedBox(width: 4),
                 Text(
@@ -168,7 +167,7 @@ class ViewUserPage extends StatelessWidget {
                   style: TextStyle(
                     fontSize: 12,
                     fontWeight: FontWeight.w600,
-                    color: isActive ? TravelAppColors.success : TravelAppColors.error,
+                    color: statusColor,
                   ),
                 ),
               ],
@@ -177,11 +176,12 @@ class ViewUserPage extends StatelessWidget {
           const SizedBox(height: 32),
           const Divider(),
           const SizedBox(height: 24),
-          _buildInfoItem(l10n.phoneLabel.toUpperCase(), user.phoneNumber),
+          _buildInfoItem(theme, l10n.phoneLabel.toUpperCase(), user.phoneNumber),
           const SizedBox(height: 16),
-          _buildInfoItem(l10n.cpfLabel, user.cpf),
+          _buildInfoItem(theme, l10n.cpfLabel, user.cpf),
           const SizedBox(height: 16),
           _buildInfoItem(
+            theme,
             l10n.sexFieldLabel.toUpperCase(),
             user.sex == 'M'
                 ? l10n.maleGenderLabel
@@ -195,7 +195,7 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildInfoItem(String label, String value) {
+  Widget _buildInfoItem(ThemeData theme, String label, String value) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
@@ -204,16 +204,16 @@ class ViewUserPage extends StatelessWidget {
           style: TextStyle(
             fontSize: 12,
             fontWeight: FontWeight.w600,
-            color: TravelAppColors.textSecondary,
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
             letterSpacing: 0.5,
           ),
         ),
         const SizedBox(height: 4),
         Text(
           value,
-          style: const TextStyle(
+          style: TextStyle(
             fontSize: 14,
-            color: TravelAppColors.textPrimary,
+            color: theme.colorScheme.onSurface,
             fontWeight: FontWeight.w500,
           ),
         ),
@@ -237,9 +237,9 @@ class ViewUserPage extends StatelessWidget {
   Widget _buildTravelHistory(ThemeData theme, AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
-        color: TravelAppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: BoxBorder.fromBorderSide(BorderSide(color: TravelAppColors.border)),
+        border: BoxBorder.fromBorderSide(BorderSide(color: theme.colorScheme.outlineVariant)),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -263,20 +263,20 @@ class ViewUserPage extends StatelessWidget {
             )
           else
             DataTable(
-              headingRowColor: WidgetStateProperty.all(TravelAppColors.background),
+              headingRowColor: WidgetStateProperty.all(theme.colorScheme.surfaceContainerHighest),
               columns: [
-                DataColumn(label: Text(l10n.travelNameColumn.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
-                DataColumn(label: Text(l10n.destinationLabel.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
-                DataColumn(label: Text(l10n.statusColumn.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
-                DataColumn(label: Text(l10n.startDateLabel.toUpperCase(), style: const TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: TravelAppColors.textSecondary))),
+                DataColumn(label: Text(l10n.travelNameColumn.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
+                DataColumn(label: Text(l10n.destinationLabel.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
+                DataColumn(label: Text(l10n.statusColumn.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
+                DataColumn(label: Text(l10n.startDateLabel.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
               ],
               rows: user.travels.map((travel) {
                 return DataRow(
                   cells: [
                     DataCell(Text(travel.travelName, style: const TextStyle(fontWeight: FontWeight.w500))),
-                    DataCell(Text(travel.destination, style: const TextStyle(color: TravelAppColors.textSecondary))),
-                    DataCell(_buildStatusBadge(travel.status)),
-                    DataCell(Text('${travel.startDate.month}/${travel.startDate.day}/${travel.startDate.year}', style: const TextStyle(color: TravelAppColors.textSecondary))),
+                    DataCell(Text(travel.destination, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
+                    DataCell(_buildStatusBadge(theme, travel.status)),
+                    DataCell(Text('${travel.startDate.month}/${travel.startDate.day}/${travel.startDate.year}', style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
                   ],
                 );
               }).toList(),
@@ -286,32 +286,27 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatusBadge(String status) {
+  Widget _buildStatusBadge(ThemeData theme, String status) {
     Color color;
-    Color bgColor;
-    
+
     switch (status.toLowerCase()) {
       case 'completed':
-        color = TravelAppColors.success;
-        bgColor = TravelAppColors.success.withValues(alpha: 0.1);
+        color = theme.semanticColors.success;
         break;
       case 'upcoming':
-        color = TravelAppColors.primary;
-        bgColor = TravelAppColors.primary.withValues(alpha: 0.1);
+        color = theme.colorScheme.primary;
         break;
       case 'cancelled':
-        color = TravelAppColors.error;
-        bgColor = TravelAppColors.error.withValues(alpha: 0.1);
+        color = theme.colorScheme.error;
         break;
       default:
-        color = TravelAppColors.textSecondary;
-        bgColor = TravelAppColors.textSecondary.withValues(alpha: 0.1);
+        color = theme.colorScheme.onSurface.withValues(alpha: 0.6);
     }
 
     return Container(
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
-        color: bgColor,
+        color: color.withValues(alpha: 0.1),
         borderRadius: BorderRadius.circular(16),
       ),
       child: Text(
@@ -328,9 +323,9 @@ class ViewUserPage extends StatelessWidget {
   Widget _buildSecurityActions(ThemeData theme, UsersController controller, BuildContext context, AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
-        color: TravelAppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: BoxBorder.fromBorderSide(BorderSide(color: TravelAppColors.border)),
+        border: BoxBorder.fromBorderSide(BorderSide(color: theme.colorScheme.outlineVariant)),
       ),
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -347,10 +342,11 @@ class ViewUserPage extends StatelessWidget {
             children: [
               Expanded(
                 child: _buildActionCard(
+                  theme: theme,
                   title: l10n.resetPasswordActionTitle,
                   description: l10n.resetPasswordActionDescription,
                   icon: Icons.key_outlined,
-                  iconColor: TravelAppColors.primary,
+                  iconColor: theme.colorScheme.primary,
                   onTap: () async {
                     final success = await controller.resetPassword(user.localId);
                     if (context.mounted) {
@@ -364,10 +360,11 @@ class ViewUserPage extends StatelessWidget {
               const SizedBox(width: 16),
               Expanded(
                 child: _buildActionCard(
+                  theme: theme,
                   title: l10n.forceLogoutActionTitle,
                   description: l10n.forceLogoutActionDescription,
                   icon: Icons.power_settings_new,
-                  iconColor: TravelAppColors.error,
+                  iconColor: theme.colorScheme.error,
                   onTap: () async {
                     final confirmed = await showConfirmationDialog(
                       context,
@@ -395,6 +392,7 @@ class ViewUserPage extends StatelessWidget {
   }
 
   Widget _buildActionCard({
+    required ThemeData theme,
     required String title,
     required String description,
     required IconData icon,
@@ -407,7 +405,7 @@ class ViewUserPage extends StatelessWidget {
       child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
-          border: Border.all(color: TravelAppColors.border),
+          border: Border.all(color: theme.colorScheme.outlineVariant),
           borderRadius: BorderRadius.circular(8),
         ),
         child: Column(
@@ -433,7 +431,7 @@ class ViewUserPage extends StatelessWidget {
             const SizedBox(height: 12),
             Text(
               description,
-              style: const TextStyle(color: TravelAppColors.textSecondary, fontSize: 14),
+              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6), fontSize: 14),
             ),
           ],
         ),
@@ -444,9 +442,9 @@ class ViewUserPage extends StatelessWidget {
   Widget _buildTravelStats(ThemeData theme, AppLocalizations l10n) {
     return Container(
       decoration: BoxDecoration(
-        color: TravelAppColors.surface,
+        color: theme.colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
-        border: BoxBorder.fromBorderSide(BorderSide(color: TravelAppColors.border)),
+        border: BoxBorder.fromBorderSide(BorderSide(color: theme.colorScheme.outlineVariant)),
       ),
       padding: const EdgeInsets.all(24),
       child: Column(
@@ -462,11 +460,11 @@ class ViewUserPage extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: _buildStatCard(l10n.totalTravels.toUpperCase(), user.stats.totalTravels),
+                child: _buildStatCard(theme, l10n.totalTravels.toUpperCase(), user.stats.totalTravels),
               ),
               const SizedBox(width: 16),
               Expanded(
-                child: _buildStatCard(l10n.uniqueDestinationsStatLabel, user.stats.uniqueDestinationsCount),
+                child: _buildStatCard(theme, l10n.uniqueDestinationsStatLabel, user.stats.uniqueDestinationsCount),
               ),
             ],
           ),
@@ -475,21 +473,21 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildStatCard(String label, String value) {
+  Widget _buildStatCard(ThemeData theme, String label, String value) {
     return Container(
       padding: const EdgeInsets.symmetric(vertical: 32, horizontal: 16),
       decoration: BoxDecoration(
-        border: Border.all(color: TravelAppColors.border),
+        border: Border.all(color: theme.colorScheme.outlineVariant),
         borderRadius: BorderRadius.circular(8),
       ),
       child: Column(
         children: [
           Text(
             label,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 12,
               fontWeight: FontWeight.bold,
-              color: TravelAppColors.textSecondary,
+              color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
               letterSpacing: 0.5,
             ),
             textAlign: TextAlign.center,
@@ -497,10 +495,10 @@ class ViewUserPage extends StatelessWidget {
           const SizedBox(height: 12),
           Text(
             value,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 32,
               fontWeight: FontWeight.bold,
-              color: TravelAppColors.primary,
+              color: theme.colorScheme.primary,
             ),
             textAlign: TextAlign.center,
           ),
