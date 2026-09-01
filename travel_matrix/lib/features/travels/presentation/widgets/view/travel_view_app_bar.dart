@@ -169,7 +169,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                               ScaffoldMessenger.of(context).showSnackBar(
                                 SnackBar(
                                   content: Text(l10n.markAsReadyFailure),
-                                  backgroundColor: Colors.red,
+                                  backgroundColor: theme.colorScheme.error,
                                 ),
                               );
                             }
