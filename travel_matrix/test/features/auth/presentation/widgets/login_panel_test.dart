@@ -11,6 +11,7 @@ import 'package:travel_matrix/features/auth/domain/entities/auth_session.dart';
 import 'package:travel_matrix/features/auth/presentation/controllers/login_controller.dart';
 import 'package:travel_matrix/features/auth/presentation/widgets/login_panel.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 /// Mocktail é usado aqui na fronteira de dependência real (o repositório),
 /// não no ChangeNotifier em si — Provider precisa de um Listenable de
@@ -25,6 +26,9 @@ Widget _wrap(LoginController controller) {
       ChangeNotifierProvider(create: (_) => AuthController()),
     ],
     child: MaterialApp(
+      // AppTheme.lightTheme (não o ThemeData default do Flutter) — sem isso
+      // este teste não pega nenhuma regressão de tema real do painel.
+      theme: AppTheme.lightTheme,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -36,6 +40,10 @@ Widget _wrap(LoginController controller) {
     ),
   );
 }
+
+// As asserções abaixo buscam pelo texto literal 'LOGIN AS AGENT' (en, locale
+// default do teste) — é o texto de l10n.loginButton. Se esse texto mudar no
+// .arb, estes testes quebram e precisam ser atualizados junto.
 
 void main() {
   late _MockAuthRepository repository;
