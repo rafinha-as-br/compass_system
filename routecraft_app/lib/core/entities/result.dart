@@ -3,7 +3,7 @@ sealed class Result<T> {
   const Result();
 
   const factory Result.success(T data) = Success<T>;
-  const factory Result.failure(String message) = Failure<T>;
+  const factory Result.failure(String message, {bool isConnectivityError}) = Failure<T>;
 
   bool get isSuccess => this is Success<T>;
 
@@ -25,5 +25,10 @@ final class Success<T> extends Result<T> {
 
 final class Failure<T> extends Result<T> {
   final String message;
-  const Failure(this.message);
+
+  /// True when [message] is an untranslated client-side network error — the
+  /// UI should show a localized generic message instead.
+  final bool isConnectivityError;
+
+  const Failure(this.message, {this.isConnectivityError = false});
 }

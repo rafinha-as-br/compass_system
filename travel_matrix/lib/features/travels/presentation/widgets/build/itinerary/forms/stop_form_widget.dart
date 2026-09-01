@@ -65,11 +65,11 @@ class _StopFormWidgetState extends State<StopFormWidget> {
     super.dispose();
   }
 
-  FieldState<String> _validateRequiredField(String value) {
+  FieldState<String> _validateRequiredField(BuildContext context, String value) {
     if (value.trim().isEmpty) {
       return FieldState(
         value: value,
-        error: 'Field cannot be empty',
+        error: AppLocalizations.of(context)!.fieldRequiredError,
         isTouched: true,
       );
     }
@@ -77,7 +77,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
   }
 
   void _onNameChanged(String value) {
-    final validatedField = _validateRequiredField(value);
+    final validatedField = _validateRequiredField(context, value);
     setState(() {
       _formState = _formState.copyWith(name: validatedField);
     });
@@ -131,6 +131,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       padding: const EdgeInsets.all(16),
@@ -141,7 +142,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           CustomFormField.text(
-            label: 'Stop Name',
+            label: l10n.stopNameLabel,
             enabled: true,
             controller: _nameCtrl,
             errorText: _formState.name.isTouched ? _formState.name.error : null,
@@ -149,7 +150,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
           ),
           const SizedBox(height: 12),
           CustomFormField.text(
-            label: 'Description',
+            label: l10n.descriptionLabel,
             enabled: true,
             controller: _descCtrl,
             errorText: _formState.description.isTouched
@@ -162,7 +163,7 @@ class _StopFormWidgetState extends State<StopFormWidget> {
             children: [
               Expanded(
                 child: CustomFormField.text(
-                  label: 'Add Experience',
+                  label: l10n.addExperienceLabel,
                   enabled: true,
                   controller: _experienceCtrl,
                   onChanged: (_) {},

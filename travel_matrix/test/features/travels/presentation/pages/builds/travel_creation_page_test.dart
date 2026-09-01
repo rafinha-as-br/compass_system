@@ -60,7 +60,7 @@ void main() {
     when(() => userRepository.getAllUsers()).thenAnswer((_) async => Result.success([_buildClient()]));
   });
 
-  Widget wrap(AuthController auth) {
+  Widget wrap(AuthController auth, {Locale? locale}) {
     final travelsController = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
     final router = GoRouter(
       initialLocation: '/create',
@@ -80,6 +80,7 @@ void main() {
       ],
       child: MaterialApp.router(
         routerConfig: router,
+        locale: locale,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -133,6 +134,22 @@ void main() {
 
     verifyNever(() => travelUseCases.createFromRequest(any()));
     expect(find.text('Session expired. Please sign in again.'), findsOneWidget);
+  });
+
+  testWidgets('renders the page in Portuguese, not with leftover English text', (tester) async {
+    final auth = AuthController();
+    auth.debugSetUserData({'id': 'agent-9', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    await tester.pumpWidget(wrap(auth, locale: const Locale('pt')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Criar Viagem'), findsWidgets);
+    expect(find.text('Nome da Viagem'), findsOneWidget);
+    expect(find.text('CRIAR VIAGEM'), findsOneWidget);
+
+    expect(find.text('Create Travel'), findsNothing);
+    expect(find.text('Travel Name'), findsNothing);
+    expect(find.text('CREATE TRAVEL'), findsNothing);
   });
 }
 
