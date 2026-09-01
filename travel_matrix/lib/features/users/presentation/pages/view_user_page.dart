@@ -235,12 +235,10 @@ class ViewUserPage extends StatelessWidget {
   }
 
   Widget _buildTravelHistory(ThemeData theme, AppLocalizations l10n) {
-    return Container(
-      decoration: BoxDecoration(
-        color: theme.colorScheme.surface,
-        borderRadius: BorderRadius.circular(12),
-        border: BoxBorder.fromBorderSide(BorderSide(color: theme.colorScheme.outlineVariant)),
-      ),
+    return Card(
+      color: theme.colorScheme.surface,
+      elevation: 0,
+      margin: EdgeInsets.zero,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
