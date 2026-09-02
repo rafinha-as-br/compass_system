@@ -77,6 +77,7 @@ class ItineraryBuildPage extends StatelessWidget {
                   ]
                 : null,
             interestPoints: itineraryBuildModel.interestsPoints,
+            l10n: AppLocalizations.of(context)!,
           ),
         ),
 

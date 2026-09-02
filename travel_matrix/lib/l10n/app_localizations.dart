@@ -1466,6 +1466,18 @@ abstract class AppLocalizations {
   /// **'Finish point'**
   String get defaultFinishPointValue;
 
+  /// No description provided for @newStepDefaultTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'New Step — {index}'**
+  String newStepDefaultTitle(int index);
+
+  /// No description provided for @newStepDefaultDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'New step description'**
+  String get newStepDefaultDescription;
+
   /// No description provided for @hostingNameLabel.
   ///
   /// In en, this message translates to:

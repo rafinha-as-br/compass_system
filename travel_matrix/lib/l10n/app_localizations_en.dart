@@ -731,6 +731,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get defaultFinishPointValue => 'Finish point';
 
   @override
+  String newStepDefaultTitle(int index) {
+    return 'New Step — $index';
+  }
+
+  @override
+  String get newStepDefaultDescription => 'New step description';
+
+  @override
   String get hostingNameLabel => 'Hosting Name';
 
   @override

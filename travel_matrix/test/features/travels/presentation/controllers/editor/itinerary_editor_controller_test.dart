@@ -1,9 +1,15 @@
+import 'package:flutter/widgets.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/editor/itinerary_editor_controller.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 void main() {
   test('start and finish placeholder steps get distinct default titles', () {
-    final editor = ItineraryEditorController(interestPoints: [], steps: null);
+    final editor = ItineraryEditorController(
+      interestPoints: [],
+      steps: null,
+      l10n: lookupAppLocalizations(const Locale('en')),
+    );
 
     expect(editor.stepsList.length, 2);
     expect(

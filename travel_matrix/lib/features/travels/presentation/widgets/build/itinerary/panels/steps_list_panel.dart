@@ -89,8 +89,9 @@ class StepsListPanel extends StatelessWidget {
               // add a placeholder step, guarantees that the title is not empty
               addStep(
                 newStep: ItineraryStepViewModel.newPlaceHolder(
-                  currentIndex: stepsList.length,
                   position: StepPosition.middle,
+                  title: l10n.newStepDefaultTitle(stepsList.length + 1),
+                  description: l10n.newStepDefaultDescription,
                 )
               );
             },

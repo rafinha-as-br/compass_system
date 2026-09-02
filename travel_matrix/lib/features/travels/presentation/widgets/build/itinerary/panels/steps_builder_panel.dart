@@ -126,9 +126,13 @@ class _StepNavigator extends StatelessWidget {
           ),
 
         /// Step title
-        Text(
-          step.title,
-          style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+        Expanded(
+          child: Text(
+            step.title,
+            textAlign: TextAlign.center,
+            overflow: TextOverflow.ellipsis,
+            style: Theme.of(context).textTheme.titleSmall?.copyWith(fontWeight: FontWeight.w600),
+          ),
         ),
 
         /// Next step or add step navigator button
@@ -138,8 +142,9 @@ class _StepNavigator extends StatelessWidget {
               // add a placeholder step, guarantees that the title is not empty
               addStep(
                 newStep: ItineraryStepViewModel.newPlaceHolder(
-                  currentIndex: selectedIndex + 1,
                   position:  StepPosition.middle,
+                  title: l10n.newStepDefaultTitle(selectedIndex + 2),
+                  description: l10n.newStepDefaultDescription,
                 )
               );
             },
@@ -202,7 +207,11 @@ class _StepFormRender extends StatelessWidget {
     final position = step.position;
 
     if (newType == PlaceHolderStepViewModel) {
-      newStep = ItineraryStepViewModel.newPlaceHolder(currentIndex: selectedIndex, position: position);
+      newStep = ItineraryStepViewModel.newPlaceHolder(
+        position: position,
+        title: l10n.newStepDefaultTitle(selectedIndex + 1),
+        description: l10n.newStepDefaultDescription,
+      );
     } else if (newType == StopStepViewModel) {
       newStep = ItineraryStepViewModel.newStop(
           title: title,

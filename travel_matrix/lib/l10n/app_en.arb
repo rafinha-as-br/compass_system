@@ -291,6 +291,13 @@
   "defaultPlaceAddressValue": "Place address",
   "defaultStartingPointValue": "Starting point",
   "defaultFinishPointValue": "Finish point",
+  "newStepDefaultTitle": "New Step — {index}",
+  "@newStepDefaultTitle": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "newStepDefaultDescription": "New step description",
   "hostingNameLabel": "Hosting Name",
   "addressLabel": "Address",
   "checkInLabel": "Check-in",

@@ -4,6 +4,7 @@ import 'package:travel_matrix/features/travels/presentation/models/build_models/
 import 'package:travel_matrix/features/travels/presentation/models/view_models/timeline_problem_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/builds/itinerary_build_page.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/panels/interest_points_panel.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 import '../../models/view_models/itinerary_steps_view_models.dart';
 import '../../models/view_models/route_view_model.dart';
@@ -15,7 +16,8 @@ class ItineraryEditorController extends ChangeNotifier {
   ItineraryEditorController({
     required this.interestPoints,
     required List<ItineraryStepViewModel>? steps,
-  }) {
+    required AppLocalizations l10n,
+  }) : _l10n = l10n {
     // Null verificator to activate the first and last steps creation
     if (steps != null) {
       _stepsList = steps;
@@ -24,6 +26,9 @@ class ItineraryEditorController extends ChangeNotifier {
       createFirstAndLastSteps();
     }
   }
+
+  /// Localizations used to build default step titles/descriptions.
+  final AppLocalizations _l10n;
 
   /// Public interests points list
   final List<InterestPointViewModel> interestPoints;
@@ -102,11 +107,13 @@ class ItineraryEditorController extends ChangeNotifier {
   void createFirstAndLastSteps() {
     final firstStep = ItineraryStepViewModel.newPlaceHolder(
       position: StepPosition.start,
-      currentIndex: 0,
+      title: _l10n.newStepDefaultTitle(1),
+      description: _l10n.newStepDefaultDescription,
     );
     final lastStep = ItineraryStepViewModel.newPlaceHolder(
       position: StepPosition.finish,
-      currentIndex: 1,
+      title: _l10n.newStepDefaultTitle(2),
+      description: _l10n.newStepDefaultDescription,
     );
     addStep(newStep: firstStep);
     addStep(newStep: lastStep);

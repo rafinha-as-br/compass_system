@@ -738,6 +738,14 @@ class AppLocalizationsPt extends AppLocalizations {
   String get defaultFinishPointValue => 'Ponto de chegada';
 
   @override
+  String newStepDefaultTitle(int index) {
+    return 'Nova Etapa — $index';
+  }
+
+  @override
+  String get newStepDefaultDescription => 'Descrição da nova etapa';
+
+  @override
   String get hostingNameLabel => 'Nome da Hospedagem';
 
   @override

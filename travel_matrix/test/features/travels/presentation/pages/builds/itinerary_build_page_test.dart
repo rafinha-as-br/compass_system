@@ -125,4 +125,16 @@ void main() {
     expect(find.text('Choose step type:'), findsNothing);
     expect(find.text('Save'), findsNothing);
   });
+
+  testWidgets('new placeholder step gets a localized default title in Portuguese, not "New Step"', (tester) async {
+    final repository = _MockItineraryRepository();
+    final auth = AuthController();
+    auth.debugSetUserData({'id': 'agent-9', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    await tester.pumpWidget(wrap(repository: repository, auth: auth, locale: const Locale('pt')));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Nova Etapa — 1'), findsWidgets);
+    expect(find.textContaining('New Step'), findsNothing);
+  });
 }

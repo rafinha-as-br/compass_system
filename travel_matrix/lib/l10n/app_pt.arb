@@ -256,6 +256,8 @@
   "defaultPlaceAddressValue": "Endereço do local",
   "defaultStartingPointValue": "Ponto de partida",
   "defaultFinishPointValue": "Ponto de chegada",
+  "newStepDefaultTitle": "Nova Etapa — {index}",
+  "newStepDefaultDescription": "Descrição da nova etapa",
   "hostingNameLabel": "Nome da Hospedagem",
   "addressLabel": "Endereço",
   "checkInLabel": "Check-in",
