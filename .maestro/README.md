@@ -36,6 +36,20 @@ permanente.
         └── home_screens_smoke.yaml             — navega pelas 4 opções da Home sem crash
 ```
 
+## Gotcha: `clearState` não limpa o Keychain
+
+`launchApp: clearState: true` limpa os dados do app, mas **não** o
+Android Keystore-backed secure storage usado pelo `flutter_secure_storage`
+(onde o RouteCraft guarda o token JWT). Todo flow que assume estado
+deslogado no início precisa também de `- clearKeychain` logo após o
+`launchApp` — sem isso, se um flow anterior na mesma execução deixou uma
+sessão válida salva, o app abre direto na Home e o flow falha tentando
+encontrar "Email" (elemento só visível na tela de login). Confirmado em
+2026-09-04 durante QA de CPS-43: `login_invalid_credentials.yaml`,
+`login_retry_after_error.yaml`, `session_persists_on_restart.yaml` e
+`forgot_password.yaml` estavam sem esse passo (só `login_success.yaml` o
+tinha) — corrigido nesta mesma rodada.
+
 ## Como rodar
 
 ```bash
@@ -66,3 +80,9 @@ maestro test .maestro/routecraft/auth/login_success.yaml # um flow específico
   é coberta pelos testes unitários de `JwtPayloadDecoder.isExpired`
   (`routecraft_app/test/`), não por este suite. `session_persists_on_restart.yaml`
   cobre o caminho inverso: token válido não é invalidado incorretamente.
+  **Atualização (CPS-82):** a compass-api agora expõe um mecanismo real de
+  invalidação manual (`POST /users/{id}/force-logout`, verificado via
+  `sessionInvalidatedAt` no `JwtAuthenticationFilter`) — viabiliza testar
+  "sessão forçadamente expirada" sem esperar 24h, mas ainda não existe um
+  flow Maestro E2E para esse caminho aqui (requer chamar o endpoint como
+  agente pelo Travel Matrix ou via API enquanto o RouteCraft está logado).

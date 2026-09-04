@@ -2,6 +2,7 @@ appId: com.example.routecraft_app
 ---
 - launchApp:
     clearState: true
+- clearKeychain
 - tapOn: "Email"
 - eraseText
 - inputText: "joao.teste@teste.com"
