@@ -103,8 +103,6 @@ class CustomFormField extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final bool hasError = errorText != null;
-
     return TextField(
       controller: controller,
       enabled: enabled,
@@ -121,41 +119,12 @@ class CustomFormField extends StatelessWidget {
 
       inputFormatters: _inputFormatters,
 
+      /// Bordas (padrão/foco/erro) vêm do `inputDecorationTheme` do app —
+      /// o TextField já seleciona a borda de erro sozinho quando `errorText`
+      /// não é nulo, sem precisar duplicar essa lógica aqui.
       decoration: InputDecoration(
         labelText: label,
         errorText: errorText,
-
-        border: const OutlineInputBorder(),
-
-        enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: hasError
-                ? Colors.red
-                : Colors.grey,
-          ),
-        ),
-
-        focusedBorder: OutlineInputBorder(
-          borderSide: BorderSide(
-            color: hasError
-                ? Colors.red
-                : Theme.of(context).colorScheme.primary,
-            width: 2,
-          ),
-        ),
-
-        errorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.red,
-          ),
-        ),
-
-        focusedErrorBorder: const OutlineInputBorder(
-          borderSide: BorderSide(
-            color: Colors.red,
-            width: 2,
-          ),
-        ),
       ),
     );
   }

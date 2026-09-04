@@ -12,6 +12,11 @@ class TravelAppColors {
   static const Color accentGoldLight = Color(0xFFE3BC58);
   static const Color accentGoldDark = Color(0xFFA47C18);
 
+  // Contraste com onTertiary (branco) ~5.3:1 — acima do mínimo AA (4.5:1)
+  // para texto normal, não só do 3:1 de componentes grandes.
+  static const Color tertiary = Color(0xFF177A62);
+  static const Color tertiaryLight = Color(0xFF3DAF95);
+
   static const Color background = Color(0xFFF8F9FA);
   static const Color surface = Color(0xFFFFFFFF);
   static const Color surfaceDark = Color(0xFF101820);
@@ -102,22 +107,30 @@ class AppTheme {
   }
 
   static ThemeData get lightTheme {
+    const colorScheme = ColorScheme.light(
+      primary: TravelAppColors.primary,
+      secondary: TravelAppColors.accentGold,
+      tertiary: TravelAppColors.tertiary,
+      surface: TravelAppColors.surface,
+      error: TravelAppColors.error,
+      onPrimary: TravelAppColors.textOnPrimary,
+      // accentGold é um tom claro — texto escuro garante contraste AA (branco falha, ~2.2:1).
+      onSecondary: TravelAppColors.textPrimary,
+      onTertiary: TravelAppColors.textOnPrimary,
+      onSurface: TravelAppColors.textPrimary,
+      onError: TravelAppColors.textOnPrimary,
+      // outline/outlineVariant não têm default de marca — sem isso caem no
+      // fallback do ColorScheme.light() (preto puro), quebrando qualquer borda.
+      outline: TravelAppColors.border,
+      outlineVariant: TravelAppColors.divider,
+    );
+
     return ThemeData(
       brightness: Brightness.light,
       primaryColor: TravelAppColors.primary,
       scaffoldBackgroundColor: TravelAppColors.background,
       textTheme: _interTextTheme(ThemeData.light().textTheme),
-      colorScheme: const ColorScheme.light(
-        primary: TravelAppColors.primary,
-        secondary: TravelAppColors.accentGold,
-        surface: TravelAppColors.surface,
-        error: TravelAppColors.error,
-        onPrimary: TravelAppColors.textOnPrimary,
-        // accentGold é um tom claro — texto escuro garante contraste AA (branco falha, ~2.2:1).
-        onSecondary: TravelAppColors.textPrimary,
-        onSurface: TravelAppColors.textPrimary,
-        onError: TravelAppColors.textOnPrimary,
-      ),
+      colorScheme: colorScheme,
       appBarTheme: const AppBarTheme(
         backgroundColor: TravelAppColors.primary,
         foregroundColor: TravelAppColors.textOnPrimary,
@@ -128,6 +141,9 @@ class AppTheme {
         unselectedLabelColor: TravelAppColors.textSecondary,
         labelStyle: TextStyle(color: TravelAppColors.textOnPrimary)
       ),
+      inputDecorationTheme: _inputDecorationTheme(colorScheme),
+      elevatedButtonTheme: _elevatedButtonTheme(colorScheme),
+      cardTheme: _cardTheme(colorScheme),
       extensions: const [
         AppSemanticColors(
           success: TravelAppColors.success,
@@ -139,27 +155,41 @@ class AppTheme {
   }
 
   static ThemeData get darkTheme {
+    const colorScheme = ColorScheme.dark(
+      primary: TravelAppColors.primaryLight,
+      secondary: TravelAppColors.accentGoldLight,
+      tertiary: TravelAppColors.tertiaryLight,
+      surface: TravelAppColors.surfaceDark,
+      error: TravelAppColors.error,
+      onPrimary: TravelAppColors.textOnPrimary,
+      // accentGoldLight também é claro — mesma correção de contraste do tema light.
+      onSecondary: TravelAppColors.textPrimary,
+      // tertiaryLight também é claro — mesma correção de contraste.
+      onTertiary: TravelAppColors.textPrimary,
+      onSurface: TravelAppColors.textOnDark,
+      onError: TravelAppColors.textOnPrimary,
+      // Sem default de marca para tons neutros escuros — mesma correção do tema light.
+      outline: TravelAppColors.disabled,
+      // 25% de branco sobre surfaceDark — mesma proporção das variantes semânticas
+      // abaixo (não 12%: contraste ficava abaixo de 3:1 contra surfaceDark, borda
+      // de card/input quase invisível).
+      outlineVariant: Color(0xFF4C5258),
+    );
+
     return ThemeData(
       brightness: Brightness.dark,
       primaryColor: TravelAppColors.primaryDark,
       scaffoldBackgroundColor: TravelAppColors.surfaceDark,
       textTheme: _interTextTheme(ThemeData.dark().textTheme),
-      colorScheme: const ColorScheme.dark(
-        primary: TravelAppColors.primaryLight,
-        secondary: TravelAppColors.accentGoldLight,
-        surface: TravelAppColors.surfaceDark,
-        error: TravelAppColors.error,
-        onPrimary: TravelAppColors.textOnPrimary,
-        // accentGoldLight também é claro — mesma correção de contraste do tema light.
-        onSecondary: TravelAppColors.textPrimary,
-        onSurface: TravelAppColors.textOnDark,
-        onError: TravelAppColors.textOnPrimary,
-      ),
+      colorScheme: colorScheme,
       appBarTheme: const AppBarTheme(
         backgroundColor: TravelAppColors.surfaceDark,
         foregroundColor: TravelAppColors.textOnDark,
         elevation: 0,
       ),
+      inputDecorationTheme: _inputDecorationTheme(colorScheme),
+      elevatedButtonTheme: _elevatedButtonTheme(colorScheme),
+      cardTheme: _cardTheme(colorScheme),
       extensions: const [
         AppSemanticColors(
           // Variantes com 25% de branco misturado — mesma proporção usada para
@@ -169,6 +199,49 @@ class AppTheme {
           info: Color(0xFF6B92BC),
         ),
       ],
+    );
+  }
+
+  static InputDecorationTheme _inputDecorationTheme(ColorScheme colorScheme) {
+    return InputDecorationTheme(
+      border: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: colorScheme.outline),
+      ),
+      enabledBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: colorScheme.outline),
+      ),
+      focusedBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: colorScheme.primary, width: 2),
+      ),
+      errorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: colorScheme.error),
+      ),
+      focusedErrorBorder: OutlineInputBorder(
+        borderRadius: BorderRadius.circular(8),
+        borderSide: BorderSide(color: colorScheme.error, width: 2),
+      ),
+    );
+  }
+
+  static ElevatedButtonThemeData _elevatedButtonTheme(ColorScheme colorScheme) {
+    return ElevatedButtonThemeData(
+      style: ElevatedButton.styleFrom(
+        backgroundColor: colorScheme.secondary,
+        foregroundColor: colorScheme.onSecondary,
+      ),
+    );
+  }
+
+  static CardThemeData _cardTheme(ColorScheme colorScheme) {
+    return CardThemeData(
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: BorderSide(color: colorScheme.outlineVariant),
+      ),
     );
   }
 }

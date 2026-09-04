@@ -27,10 +27,13 @@ class PrimarySubmitButton extends StatelessWidget {
           foregroundColor: Theme.of(context).colorScheme.onPrimary,
         ),
         child: isLoading
-            ? const SizedBox(
+            ? SizedBox(
                 width: 20,
                 height: 20,
-                child: CircularProgressIndicator(strokeWidth: 2, color: Colors.white),
+                child: CircularProgressIndicator(
+                  strokeWidth: 2,
+                  color: Theme.of(context).colorScheme.onPrimary,
+                ),
               )
             : Text(label, style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
       ),

@@ -13,14 +13,22 @@ import '../view_models/client_status_view_model.dart';
 
 /// Users Dashboard Tab — lists all Client users with status indicators.
 class UsersDashboardPage extends StatelessWidget {
-  const UsersDashboardPage({super.key});
+  final UsersController? controller;
+
+  const UsersDashboardPage({super.key, this.controller});
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider(
-      create: (_) => UsersController(),
-      child: const _UsersDashboardView(),
-    );
+    final providedController = controller;
+    return providedController != null
+        ? ChangeNotifierProvider.value(
+            value: providedController,
+            child: const _UsersDashboardView(),
+          )
+        : ChangeNotifierProvider(
+            create: (_) => UsersController(),
+            child: const _UsersDashboardView(),
+          );
   }
 }
 
@@ -85,11 +93,11 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                     prefixIcon: const Icon(Icons.search),
                     border: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: TravelAppColors.border),
+                      borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
                     ),
                     enabledBorder: OutlineInputBorder(
                       borderRadius: BorderRadius.circular(8),
-                      borderSide: BorderSide(color: TravelAppColors.border),
+                      borderSide: BorderSide(color: theme.colorScheme.outlineVariant),
                     ),
                     contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 0),
                   ),
@@ -108,7 +116,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                 child: Container(
                   height: 48,
                   decoration: BoxDecoration(
-                    border: Border.all(color: TravelAppColors.border),
+                    border: Border.all(color: theme.colorScheme.outlineVariant),
                     borderRadius: BorderRadius.circular(8),
                   ),
                   padding: const EdgeInsets.symmetric(horizontal: 12),
@@ -195,7 +203,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                         elevation: 0,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8),
-                          side: BorderSide(color: TravelAppColors.border),
+                          side: BorderSide(color: theme.colorScheme.outlineVariant),
                         ),
                         child: _buildUsersTable(context, filteredUsers, controller),
                       ),
@@ -222,16 +230,16 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
             constraints: BoxConstraints(minWidth: constraints.maxWidth),
             child: DataTable(
               headingRowColor: WidgetStateProperty.all(
-                TravelAppColors.background,
+                theme.colorScheme.surfaceContainerHighest,
               ),
               dataRowMaxHeight: 64,
               dataRowMinHeight: 64,
               columns: [
-                DataColumn(label: Text(l10n.clientNameColumn, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text(l10n.loginEmailLabel, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text(l10n.phoneLabel, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text(l10n.statusColumn, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text(l10n.actionsColumn, style: TextStyle(color: TravelAppColors.textPrimary, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.clientNameColumn, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.loginEmailLabel, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.phoneLabel, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.statusColumn, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
+                DataColumn(label: Text(l10n.actionsColumn, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
               ],
               rows: users.map((user) {
                 return DataRow(
@@ -260,15 +268,15 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                         ],
                       ),
                     ),
-                    DataCell(Text(user.email, style: TextStyle(color: TravelAppColors.textSecondary))),
-                    DataCell(Text(user.phoneNumber, style: TextStyle(color: TravelAppColors.textSecondary))),
+                    DataCell(Text(user.email, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
+                    DataCell(Text(user.phoneNumber, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
                     DataCell(
                       Container(
                         padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                         decoration: BoxDecoration(
                           color: user.status.status is ActiveStatusViewModel
-                              ? TravelAppColors.success.withValues(alpha: 0.1)
-                              : TravelAppColors.error.withValues(alpha: 0.1),
+                              ? theme.semanticColors.success.withValues(alpha: 0.1)
+                              : theme.colorScheme.error.withValues(alpha: 0.1),
                           borderRadius: BorderRadius.circular(16),
                         ),
                         child: Row(
@@ -277,7 +285,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                             Icon(
                               user.status.status is ActiveStatusViewModel ? Icons.check_circle_outline : Icons.highlight_off,
                               size: 14,
-                              color: user.status.status is ActiveStatusViewModel ? TravelAppColors.success : TravelAppColors.error,
+                              color: user.status.status is ActiveStatusViewModel ? theme.semanticColors.success : theme.colorScheme.error,
                             ),
                             const SizedBox(width: 4),
                             Text(
@@ -286,8 +294,8 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
                                 color: user.status.status is ActiveStatusViewModel
-                                    ? TravelAppColors.success
-                                    : TravelAppColors.error,
+                                    ? theme.semanticColors.success
+                                    : theme.colorScheme.error,
                               ),
                             ),
                           ],
@@ -300,13 +308,13 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                         children: [
                           IconButton(
                             icon: const Icon(Icons.remove_red_eye_outlined, size: 20),
-                            color: TravelAppColors.textSecondary,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             tooltip: l10n.viewUser,
                             onPressed: () => _navigateToUser(context, user, controller),
                           ),
                           IconButton(
                             icon: const Icon(Icons.block, size: 20),
-                            color: TravelAppColors.textSecondary,
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                             tooltip: l10n.deactivateUserDialogTitle,
                             onPressed: () async {
                               final reason = await showDeactivateUserDialog(context, user.name);
