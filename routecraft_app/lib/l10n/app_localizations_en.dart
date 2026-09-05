@@ -92,6 +92,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountSettingsNav => 'User Account & Settings';
 
   @override
+  String get homeNavLabel => 'Home';
+
+  @override
+  String get itineraryNavLabel => 'Itinerary';
+
+  @override
+  String get accountNavLabel => 'Account';
+
+  @override
   String get createRouteTitle => 'Create a Route';
 
   @override

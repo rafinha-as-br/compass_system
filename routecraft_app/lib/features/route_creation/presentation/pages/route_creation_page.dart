@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
@@ -42,7 +43,7 @@ class _RouteCreationView extends StatelessWidget {
               const Text('Route created successfully!', style: TextStyle(fontSize: 20)),
               const SizedBox(height: 32),
               AppButton(
-                onPressed: () => Navigator.pop(context),
+                onPressed: () => context.pop(),
                 child: const Text('Back to Home'),
               ),
             ],

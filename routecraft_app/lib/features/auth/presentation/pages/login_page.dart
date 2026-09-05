@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
-import 'package:routecraft_app/app/gates/gate_auth.dart';
+import 'package:routecraft_app/app/global_controllers/auth_controller.dart';
+import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/login_controller.dart';
-import 'package:routecraft_app/features/auth/presentation/pages/forgot_password_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
 import 'package:routecraft_app/shared/widgets/app_text_field.dart';
@@ -52,11 +53,8 @@ class _LoginViewState extends State<_LoginView> {
       );
 
       if (success && mounted) {
-        // Trigger re-render of Auth Gate
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => const GateAuth()),
-        );
+        // Refreshes AuthController so AppRouter's redirect leaves /login.
+        await context.read<AuthController>().refresh();
       }
     }
   }
@@ -110,10 +108,7 @@ class _LoginViewState extends State<_LoginView> {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () => Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (_) => const ForgotPasswordPage()),
-                      ),
+                      onPressed: () => context.push(AppRoutes.forgotPassword),
                       child: Text(l10n.forgotPasswordLink),
                     ),
                   ),

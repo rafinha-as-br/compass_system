@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/global_controllers/auth_controller.dart';
 import 'package:routecraft_app/core/entities/result.dart';
+import 'package:routecraft_app/features/auth/domain/entities/auth_session.dart';
 import 'package:routecraft_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/login_controller.dart';
 import 'package:routecraft_app/features/auth/presentation/pages/login_page.dart';
@@ -9,17 +12,20 @@ import 'package:routecraft_app/l10n/app_localizations.dart';
 
 import '../../../../support/stub_auth_repository.dart';
 
-Widget _wrap(LoginController controller, {Locale? locale}) {
-  return MaterialApp(
-    locale: locale,
-    localizationsDelegates: const [
-      AppLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: LoginPage(controller: controller),
+Widget _wrap(LoginController controller, {Locale? locale, AuthController? authController}) {
+  return ChangeNotifierProvider<AuthController>.value(
+    value: authController ?? AuthController(checkAuthenticated: () async => false),
+    child: MaterialApp(
+      locale: locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: LoginPage(controller: controller),
+    ),
   );
 }
 
@@ -109,8 +115,26 @@ void main() {
     expect(find.text('Não foi possível conectar ao servidor.'), findsNothing);
   });
 
-  // The success path (saveToken called, navigation to GateAuth) is covered
-  // at the controller level in login_controller_test.dart — reproducing it
-  // here would require bootstrapping GateAuth's AuthService/secure storage,
-  // unrelated to this page's rebranding/l10n scope.
+  testWidgets('refreshes AuthController on a successful login', (tester) async {
+    final repository = StubAuthRepository(
+      const Result.success(
+        AuthSession(token: 'fake-token', email: 'agente@routecraft.com', name: 'Agente'),
+      ),
+    );
+    final controller = LoginController(
+      loginUseCase: LoginUseCase(repository),
+      saveToken: (_) async {},
+      saveClientName: (_) async {},
+    );
+    final authController = AuthController(checkAuthenticated: () async => true);
+
+    await tester.pumpWidget(_wrap(controller, locale: const Locale('en'), authController: authController));
+
+    await tester.enterText(find.widgetWithText(TextFormField, 'Email'), 'agente@routecraft.com');
+    await tester.enterText(find.widgetWithText(TextFormField, 'Password'), 'secret123');
+    await tester.tap(find.text('LOGIN'));
+    await tester.pumpAndSettle();
+
+    expect(authController.isAuthenticated, isTrue);
+  });
 }

@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 
-import 'package:routecraft_app/features/home/presentation/pages/follow_travel_page.dart';
 import 'package:routecraft_app/features/visualization/presentation/controllers/visualization_controller.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
 
@@ -78,11 +79,7 @@ class _VisualizationView extends StatelessWidget {
           backgroundColor: travel.hasItinerary ? TravelAppColors.success : TravelAppColors.warning,
         ),
         onTap: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(
-              builder: (_) => FollowTravelPage(travel: travel),
-            ),
-          );
+          context.push(AppRoutes.itineraryFollowTravel, extra: travel);
         },
       ),
     );

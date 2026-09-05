@@ -1,41 +1,33 @@
-import 'dart:async';
-
 import 'package:flutter/material.dart';
-import 'package:routecraft_app/app/gates/gate_auth.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
 
-class GateSplash extends StatefulWidget {
-  const GateSplash({super.key});
+/// Branded loading screen shown by [AppBootstrap] while [AuthController]
+/// resolves the initial session. It carries its own [MaterialApp] because it
+/// renders before the app's real router (and its `MaterialApp.router`) exist.
+class SplashScreen extends StatelessWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<GateSplash> createState() => _GateSplashState();
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      theme: AppTheme.lightTheme,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: const _SplashBody(),
+    );
+  }
 }
 
-class _GateSplashState extends State<GateSplash> {
-  Timer? _navigationTimer;
-
-  @override
-  void initState() {
-    super.initState();
-    // Artificial delay for splash screen.
-    _navigationTimer = Timer(const Duration(seconds: 2), _goToAuthGate);
-  }
-
-  void _goToAuthGate() {
-    if (mounted) {
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const GateAuth()),
-      );
-    }
-  }
-
-  @override
-  void dispose() {
-    _navigationTimer?.cancel();
-    super.dispose();
-  }
+class _SplashBody extends StatelessWidget {
+  const _SplashBody();
 
   @override
   Widget build(BuildContext context) {
@@ -45,8 +37,6 @@ class _GateSplashState extends State<GateSplash> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-
-            /// logo
             Expanded(
               flex: 2,
               child: Container(
@@ -54,7 +44,6 @@ class _GateSplashState extends State<GateSplash> {
                 child: Image.asset('assets/images/logo.png', width: 400),
               ),
             ),
-
             const SizedBox(height: 24),
             Text(
               AppLocalizations.of(context)!.appTitle,

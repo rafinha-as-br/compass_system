@@ -1,11 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/auth/domain/entities/auth_session.dart';
 import 'package:routecraft_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:routecraft_app/features/auth/domain/usecases/reset_password_usecase.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/reset_password_controller.dart';
+import 'package:routecraft_app/features/auth/presentation/pages/login_page.dart';
 import 'package:routecraft_app/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 
@@ -35,7 +38,22 @@ class _StubAuthRepository implements AuthRepository {
 }
 
 Widget _wrap(ResetPasswordController controller) {
-  return MaterialApp(
+  final router = GoRouter(
+    initialLocation: AppRoutes.resetPassword,
+    routes: [
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        builder: (context, state) => ResetPasswordPage(controller: controller),
+      ),
+      GoRoute(
+        path: AppRoutes.login,
+        builder: (context, state) => const LoginPage(),
+      ),
+    ],
+  );
+
+  return MaterialApp.router(
+    routerConfig: router,
     localizationsDelegates: const [
       AppLocalizations.delegate,
       GlobalMaterialLocalizations.delegate,
@@ -43,7 +61,6 @@ Widget _wrap(ResetPasswordController controller) {
       GlobalCupertinoLocalizations.delegate,
     ],
     supportedLocales: AppLocalizations.supportedLocales,
-    home: ResetPasswordPage(controller: controller),
   );
 }
 
@@ -83,6 +100,7 @@ void main() {
       find.text('Password reset successfully. You can now log in.'),
       findsOneWidget,
     );
+    expect(find.byType(LoginPage), findsOneWidget);
   });
 
   testWidgets('exibe a mensagem de erro para token inválido/expirado', (tester) async {
