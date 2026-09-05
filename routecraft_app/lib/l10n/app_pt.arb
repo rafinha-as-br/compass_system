@@ -2,15 +2,21 @@
   "@@locale": "pt",
 
   "appTitle": "RouteCraft",
+  "appBrandSubtitle": "Compass System",
+  "splashCheckingSession": "Verificando sessão…",
 
-  "loginTitle": "Login RouteCraft",
+  "loginTitle": "Bem-vindo de volta",
   "loginEmailLabel": "E-mail",
+  "loginEmailHint": "voce@email.com",
   "loginPasswordLabel": "Senha",
   "loginButton": "ENTRAR",
   "loginEmailRequired": "Informe o e-mail",
   "loginPasswordRequired": "Informe a senha",
   "loginAccessDenied": "Acesso negado. Apenas Clientes podem acessar o RouteCraft.",
   "loginError": "Ocorreu um erro durante o login.",
+  "loginNoAccountFooter": "Não tem conta? Fale com seu agente",
+  "loginShowPassword": "Mostrar senha",
+  "loginHidePassword": "Ocultar senha",
 
   "forgotPasswordLink": "Esqueceu a senha?",
   "forgotPasswordTitle": "Redefinir sua senha",

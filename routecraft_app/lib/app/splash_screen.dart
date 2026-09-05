@@ -31,32 +31,37 @@ class _SplashBody extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final onPrimary = Theme.of(context).colorScheme.onPrimary;
+
     return Scaffold(
-      backgroundColor: Theme.of(context).primaryColor,
+      backgroundColor: TravelAppColors.primary,
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Expanded(
-              flex: 2,
-              child: Container(
-                color: TravelAppColors.primaryDark,
-                child: Image.asset('assets/images/logo.png', width: 400),
-              ),
-            ),
-            const SizedBox(height: 24),
+            Text('✦', style: TextStyle(fontSize: 48, color: onPrimary)),
+            const SizedBox(height: 16),
             Text(
-              AppLocalizations.of(context)!.appTitle,
+              l10n.appTitle,
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.bold,
-                color: Theme.of(context).colorScheme.onPrimary,
+                color: onPrimary,
               ),
             ),
-            const SizedBox(height: 48),
-            CircularProgressIndicator(
-              color: Theme.of(context).colorScheme.onPrimary,
+            const SizedBox(height: 4),
+            Text(
+              l10n.appBrandSubtitle,
+              style: TextStyle(fontSize: 14, color: onPrimary.withValues(alpha: 0.8)),
             ),
+            const SizedBox(height: 48),
+            Text(
+              l10n.splashCheckingSession,
+              style: TextStyle(fontSize: 14, color: onPrimary.withValues(alpha: 0.8)),
+            ),
+            const SizedBox(height: 16),
+            CircularProgressIndicator(color: onPrimary),
           ],
         ),
       ),
