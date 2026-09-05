@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/auth/domain/entities/auth_session.dart';
 import 'package:routecraft_app/features/auth/domain/repositories/auth_repository.dart';
 import 'package:routecraft_app/features/auth/domain/usecases/request_password_reset_usecase.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/forgot_password_controller.dart';
 import 'package:routecraft_app/features/auth/presentation/pages/forgot_password_page.dart';
+import 'package:routecraft_app/features/auth/presentation/pages/reset_password_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 
 class _StubAuthRepository implements AuthRepository {
@@ -33,7 +36,22 @@ class _StubAuthRepository implements AuthRepository {
 }
 
 Widget _wrap(ForgotPasswordController controller) {
-  return MaterialApp(
+  final router = GoRouter(
+    initialLocation: AppRoutes.forgotPassword,
+    routes: [
+      GoRoute(
+        path: AppRoutes.forgotPassword,
+        builder: (context, state) => ForgotPasswordPage(controller: controller),
+      ),
+      GoRoute(
+        path: AppRoutes.resetPassword,
+        builder: (context, state) => const ResetPasswordPage(),
+      ),
+    ],
+  );
+
+  return MaterialApp.router(
+    routerConfig: router,
     localizationsDelegates: const [
       AppLocalizations.delegate,
       GlobalMaterialLocalizations.delegate,
@@ -41,7 +59,6 @@ Widget _wrap(ForgotPasswordController controller) {
       GlobalCupertinoLocalizations.delegate,
     ],
     supportedLocales: AppLocalizations.supportedLocales,
-    home: ForgotPasswordPage(controller: controller),
   );
 }
 

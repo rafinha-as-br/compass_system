@@ -31,6 +31,10 @@
   "visualizeRoutesNav": "Visualize Routes & Itineraries",
   "accountSettingsNav": "User Account & Settings",
 
+  "homeNavLabel": "Home",
+  "itineraryNavLabel": "Itinerary",
+  "accountNavLabel": "Account",
+
   "createRouteTitle": "Create a Route",
   "tripInfoStep": "Trip Info",
   "tripNameLabel": "Trip Name",

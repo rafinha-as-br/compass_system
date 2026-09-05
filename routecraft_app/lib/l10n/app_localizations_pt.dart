@@ -92,6 +92,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountSettingsNav => 'Conta e Configurações';
 
   @override
+  String get homeNavLabel => 'Início';
+
+  @override
+  String get itineraryNavLabel => 'Roteiro';
+
+  @override
+  String get accountNavLabel => 'Conta';
+
+  @override
   String get createRouteTitle => 'Criar uma Rota';
 
   @override

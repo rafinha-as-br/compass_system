@@ -27,6 +27,18 @@ class AuthService {
 
   Future<void> clearToken() async {
     await _storage.delete(key: 'auth_token');
+    await _storage.delete(key: 'client_name');
+  }
+
+  /// Persists the authenticated client's name — the backend identifies a
+  /// client's travels by name (`clientName`), not by id, so this is what
+  /// the travels feature reads back to create/fetch travels for them.
+  Future<void> saveClientName(String name) async {
+    await _storage.write(key: 'client_name', value: name);
+  }
+
+  Future<String?> getClientName() async {
+    return await _storage.read(key: 'client_name');
   }
 
   /// True when there is a stored token that is well-formed and not expired.

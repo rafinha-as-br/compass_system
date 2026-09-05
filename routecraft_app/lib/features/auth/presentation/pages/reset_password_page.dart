@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/reset_password_controller.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/utils/validators.dart';
@@ -55,7 +57,7 @@ class _ResetPasswordViewState extends State<_ResetPasswordView> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text(l10n.resetPasswordSuccess)),
       );
-      Navigator.popUntil(context, (route) => route.isFirst);
+      context.go(AppRoutes.login);
     }
   }
 

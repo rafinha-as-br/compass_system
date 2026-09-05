@@ -1,8 +1,9 @@
 import 'package:flutter/foundation.dart';
-import 'package:flutter/material.dart';
-import 'package:routecraft_app/core/mock/mock_repository.dart';
-import 'package:routecraft_app/core/services/compass_service.dart';
+import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/core/services/auth_service.dart';
+import 'package:routecraft_app/features/travels/data/repositories/travel_repository_impl.dart';
+import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
+import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 
 class VisualizationState {
   final bool isLoading;
@@ -18,69 +19,50 @@ class VisualizationController extends ChangeNotifier {
   VisualizationState _state = const VisualizationState();
   VisualizationState get state => _state;
 
-  VisualizationController() {
+  final TravelUseCases? _travelUseCasesOverride;
+  final Future<String?> Function()? _getClientNameOverride;
+
+  /// [travelUseCases]/[getClientName] are injectable for tests, without
+  /// depending on the real network/singleton wiring (`AuthService.instance`
+  /// is only touched when no override is given).
+  VisualizationController({
+    TravelUseCases? travelUseCases,
+    Future<String?> Function()? getClientName,
+  })  : _travelUseCasesOverride = travelUseCases,
+        _getClientNameOverride = getClientName {
     _fetchData();
   }
 
   /// Test-only: starts from a fixed state instead of hitting the real
-  /// network/singleton wiring (`AuthService.instance`/`CompassService.instance`).
+  /// network/singleton wiring.
   @visibleForTesting
-  VisualizationController.withState(VisualizationState state) : _state = state;
+  VisualizationController.withState(this._state)
+      : _travelUseCasesOverride = null,
+        _getClientNameOverride = null;
+
+  TravelUseCases get _travelUseCases => _travelUseCasesOverride ?? TravelUseCases(TravelRepositoryImpl());
+
+  Future<String?> _getClientName() =>
+      (_getClientNameOverride ?? AuthService.instance.getClientName)();
 
   Future<void> _fetchData() async {
     _state = const VisualizationState(isLoading: true);
     notifyListeners();
 
-    try {
-      final token = await AuthService.instance.getToken();
-      if (token == null) {
-        _state = const VisualizationState(isLoading: false);
-        notifyListeners();
-        return;
-      }
-
-      // Fetch travels for client from the API
-      final response =
-          await CompassService.instance.getTravelsForClient(token, 'client_1');
-
-      final List<Travel> travels = [];
-      if (response['status'] == 'success') {
-        final data = response['data'] as List<dynamic>;
-        for (var item in data) {
-          travels.add(Travel.fromJson(item as Map<String, dynamic>));
-        }
-      }
-
-      if (travels.isEmpty) {
-        travels.add(
-          Travel(
-            id: 'mock_travel_999',
-            clientId: 'client_1',
-            agentId: 'agent_1',
-            travelName: 'Mock Travel: New York to Tokyo',
-            travelStatus: TravelStatus.routeCreated,
-            participantsList: [],
-            routePlan: RoutePlan(
-              startDate: DateTime.now(),
-              endDate: DateTime.now().add(const Duration(days: 10)),
-              startLocation: 'New York',
-              destination: 'Tokyo',
-              interestsList: [
-                InterestPoint(id: 'ip1', name: 'Mount Fuji', description: 'Sightseeing'),
-              ],
-            ),
-          ),
-        );
-      }
-
-      _state = VisualizationState(
-        isLoading: false,
-        travels: travels,
-      );
-      notifyListeners();
-    } catch (e) {
+    final clientName = await _getClientName();
+    if (clientName == null || clientName.isEmpty) {
       _state = const VisualizationState(isLoading: false);
       notifyListeners();
+      return;
     }
+
+    final result = await _travelUseCases.getTravelsForClient(clientName);
+    switch (result) {
+      case Success<List<Travel>>(data: final travels):
+        _state = VisualizationState(isLoading: false, travels: travels);
+      case Failure<List<Travel>>():
+        _state = const VisualizationState(isLoading: false);
+    }
+    notifyListeners();
   }
 }

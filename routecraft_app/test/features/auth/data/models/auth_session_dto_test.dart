@@ -13,18 +13,21 @@ void main() {
 
       expect(dto.token, 'abc123');
       expect(dto.email, 'john@example.com');
+      expect(dto.name, 'John');
     });
 
     test('toDomain preserves all fields', () {
       const dto = AuthSessionDto(
         token: 'abc123',
         email: 'agent@example.com',
+        name: 'Agent Name',
       );
 
       final session = dto.toDomain();
 
       expect(session.token, 'abc123');
       expect(session.email, 'agent@example.com');
+      expect(session.name, 'Agent Name');
     });
   });
 }

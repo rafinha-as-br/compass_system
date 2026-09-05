@@ -2,8 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:routecraft_app/app/controllers/settings_controller.dart';
-import 'package:routecraft_app/core/services/auth_service.dart';
-import 'package:routecraft_app/app/gates/gate_auth.dart';
+import 'package:routecraft_app/app/global_controllers/auth_controller.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
 
 class AccountPage extends StatelessWidget {
@@ -58,15 +57,9 @@ class AccountPage extends StatelessWidget {
           AppButton(
             variant: AppButtonVariant.danger,
             icon: const Icon(Icons.logout),
-            onPressed: () async {
-              await AuthService.instance.clearToken();
-              if (context.mounted) {
-                Navigator.of(context).pushAndRemoveUntil(
-                  MaterialPageRoute(builder: (context) => const GateAuth()),
-                  (Route<dynamic> route) => false,
-                );
-              }
-            },
+            // AppRouter's redirect leaves the private area once
+            // AuthController.logout() notifies isAuthenticated == false.
+            onPressed: () => context.read<AuthController>().logout(),
             child: const Text('Log Out'),
           ),
         ],
