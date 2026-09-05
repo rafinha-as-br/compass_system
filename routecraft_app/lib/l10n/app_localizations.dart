@@ -254,6 +254,42 @@ abstract class AppLocalizations {
   /// **'User Account & Settings'**
   String get accountSettingsNav;
 
+  /// No description provided for @homeGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeSectionInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get homeSectionInProgress;
+
+  /// No description provided for @homeSectionUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get homeSectionUpcoming;
+
+  /// No description provided for @homeSectionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get homeSectionCompleted;
+
+  /// No description provided for @homeEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the trip you want to take and your agent will build the itinerary.'**
+  String get homeEmptyMessage;
+
+  /// No description provided for @homeEmptyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Create my first route'**
+  String get homeEmptyCta;
+
   /// No description provided for @homeNavLabel.
   ///
   /// In en, this message translates to:

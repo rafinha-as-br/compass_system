@@ -92,6 +92,27 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountSettingsNav => 'Conta e Configurações';
 
   @override
+  String homeGreeting(String name) {
+    return 'Olá, $name';
+  }
+
+  @override
+  String get homeSectionInProgress => 'Em andamento';
+
+  @override
+  String get homeSectionUpcoming => 'Próximas';
+
+  @override
+  String get homeSectionCompleted => 'Concluídas';
+
+  @override
+  String get homeEmptyMessage =>
+      'Descreva a viagem que você quer fazer e seu agente monta o roteiro.';
+
+  @override
+  String get homeEmptyCta => 'Criar minha primeira rota';
+
+  @override
   String get homeNavLabel => 'Início';
 
   @override
