@@ -175,4 +175,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get notAuthenticated => 'Not authenticated.';
+
+  @override
+  String get travelStatusRouteCreated => 'Awaiting agent';
+
+  @override
+  String get travelStatusItineraryCreated => 'Itinerary published';
+
+  @override
+  String get travelStatusTravelStarted => 'In progress';
+
+  @override
+  String get travelStatusTravelFinished => 'Completed';
 }

@@ -69,5 +69,10 @@
   "phoneLabel": "Phone",
   "saveChanges": "SAVE CHANGES",
   "logoutButton": "LOGOUT",
-  "notAuthenticated": "Not authenticated."
+  "notAuthenticated": "Not authenticated.",
+
+  "travelStatusRouteCreated": "Awaiting agent",
+  "travelStatusItineraryCreated": "Itinerary published",
+  "travelStatusTravelStarted": "In progress",
+  "travelStatusTravelFinished": "Completed"
 }

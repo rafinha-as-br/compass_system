@@ -175,4 +175,16 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get notAuthenticated => 'Não autenticado.';
+
+  @override
+  String get travelStatusRouteCreated => 'Aguardando agente';
+
+  @override
+  String get travelStatusItineraryCreated => 'Itinerário publicado';
+
+  @override
+  String get travelStatusTravelStarted => 'Em andamento';
+
+  @override
+  String get travelStatusTravelFinished => 'Concluída';
 }

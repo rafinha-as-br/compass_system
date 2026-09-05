@@ -415,6 +415,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not authenticated.'**
   String get notAuthenticated;
+
+  /// No description provided for @travelStatusRouteCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Awaiting agent'**
+  String get travelStatusRouteCreated;
+
+  /// No description provided for @travelStatusItineraryCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary published'**
+  String get travelStatusItineraryCreated;
+
+  /// No description provided for @travelStatusTravelStarted.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get travelStatusTravelStarted;
+
+  /// No description provided for @travelStatusTravelFinished.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get travelStatusTravelFinished;
 }
 
 class _AppLocalizationsDelegate
