@@ -32,7 +32,7 @@ void main() {
     test('delegates to the repository with the given credentials', () async {
       final repository = _FakeAuthRepository()
         ..nextResult = const Result.success(
-          AuthSession(token: 't', email: 'a@b.com'),
+          AuthSession(token: 't', email: 'a@b.com', name: 'Maria Silva'),
         );
       final useCase = LoginUseCase(repository);
 

@@ -27,20 +27,23 @@ class _StubAuthRepository implements AuthRepository {
 
 void main() {
   group('LoginController.login', () {
-    test('on success, saves the token and clears loading/error state', () async {
-      const session = AuthSession(token: 'jwt', email: 'a@b.com');
+    test('on success, saves the token/client name and clears loading/error state', () async {
+      const session = AuthSession(token: 'jwt', email: 'a@b.com', name: 'Maria Silva');
       final useCase = LoginUseCase(_StubAuthRepository(const Result.success(session)));
       String? savedToken;
+      String? savedClientName;
 
       final controller = LoginController(
         loginUseCase: useCase,
         saveToken: (token) async => savedToken = token,
+        saveClientName: (name) async => savedClientName = name,
       );
 
       final success = await controller.login('a@b.com', 'secret');
 
       expect(success, isTrue);
       expect(savedToken, 'jwt');
+      expect(savedClientName, 'Maria Silva');
       expect(controller.state.isLoading, isFalse);
       expect(controller.state.errorMessage, isNull);
     });
@@ -88,13 +91,14 @@ void main() {
       final controller = LoginController(
         loginUseCase: LoginUseCase(repository),
         saveToken: (token) async {},
+        saveClientName: (name) async {},
       );
 
       await controller.login('a@b.com', 'wrong');
       expect(controller.state.errorMessage, isNotNull);
 
       repository.result = const Result.success(
-        AuthSession(token: 'jwt', email: 'a@b.com'),
+        AuthSession(token: 'jwt', email: 'a@b.com', name: 'Maria Silva'),
       );
 
       await controller.login('a@b.com', 'secret');

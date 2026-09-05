@@ -13,4 +13,10 @@ abstract final class ApiEndpoints {
   static const String registerClient = '/api/auth/cadastrar/cliente';
   static const String forgotPassword = '/api/auth/esqueci-senha';
   static const String resetPassword = '/api/auth/redefinir-senha';
+
+  // Travels
+  static const String travels = '/travels';
+  static String travelById(String id) => '/travels/$id';
+  static String travelsByClient(String clientName) => '/travels/client/$clientName';
+  static String travelRoute(String travelId) => '/travels/$travelId/route';
 }

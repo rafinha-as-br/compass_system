@@ -33,18 +33,33 @@ class LoginState {
 
 class LoginController extends ChangeNotifier {
   final LoginUseCase _loginUseCase;
-  final Future<void> Function(String token) _saveToken;
+  final Future<void> Function(String token)? _saveTokenOverride;
+  final Future<void> Function(String name)? _saveClientNameOverride;
 
+  /// [saveToken]/[saveClientName] are injectable for widget tests, without
+  /// depending on the real network/singleton wiring. `AuthService.instance`
+  /// is only touched when an override isn't given, so constructing this
+  /// with just one override doesn't require `AuthService` to already be
+  /// initialized. In production, the call site (`LoginController()`) is
+  /// unaffected — the default wiring is used.
   LoginController({
     LoginUseCase? loginUseCase,
     Future<void> Function(String token)? saveToken,
+    Future<void> Function(String name)? saveClientName,
   })  : _loginUseCase = loginUseCase ??
             LoginUseCase(
               AuthRepositoryImpl(
                 AuthRemoteDataSource(HttpApiClient.instance),
               ),
             ),
-        _saveToken = saveToken ?? AuthService.instance.saveToken;
+        _saveTokenOverride = saveToken,
+        _saveClientNameOverride = saveClientName;
+
+  Future<void> _saveToken(String token) =>
+      (_saveTokenOverride ?? AuthService.instance.saveToken)(token);
+
+  Future<void> _saveClientName(String name) =>
+      (_saveClientNameOverride ?? AuthService.instance.saveClientName)(name);
 
   LoginState _state = const LoginState();
 
@@ -59,6 +74,7 @@ class LoginController extends ChangeNotifier {
     switch (result) {
       case Success<AuthSession>(data: final session):
         await _saveToken(session.token);
+        await _saveClientName(session.name);
         _state = _state.copyWith(isLoading: false);
         notifyListeners();
         return true;
