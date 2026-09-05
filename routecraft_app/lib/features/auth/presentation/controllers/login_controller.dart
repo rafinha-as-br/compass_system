@@ -33,7 +33,7 @@ class LoginState {
 
 class LoginController extends ChangeNotifier {
   final LoginUseCase _loginUseCase;
-  final Future<void> Function(String token) _saveToken;
+  final Future<void> Function(String token)? _saveTokenOverride;
 
   LoginController({
     LoginUseCase? loginUseCase,
@@ -44,7 +44,14 @@ class LoginController extends ChangeNotifier {
                 AuthRemoteDataSource(HttpApiClient.instance),
               ),
             ),
-        _saveToken = saveToken ?? AuthService.instance.saveToken;
+        _saveTokenOverride = saveToken;
+
+  // `AuthService.instance` is only touched here, lazily, so constructing a
+  // LoginController without an injected `saveToken` doesn't require
+  // AuthService to already be initialized (e.g. in a widget test that never
+  // reaches a successful login).
+  Future<void> _saveToken(String token) =>
+      (_saveTokenOverride ?? AuthService.instance.saveToken)(token);
 
   LoginState _state = const LoginState();
 

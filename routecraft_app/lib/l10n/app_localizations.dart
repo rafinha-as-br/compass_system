@@ -254,6 +254,24 @@ abstract class AppLocalizations {
   /// **'User Account & Settings'**
   String get accountSettingsNav;
 
+  /// No description provided for @homeNavLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get homeNavLabel;
+
+  /// No description provided for @itineraryNavLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary'**
+  String get itineraryNavLabel;
+
+  /// No description provided for @accountNavLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Account'**
+  String get accountNavLabel;
+
   /// No description provided for @createRouteTitle.
   ///
   /// In en, this message translates to:

@@ -31,6 +31,10 @@
   "visualizeRoutesNav": "Visualizar Rotas e Roteiros",
   "accountSettingsNav": "Conta e Configurações",
 
+  "homeNavLabel": "Início",
+  "itineraryNavLabel": "Roteiro",
+  "accountNavLabel": "Conta",
+
   "createRouteTitle": "Criar uma Rota",
   "tripInfoStep": "Informações da Viagem",
   "tripNameLabel": "Nome da Viagem",

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:routecraft_app/core/mock/mock_repository.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
@@ -28,7 +29,7 @@ class _FollowTravelPageState extends State<FollowTravelPage> {
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(content: Text('Following Travel ID: $travelId')),
       );
-      Navigator.pop(context);
+      context.pop();
     }
   }
 
