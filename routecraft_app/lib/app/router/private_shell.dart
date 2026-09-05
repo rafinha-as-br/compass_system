@@ -3,11 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/app/router/private_shell_scaffold.dart';
 import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
-import 'package:routecraft_app/features/home/presentation/pages/follow_travel_page.dart';
 import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
+import 'package:routecraft_app/features/itinerary_hub/presentation/pages/itinerary_hub_page.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
-import 'package:routecraft_app/features/visualization/presentation/pages/visualization_page.dart';
 
 final privateShellRoute = StatefulShellRoute.indexedStack(
   builder: (context, state, navigationShell) {
@@ -26,7 +25,7 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
           ),
           GoRoute(
             path: AppRoutes.followTravel,
-            builder: _followTravelBuilder,
+            builder: _itineraryHubBuilder,
           ),
         ],
       ),
@@ -36,11 +35,11 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
     StatefulShellBranch(routes: [
       GoRoute(
         path: AppRoutes.itinerary,
-        builder: (context, state) => const VisualizationPage(),
+        builder: (context, state) => const ItineraryHubPage(travel: null),
         routes: [
           GoRoute(
             path: AppRoutes.followTravel,
-            builder: _followTravelBuilder,
+            builder: _itineraryHubBuilder,
           ),
         ],
       ),
@@ -56,7 +55,6 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
   ],
 );
 
-Widget _followTravelBuilder(BuildContext context, GoRouterState state) {
-  final travel = state.extra as Travel?;
-  return FollowTravelPage(travel: travel);
+Widget _itineraryHubBuilder(BuildContext context, GoRouterState state) {
+  return ItineraryHubPage(travel: state.extra as Travel?);
 }

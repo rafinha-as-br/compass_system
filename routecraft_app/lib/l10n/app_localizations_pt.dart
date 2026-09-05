@@ -165,6 +165,74 @@ class AppLocalizationsPt extends AppLocalizations {
   String get routeLabel => 'Rota';
 
   @override
+  String get hubTitle => 'MINHA VIAGEM';
+
+  @override
+  String get hubAwaitingAgentTitle => 'Seu agente está montando seu roteiro';
+
+  @override
+  String get hubWhatYouAskedLabel => 'O QUE VOCÊ PEDIU';
+
+  @override
+  String get hubEditRouteLink => 'editar rota';
+
+  @override
+  String hubInterestsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count interesses',
+      one: '1 interesse',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hubNextStepLabel => 'PRÓXIMA ETAPA';
+
+  @override
+  String hubInDaysCount(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'em $days dias',
+      one: 'em 1 dia',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hubToday => 'hoje';
+
+  @override
+  String get hubViewDetailsLink => 'Ver detalhes';
+
+  @override
+  String get hubStepsLabel => 'ETAPAS';
+
+  @override
+  String get hubNightsLabel => 'NOITES';
+
+  @override
+  String get hubRouteSummaryLabel => 'RESUMO DA ROTA';
+
+  @override
+  String get hubOpenFullItineraryButton => 'Abrir roteiro completo';
+
+  @override
+  String get hubComingSoon => 'Em breve.';
+
+  @override
+  String get hubEmptyTitle => 'Nenhuma viagem selecionada';
+
+  @override
+  String get hubEmptyMessage =>
+      'Selecione uma viagem em Início para ver o roteiro.';
+
+  @override
+  String get hubGoToHomeCta => 'Ir para o Início';
+
+  @override
   String get accountTitle => 'Minha Conta';
 
   @override
