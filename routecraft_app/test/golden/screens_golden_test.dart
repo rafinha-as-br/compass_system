@@ -55,10 +55,26 @@ Widget _routeCreationScreen() => RouteCreationPage(
       controller: RouteCreationController.withState(const RouteCreationState()),
     );
 
+Widget _routeCreationReviewScreen() {
+  final controller = RouteCreationController.withState(
+    const RouteCreationState(currentStep: routeCreationStepCount),
+  );
+  controller.tripNameController.text = 'Litoral Norte com a família';
+  controller.startLocationController.text = 'São Paulo';
+  controller.destinationController.text = 'Paraty, RJ';
+  controller.setStartDate(DateTime(2026, 10, 12));
+  controller.setEndDate(DateTime(2026, 10, 19));
+  controller.addInterestPoint('Trilha', '');
+  controller.addInterestPoint('Gastronomia', '');
+  controller.addInterestPoint('Centro histórico', '');
+  return RouteCreationPage(controller: controller);
+}
+
 final _screens = <String, Widget Function()>{
   'login': _loginScreen,
   'visualization': _visualizationScreen,
   'route_creation': _routeCreationScreen,
+  'route_creation_review': _routeCreationReviewScreen,
 };
 
 // ponytail: TestWidgetsFlutterBinding bloqueia todo HttpClient real durante
