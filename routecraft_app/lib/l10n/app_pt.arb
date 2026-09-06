@@ -36,6 +36,12 @@
   "createRouteNav": "Criar uma Rota",
   "visualizeRoutesNav": "Visualizar Rotas e Roteiros",
   "accountSettingsNav": "Conta e Configurações",
+  "homeGreeting": "Olá, {name}",
+  "homeSectionInProgress": "Em andamento",
+  "homeSectionUpcoming": "Próximas",
+  "homeSectionCompleted": "Concluídas",
+  "homeEmptyMessage": "Descreva a viagem que você quer fazer e seu agente monta o roteiro.",
+  "homeEmptyCta": "Criar minha primeira rota",
 
   "homeNavLabel": "Início",
   "itineraryNavLabel": "Roteiro",

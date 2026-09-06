@@ -36,6 +36,17 @@
   "createRouteNav": "Create a Route",
   "visualizeRoutesNav": "Visualize Routes & Itineraries",
   "accountSettingsNav": "User Account & Settings",
+  "homeGreeting": "Hello, {name}",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "homeSectionInProgress": "In progress",
+  "homeSectionUpcoming": "Upcoming",
+  "homeSectionCompleted": "Completed",
+  "homeEmptyMessage": "Describe the trip you want to take and your agent will build the itinerary.",
+  "homeEmptyCta": "Create my first route",
 
   "homeNavLabel": "Home",
   "itineraryNavLabel": "Itinerary",
