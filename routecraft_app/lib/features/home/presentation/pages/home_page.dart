@@ -6,6 +6,7 @@ import 'package:routecraft_app/features/home/presentation/controllers/home_contr
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/widgets/empty_state_view.dart';
+import 'package:routecraft_app/shared/widgets/skeleton_block.dart';
 import 'package:routecraft_app/shared/widgets/travel_card.dart';
 import 'package:routecraft_app/shared/widgets/travel_status_chip.dart';
 
@@ -36,18 +37,20 @@ class _HomeView extends StatelessWidget {
 
     return Scaffold(
       body: state.isLoading
-          ? const Center(child: CircularProgressIndicator())
-          : SafeArea(
-              child: Column(
-                children: [
-                  _HomeHeader(clientName: state.clientName),
-                  Expanded(
-                    child: state.isEmpty ? const _EmptyHome() : _TravelSectionsList(state: state),
+          ? const _HomeSkeleton()
+          : state.isError
+              ? _HomeError(onRetry: () => context.read<HomeController>().retry())
+              : SafeArea(
+                  child: Column(
+                    children: [
+                      _HomeHeader(clientName: state.clientName),
+                      Expanded(
+                        child: state.isEmpty ? const _EmptyHome() : _TravelSectionsList(state: state),
+                      ),
+                    ],
                   ),
-                ],
-              ),
-            ),
-      floatingActionButton: (state.isLoading || state.isEmpty)
+                ),
+      floatingActionButton: (state.isLoading || state.isError || state.isEmpty)
           ? null
           : FloatingActionButton.extended(
               onPressed: () => context.push(AppRoutes.homeCreateRoute),
@@ -179,6 +182,68 @@ class _TravelSection extends StatelessWidget {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+/// Sketches the shape of the header + travel cards while they load — no
+/// spinner, per DESIGN.md's loading pattern (wireframe 2d).
+class _HomeSkeleton extends StatelessWidget {
+  const _HomeSkeleton();
+
+  @override
+  Widget build(BuildContext context) {
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                const SkeletonBlock(height: 48, width: 48, borderRadius: BorderRadius.all(Radius.circular(24))),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: const [
+                      SkeletonBlock(height: 14, width: 100),
+                      SizedBox(height: 8),
+                      SkeletonBlock(height: 20, width: 160),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 24),
+            for (var i = 0; i < 3; i++) ...[
+              const SkeletonBlock(height: 88),
+              const SizedBox(height: 8),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class _HomeError extends StatelessWidget {
+  const _HomeError({required this.onRetry});
+
+  final VoidCallback onRetry;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return SafeArea(
+      child: EmptyStateView(
+        icon: Icons.error_outline,
+        title: l10n.networkErrorTitle,
+        message: l10n.networkErrorMessage,
+        ctaLabel: l10n.networkErrorRetryCta,
+        onCtaPressed: onRetry,
       ),
     );
   }

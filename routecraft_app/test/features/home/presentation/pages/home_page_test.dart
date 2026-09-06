@@ -1,11 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/home/presentation/controllers/home_controller.dart';
 import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
+import 'package:routecraft_app/features/travels/domain/repositories/travel_repository.dart';
+import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
+import 'package:routecraft_app/shared/widgets/skeleton_block.dart';
+
+/// Fails once, then succeeds — models a transient network error recovering
+/// after the user taps retry.
+class _FakeSuccessAfterFailureRepository implements TravelRepository {
+  var _calls = 0;
+
+  @override
+  Future<Result<List<Travel>>> getTravelsForClient(String clientName) async {
+    _calls++;
+    if (_calls == 1) return const Result.failure('Erro de rede');
+    return Result.success([_travel('Litoral Norte', TravelStatus.travelStarted)]);
+  }
+
+  @override
+  Future<Result<Travel>> getTravel(String id) async => throw UnimplementedError();
+
+  @override
+  Future<Result<Travel>> createTravel(Travel travel) async => throw UnimplementedError();
+}
 
 Widget _wrap(HomeController controller, {Locale? locale}) {
   return MaterialApp(
@@ -40,10 +63,40 @@ Travel _travel(String name, TravelStatus status, {DateTime? startDate}) => Trave
     );
 
 void main() {
-  testWidgets('shows a loading spinner while fetching', (tester) async {
+  testWidgets('shows a skeleton, not a spinner, while fetching', (tester) async {
     await tester.pumpWidget(_wrap(HomeController.withState(const HomeState())));
 
-    expect(find.byType(CircularProgressIndicator), findsOneWidget);
+    expect(find.byType(SkeletonBlock), findsWidgets);
+    expect(find.byType(CircularProgressIndicator), findsNothing);
+  });
+
+  testWidgets('shows the network-error state with a retry button, and no floating action button', (tester) async {
+    await tester.pumpWidget(_wrap(HomeController.withState(const HomeState(isLoading: false, isError: true))));
+    await tester.pump();
+
+    expect(find.text("Couldn't load this"), findsOneWidget);
+    expect(find.text('Check your connection and try again.'), findsOneWidget);
+    expect(find.text('Try again'), findsOneWidget);
+    expect(find.byType(FloatingActionButton), findsNothing);
+  });
+
+  testWidgets('tapping "Try again" retries the fetch and shows the travels on success', (tester) async {
+    final repository = _FakeSuccessAfterFailureRepository();
+    final controller = HomeController(
+      travelUseCases: TravelUseCases(repository),
+      getClientName: () async => 'Rafaela Souza',
+    );
+
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pump();
+
+    expect(find.text("Couldn't load this"), findsOneWidget);
+
+    await tester.tap(find.text('Try again'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(find.text('Litoral Norte'), findsOneWidget);
   });
 
   testWidgets('shows the empty state with no floating action button when there are no travels', (tester) async {

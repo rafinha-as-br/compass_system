@@ -96,7 +96,7 @@ void main() {
       expect(controller.state.isEmpty, isTrue);
     });
 
-    test('degrades to an empty, non-loading state on a repository failure', () async {
+    test('surfaces a retry-worthy error state on a repository failure, instead of hiding it as "no travels"', () async {
       final repository = _FakeTravelRepository()..nextResult = const Result.failure('Erro de rede');
       final controller = HomeController(
         travelUseCases: TravelUseCases(repository),
@@ -106,10 +106,10 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       expect(controller.state.isLoading, isFalse);
-      expect(controller.state.isEmpty, isTrue);
+      expect(controller.state.isError, isTrue);
     });
 
-    test('degrades to an empty, non-loading state when reading the client name throws', () async {
+    test('surfaces a retry-worthy error state when reading the client name throws', () async {
       final repository = _FakeTravelRepository();
       final controller = HomeController(
         travelUseCases: TravelUseCases(repository),
@@ -119,7 +119,24 @@ void main() {
       await Future<void>.delayed(Duration.zero);
 
       expect(controller.state.isLoading, isFalse);
-      expect(controller.state.isEmpty, isTrue);
+      expect(controller.state.isError, isTrue);
+    });
+
+    test('retry() re-runs the fetch and clears the error state on success', () async {
+      final repository = _FakeTravelRepository()..nextResult = const Result.failure('Erro de rede');
+      final controller = HomeController(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+      );
+
+      await Future<void>.delayed(Duration.zero);
+      expect(controller.state.isError, isTrue);
+
+      repository.nextResult = Result.success([_travel('Chapada', TravelStatus.travelFinished)]);
+      await controller.retry();
+
+      expect(controller.state.isError, isFalse);
+      expect(controller.state.completed.map((t) => t.travelName), ['Chapada']);
     });
   });
 }

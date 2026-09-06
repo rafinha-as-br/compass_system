@@ -43,6 +43,10 @@
   "homeEmptyMessage": "Descreva a viagem que você quer fazer e seu agente monta o roteiro.",
   "homeEmptyCta": "Criar minha primeira rota",
 
+  "networkErrorTitle": "Não foi possível carregar",
+  "networkErrorMessage": "Verifique sua conexão e tente novamente.",
+  "networkErrorRetryCta": "Tentar de novo",
+
   "homeNavLabel": "Início",
   "itineraryNavLabel": "Roteiro",
   "accountNavLabel": "Conta",

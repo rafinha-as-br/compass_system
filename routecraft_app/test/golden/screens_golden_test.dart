@@ -197,9 +197,16 @@ Widget _homeScreen() => HomePage(
       ),
     );
 
+Widget _homeSkeletonScreen() => HomePage(controller: HomeController.withState(const HomeState()));
+
+Widget _homeErrorScreen() =>
+    HomePage(controller: HomeController.withState(const HomeState(isLoading: false, isError: true)));
+
 final _screens = <String, Widget Function()>{
   'login': _loginScreen,
   'home': _homeScreen,
+  'home_skeleton': _homeSkeletonScreen,
+  'home_error': _homeErrorScreen,
   'hub_route_created': _hubRouteCreatedScreen,
   'hub_itinerary_created': _hubItineraryCreatedScreen,
   'timeline_with_steps': _timelineWithStepsScreen,

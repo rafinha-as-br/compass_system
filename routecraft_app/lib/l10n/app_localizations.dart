@@ -326,6 +326,24 @@ abstract class AppLocalizations {
   /// **'Create my first route'**
   String get homeEmptyCta;
 
+  /// No description provided for @networkErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Couldn\'t load this'**
+  String get networkErrorTitle;
+
+  /// No description provided for @networkErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Check your connection and try again.'**
+  String get networkErrorMessage;
+
+  /// No description provided for @networkErrorRetryCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get networkErrorRetryCta;
+
   /// No description provided for @homeNavLabel.
   ///
   /// In en, this message translates to:

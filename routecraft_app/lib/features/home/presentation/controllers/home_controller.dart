@@ -13,6 +13,7 @@ import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.
 /// then completed. Each group is sorted by the route's start date.
 class HomeState {
   final bool isLoading;
+  final bool isError;
   final String? clientName;
   final List<Travel> inProgress;
   final List<Travel> upcoming;
@@ -20,6 +21,7 @@ class HomeState {
 
   const HomeState({
     this.isLoading = true,
+    this.isError = false,
     this.clientName,
     this.inProgress = const [],
     this.upcoming = const [],
@@ -93,16 +95,20 @@ class HomeController extends ChangeNotifier {
           // or fails because of.
           unawaited(_checkForNotifications(travels));
         case Failure<List<Travel>>():
-          _state = HomeState(isLoading: false, clientName: clientName);
+          _state = HomeState(isLoading: false, isError: true, clientName: clientName);
       }
     } catch (error) {
-      // Degrades to the empty state rather than crashing Início — mirrors
-      // how a repository failure above is already treated as "no travels".
+      // A network/storage failure is a distinct, retry-worthy state — it no
+      // longer degrades silently to "no travels" (that used to hide real
+      // outages behind an empty-state screen).
       debugPrint('HomeController: failed to load travels: $error');
-      _state = const HomeState(isLoading: false);
+      _state = const HomeState(isLoading: false, isError: true);
     }
     notifyListeners();
   }
+
+  /// Re-runs the fetch — the retry action on the network-error state.
+  Future<void> retry() => _fetchData();
 
   Future<void> _checkForNotifications(List<Travel> travels) async {
     try {

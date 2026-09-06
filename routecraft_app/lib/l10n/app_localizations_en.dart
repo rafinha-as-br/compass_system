@@ -132,6 +132,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeEmptyCta => 'Create my first route';
 
   @override
+  String get networkErrorTitle => 'Couldn\'t load this';
+
+  @override
+  String get networkErrorMessage => 'Check your connection and try again.';
+
+  @override
+  String get networkErrorRetryCta => 'Try again';
+
+  @override
   String get homeNavLabel => 'Home';
 
   @override

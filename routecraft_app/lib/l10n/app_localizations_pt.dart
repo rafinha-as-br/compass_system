@@ -131,6 +131,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeEmptyCta => 'Criar minha primeira rota';
 
   @override
+  String get networkErrorTitle => 'Não foi possível carregar';
+
+  @override
+  String get networkErrorMessage => 'Verifique sua conexão e tente novamente.';
+
+  @override
+  String get networkErrorRetryCta => 'Tentar de novo';
+
+  @override
   String get homeNavLabel => 'Início';
 
   @override

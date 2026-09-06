@@ -48,6 +48,10 @@
   "homeEmptyMessage": "Describe the trip you want to take and your agent will build the itinerary.",
   "homeEmptyCta": "Create my first route",
 
+  "networkErrorTitle": "Couldn't load this",
+  "networkErrorMessage": "Check your connection and try again.",
+  "networkErrorRetryCta": "Try again",
+
   "homeNavLabel": "Home",
   "itineraryNavLabel": "Itinerary",
   "accountNavLabel": "Account",
