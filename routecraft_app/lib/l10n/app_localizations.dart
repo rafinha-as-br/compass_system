@@ -704,6 +704,48 @@ abstract class AppLocalizations {
   /// **'Go to Home'**
   String get hubGoToHomeCta;
 
+  /// No description provided for @timelineDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {dayNumber}'**
+  String timelineDayLabel(int dayNumber);
+
+  /// No description provided for @timelineNoStepsForDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No steps this day'**
+  String get timelineNoStepsForDay;
+
+  /// No description provided for @timelineFreeTimeUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Free time · no step until {until}'**
+  String timelineFreeTimeUntil(String until);
+
+  /// No description provided for @timelineTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'tomorrow'**
+  String get timelineTomorrow;
+
+  /// No description provided for @timelinePreviousDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous day'**
+  String get timelinePreviousDay;
+
+  /// No description provided for @timelineNextDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Next day'**
+  String get timelineNextDay;
+
+  /// No description provided for @timelineRentalCarLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental car'**
+  String get timelineRentalCarLabel;
+
   /// No description provided for @accountTitle.
   ///
   /// In en, this message translates to:

@@ -111,6 +111,14 @@
   "hubEmptyMessage": "Selecione uma viagem em Início para ver o roteiro.",
   "hubGoToHomeCta": "Ir para o Início",
 
+  "timelineDayLabel": "Dia {dayNumber}",
+  "timelineNoStepsForDay": "Nenhuma etapa neste dia",
+  "timelineFreeTimeUntil": "Tempo livre · sem etapa até {until}",
+  "timelineTomorrow": "amanhã",
+  "timelinePreviousDay": "Dia anterior",
+  "timelineNextDay": "Dia seguinte",
+  "timelineRentalCarLabel": "Carro alugado",
+
   "accountTitle": "Minha Conta",
   "logoutButton": "SAIR",
   "notAuthenticated": "Não autenticado.",

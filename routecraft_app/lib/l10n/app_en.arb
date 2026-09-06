@@ -152,6 +152,24 @@
   "hubEmptyMessage": "Select a trip from Home to see its itinerary.",
   "hubGoToHomeCta": "Go to Home",
 
+  "timelineDayLabel": "Day {dayNumber}",
+  "@timelineDayLabel": {
+    "placeholders": {
+      "dayNumber": { "type": "int" }
+    }
+  },
+  "timelineNoStepsForDay": "No steps this day",
+  "timelineFreeTimeUntil": "Free time · no step until {until}",
+  "@timelineFreeTimeUntil": {
+    "placeholders": {
+      "until": { "type": "String" }
+    }
+  },
+  "timelineTomorrow": "tomorrow",
+  "timelinePreviousDay": "Previous day",
+  "timelineNextDay": "Next day",
+  "timelineRentalCarLabel": "Rental car",
+
   "accountTitle": "My Account",
   "logoutButton": "LOGOUT",
   "notAuthenticated": "Not authenticated.",
