@@ -752,6 +752,144 @@ abstract class AppLocalizations {
   /// **'Could not open this trip.'**
   String get notificationOpenTripError;
 
+  /// No description provided for @editRouteTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit my route'**
+  String get editRouteTitle;
+
+  /// No description provided for @editRouteSaveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'SAVE'**
+  String get editRouteSaveButton;
+
+  /// No description provided for @editRoutePublishedWarning.
+  ///
+  /// In en, this message translates to:
+  /// **'Your itinerary has already been built. Changing the route won\'t change its steps — your agent will be notified to review it.'**
+  String get editRoutePublishedWarning;
+
+  /// No description provided for @editRouteChangedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'changed'**
+  String get editRouteChangedLabel;
+
+  /// No description provided for @editRouteUndoLink.
+  ///
+  /// In en, this message translates to:
+  /// **'undo'**
+  String get editRouteUndoLink;
+
+  /// No description provided for @editRouteRemoveInterestTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get editRouteRemoveInterestTooltip;
+
+  /// No description provided for @editRoutePendingChangesCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 PENDING CHANGE} other{{count} PENDING CHANGES}}'**
+  String editRoutePendingChangesCount(int count);
+
+  /// No description provided for @editRouteDiffDeparture.
+  ///
+  /// In en, this message translates to:
+  /// **'departure {oldDate} → {newDate}'**
+  String editRouteDiffDeparture(String oldDate, String newDate);
+
+  /// No description provided for @editRouteDiffReturn.
+  ///
+  /// In en, this message translates to:
+  /// **'return {oldDate} → {newDate}'**
+  String editRouteDiffReturn(String oldDate, String newDate);
+
+  /// No description provided for @editRouteDiffOrigin.
+  ///
+  /// In en, this message translates to:
+  /// **'origin {oldValue} → {newValue}'**
+  String editRouteDiffOrigin(String oldValue, String newValue);
+
+  /// No description provided for @editRouteDiffDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'destination {oldValue} → {newValue}'**
+  String editRouteDiffDestination(String oldValue, String newValue);
+
+  /// No description provided for @editRouteDiffInterestsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 interest added} other{{count} interests added}}'**
+  String editRouteDiffInterestsAdded(int count);
+
+  /// No description provided for @editRouteDiffInterestsRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 interest removed} other{{count} interests removed}}'**
+  String editRouteDiffInterestsRemoved(int count);
+
+  /// No description provided for @editRouteSubmitCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Send changes'**
+  String get editRouteSubmitCta;
+
+  /// No description provided for @editRouteSubmitError.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update route: {error}'**
+  String editRouteSubmitError(String error);
+
+  /// No description provided for @editRouteUpdateSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Route updated successfully!'**
+  String get editRouteUpdateSuccess;
+
+  /// No description provided for @timelineDayLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {dayNumber}'**
+  String timelineDayLabel(int dayNumber);
+
+  /// No description provided for @timelineNoStepsForDay.
+  ///
+  /// In en, this message translates to:
+  /// **'No steps this day'**
+  String get timelineNoStepsForDay;
+
+  /// No description provided for @timelineFreeTimeUntil.
+  ///
+  /// In en, this message translates to:
+  /// **'Free time · no step until {until}'**
+  String timelineFreeTimeUntil(String until);
+
+  /// No description provided for @timelineTomorrow.
+  ///
+  /// In en, this message translates to:
+  /// **'tomorrow'**
+  String get timelineTomorrow;
+
+  /// No description provided for @timelinePreviousDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Previous day'**
+  String get timelinePreviousDay;
+
+  /// No description provided for @timelineNextDay.
+  ///
+  /// In en, this message translates to:
+  /// **'Next day'**
+  String get timelineNextDay;
+
+  /// No description provided for @timelineRentalCarLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental car'**
+  String get timelineRentalCarLabel;
+
   /// No description provided for @accountTitle.
   ///
   /// In en, this message translates to:

@@ -3,10 +3,10 @@ import 'package:go_router/go_router.dart';
 import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary_step.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
-import 'package:routecraft_app/features/travels/domain/entities/transport.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/utils/date_formatting.dart';
+import 'package:routecraft_app/shared/utils/step_icon_mapping.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
 import 'package:routecraft_app/shared/widgets/empty_state_view.dart';
 import 'package:routecraft_app/shared/widgets/step_icon.dart';
@@ -124,7 +124,7 @@ class _RouteCreatedBody extends StatelessWidget {
           label: l10n.hubWhatYouAskedLabel,
           routePlan: travel.routePlan,
           trailing: TextButton(
-            onPressed: () => _showComingSoon(context),
+            onPressed: () => _openEditRoute(context, travel),
             child: Text(l10n.hubEditRouteLink),
           ),
         ),
@@ -162,12 +162,19 @@ class _ItineraryCreatedBody extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 24),
-        _RouteSummaryBlock(label: l10n.hubRouteSummaryLabel, routePlan: travel.routePlan),
+        _RouteSummaryBlock(
+          label: l10n.hubRouteSummaryLabel,
+          routePlan: travel.routePlan,
+          trailing: TextButton(
+            onPressed: () => _openEditRoute(context, travel),
+            child: Text(l10n.hubEditRouteLink),
+          ),
+        ),
         const SizedBox(height: 24),
         SizedBox(
           height: 50,
           child: AppButton(
-            onPressed: () => _showComingSoon(context),
+            onPressed: () => _openFullItinerary(context, travel),
             child: Text(l10n.hubOpenFullItineraryButton),
           ),
         ),
@@ -203,7 +210,7 @@ class _NextStepCard extends StatelessWidget {
             const SizedBox(height: 12),
             Row(
               children: [
-                StepIcon(type: _stepIconType(step)),
+                StepIcon(type: stepIconType(step)),
                 const SizedBox(width: 12),
                 Expanded(
                   child: Column(
@@ -315,23 +322,21 @@ void _showComingSoon(BuildContext context) {
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.hubComingSoon)));
 }
 
+void _openEditRoute(BuildContext context, Travel travel) {
+  final currentLocation = GoRouterState.of(context).matchedLocation;
+  context.push('$currentLocation/${AppRoutes.editRoute}', extra: travel);
+}
+
+void _openFullItinerary(BuildContext context, Travel travel) {
+  final currentLocation = GoRouterState.of(context).matchedLocation;
+  context.push('$currentLocation/${AppRoutes.itineraryTimeline}', extra: travel);
+}
+
 TravelStatusChipVariant _chipVariant(TravelStatus status) => switch (status) {
       TravelStatus.routeCreated => TravelStatusChipVariant.routeCreated,
       TravelStatus.itineraryCreated => TravelStatusChipVariant.itineraryCreated,
       TravelStatus.travelStarted => TravelStatusChipVariant.travelStarted,
       TravelStatus.travelFinished => TravelStatusChipVariant.travelFinished,
-    };
-
-StepIconType _stepIconType(ItineraryStep step) => switch (step) {
-      Stop() => StepIconType.stop,
-      Hosting() => StepIconType.hosting,
-      TravelSegment(:final transport) => switch (transport) {
-          Airplane() => StepIconType.airplane,
-          Bus() => StepIconType.bus,
-          RentalCar() => StepIconType.rentalCar,
-          _ => StepIconType.boundary,
-        },
-      _ => StepIconType.boundary,
     };
 
 /// The step the client should see next: the earliest unfinished step, or

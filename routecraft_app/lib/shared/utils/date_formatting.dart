@@ -31,6 +31,21 @@ String formatDateRange(String languageCode, DateTime start, DateTime end) {
 String formatDate(String languageCode, DateTime date) =>
     '${date.day} ${monthAbbreviation(languageCode, date.month)} ${date.year}';
 
-/// A time of day as "HH:mm" — e.g. "09:00". Always 24h, locale-independent.
+const _weekdayNamesEn = [
+  'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday', //
+];
+const _weekdayNamesPt = [
+  'segunda-feira', 'terça-feira', 'quarta-feira', 'quinta-feira', 'sexta-feira', 'sábado', 'domingo', //
+];
+
+/// Full weekday name for the given locale (`DateTime.weekday`: 1=Monday..
+/// 7=Sunday) — same EN/PT fallback pattern as [monthAbbreviation].
+String weekdayName(String languageCode, int weekday) {
+  final names = languageCode == 'pt' ? _weekdayNamesPt : _weekdayNamesEn;
+  return names[weekday - 1];
+}
+
+/// A time of day as "HH:mm" — e.g. "09:00". Always 24h, locale-independent
+/// (matches how times already appear across the RouteCraft wireframes).
 String formatTime(DateTime time) =>
     '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';

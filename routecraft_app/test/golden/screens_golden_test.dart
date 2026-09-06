@@ -17,6 +17,7 @@ import 'package:routecraft_app/features/auth/presentation/pages/login_page.dart'
 import 'package:routecraft_app/features/home/presentation/controllers/home_controller.dart';
 import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
 import 'package:routecraft_app/features/itinerary_hub/presentation/pages/itinerary_hub_page.dart';
+import 'package:routecraft_app/features/itinerary_timeline/presentation/pages/itinerary_timeline_page.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
@@ -111,6 +112,29 @@ Widget _hubRouteCreatedScreen() => ItineraryHubPage(
 
 Widget _hubItineraryCreatedScreen() => ItineraryHubPage(travel: _sampleTravel());
 
+Widget _timelineWithStepsScreen() => ItineraryTimelinePage(travel: _sampleTravel());
+
+Widget _timelineEmptyDayScreen() => ItineraryTimelinePage(
+      travel: Travel(
+        domainId: 't3',
+        backEndId: 't3',
+        clientName: 'Rafaela Souza',
+        travelName: 'Trip to Rome',
+        travelStatus: TravelStatus.itineraryCreated,
+        participantsList: const [],
+        routePlan: RoutePlan(
+          domainId: 'r3',
+          backEndId: 'r3',
+          startDate: DateTime(2026, 1, 1),
+          endDate: DateTime(2026, 1, 3),
+          startLocation: 'São Paulo',
+          destination: 'Rome',
+          interestsList: const [],
+        ),
+        itinerary: Itinerary(domainId: 'it3', backEndId: 'it3', agentName: 'Ana', itinerarySteps: const []),
+      ),
+    );
+
 Widget _routeCreationScreen() => RouteCreationPage(
       controller: RouteCreationController.withState(const RouteCreationState()),
     );
@@ -178,6 +202,8 @@ final _screens = <String, Widget Function()>{
   'home': _homeScreen,
   'hub_route_created': _hubRouteCreatedScreen,
   'hub_itinerary_created': _hubItineraryCreatedScreen,
+  'timeline_with_steps': _timelineWithStepsScreen,
+  'timeline_empty_day': _timelineEmptyDayScreen,
   'route_creation': _routeCreationScreen,
   'route_creation_review': _routeCreationReviewScreen,
   'account': _accountScreen,
