@@ -35,17 +35,19 @@ class LoginController extends ChangeNotifier {
   final LoginUseCase _loginUseCase;
   final Future<void> Function(String token)? _saveTokenOverride;
   final Future<void> Function(String name)? _saveClientNameOverride;
+  final Future<void> Function(String email)? _saveClientEmailOverride;
 
-  /// [saveToken]/[saveClientName] are injectable for widget tests, without
-  /// depending on the real network/singleton wiring. `AuthService.instance`
-  /// is only touched when an override isn't given, so constructing this
-  /// with just one override doesn't require `AuthService` to already be
-  /// initialized. In production, the call site (`LoginController()`) is
-  /// unaffected — the default wiring is used.
+  /// [saveToken]/[saveClientName]/[saveClientEmail] are injectable for
+  /// widget tests, without depending on the real network/singleton wiring.
+  /// `AuthService.instance` is only touched when an override isn't given, so
+  /// constructing this with just one override doesn't require
+  /// `AuthService` to already be initialized. In production, the call site
+  /// (`LoginController()`) is unaffected — the default wiring is used.
   LoginController({
     LoginUseCase? loginUseCase,
     Future<void> Function(String token)? saveToken,
     Future<void> Function(String name)? saveClientName,
+    Future<void> Function(String email)? saveClientEmail,
   })  : _loginUseCase = loginUseCase ??
             LoginUseCase(
               AuthRepositoryImpl(
@@ -53,13 +55,17 @@ class LoginController extends ChangeNotifier {
               ),
             ),
         _saveTokenOverride = saveToken,
-        _saveClientNameOverride = saveClientName;
+        _saveClientNameOverride = saveClientName,
+        _saveClientEmailOverride = saveClientEmail;
 
   Future<void> _saveToken(String token) =>
       (_saveTokenOverride ?? AuthService.instance.saveToken)(token);
 
   Future<void> _saveClientName(String name) =>
       (_saveClientNameOverride ?? AuthService.instance.saveClientName)(name);
+
+  Future<void> _saveClientEmail(String email) =>
+      (_saveClientEmailOverride ?? AuthService.instance.saveClientEmail)(email);
 
   LoginState _state = const LoginState();
 
@@ -75,6 +81,7 @@ class LoginController extends ChangeNotifier {
       case Success<AuthSession>(data: final session):
         await _saveToken(session.token);
         await _saveClientName(session.name);
+        await _saveClientEmail(session.email);
         _state = _state.copyWith(isLoading: false);
         notifyListeners();
         return true;

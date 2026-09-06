@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/controllers/settings_controller.dart';
 import 'package:routecraft_app/core/entities/result.dart';
+import 'package:routecraft_app/features/account/presentation/controllers/account_controller.dart';
+import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary_step.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
@@ -111,6 +115,20 @@ Widget _routeCreationScreen() => RouteCreationPage(
       controller: RouteCreationController.withState(const RouteCreationState()),
     );
 
+Widget _accountScreen() => ChangeNotifierProvider<SettingsController>(
+      create: (_) => SettingsController(),
+      child: AccountPage(
+        controller: AccountController.withState(
+          const AccountState(
+            isLoading: false,
+            clientName: 'Rafaela Souza',
+            clientEmail: 'rafaela@email.com',
+            agentName: 'Marcos Cardoso',
+          ),
+        ),
+      ),
+    );
+
 Widget _routeCreationReviewScreen() {
   final controller = RouteCreationController.withState(
     const RouteCreationState(currentStep: routeCreationStepCount),
@@ -162,6 +180,7 @@ final _screens = <String, Widget Function()>{
   'hub_itinerary_created': _hubItineraryCreatedScreen,
   'route_creation': _routeCreationScreen,
   'route_creation_review': _routeCreationReviewScreen,
+  'account': _accountScreen,
 };
 
 // ponytail: TestWidgetsFlutterBinding bloqueia todo HttpClient real durante

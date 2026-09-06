@@ -710,30 +710,6 @@ abstract class AppLocalizations {
   /// **'My Account'**
   String get accountTitle;
 
-  /// No description provided for @nameLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Name'**
-  String get nameLabel;
-
-  /// No description provided for @emailLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Email'**
-  String get emailLabel;
-
-  /// No description provided for @phoneLabel.
-  ///
-  /// In en, this message translates to:
-  /// **'Phone'**
-  String get phoneLabel;
-
-  /// No description provided for @saveChanges.
-  ///
-  /// In en, this message translates to:
-  /// **'SAVE CHANGES'**
-  String get saveChanges;
-
   /// No description provided for @logoutButton.
   ///
   /// In en, this message translates to:
@@ -745,6 +721,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Not authenticated.'**
   String get notAuthenticated;
+
+  /// No description provided for @accountAgentBlockLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'MY AGENT'**
+  String get accountAgentBlockLabel;
+
+  /// No description provided for @accountPersonalDataMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal data'**
+  String get accountPersonalDataMenu;
+
+  /// No description provided for @accountNotificationsMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get accountNotificationsMenu;
+
+  /// No description provided for @accountHelpMenu.
+  ///
+  /// In en, this message translates to:
+  /// **'Help'**
+  String get accountHelpMenu;
+
+  /// No description provided for @accountDarkModeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Dark Mode'**
+  String get accountDarkModeLabel;
+
+  /// No description provided for @accountLanguageLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Language ({code})'**
+  String accountLanguageLabel(String code);
+
+  /// No description provided for @comingSoonMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon.'**
+  String get comingSoonMessage;
 
   /// No description provided for @travelStatusRouteCreated.
   ///

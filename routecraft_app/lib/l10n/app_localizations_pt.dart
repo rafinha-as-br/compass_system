@@ -351,22 +351,33 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountTitle => 'Minha Conta';
 
   @override
-  String get nameLabel => 'Nome';
-
-  @override
-  String get emailLabel => 'E-mail';
-
-  @override
-  String get phoneLabel => 'Telefone';
-
-  @override
-  String get saveChanges => 'SALVAR ALTERAÇÕES';
-
-  @override
   String get logoutButton => 'SAIR';
 
   @override
   String get notAuthenticated => 'Não autenticado.';
+
+  @override
+  String get accountAgentBlockLabel => 'MEU AGENTE';
+
+  @override
+  String get accountPersonalDataMenu => 'Dados pessoais';
+
+  @override
+  String get accountNotificationsMenu => 'Notificações';
+
+  @override
+  String get accountHelpMenu => 'Ajuda';
+
+  @override
+  String get accountDarkModeLabel => 'Modo escuro';
+
+  @override
+  String accountLanguageLabel(String code) {
+    return 'Idioma ($code)';
+  }
+
+  @override
+  String get comingSoonMessage => 'Em breve.';
 
   @override
   String get travelStatusRouteCreated => 'Aguardando agente';
