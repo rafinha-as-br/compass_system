@@ -15,6 +15,6 @@ appId: com.example.routecraft_app
 - eraseText
 - inputText: "senha123"
 - tapOn: "LOGIN"
-- assertNotVisible: "RouteCraft Login"
-- assertVisible: "RouteCraft Home"
+- assertNotVisible: "Welcome back"
+- assertVisible: "My Travels"
 - takeScreenshot: login_retry_after_error
