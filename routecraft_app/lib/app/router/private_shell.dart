@@ -6,6 +6,7 @@ import 'package:routecraft_app/features/account/presentation/pages/account_page.
 import 'package:routecraft_app/features/edit_route/presentation/pages/edit_route_page.dart';
 import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
 import 'package:routecraft_app/features/itinerary_hub/presentation/pages/itinerary_hub_page.dart';
+import 'package:routecraft_app/features/itinerary_timeline/presentation/pages/itinerary_timeline_page.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 
@@ -32,6 +33,10 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
                 path: AppRoutes.editRoute,
                 builder: _editRouteBuilder,
               ),
+              GoRoute(
+                path: AppRoutes.itineraryTimeline,
+                builder: _itineraryTimelineBuilder,
+              ),
             ],
           ),
         ],
@@ -51,6 +56,10 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
               GoRoute(
                 path: AppRoutes.editRoute,
                 builder: _editRouteBuilder,
+              ),
+              GoRoute(
+                path: AppRoutes.itineraryTimeline,
+                builder: _itineraryTimelineBuilder,
               ),
             ],
           ),
@@ -74,4 +83,8 @@ Widget _itineraryHubBuilder(BuildContext context, GoRouterState state) {
 
 Widget _editRouteBuilder(BuildContext context, GoRouterState state) {
   return EditRoutePage(travel: state.extra as Travel);
+}
+
+Widget _itineraryTimelineBuilder(BuildContext context, GoRouterState state) {
+  return ItineraryTimelinePage(travel: state.extra as Travel?);
 }

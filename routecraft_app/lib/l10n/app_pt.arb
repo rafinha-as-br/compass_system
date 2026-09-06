@@ -128,6 +128,14 @@
   "editRouteSubmitError": "Falha ao atualizar rota: {error}",
   "editRouteUpdateSuccess": "Rota atualizada com sucesso!",
 
+  "timelineDayLabel": "Dia {dayNumber}",
+  "timelineNoStepsForDay": "Nenhuma etapa neste dia",
+  "timelineFreeTimeUntil": "Tempo livre · sem etapa até {until}",
+  "timelineTomorrow": "amanhã",
+  "timelinePreviousDay": "Dia anterior",
+  "timelineNextDay": "Dia seguinte",
+  "timelineRentalCarLabel": "Carro alugado",
+
   "accountTitle": "Minha Conta",
   "logoutButton": "SAIR",
   "notAuthenticated": "Não autenticado.",

@@ -431,6 +431,31 @@ class AppLocalizationsPt extends AppLocalizations {
   String get editRouteUpdateSuccess => 'Rota atualizada com sucesso!';
 
   @override
+  String timelineDayLabel(int dayNumber) {
+    return 'Dia $dayNumber';
+  }
+
+  @override
+  String get timelineNoStepsForDay => 'Nenhuma etapa neste dia';
+
+  @override
+  String timelineFreeTimeUntil(String until) {
+    return 'Tempo livre · sem etapa até $until';
+  }
+
+  @override
+  String get timelineTomorrow => 'amanhã';
+
+  @override
+  String get timelinePreviousDay => 'Dia anterior';
+
+  @override
+  String get timelineNextDay => 'Dia seguinte';
+
+  @override
+  String get timelineRentalCarLabel => 'Carro alugado';
+
+  @override
   String get accountTitle => 'Minha Conta';
 
   @override
