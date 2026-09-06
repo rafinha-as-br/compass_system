@@ -602,6 +602,108 @@ abstract class AppLocalizations {
   /// **'Route'**
   String get routeLabel;
 
+  /// No description provided for @hubTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'MY TRIP'**
+  String get hubTitle;
+
+  /// No description provided for @hubAwaitingAgentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Your agent is preparing your itinerary'**
+  String get hubAwaitingAgentTitle;
+
+  /// No description provided for @hubWhatYouAskedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'WHAT YOU ASKED FOR'**
+  String get hubWhatYouAskedLabel;
+
+  /// No description provided for @hubEditRouteLink.
+  ///
+  /// In en, this message translates to:
+  /// **'edit route'**
+  String get hubEditRouteLink;
+
+  /// No description provided for @hubInterestsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 interest} other{{count} interests}}'**
+  String hubInterestsCount(int count);
+
+  /// No description provided for @hubNextStepLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'NEXT STEP'**
+  String get hubNextStepLabel;
+
+  /// No description provided for @hubInDaysCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{days, plural, one{in 1 day} other{in {days} days}}'**
+  String hubInDaysCount(int days);
+
+  /// No description provided for @hubToday.
+  ///
+  /// In en, this message translates to:
+  /// **'today'**
+  String get hubToday;
+
+  /// No description provided for @hubViewDetailsLink.
+  ///
+  /// In en, this message translates to:
+  /// **'View details'**
+  String get hubViewDetailsLink;
+
+  /// No description provided for @hubStepsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'STEPS'**
+  String get hubStepsLabel;
+
+  /// No description provided for @hubNightsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'NIGHTS'**
+  String get hubNightsLabel;
+
+  /// No description provided for @hubRouteSummaryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ROUTE SUMMARY'**
+  String get hubRouteSummaryLabel;
+
+  /// No description provided for @hubOpenFullItineraryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Open full itinerary'**
+  String get hubOpenFullItineraryButton;
+
+  /// No description provided for @hubComingSoon.
+  ///
+  /// In en, this message translates to:
+  /// **'Coming soon.'**
+  String get hubComingSoon;
+
+  /// No description provided for @hubEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No trip selected'**
+  String get hubEmptyTitle;
+
+  /// No description provided for @hubEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Select a trip from Home to see its itinerary.'**
+  String get hubEmptyMessage;
+
+  /// No description provided for @hubGoToHomeCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Go to Home'**
+  String get hubGoToHomeCta;
+
   /// No description provided for @accountTitle.
   ///
   /// In en, this message translates to:

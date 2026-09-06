@@ -124,6 +124,34 @@
   "noItinerary": "No itinerary",
   "routeLabel": "Route",
 
+  "hubTitle": "MY TRIP",
+  "hubAwaitingAgentTitle": "Your agent is preparing your itinerary",
+  "hubWhatYouAskedLabel": "WHAT YOU ASKED FOR",
+  "hubEditRouteLink": "edit route",
+  "hubInterestsCount": "{count, plural, one{1 interest} other{{count} interests}}",
+  "@hubInterestsCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "hubNextStepLabel": "NEXT STEP",
+  "hubInDaysCount": "{days, plural, one{in 1 day} other{in {days} days}}",
+  "@hubInDaysCount": {
+    "placeholders": {
+      "days": { "type": "int" }
+    }
+  },
+  "hubToday": "today",
+  "hubViewDetailsLink": "View details",
+  "hubStepsLabel": "STEPS",
+  "hubNightsLabel": "NIGHTS",
+  "hubRouteSummaryLabel": "ROUTE SUMMARY",
+  "hubOpenFullItineraryButton": "Open full itinerary",
+  "hubComingSoon": "Coming soon.",
+  "hubEmptyTitle": "No trip selected",
+  "hubEmptyMessage": "Select a trip from Home to see its itinerary.",
+  "hubGoToHomeCta": "Go to Home",
+
   "accountTitle": "My Account",
   "nameLabel": "Name",
   "emailLabel": "Email",

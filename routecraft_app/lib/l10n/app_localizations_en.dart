@@ -281,6 +281,73 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routeLabel => 'Route';
 
   @override
+  String get hubTitle => 'MY TRIP';
+
+  @override
+  String get hubAwaitingAgentTitle => 'Your agent is preparing your itinerary';
+
+  @override
+  String get hubWhatYouAskedLabel => 'WHAT YOU ASKED FOR';
+
+  @override
+  String get hubEditRouteLink => 'edit route';
+
+  @override
+  String hubInterestsCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count interests',
+      one: '1 interest',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hubNextStepLabel => 'NEXT STEP';
+
+  @override
+  String hubInDaysCount(int days) {
+    String _temp0 = intl.Intl.pluralLogic(
+      days,
+      locale: localeName,
+      other: 'in $days days',
+      one: 'in 1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get hubToday => 'today';
+
+  @override
+  String get hubViewDetailsLink => 'View details';
+
+  @override
+  String get hubStepsLabel => 'STEPS';
+
+  @override
+  String get hubNightsLabel => 'NIGHTS';
+
+  @override
+  String get hubRouteSummaryLabel => 'ROUTE SUMMARY';
+
+  @override
+  String get hubOpenFullItineraryButton => 'Open full itinerary';
+
+  @override
+  String get hubComingSoon => 'Coming soon.';
+
+  @override
+  String get hubEmptyTitle => 'No trip selected';
+
+  @override
+  String get hubEmptyMessage => 'Select a trip from Home to see its itinerary.';
+
+  @override
+  String get hubGoToHomeCta => 'Go to Home';
+
+  @override
   String get accountTitle => 'My Account';
 
   @override
