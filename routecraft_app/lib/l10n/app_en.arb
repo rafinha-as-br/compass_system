@@ -68,12 +68,20 @@
   "routeLabel": "Route",
 
   "accountTitle": "My Account",
-  "nameLabel": "Name",
-  "emailLabel": "Email",
-  "phoneLabel": "Phone",
-  "saveChanges": "SAVE CHANGES",
   "logoutButton": "LOGOUT",
   "notAuthenticated": "Not authenticated.",
+  "accountAgentBlockLabel": "MY AGENT",
+  "accountPersonalDataMenu": "Personal data",
+  "accountNotificationsMenu": "Notifications",
+  "accountHelpMenu": "Help",
+  "accountDarkModeLabel": "Dark Mode",
+  "accountLanguageLabel": "Language ({code})",
+  "@accountLanguageLabel": {
+    "placeholders": {
+      "code": { "type": "String" }
+    }
+  },
+  "comingSoonMessage": "Coming soon.",
 
   "travelStatusRouteCreated": "Awaiting agent",
   "travelStatusItineraryCreated": "Itinerary published",

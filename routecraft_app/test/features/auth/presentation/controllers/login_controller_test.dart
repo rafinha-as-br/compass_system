@@ -32,11 +32,13 @@ void main() {
       final useCase = LoginUseCase(_StubAuthRepository(const Result.success(session)));
       String? savedToken;
       String? savedClientName;
+      String? savedClientEmail;
 
       final controller = LoginController(
         loginUseCase: useCase,
         saveToken: (token) async => savedToken = token,
         saveClientName: (name) async => savedClientName = name,
+        saveClientEmail: (email) async => savedClientEmail = email,
       );
 
       final success = await controller.login('a@b.com', 'secret');
@@ -44,6 +46,7 @@ void main() {
       expect(success, isTrue);
       expect(savedToken, 'jwt');
       expect(savedClientName, 'Maria Silva');
+      expect(savedClientEmail, 'a@b.com');
       expect(controller.state.isLoading, isFalse);
       expect(controller.state.errorMessage, isNull);
     });
@@ -92,6 +95,7 @@ void main() {
         loginUseCase: LoginUseCase(repository),
         saveToken: (token) async {},
         saveClientName: (name) async {},
+        saveClientEmail: (email) async {},
       );
 
       await controller.login('a@b.com', 'wrong');

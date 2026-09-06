@@ -28,6 +28,7 @@ class AuthService {
   Future<void> clearToken() async {
     await _storage.delete(key: 'auth_token');
     await _storage.delete(key: 'client_name');
+    await _storage.delete(key: 'client_email');
   }
 
   /// Persists the authenticated client's name — the backend identifies a
@@ -39,6 +40,16 @@ class AuthService {
 
   Future<String?> getClientName() async {
     return await _storage.read(key: 'client_name');
+  }
+
+  /// Persists the authenticated client's email — shown on the Account
+  /// screen. Unlike [saveClientName], nothing else keys data off this.
+  Future<void> saveClientEmail(String email) async {
+    await _storage.write(key: 'client_email', value: email);
+  }
+
+  Future<String?> getClientEmail() async {
+    return await _storage.read(key: 'client_email');
   }
 
   /// True when there is a stored token that is well-formed and not expired.

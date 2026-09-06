@@ -125,6 +125,7 @@ void main() {
       loginUseCase: LoginUseCase(repository),
       saveToken: (_) async {},
       saveClientName: (_) async {},
+      saveClientEmail: (_) async {},
     );
     final authController = AuthController(checkAuthenticated: () async => true);
 

@@ -168,22 +168,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get accountTitle => 'My Account';
 
   @override
-  String get nameLabel => 'Name';
-
-  @override
-  String get emailLabel => 'Email';
-
-  @override
-  String get phoneLabel => 'Phone';
-
-  @override
-  String get saveChanges => 'SAVE CHANGES';
-
-  @override
   String get logoutButton => 'LOGOUT';
 
   @override
   String get notAuthenticated => 'Not authenticated.';
+
+  @override
+  String get accountAgentBlockLabel => 'MY AGENT';
+
+  @override
+  String get accountPersonalDataMenu => 'Personal data';
+
+  @override
+  String get accountNotificationsMenu => 'Notifications';
+
+  @override
+  String get accountHelpMenu => 'Help';
+
+  @override
+  String get accountDarkModeLabel => 'Dark Mode';
+
+  @override
+  String accountLanguageLabel(String code) {
+    return 'Language ($code)';
+  }
+
+  @override
+  String get comingSoonMessage => 'Coming soon.';
 
   @override
   String get travelStatusRouteCreated => 'Awaiting agent';
