@@ -12,10 +12,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appTitle => 'RouteCraft';
 
   @override
-  String get loginTitle => 'Login RouteCraft';
+  String get appBrandSubtitle => 'Compass System';
+
+  @override
+  String get splashCheckingSession => 'Verificando sessão…';
+
+  @override
+  String get loginTitle => 'Bem-vindo de volta';
 
   @override
   String get loginEmailLabel => 'E-mail';
+
+  @override
+  String get loginEmailHint => 'voce@email.com';
 
   @override
   String get loginPasswordLabel => 'Senha';
@@ -35,6 +44,15 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get loginError => 'Ocorreu um erro durante o login.';
+
+  @override
+  String get loginNoAccountFooter => 'Não tem conta? Fale com seu agente';
+
+  @override
+  String get loginShowPassword => 'Mostrar senha';
+
+  @override
+  String get loginHidePassword => 'Ocultar senha';
 
   @override
   String get forgotPasswordLink => 'Esqueceu a senha?';

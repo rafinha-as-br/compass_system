@@ -38,10 +38,11 @@ void main() {
 
     await tester.pumpWidget(_wrap(controller, locale: const Locale('en')));
 
-    expect(find.text('RouteCraft Login'), findsOneWidget);
+    expect(find.text('Welcome back'), findsOneWidget);
     expect(find.text('Email'), findsOneWidget);
     expect(find.text('Password'), findsOneWidget);
     expect(find.text('LOGIN'), findsOneWidget);
+    expect(find.text("Don't have an account? Talk to your agent"), findsOneWidget);
   });
 
   testWidgets('renders every UI string from AppLocalizations (pt)', (tester) async {
@@ -52,10 +53,11 @@ void main() {
 
     await tester.pumpWidget(_wrap(controller, locale: const Locale('pt')));
 
-    expect(find.text('Login RouteCraft'), findsOneWidget);
+    expect(find.text('Bem-vindo de volta'), findsOneWidget);
     expect(find.text('E-mail'), findsOneWidget);
     expect(find.text('Senha'), findsOneWidget);
     expect(find.text('ENTRAR'), findsOneWidget);
+    expect(find.text('Não tem conta? Fale com seu agente'), findsOneWidget);
   });
 
   testWidgets('validates required fields without calling the use case', (tester) async {
@@ -77,7 +79,36 @@ void main() {
     expect(repository.capturedEmail, isNull);
   });
 
-  testWidgets('submits valid credentials and surfaces a login failure message', (tester) async {
+  testWidgets('toggles password visibility', (tester) async {
+    final controller = LoginController(
+      loginUseCase: LoginUseCase(StubAuthRepository(const Result.failure(''))),
+      saveToken: (_) async {},
+    );
+
+    await tester.pumpWidget(_wrap(controller, locale: const Locale('en')));
+
+    final passwordField = tester.widget<TextField>(
+      find.descendant(
+        of: find.widgetWithText(TextFormField, 'Password'),
+        matching: find.byType(TextField),
+      ),
+    );
+    expect(passwordField.obscureText, isTrue);
+
+    await tester.tap(find.byIcon(Icons.visibility_outlined));
+    await tester.pump();
+
+    final toggledField = tester.widget<TextField>(
+      find.descendant(
+        of: find.widgetWithText(TextFormField, 'Password'),
+        matching: find.byType(TextField),
+      ),
+    );
+    expect(toggledField.obscureText, isFalse);
+    expect(find.byIcon(Icons.visibility_off_outlined), findsOneWidget);
+  });
+
+  testWidgets('submits valid credentials and surfaces a login failure message inline', (tester) async {
     final repository = StubAuthRepository(const Result.failure('Invalid credentials.'));
     final controller = LoginController(
       loginUseCase: LoginUseCase(repository),
@@ -93,6 +124,7 @@ void main() {
 
     expect(repository.capturedEmail, 'agente@routecraft.com');
     expect(find.text('Invalid credentials.'), findsOneWidget);
+    expect(find.byIcon(Icons.close), findsOneWidget);
   });
 
   testWidgets('shows a localized generic message instead of the raw one on a connectivity failure', (tester) async {

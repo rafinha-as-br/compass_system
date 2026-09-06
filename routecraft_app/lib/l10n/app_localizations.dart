@@ -104,10 +104,22 @@ abstract class AppLocalizations {
   /// **'RouteCraft'**
   String get appTitle;
 
+  /// No description provided for @appBrandSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass System'**
+  String get appBrandSubtitle;
+
+  /// No description provided for @splashCheckingSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking session…'**
+  String get splashCheckingSession;
+
   /// No description provided for @loginTitle.
   ///
   /// In en, this message translates to:
-  /// **'RouteCraft Login'**
+  /// **'Welcome back'**
   String get loginTitle;
 
   /// No description provided for @loginEmailLabel.
@@ -115,6 +127,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email'**
   String get loginEmailLabel;
+
+  /// No description provided for @loginEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'you@email.com'**
+  String get loginEmailHint;
 
   /// No description provided for @loginPasswordLabel.
   ///
@@ -151,6 +169,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred during login.'**
   String get loginError;
+
+  /// No description provided for @loginNoAccountFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? Talk to your agent'**
+  String get loginNoAccountFooter;
+
+  /// No description provided for @loginShowPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get loginShowPassword;
+
+  /// No description provided for @loginHidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get loginHidePassword;
 
   /// No description provided for @forgotPasswordLink.
   ///
