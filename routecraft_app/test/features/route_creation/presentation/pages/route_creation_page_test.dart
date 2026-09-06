@@ -1,8 +1,40 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
+import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
+import 'package:routecraft_app/features/travels/domain/repositories/travel_repository.dart';
+import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
+import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
+
+class _FakeTravelRepository implements TravelRepository {
+  Result<Travel>? nextCreateResult;
+
+  @override
+  Future<Result<Travel>> createTravel(Travel travel) async => nextCreateResult!;
+
+  @override
+  Future<Result<Travel>> getTravel(String id) async => throw UnimplementedError();
+
+  @override
+  Future<Result<List<Travel>>> getTravelsForClient(String clientName) async => throw UnimplementedError();
+}
+
+Widget _wrap(RouteCreationController controller) {
+  return MaterialApp(
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: AppLocalizations.supportedLocales,
+    home: RouteCreationPage(controller: controller),
+  );
+}
 
 void main() {
   testWidgets('success icon uses TravelAppColors.success', (tester) async {
@@ -10,20 +42,76 @@ void main() {
       const RouteCreationState(isSuccess: true),
     );
 
-    await tester.pumpWidget(MaterialApp(home: RouteCreationPage(controller: controller)));
+    await tester.pumpWidget(_wrap(controller));
 
     final icon = tester.widget<Icon>(find.byIcon(Icons.check_circle));
     expect(icon.color, TravelAppColors.success);
   });
 
-  testWidgets('error message uses TravelAppColors.error', (tester) async {
-    final controller = RouteCreationController.withState(
-      const RouteCreationState(currentStep: 2, errorMessage: 'Failed to create route.'),
+  testWidgets('the name step blocks Continue until a name is entered', (tester) async {
+    final controller = RouteCreationController(
+      travelUseCases: TravelUseCases(_FakeTravelRepository()),
+      getClientName: () async => null,
     );
 
-    await tester.pumpWidget(MaterialApp(home: RouteCreationPage(controller: controller)));
+    await tester.pumpWidget(_wrap(controller));
 
-    final text = tester.widget<Text>(find.text('Failed to create route.'));
-    expect(text.style?.color, TravelAppColors.error);
+    expect(find.text('STEP 1 OF 4'), findsOneWidget);
+    final continueButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(continueButton.onPressed, isNull);
+
+    await tester.enterText(find.byType(TextFormField), 'Litoral Norte');
+    await tester.pump();
+
+    final enabledButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
+    expect(enabledButton.onPressed, isNotNull);
+  });
+
+  testWidgets('walks through all 4 steps to the review screen and back to edit', (tester) async {
+    final controller = RouteCreationController(
+      travelUseCases: TravelUseCases(_FakeTravelRepository()),
+      getClientName: () async => null,
+    );
+
+    await tester.pumpWidget(_wrap(controller));
+
+    // Step 1 — name.
+    await tester.enterText(find.byType(TextFormField), 'Litoral Norte');
+    await tester.pump();
+    await tester.tap(find.text('NEXT'));
+    await tester.pumpAndSettle();
+
+    // Step 2 — dates, via the "1 week" shortcut instead of the date picker.
+    expect(find.text('STEP 2 OF 4'), findsOneWidget);
+    await tester.tap(find.text('1 week'));
+    await tester.pump();
+    expect(find.textContaining('7 nights'), findsOneWidget);
+    await tester.tap(find.text('NEXT'));
+    await tester.pumpAndSettle();
+
+    // Step 3 — locations.
+    expect(find.text('STEP 3 OF 4'), findsOneWidget);
+    final locationFields = find.byType(TextFormField);
+    await tester.enterText(locationFields.at(0), 'São Paulo');
+    await tester.enterText(locationFields.at(1), 'Paraty');
+    await tester.pump();
+    await tester.tap(find.text('NEXT'));
+    await tester.pumpAndSettle();
+
+    // Step 4 — interests (optional, skip straight through).
+    expect(find.text('STEP 4 OF 4'), findsOneWidget);
+    await tester.tap(find.text('NEXT'));
+    await tester.pumpAndSettle();
+
+    // Review.
+    expect(find.text('Confirm your route'), findsOneWidget);
+    expect(find.text('Litoral Norte'), findsOneWidget);
+    expect(find.text('São Paulo → Paraty'), findsOneWidget);
+
+    await tester.tap(find.text('Edit').first);
+    await tester.pumpAndSettle();
+
+    expect(find.text('STEP 1 OF 4'), findsOneWidget);
+    expect(find.text('Litoral Norte'), findsOneWidget);
   });
 }

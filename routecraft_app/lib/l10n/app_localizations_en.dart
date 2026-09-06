@@ -171,6 +171,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get backButton => 'BACK';
 
   @override
+  String get editButton => 'Edit';
+
+  @override
   String get routeCreatedSuccess => 'Route created successfully!';
 
   @override
@@ -183,6 +186,79 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get successTitle => 'Success';
+
+  @override
+  String routeCreationStepIndicator(int step, int total) {
+    return 'STEP $step OF $total';
+  }
+
+  @override
+  String get routeCreationNameTitle => 'What should we call this trip?';
+
+  @override
+  String get routeCreationDatesTitle => 'When do you want to travel?';
+
+  @override
+  String get routeCreationDatesSubtitle => 'Dates can change later.';
+
+  @override
+  String get routeCreationStartDateLabel => 'Departure';
+
+  @override
+  String get routeCreationEndDateLabel => 'Return';
+
+  @override
+  String routeCreationNightsCount(int nights) {
+    return '$nights nights';
+  }
+
+  @override
+  String get routeCreationDatesCoherent => 'consistent dates';
+
+  @override
+  String get routeCreationDatesIncoherent => 'Return must be after departure.';
+
+  @override
+  String get routeCreationWeekendShortcut => 'weekend';
+
+  @override
+  String get routeCreationWeekShortcut => '1 week';
+
+  @override
+  String get routeCreationFlexibleShortcut => 'still flexible';
+
+  @override
+  String get routeCreationLocationsTitle => 'Where are you headed?';
+
+  @override
+  String get routeCreationInterestsTitle =>
+      'What do you want to experience there?';
+
+  @override
+  String get routeCreationInterestNameLabel => 'Interest';
+
+  @override
+  String get routeCreationInterestDescriptionLabel => 'Description (optional)';
+
+  @override
+  String get routeCreationAddInterestButton => 'Add';
+
+  @override
+  String get routeCreationReviewHeader => 'REVIEW';
+
+  @override
+  String get routeCreationReviewTitle => 'Confirm your route';
+
+  @override
+  String get routeCreationNameBlockLabel => 'NAME';
+
+  @override
+  String routeCreationInterestsBlockLabel(int count) {
+    return '$count INTERESTS';
+  }
+
+  @override
+  String get routeCreationSubmitCta => 'Send to my agent';
 
   @override
   String get visualizationTitle => 'My Travels';
