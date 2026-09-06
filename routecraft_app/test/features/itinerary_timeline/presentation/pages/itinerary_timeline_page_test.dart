@@ -266,5 +266,29 @@ void main() {
       expect(find.textContaining('Free time'), findsOneWidget);
       expect(find.textContaining('tomorrow'), findsOneWidget);
     });
+
+    testWidgets('tapping a step opens its detail in a bottom sheet', (tester) async {
+      final itinerary = Itinerary(
+        domainId: 'it1',
+        backEndId: 'it1',
+        agentName: 'Ana',
+        itinerarySteps: [
+          _stop('s1', DateTime(2026, 10, 12, 9), DateTime(2026, 10, 12, 10), title: 'Trilha do Sono'),
+        ],
+      );
+
+      await tester.pumpWidget(_wrap(ItineraryTimelinePage(
+        travel: _travel(
+          routePlan: _routePlan(DateTime(2026, 10, 12), DateTime(2026, 10, 13)),
+          itinerary: itinerary,
+        ),
+      )));
+
+      await tester.tap(find.text('Trilha do Sono'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Stop'), findsOneWidget);
+      expect(find.text('Name'), findsOneWidget);
+    });
   });
 }
