@@ -348,6 +348,89 @@ class AppLocalizationsPt extends AppLocalizations {
   String get hubGoToHomeCta => 'Ir para o Início';
 
   @override
+  String get editRouteTitle => 'Editar minha rota';
+
+  @override
+  String get editRouteSaveButton => 'SALVAR';
+
+  @override
+  String get editRoutePublishedWarning =>
+      'Seu itinerário já foi montado. Alterar a rota não muda as etapas — seu agente será avisado para revisar.';
+
+  @override
+  String get editRouteChangedLabel => 'alterado';
+
+  @override
+  String get editRouteUndoLink => 'desfazer';
+
+  @override
+  String get editRouteRemoveInterestTooltip => 'Remover';
+
+  @override
+  String editRoutePendingChangesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ALTERAÇÕES PENDENTES',
+      one: '1 ALTERAÇÃO PENDENTE',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String editRouteDiffDeparture(String oldDate, String newDate) {
+    return 'ida $oldDate → $newDate';
+  }
+
+  @override
+  String editRouteDiffReturn(String oldDate, String newDate) {
+    return 'volta $oldDate → $newDate';
+  }
+
+  @override
+  String editRouteDiffOrigin(String oldValue, String newValue) {
+    return 'origem $oldValue → $newValue';
+  }
+
+  @override
+  String editRouteDiffDestination(String oldValue, String newValue) {
+    return 'destino $oldValue → $newValue';
+  }
+
+  @override
+  String editRouteDiffInterestsAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count interesses adicionados',
+      one: '1 interesse adicionado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String editRouteDiffInterestsRemoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count interesses removidos',
+      one: '1 interesse removido',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get editRouteSubmitCta => 'Enviar alterações';
+
+  @override
+  String editRouteSubmitError(String error) {
+    return 'Falha ao atualizar rota: $error';
+  }
+
+  @override
+  String get editRouteUpdateSuccess => 'Rota atualizada com sucesso!';
+
+  @override
   String get accountTitle => 'Minha Conta';
 
   @override

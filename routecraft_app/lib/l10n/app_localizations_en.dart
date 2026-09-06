@@ -348,6 +348,89 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubGoToHomeCta => 'Go to Home';
 
   @override
+  String get editRouteTitle => 'Edit my route';
+
+  @override
+  String get editRouteSaveButton => 'SAVE';
+
+  @override
+  String get editRoutePublishedWarning =>
+      'Your itinerary has already been built. Changing the route won\'t change its steps — your agent will be notified to review it.';
+
+  @override
+  String get editRouteChangedLabel => 'changed';
+
+  @override
+  String get editRouteUndoLink => 'undo';
+
+  @override
+  String get editRouteRemoveInterestTooltip => 'Remove';
+
+  @override
+  String editRoutePendingChangesCount(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count PENDING CHANGES',
+      one: '1 PENDING CHANGE',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String editRouteDiffDeparture(String oldDate, String newDate) {
+    return 'departure $oldDate → $newDate';
+  }
+
+  @override
+  String editRouteDiffReturn(String oldDate, String newDate) {
+    return 'return $oldDate → $newDate';
+  }
+
+  @override
+  String editRouteDiffOrigin(String oldValue, String newValue) {
+    return 'origin $oldValue → $newValue';
+  }
+
+  @override
+  String editRouteDiffDestination(String oldValue, String newValue) {
+    return 'destination $oldValue → $newValue';
+  }
+
+  @override
+  String editRouteDiffInterestsAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count interests added',
+      one: '1 interest added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String editRouteDiffInterestsRemoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count interests removed',
+      one: '1 interest removed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get editRouteSubmitCta => 'Send changes';
+
+  @override
+  String editRouteSubmitError(String error) {
+    return 'Failed to update route: $error';
+  }
+
+  @override
+  String get editRouteUpdateSuccess => 'Route updated successfully!';
+
+  @override
   String get accountTitle => 'My Account';
 
   @override

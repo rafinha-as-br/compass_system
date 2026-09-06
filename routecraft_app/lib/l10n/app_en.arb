@@ -152,6 +152,67 @@
   "hubEmptyMessage": "Select a trip from Home to see its itinerary.",
   "hubGoToHomeCta": "Go to Home",
 
+  "editRouteTitle": "Edit my route",
+  "editRouteSaveButton": "SAVE",
+  "editRoutePublishedWarning": "Your itinerary has already been built. Changing the route won't change its steps — your agent will be notified to review it.",
+  "editRouteChangedLabel": "changed",
+  "editRouteUndoLink": "undo",
+  "editRouteRemoveInterestTooltip": "Remove",
+  "editRoutePendingChangesCount": "{count, plural, one{1 PENDING CHANGE} other{{count} PENDING CHANGES}}",
+  "@editRoutePendingChangesCount": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "editRouteDiffDeparture": "departure {oldDate} → {newDate}",
+  "@editRouteDiffDeparture": {
+    "placeholders": {
+      "oldDate": { "type": "String" },
+      "newDate": { "type": "String" }
+    }
+  },
+  "editRouteDiffReturn": "return {oldDate} → {newDate}",
+  "@editRouteDiffReturn": {
+    "placeholders": {
+      "oldDate": { "type": "String" },
+      "newDate": { "type": "String" }
+    }
+  },
+  "editRouteDiffOrigin": "origin {oldValue} → {newValue}",
+  "@editRouteDiffOrigin": {
+    "placeholders": {
+      "oldValue": { "type": "String" },
+      "newValue": { "type": "String" }
+    }
+  },
+  "editRouteDiffDestination": "destination {oldValue} → {newValue}",
+  "@editRouteDiffDestination": {
+    "placeholders": {
+      "oldValue": { "type": "String" },
+      "newValue": { "type": "String" }
+    }
+  },
+  "editRouteDiffInterestsAdded": "{count, plural, one{1 interest added} other{{count} interests added}}",
+  "@editRouteDiffInterestsAdded": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "editRouteDiffInterestsRemoved": "{count, plural, one{1 interest removed} other{{count} interests removed}}",
+  "@editRouteDiffInterestsRemoved": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "editRouteSubmitCta": "Send changes",
+  "editRouteSubmitError": "Failed to update route: {error}",
+  "@editRouteSubmitError": {
+    "placeholders": {
+      "error": { "type": "String" }
+    }
+  },
+  "editRouteUpdateSuccess": "Route updated successfully!",
+
   "accountTitle": "My Account",
   "logoutButton": "LOGOUT",
   "notAuthenticated": "Not authenticated.",

@@ -124,7 +124,7 @@ class _RouteCreatedBody extends StatelessWidget {
           label: l10n.hubWhatYouAskedLabel,
           routePlan: travel.routePlan,
           trailing: TextButton(
-            onPressed: () => _showComingSoon(context),
+            onPressed: () => _openEditRoute(context, travel),
             child: Text(l10n.hubEditRouteLink),
           ),
         ),
@@ -162,7 +162,14 @@ class _ItineraryCreatedBody extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 24),
-        _RouteSummaryBlock(label: l10n.hubRouteSummaryLabel, routePlan: travel.routePlan),
+        _RouteSummaryBlock(
+          label: l10n.hubRouteSummaryLabel,
+          routePlan: travel.routePlan,
+          trailing: TextButton(
+            onPressed: () => _openEditRoute(context, travel),
+            child: Text(l10n.hubEditRouteLink),
+          ),
+        ),
         const SizedBox(height: 24),
         SizedBox(
           height: 50,
@@ -313,6 +320,11 @@ class _RouteSummaryBlock extends StatelessWidget {
 void _showComingSoon(BuildContext context) {
   final l10n = AppLocalizations.of(context)!;
   ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.hubComingSoon)));
+}
+
+void _openEditRoute(BuildContext context, Travel travel) {
+  final currentLocation = GoRouterState.of(context).matchedLocation;
+  context.push('$currentLocation/${AppRoutes.editRoute}', extra: travel);
 }
 
 TravelStatusChipVariant _chipVariant(TravelStatus status) => switch (status) {

@@ -4,9 +4,9 @@ import 'package:provider/provider.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
-import 'package:routecraft_app/shared/utils/date_formatting.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
 import 'package:routecraft_app/shared/widgets/app_text_field.dart';
+import 'package:routecraft_app/shared/widgets/date_field.dart';
 
 class RouteCreationPage extends StatelessWidget {
   const RouteCreationPage({super.key, this.controller});
@@ -203,13 +203,13 @@ class _DatesStep extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          _DateField(
+          DateField(
             label: l10n.routeCreationStartDateLabel,
             date: controller.startDate,
             onTap: () => _pickDate(context, controller, isStart: true),
           ),
           const SizedBox(height: 16),
-          _DateField(
+          DateField(
             label: l10n.routeCreationEndDateLabel,
             date: controller.endDate,
             onTap: () => _pickDate(context, controller, isStart: false),
@@ -232,36 +232,6 @@ class _DatesStep extends StatelessWidget {
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _DateField extends StatelessWidget {
-  const _DateField({required this.label, required this.date, required this.onTap});
-
-  final String label;
-  final DateTime? date;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return InkWell(
-      onTap: onTap,
-      borderRadius: BorderRadius.circular(8),
-      child: InputDecorator(
-        decoration: InputDecoration(
-          labelText: label,
-          labelStyle: const TextStyle(color: TravelAppColors.textSecondary),
-          prefixIcon: const Icon(Icons.calendar_today_outlined),
-          border: const OutlineInputBorder(borderSide: BorderSide(color: TravelAppColors.border)),
-        ),
-        child: Text(
-          date != null ? formatDate(Localizations.localeOf(context).languageCode, date!) : '—',
-          style: theme.textTheme.bodyLarge,
-        ),
       ),
     );
   }
