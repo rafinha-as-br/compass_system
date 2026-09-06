@@ -15,6 +15,8 @@ class AppTextField extends StatelessWidget {
     this.obscureText = false,
     this.enabled = true,
     this.prefixIcon,
+    this.suffixIcon,
+    this.hintText,
     this.validator,
     this.textInputAction,
     this.onFieldSubmitted,
@@ -25,6 +27,8 @@ class AppTextField extends StatelessWidget {
   final bool obscureText;
   final bool enabled;
   final Widget? prefixIcon;
+  final Widget? suffixIcon;
+  final String? hintText;
   final String? Function(String?)? validator;
   final TextInputAction? textInputAction;
   final ValueChanged<String>? onFieldSubmitted;
@@ -40,8 +44,10 @@ class AppTextField extends StatelessWidget {
       onFieldSubmitted: onFieldSubmitted,
       decoration: InputDecoration(
         labelText: labelText,
+        hintText: hintText,
         labelStyle: const TextStyle(color: TravelAppColors.textSecondary),
         prefixIcon: prefixIcon,
+        suffixIcon: suffixIcon,
         border: const OutlineInputBorder(
           borderSide: BorderSide(color: TravelAppColors.border),
         ),

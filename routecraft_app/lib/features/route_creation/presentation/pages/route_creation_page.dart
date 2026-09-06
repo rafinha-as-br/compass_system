@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
+import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
+import 'package:routecraft_app/shared/utils/date_formatting.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
 import 'package:routecraft_app/shared/widgets/app_text_field.dart';
 
@@ -28,24 +30,22 @@ class _RouteCreationView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = context.watch<RouteCreationController>();
     final state = controller.state;
 
     if (state.isSuccess) {
       return Scaffold(
-        appBar: AppBar(title: const Text('Success')),
+        appBar: AppBar(title: Text(l10n.successTitle)),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
               const Icon(Icons.check_circle, color: TravelAppColors.success, size: 80),
               const SizedBox(height: 16),
-              const Text('Route created successfully!', style: TextStyle(fontSize: 20)),
+              Text(l10n.routeCreatedSuccess, style: const TextStyle(fontSize: 20)),
               const SizedBox(height: 32),
-              AppButton(
-                onPressed: () => context.pop(),
-                child: const Text('Back to Home'),
-              ),
+              AppButton(onPressed: () => context.pop(), child: Text(l10n.backToHome)),
             ],
           ),
         ),
@@ -53,100 +53,418 @@ class _RouteCreationView extends StatelessWidget {
     }
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Create a Route'),
+      appBar: AppBar(title: Text(l10n.createRouteTitle)),
+      body: SafeArea(
+        child: SingleChildScrollView(
+          child: state.isReviewStep ? const _ReviewStep() : _StepIndicator(step: state.currentStep + 1),
+        ),
       ),
-      body: Stepper(
-        currentStep: state.currentStep,
-        onStepContinue: controller.nextStep,
-        onStepCancel: controller.previousStep,
-        controlsBuilder: (context, details) {
-          final isLastStep = state.currentStep == 2;
-          return Padding(
-            padding: const EdgeInsets.only(top: 24.0),
-            child: Row(
-              children: [
-                if (isLastStep)
-                  AppButton(
-                    onPressed: () => controller.submitRoute(),
-                    isLoading: state.isSubmitting,
-                    child: const Text('SUBMIT ROUTE'),
-                  )
-                else
-                  AppButton(
-                    onPressed: details.onStepContinue,
-                    child: const Text('NEXT'),
-                  ),
-                const SizedBox(width: 12),
-                if (state.currentStep > 0)
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      tapTargetSize: MaterialTapTargetSize.shrinkWrap,
-                    ),
-                    onPressed: state.isSubmitting ? null : details.onStepCancel,
-                    child: const Text('BACK'),
-                  ),
-              ],
-            ),
-          );
+    );
+  }
+}
+
+class _StepIndicator extends StatelessWidget {
+  const _StepIndicator({required this.step});
+
+  final int step;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Padding(
+          padding: const EdgeInsets.fromLTRB(24, 16, 24, 0),
+          child: Text(
+            l10n.routeCreationStepIndicator(step, routeCreationStepCount),
+            style: Theme.of(context).textTheme.labelLarge?.copyWith(
+                  color: Theme.of(context).colorScheme.primary,
+                  fontWeight: FontWeight.w600,
+                ),
+          ),
+        ),
+        switch (step) {
+          1 => const _NameStep(),
+          2 => const _DatesStep(),
+          3 => const _LocationsStep(),
+          _ => const _InterestsStep(),
         },
-        steps: [
-          Step(
-            title: const Text('Trip Info'),
-            content: Column(
-              children: [
-                AppTextField(
-                  controller: controller.tripNameController,
-                  labelText: 'Trip Name',
-                ),
-              ],
+      ],
+    );
+  }
+}
+
+/// Shared shell for a wizard step: title, optional subtitle, the step's own
+/// fields, and the Continue/Back controls — every step follows this same
+/// single-card layout in wireframe 1a.
+class _WizardStep extends StatelessWidget {
+  const _WizardStep({
+    required this.title,
+    this.subtitle,
+    required this.child,
+    required this.onContinue,
+    this.onBack,
+  });
+
+  final String title;
+  final String? subtitle;
+  final Widget child;
+  final VoidCallback? onContinue;
+  final VoidCallback? onBack;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(title, style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+          if (subtitle != null) ...[
+            const SizedBox(height: 4),
+            Text(
+              subtitle!,
+              style: theme.textTheme.bodyMedium?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
-            isActive: state.currentStep >= 0,
-            state: state.currentStep > 0 ? StepState.complete : StepState.indexed,
+          ],
+          const SizedBox(height: 24),
+          child,
+          const SizedBox(height: 32),
+          SizedBox(
+            height: 50,
+            child: AppButton(onPressed: onContinue, child: Text(l10n.nextButton)),
           ),
-          Step(
-            title: const Text('Locations'),
-            content: Column(
-              children: [
-                AppTextField(
-                  controller: controller.startLocationController,
-                  labelText: 'Start Location',
-                ),
-                AppTextField(
-                  controller: controller.destinationController,
-                  labelText: 'Destination',
-                ),
-              ],
-            ),
-            isActive: state.currentStep >= 1,
-            state: state.currentStep > 1 ? StepState.complete : StepState.indexed,
+          if (onBack != null) ...[
+            const SizedBox(height: 8),
+            TextButton(onPressed: onBack, child: Text(l10n.backButton)),
+          ],
+        ],
+      ),
+    );
+  }
+}
+
+class _NameStep extends StatelessWidget {
+  const _NameStep();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = context.watch<RouteCreationController>();
+
+    return _WizardStep(
+      title: l10n.routeCreationNameTitle,
+      onContinue: controller.isNameValid ? controller.nextStep : null,
+      child: AppTextField(
+        controller: controller.tripNameController,
+        labelText: l10n.tripNameLabel,
+        textInputAction: TextInputAction.done,
+      ),
+    );
+  }
+}
+
+class _DatesStep extends StatelessWidget {
+  const _DatesStep();
+
+  Future<void> _pickDate(BuildContext context, RouteCreationController controller, {required bool isStart}) async {
+    final initial = (isStart ? controller.startDate : controller.endDate) ?? DateTime.now();
+    final picked = await showDatePicker(
+      context: context,
+      initialDate: initial,
+      firstDate: DateTime.now().subtract(const Duration(days: 1)),
+      lastDate: DateTime.now().add(const Duration(days: 730)),
+    );
+    if (picked == null) return;
+    if (isStart) {
+      controller.setStartDate(picked);
+    } else {
+      controller.setEndDate(picked);
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = context.watch<RouteCreationController>();
+    final theme = Theme.of(context);
+    final nights = controller.nights;
+
+    return _WizardStep(
+      title: l10n.routeCreationDatesTitle,
+      subtitle: l10n.routeCreationDatesSubtitle,
+      onContinue: controller.isDatesValid ? controller.nextStep : null,
+      onBack: controller.previousStep,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          _DateField(
+            label: l10n.routeCreationStartDateLabel,
+            date: controller.startDate,
+            onTap: () => _pickDate(context, controller, isStart: true),
           ),
-          Step(
-            title: const Text('Interests'),
-            content: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Wrap(
-                  spacing: 8.0,
-                  children: controller.interestPoints.map((i) => Chip(label: Text(i.name))).toList(),
-                ),
-                TextButton.icon(
-                  onPressed: () {
-                    controller.addInterestPoint('Culture & History', 'Historical sites');
-                  },
-                  icon: const Icon(Icons.add),
-                  label: const Text('Add Culture Interest (Debug)'),
-                ),
-                if (state.errorMessage != null)
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(state.errorMessage!, style: const TextStyle(color: TravelAppColors.error)),
-                  )
-              ],
+          const SizedBox(height: 16),
+          _DateField(
+            label: l10n.routeCreationEndDateLabel,
+            date: controller.endDate,
+            onTap: () => _pickDate(context, controller, isStart: false),
+          ),
+          const SizedBox(height: 12),
+          if (controller.startDate != null && controller.endDate != null)
+            Text(
+              controller.isDatesValid
+                  ? '✓ ${l10n.routeCreationNightsCount(nights!)} — ${l10n.routeCreationDatesCoherent}'
+                  : l10n.routeCreationDatesIncoherent,
+              style: TextStyle(color: controller.isDatesValid ? TravelAppColors.success : theme.colorScheme.error),
             ),
-            isActive: state.currentStep >= 2,
+          const SizedBox(height: 16),
+          Wrap(
+            spacing: 8,
+            children: [
+              ActionChip(label: Text(l10n.routeCreationWeekendShortcut), onPressed: controller.applyWeekendShortcut),
+              ActionChip(label: Text(l10n.routeCreationWeekShortcut), onPressed: controller.applyWeekShortcut),
+              ActionChip(label: Text(l10n.routeCreationFlexibleShortcut), onPressed: controller.applyFlexibleShortcut),
+            ],
           ),
         ],
+      ),
+    );
+  }
+}
+
+class _DateField extends StatelessWidget {
+  const _DateField({required this.label, required this.date, required this.onTap});
+
+  final String label;
+  final DateTime? date;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(8),
+      child: InputDecorator(
+        decoration: InputDecoration(
+          labelText: label,
+          labelStyle: const TextStyle(color: TravelAppColors.textSecondary),
+          prefixIcon: const Icon(Icons.calendar_today_outlined),
+          border: const OutlineInputBorder(borderSide: BorderSide(color: TravelAppColors.border)),
+        ),
+        child: Text(
+          date != null ? formatDate(Localizations.localeOf(context).languageCode, date!) : '—',
+          style: theme.textTheme.bodyLarge,
+        ),
+      ),
+    );
+  }
+}
+
+class _LocationsStep extends StatelessWidget {
+  const _LocationsStep();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = context.watch<RouteCreationController>();
+
+    return _WizardStep(
+      title: l10n.routeCreationLocationsTitle,
+      onContinue: controller.isLocationsValid ? controller.nextStep : null,
+      onBack: controller.previousStep,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          AppTextField(controller: controller.startLocationController, labelText: l10n.startLocationLabel),
+          const SizedBox(height: 16),
+          AppTextField(controller: controller.destinationController, labelText: l10n.destinationLabel),
+        ],
+      ),
+    );
+  }
+}
+
+class _InterestsStep extends StatefulWidget {
+  const _InterestsStep();
+
+  @override
+  State<_InterestsStep> createState() => _InterestsStepState();
+}
+
+class _InterestsStepState extends State<_InterestsStep> {
+  final _nameController = TextEditingController();
+  final _descriptionController = TextEditingController();
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _descriptionController.dispose();
+    super.dispose();
+  }
+
+  void _addInterest(RouteCreationController controller) {
+    final name = _nameController.text.trim();
+    if (name.isEmpty) return;
+    controller.addInterestPoint(name, _descriptionController.text.trim());
+    _nameController.clear();
+    _descriptionController.clear();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = context.watch<RouteCreationController>();
+
+    return _WizardStep(
+      title: l10n.routeCreationInterestsTitle,
+      onContinue: controller.nextStep,
+      onBack: controller.previousStep,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (controller.interestPoints.isNotEmpty) ...[
+            Wrap(
+              spacing: 8,
+              runSpacing: 8,
+              children: controller.interestPoints
+                  .map((point) => Chip(
+                        label: Text(point.name),
+                        onDeleted: () => controller.removeInterestPoint(point.domainId),
+                      ))
+                  .toList(),
+            ),
+            const SizedBox(height: 16),
+          ],
+          AppTextField(controller: _nameController, labelText: l10n.routeCreationInterestNameLabel),
+          const SizedBox(height: 16),
+          AppTextField(controller: _descriptionController, labelText: l10n.routeCreationInterestDescriptionLabel),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: () => _addInterest(controller),
+              icon: const Icon(Icons.add),
+              label: Text(l10n.routeCreationAddInterestButton),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReviewStep extends StatelessWidget {
+  const _ReviewStep();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = context.watch<RouteCreationController>();
+    final state = controller.state;
+    final theme = Theme.of(context);
+
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(
+            l10n.routeCreationReviewHeader,
+            style: theme.textTheme.labelLarge
+                ?.copyWith(color: theme.colorScheme.primary, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 4),
+          Text(l10n.routeCreationReviewTitle, style: theme.textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold)),
+          const SizedBox(height: 24),
+          _ReviewBlock(
+            label: l10n.routeCreationNameBlockLabel,
+            value: controller.tripNameController.text,
+            onEdit: () => controller.editStep(0),
+          ),
+          const SizedBox(height: 16),
+          _ReviewBlock(
+            label: l10n.routeLabel.toUpperCase(),
+            value: '${controller.startLocationController.text} → ${controller.destinationController.text}',
+            onEdit: () => controller.editStep(2),
+          ),
+          const SizedBox(height: 16),
+          _ReviewBlock(
+            label: l10n.routeCreationInterestsBlockLabel(controller.interestPoints.length),
+            value: controller.interestPoints.isEmpty
+                ? '—'
+                : controller.interestPoints.map((p) => p.name).join(' · '),
+            onEdit: () => controller.editStep(3),
+          ),
+          if (state.hasNoSession) ...[
+            const SizedBox(height: 16),
+            Text(l10n.notAuthenticated, style: TextStyle(color: theme.colorScheme.error)),
+          ] else if (state.submitErrorMessage != null) ...[
+            const SizedBox(height: 16),
+            Text(l10n.failedToCreateRoute(state.submitErrorMessage!), style: TextStyle(color: theme.colorScheme.error)),
+          ],
+          const SizedBox(height: 32),
+          SizedBox(
+            height: 50,
+            child: AppButton(
+              onPressed: state.isSubmitting ? null : controller.submitRoute,
+              isLoading: state.isSubmitting,
+              child: Text(l10n.routeCreationSubmitCta),
+            ),
+          ),
+          const SizedBox(height: 8),
+          TextButton(
+            onPressed: state.isSubmitting ? null : controller.previousStep,
+            child: Text(l10n.backButton),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ReviewBlock extends StatelessWidget {
+  const _ReviewBlock({required this.label, required this.value, required this.onEdit});
+
+  final String label;
+  final String value;
+  final VoidCallback onEdit;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    label,
+                    style: theme.textTheme.labelMedium
+                        ?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                  ),
+                  const SizedBox(height: 4),
+                  Text(value, style: theme.textTheme.bodyLarge),
+                ],
+              ),
+            ),
+            TextButton(onPressed: onEdit, child: Text(l10n.editButton)),
+          ],
+        ),
       ),
     );
   }

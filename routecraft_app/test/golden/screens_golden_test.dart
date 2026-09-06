@@ -10,6 +10,8 @@ import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/login_controller.dart';
 import 'package:routecraft_app/features/auth/presentation/pages/login_page.dart';
+import 'package:routecraft_app/features/home/presentation/controllers/home_controller.dart';
+import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
 import 'package:routecraft_app/features/itinerary_hub/presentation/pages/itinerary_hub_page.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
@@ -109,11 +111,57 @@ Widget _routeCreationScreen() => RouteCreationPage(
       controller: RouteCreationController.withState(const RouteCreationState()),
     );
 
+Widget _routeCreationReviewScreen() {
+  final controller = RouteCreationController.withState(
+    const RouteCreationState(currentStep: routeCreationStepCount),
+  );
+  controller.tripNameController.text = 'Litoral Norte com a família';
+  controller.startLocationController.text = 'São Paulo';
+  controller.destinationController.text = 'Paraty, RJ';
+  controller.setStartDate(DateTime(2026, 10, 12));
+  controller.setEndDate(DateTime(2026, 10, 19));
+  controller.addInterestPoint('Trilha', '');
+  controller.addInterestPoint('Gastronomia', '');
+  controller.addInterestPoint('Centro histórico', '');
+  return RouteCreationPage(controller: controller);
+}
+
+Widget _homeScreen() => HomePage(
+      controller: HomeController.withState(
+        HomeState(
+          isLoading: false,
+          clientName: 'Rafaela Souza',
+          inProgress: [
+            Travel(
+              domainId: 't2',
+              backEndId: 't2',
+              clientName: 'Rafaela Souza',
+              travelName: 'Litoral Norte',
+              travelStatus: TravelStatus.travelStarted,
+              participantsList: const [],
+              routePlan: RoutePlan(
+                domainId: 'r2',
+                backEndId: 'r2',
+                startDate: DateTime(2026, 10, 12),
+                endDate: DateTime(2026, 10, 19),
+                startLocation: 'São Paulo',
+                destination: 'Paraty',
+                interestsList: const [],
+              ),
+            ),
+          ],
+          upcoming: [_sampleTravel()],
+        ),
+      ),
+    );
+
 final _screens = <String, Widget Function()>{
   'login': _loginScreen,
+  'home': _homeScreen,
   'hub_route_created': _hubRouteCreatedScreen,
   'hub_itinerary_created': _hubItineraryCreatedScreen,
   'route_creation': _routeCreationScreen,
+  'route_creation_review': _routeCreationReviewScreen,
 };
 
 // ponytail: TestWidgetsFlutterBinding bloqueia todo HttpClient real durante

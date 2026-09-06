@@ -104,10 +104,22 @@ abstract class AppLocalizations {
   /// **'RouteCraft'**
   String get appTitle;
 
+  /// No description provided for @appBrandSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass System'**
+  String get appBrandSubtitle;
+
+  /// No description provided for @splashCheckingSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking session…'**
+  String get splashCheckingSession;
+
   /// No description provided for @loginTitle.
   ///
   /// In en, this message translates to:
-  /// **'RouteCraft Login'**
+  /// **'Welcome back'**
   String get loginTitle;
 
   /// No description provided for @loginEmailLabel.
@@ -115,6 +127,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email'**
   String get loginEmailLabel;
+
+  /// No description provided for @loginEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'you@email.com'**
+  String get loginEmailHint;
 
   /// No description provided for @loginPasswordLabel.
   ///
@@ -151,6 +169,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred during login.'**
   String get loginError;
+
+  /// No description provided for @loginNoAccountFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? Talk to your agent'**
+  String get loginNoAccountFooter;
+
+  /// No description provided for @loginShowPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get loginShowPassword;
+
+  /// No description provided for @loginHidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get loginHidePassword;
 
   /// No description provided for @forgotPasswordLink.
   ///
@@ -254,6 +290,42 @@ abstract class AppLocalizations {
   /// **'User Account & Settings'**
   String get accountSettingsNav;
 
+  /// No description provided for @homeGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeSectionInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get homeSectionInProgress;
+
+  /// No description provided for @homeSectionUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get homeSectionUpcoming;
+
+  /// No description provided for @homeSectionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get homeSectionCompleted;
+
+  /// No description provided for @homeEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the trip you want to take and your agent will build the itinerary.'**
+  String get homeEmptyMessage;
+
+  /// No description provided for @homeEmptyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Create my first route'**
+  String get homeEmptyCta;
+
   /// No description provided for @homeNavLabel.
   ///
   /// In en, this message translates to:
@@ -332,6 +404,12 @@ abstract class AppLocalizations {
   /// **'BACK'**
   String get backButton;
 
+  /// No description provided for @editButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Edit'**
+  String get editButton;
+
   /// No description provided for @routeCreatedSuccess.
   ///
   /// In en, this message translates to:
@@ -355,6 +433,138 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Success'**
   String get successTitle;
+
+  /// No description provided for @routeCreationStepIndicator.
+  ///
+  /// In en, this message translates to:
+  /// **'STEP {step} OF {total}'**
+  String routeCreationStepIndicator(int step, int total);
+
+  /// No description provided for @routeCreationNameTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What should we call this trip?'**
+  String get routeCreationNameTitle;
+
+  /// No description provided for @routeCreationDatesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'When do you want to travel?'**
+  String get routeCreationDatesTitle;
+
+  /// No description provided for @routeCreationDatesSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates can change later.'**
+  String get routeCreationDatesSubtitle;
+
+  /// No description provided for @routeCreationStartDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Departure'**
+  String get routeCreationStartDateLabel;
+
+  /// No description provided for @routeCreationEndDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Return'**
+  String get routeCreationEndDateLabel;
+
+  /// No description provided for @routeCreationNightsCount.
+  ///
+  /// In en, this message translates to:
+  /// **'{nights} nights'**
+  String routeCreationNightsCount(int nights);
+
+  /// No description provided for @routeCreationDatesCoherent.
+  ///
+  /// In en, this message translates to:
+  /// **'consistent dates'**
+  String get routeCreationDatesCoherent;
+
+  /// No description provided for @routeCreationDatesIncoherent.
+  ///
+  /// In en, this message translates to:
+  /// **'Return must be after departure.'**
+  String get routeCreationDatesIncoherent;
+
+  /// No description provided for @routeCreationWeekendShortcut.
+  ///
+  /// In en, this message translates to:
+  /// **'weekend'**
+  String get routeCreationWeekendShortcut;
+
+  /// No description provided for @routeCreationWeekShortcut.
+  ///
+  /// In en, this message translates to:
+  /// **'1 week'**
+  String get routeCreationWeekShortcut;
+
+  /// No description provided for @routeCreationFlexibleShortcut.
+  ///
+  /// In en, this message translates to:
+  /// **'still flexible'**
+  String get routeCreationFlexibleShortcut;
+
+  /// No description provided for @routeCreationLocationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Where are you headed?'**
+  String get routeCreationLocationsTitle;
+
+  /// No description provided for @routeCreationInterestsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'What do you want to experience there?'**
+  String get routeCreationInterestsTitle;
+
+  /// No description provided for @routeCreationInterestNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Interest'**
+  String get routeCreationInterestNameLabel;
+
+  /// No description provided for @routeCreationInterestDescriptionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Description (optional)'**
+  String get routeCreationInterestDescriptionLabel;
+
+  /// No description provided for @routeCreationAddInterestButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get routeCreationAddInterestButton;
+
+  /// No description provided for @routeCreationReviewHeader.
+  ///
+  /// In en, this message translates to:
+  /// **'REVIEW'**
+  String get routeCreationReviewHeader;
+
+  /// No description provided for @routeCreationReviewTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your route'**
+  String get routeCreationReviewTitle;
+
+  /// No description provided for @routeCreationNameBlockLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'NAME'**
+  String get routeCreationNameBlockLabel;
+
+  /// No description provided for @routeCreationInterestsBlockLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} INTERESTS'**
+  String routeCreationInterestsBlockLabel(int count);
+
+  /// No description provided for @routeCreationSubmitCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Send to my agent'**
+  String get routeCreationSubmitCta;
 
   /// No description provided for @visualizationTitle.
   ///

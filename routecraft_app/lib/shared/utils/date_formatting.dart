@@ -1,7 +1,7 @@
 // ponytail: hand-rolled month abbreviations instead of intl's DateFormat —
 // DateFormat needs initializeDateFormatting() per locale, unused anywhere
-// else in this app; wiring it up for a couple of date labels isn't worth
-// the setup. Upgrade: switch to DateFormat if more locale-aware formats show up.
+// else in this app; wiring it up for two date labels isn't worth the setup.
+// Upgrade: switch to DateFormat if a third locale-aware date format shows up.
 const _monthAbbreviationsEn = [
   'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', //
 ];

@@ -12,10 +12,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get appTitle => 'RouteCraft';
 
   @override
-  String get loginTitle => 'Login RouteCraft';
+  String get appBrandSubtitle => 'Compass System';
+
+  @override
+  String get splashCheckingSession => 'Verificando sessão…';
+
+  @override
+  String get loginTitle => 'Bem-vindo de volta';
 
   @override
   String get loginEmailLabel => 'E-mail';
+
+  @override
+  String get loginEmailHint => 'voce@email.com';
 
   @override
   String get loginPasswordLabel => 'Senha';
@@ -35,6 +44,15 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get loginError => 'Ocorreu um erro durante o login.';
+
+  @override
+  String get loginNoAccountFooter => 'Não tem conta? Fale com seu agente';
+
+  @override
+  String get loginShowPassword => 'Mostrar senha';
+
+  @override
+  String get loginHidePassword => 'Ocultar senha';
 
   @override
   String get forgotPasswordLink => 'Esqueceu a senha?';
@@ -92,6 +110,27 @@ class AppLocalizationsPt extends AppLocalizations {
   String get accountSettingsNav => 'Conta e Configurações';
 
   @override
+  String homeGreeting(String name) {
+    return 'Olá, $name';
+  }
+
+  @override
+  String get homeSectionInProgress => 'Em andamento';
+
+  @override
+  String get homeSectionUpcoming => 'Próximas';
+
+  @override
+  String get homeSectionCompleted => 'Concluídas';
+
+  @override
+  String get homeEmptyMessage =>
+      'Descreva a viagem que você quer fazer e seu agente monta o roteiro.';
+
+  @override
+  String get homeEmptyCta => 'Criar minha primeira rota';
+
+  @override
   String get homeNavLabel => 'Início';
 
   @override
@@ -131,6 +170,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get backButton => 'VOLTAR';
 
   @override
+  String get editButton => 'Editar';
+
+  @override
   String get routeCreatedSuccess => 'Rota criada com sucesso!';
 
   @override
@@ -143,6 +185,79 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get successTitle => 'Sucesso';
+
+  @override
+  String routeCreationStepIndicator(int step, int total) {
+    return 'PASSO $step DE $total';
+  }
+
+  @override
+  String get routeCreationNameTitle => 'Como vamos chamar essa viagem?';
+
+  @override
+  String get routeCreationDatesTitle => 'Quando você quer viajar?';
+
+  @override
+  String get routeCreationDatesSubtitle => 'Datas podem mudar depois.';
+
+  @override
+  String get routeCreationStartDateLabel => 'Ida';
+
+  @override
+  String get routeCreationEndDateLabel => 'Volta';
+
+  @override
+  String routeCreationNightsCount(int nights) {
+    return '$nights noites';
+  }
+
+  @override
+  String get routeCreationDatesCoherent => 'datas coerentes';
+
+  @override
+  String get routeCreationDatesIncoherent =>
+      'A volta precisa ser depois da ida.';
+
+  @override
+  String get routeCreationWeekendShortcut => 'fim de semana';
+
+  @override
+  String get routeCreationWeekShortcut => '1 semana';
+
+  @override
+  String get routeCreationFlexibleShortcut => 'ainda flexível';
+
+  @override
+  String get routeCreationLocationsTitle => 'Para onde você vai?';
+
+  @override
+  String get routeCreationInterestsTitle => 'O que você quer viver por lá?';
+
+  @override
+  String get routeCreationInterestNameLabel => 'Interesse';
+
+  @override
+  String get routeCreationInterestDescriptionLabel => 'Descrição (opcional)';
+
+  @override
+  String get routeCreationAddInterestButton => 'Adicionar';
+
+  @override
+  String get routeCreationReviewHeader => 'REVISÃO';
+
+  @override
+  String get routeCreationReviewTitle => 'Confirme sua rota';
+
+  @override
+  String get routeCreationNameBlockLabel => 'NOME';
+
+  @override
+  String routeCreationInterestsBlockLabel(int count) {
+    return '$count INTERESSES';
+  }
+
+  @override
+  String get routeCreationSubmitCta => 'Enviar para meu agente';
 
   @override
   String get visualizationTitle => 'Minhas Viagens';

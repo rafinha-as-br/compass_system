@@ -2,15 +2,21 @@
   "@@locale": "en",
 
   "appTitle": "RouteCraft",
+  "appBrandSubtitle": "Compass System",
+  "splashCheckingSession": "Checking session…",
 
-  "loginTitle": "RouteCraft Login",
+  "loginTitle": "Welcome back",
   "loginEmailLabel": "Email",
+  "loginEmailHint": "you@email.com",
   "loginPasswordLabel": "Password",
   "loginButton": "LOGIN",
   "loginEmailRequired": "Enter email",
   "loginPasswordRequired": "Enter password",
   "loginAccessDenied": "Access denied. Only Clients can access RouteCraft.",
   "loginError": "An error occurred during login.",
+  "loginNoAccountFooter": "Don't have an account? Talk to your agent",
+  "loginShowPassword": "Show password",
+  "loginHidePassword": "Hide password",
 
   "forgotPasswordLink": "Forgot password?",
   "forgotPasswordTitle": "Reset your password",
@@ -30,6 +36,17 @@
   "createRouteNav": "Create a Route",
   "visualizeRoutesNav": "Visualize Routes & Itineraries",
   "accountSettingsNav": "User Account & Settings",
+  "homeGreeting": "Hello, {name}",
+  "@homeGreeting": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "homeSectionInProgress": "In progress",
+  "homeSectionUpcoming": "Upcoming",
+  "homeSectionCompleted": "Completed",
+  "homeEmptyMessage": "Describe the trip you want to take and your agent will build the itinerary.",
+  "homeEmptyCta": "Create my first route",
 
   "homeNavLabel": "Home",
   "itineraryNavLabel": "Itinerary",
@@ -45,6 +62,7 @@
   "submitRoute": "SUBMIT ROUTE",
   "nextButton": "NEXT",
   "backButton": "BACK",
+  "editButton": "Edit",
   "routeCreatedSuccess": "Route created successfully!",
   "backToHome": "Back to Home",
   "failedToCreateRoute": "Failed to create route: {error}",
@@ -54,6 +72,45 @@
     }
   },
   "successTitle": "Success",
+
+  "routeCreationStepIndicator": "STEP {step} OF {total}",
+  "@routeCreationStepIndicator": {
+    "placeholders": {
+      "step": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "routeCreationNameTitle": "What should we call this trip?",
+  "routeCreationDatesTitle": "When do you want to travel?",
+  "routeCreationDatesSubtitle": "Dates can change later.",
+  "routeCreationStartDateLabel": "Departure",
+  "routeCreationEndDateLabel": "Return",
+  "routeCreationNightsCount": "{nights} nights",
+  "@routeCreationNightsCount": {
+    "placeholders": {
+      "nights": { "type": "int" }
+    }
+  },
+  "routeCreationDatesCoherent": "consistent dates",
+  "routeCreationDatesIncoherent": "Return must be after departure.",
+  "routeCreationWeekendShortcut": "weekend",
+  "routeCreationWeekShortcut": "1 week",
+  "routeCreationFlexibleShortcut": "still flexible",
+  "routeCreationLocationsTitle": "Where are you headed?",
+  "routeCreationInterestsTitle": "What do you want to experience there?",
+  "routeCreationInterestNameLabel": "Interest",
+  "routeCreationInterestDescriptionLabel": "Description (optional)",
+  "routeCreationAddInterestButton": "Add",
+  "routeCreationReviewHeader": "REVIEW",
+  "routeCreationReviewTitle": "Confirm your route",
+  "routeCreationNameBlockLabel": "NAME",
+  "routeCreationInterestsBlockLabel": "{count} INTERESTS",
+  "@routeCreationInterestsBlockLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "routeCreationSubmitCta": "Send to my agent",
 
   "visualizationTitle": "My Travels",
   "noTravelsYet": "No travels yet.",

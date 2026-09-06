@@ -7,29 +7,42 @@ import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 
+/// Number of guided data-entry steps (name, dates, locations, interests)
+/// before the review screen — [RouteCreationState.currentStep] `4` is the
+/// review, one past this count.
+const routeCreationStepCount = 4;
+
 class RouteCreationState {
   final int currentStep;
   final bool isSubmitting;
-  final String? errorMessage;
+  final bool hasNoSession;
+  final String? submitErrorMessage;
   final bool isSuccess;
 
   const RouteCreationState({
     this.currentStep = 0,
     this.isSubmitting = false,
-    this.errorMessage,
+    this.hasNoSession = false,
+    this.submitErrorMessage,
     this.isSuccess = false,
   });
+
+  bool get isReviewStep => currentStep == routeCreationStepCount;
 
   RouteCreationState copyWith({
     int? currentStep,
     bool? isSubmitting,
-    String? errorMessage,
+    bool? hasNoSession,
+    String? submitErrorMessage,
     bool? isSuccess,
   }) {
     return RouteCreationState(
       currentStep: currentStep ?? this.currentStep,
       isSubmitting: isSubmitting ?? this.isSubmitting,
-      errorMessage: errorMessage ?? this.errorMessage,
+      hasNoSession: hasNoSession ?? this.hasNoSession,
+      // No `?? this.submitErrorMessage` fallback: a passed `null` must clear
+      // a stale message from a previous attempt (same fix as LoginState).
+      submitErrorMessage: submitErrorMessage,
       isSuccess: isSuccess ?? this.isSuccess,
     );
   }
@@ -49,7 +62,11 @@ class RouteCreationController extends ChangeNotifier {
     TravelUseCases? travelUseCases,
     Future<String?> Function()? getClientName,
   })  : _travelUseCasesOverride = travelUseCases,
-        _getClientNameOverride = getClientName;
+        _getClientNameOverride = getClientName {
+    tripNameController.addListener(notifyListeners);
+    startLocationController.addListener(notifyListeners);
+    destinationController.addListener(notifyListeners);
+  }
 
   /// Test-only: starts from a fixed state instead of the default (empty)
   /// one, without going through `submitRoute()`'s real network/singleton
@@ -64,27 +81,58 @@ class RouteCreationController extends ChangeNotifier {
   Future<String?> _getClientName() =>
       (_getClientNameOverride ?? AuthService.instance.getClientName)();
 
-  // Form Fields
+  // Step 1 — name.
   final tripNameController = TextEditingController();
-  final startLocationController = TextEditingController();
-  final destinationController = TextEditingController();
+  bool get isNameValid => tripNameController.text.trim().isNotEmpty;
+
+  // Step 2 — dates.
   DateTime? startDate;
   DateTime? endDate;
+
+  int? get nights => (startDate != null && endDate != null) ? endDate!.difference(startDate!).inDays : null;
+  bool get isDatesValid => startDate != null && endDate != null && endDate!.isAfter(startDate!);
+
+  void setStartDate(DateTime date) {
+    startDate = date;
+    notifyListeners();
+  }
+
+  void setEndDate(DateTime date) {
+    endDate = date;
+    notifyListeners();
+  }
+
+  void applyWeekendShortcut() {
+    final now = DateTime.now();
+    final daysUntilSaturday = (DateTime.saturday - now.weekday) % 7;
+    final saturday = DateTime(now.year, now.month, now.day).add(Duration(days: daysUntilSaturday == 0 ? 7 : daysUntilSaturday));
+    startDate = saturday;
+    endDate = saturday.add(const Duration(days: 1));
+    notifyListeners();
+  }
+
+  void applyWeekShortcut() {
+    final tomorrow = DateTime.now().add(const Duration(days: 1));
+    startDate = DateTime(tomorrow.year, tomorrow.month, tomorrow.day);
+    endDate = startDate!.add(const Duration(days: 7));
+    notifyListeners();
+  }
+
+  void applyFlexibleShortcut() {
+    final now = DateTime.now();
+    startDate = DateTime(now.year, now.month, now.day).add(const Duration(days: 30));
+    endDate = startDate!.add(const Duration(days: 7));
+    notifyListeners();
+  }
+
+  // Step 3 — locations.
+  final startLocationController = TextEditingController();
+  final destinationController = TextEditingController();
+  bool get isLocationsValid =>
+      startLocationController.text.trim().isNotEmpty && destinationController.text.trim().isNotEmpty;
+
+  // Step 4 — interests (optional: always valid to continue).
   final List<InterestPoint> interestPoints = [];
-
-  void nextStep() {
-    if (_state.currentStep < 2) {
-      _state = _state.copyWith(currentStep: _state.currentStep + 1);
-      notifyListeners();
-    }
-  }
-
-  void previousStep() {
-    if (_state.currentStep > 0) {
-      _state = _state.copyWith(currentStep: _state.currentStep - 1);
-      notifyListeners();
-    }
-  }
 
   void addInterestPoint(String name, String description) {
     interestPoints.add(InterestPoint(
@@ -96,16 +144,45 @@ class RouteCreationController extends ChangeNotifier {
     notifyListeners();
   }
 
+  void removeInterestPoint(String domainId) {
+    interestPoints.removeWhere((point) => point.domainId == domainId);
+    notifyListeners();
+  }
+
+  bool _isStepValid(int step) => switch (step) {
+        0 => isNameValid,
+        1 => isDatesValid,
+        2 => isLocationsValid,
+        3 => true,
+        _ => false,
+      };
+
+  void nextStep() {
+    if (_state.currentStep >= routeCreationStepCount || !_isStepValid(_state.currentStep)) return;
+    _state = _state.copyWith(currentStep: _state.currentStep + 1);
+    notifyListeners();
+  }
+
+  void previousStep() {
+    if (_state.currentStep > 0) {
+      _state = _state.copyWith(currentStep: _state.currentStep - 1);
+      notifyListeners();
+    }
+  }
+
+  /// Jumps back from the review screen to a given step to edit it.
+  void editStep(int step) {
+    _state = _state.copyWith(currentStep: step);
+    notifyListeners();
+  }
+
   Future<void> submitRoute() async {
-    _state = _state.copyWith(isSubmitting: true, errorMessage: null);
+    _state = _state.copyWith(isSubmitting: true, hasNoSession: false, submitErrorMessage: null);
     notifyListeners();
 
     final clientName = await _getClientName();
     if (clientName == null || clientName.isEmpty) {
-      _state = _state.copyWith(
-        isSubmitting: false,
-        errorMessage: 'Invalid session. Please log in again.',
-      );
+      _state = _state.copyWith(isSubmitting: false, hasNoSession: true);
       notifyListeners();
       return;
     }
@@ -113,10 +190,10 @@ class RouteCreationController extends ChangeNotifier {
     final routePlan = RoutePlan(
       domainId: const Uuid().v4(),
       backEndId: null,
-      startDate: startDate ?? DateTime.now(),
-      endDate: endDate ?? DateTime.now().add(const Duration(days: 7)),
-      startLocation: startLocationController.text,
-      destination: destinationController.text,
+      startDate: startDate!,
+      endDate: endDate!,
+      startLocation: startLocationController.text.trim(),
+      destination: destinationController.text.trim(),
       interestsList: interestPoints,
     );
 
@@ -124,7 +201,7 @@ class RouteCreationController extends ChangeNotifier {
       domainId: const Uuid().v4(),
       backEndId: null,
       clientName: clientName,
-      travelName: tripNameController.text.isEmpty ? 'My Trip' : tripNameController.text,
+      travelName: tripNameController.text.trim(),
       travelStatus: TravelStatus.routeCreated,
       participantsList: const [],
       routePlan: routePlan,
@@ -135,7 +212,7 @@ class RouteCreationController extends ChangeNotifier {
       case Success<Travel>():
         _state = _state.copyWith(isSubmitting: false, isSuccess: true);
       case Failure<Travel>(message: final message):
-        _state = _state.copyWith(isSubmitting: false, errorMessage: 'Failed to create route: $message');
+        _state = _state.copyWith(isSubmitting: false, submitErrorMessage: message);
     }
     notifyListeners();
   }
