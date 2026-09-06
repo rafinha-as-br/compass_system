@@ -104,10 +104,22 @@ abstract class AppLocalizations {
   /// **'RouteCraft'**
   String get appTitle;
 
+  /// No description provided for @appBrandSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass System'**
+  String get appBrandSubtitle;
+
+  /// No description provided for @splashCheckingSession.
+  ///
+  /// In en, this message translates to:
+  /// **'Checking session…'**
+  String get splashCheckingSession;
+
   /// No description provided for @loginTitle.
   ///
   /// In en, this message translates to:
-  /// **'RouteCraft Login'**
+  /// **'Welcome back'**
   String get loginTitle;
 
   /// No description provided for @loginEmailLabel.
@@ -115,6 +127,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Email'**
   String get loginEmailLabel;
+
+  /// No description provided for @loginEmailHint.
+  ///
+  /// In en, this message translates to:
+  /// **'you@email.com'**
+  String get loginEmailHint;
 
   /// No description provided for @loginPasswordLabel.
   ///
@@ -151,6 +169,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred during login.'**
   String get loginError;
+
+  /// No description provided for @loginNoAccountFooter.
+  ///
+  /// In en, this message translates to:
+  /// **'Don\'t have an account? Talk to your agent'**
+  String get loginNoAccountFooter;
+
+  /// No description provided for @loginShowPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Show password'**
+  String get loginShowPassword;
+
+  /// No description provided for @loginHidePassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide password'**
+  String get loginHidePassword;
 
   /// No description provided for @forgotPasswordLink.
   ///
@@ -253,6 +289,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'User Account & Settings'**
   String get accountSettingsNav;
+
+  /// No description provided for @homeGreeting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hello, {name}'**
+  String homeGreeting(String name);
+
+  /// No description provided for @homeSectionInProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'In progress'**
+  String get homeSectionInProgress;
+
+  /// No description provided for @homeSectionUpcoming.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcoming'**
+  String get homeSectionUpcoming;
+
+  /// No description provided for @homeSectionCompleted.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get homeSectionCompleted;
+
+  /// No description provided for @homeEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Describe the trip you want to take and your agent will build the itinerary.'**
+  String get homeEmptyMessage;
+
+  /// No description provided for @homeEmptyCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Create my first route'**
+  String get homeEmptyCta;
 
   /// No description provided for @homeNavLabel.
   ///

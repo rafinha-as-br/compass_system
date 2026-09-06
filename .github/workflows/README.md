@@ -33,20 +33,20 @@ Sem análise estática configurada neste módulo (nenhum plugin Checkstyle/Spotb
 
 Versão do Flutter pinada em `3.35.5` (stable) para reprodutibilidade.
 
+### `routecraft` (routecraft_app)
+
+| Etapa | Comando |
+| --- | --- |
+| Instalar dependências | `flutter pub get` |
+| Análise estática | `flutter analyze` |
+| Testes automatizados | `flutter test` |
+| Build | `flutter build web` |
+
+Mesmo padrão do job `travel-matrix` (Flutter `3.35.5` stable). Inclui testes golden (`test/golden/screens_golden_test.dart`) — rodam no runner `ubuntu-latest`, diferente do Windows usado localmente; se surgir mismatch de golden por rasterização de fonte entre SOs, regenerar os goldens a partir do runner Linux (ou de um container equivalente) em vez de aceitar o golden gerado localmente.
+
 ## Quality gates
 
 Todas as etapas acima são obrigatórias (**BLOCK** em caso de falha) — falha em qualquer uma delas reprova o check do job e, com branch protection ativa (ver abaixo), bloqueia o merge do PR.
-
-## Módulo fora da pipeline: `routecraft_app`
-
-`routecraft_app` **não está incluído** nesta pipeline. O `pubspec.yaml` declara uma dependência de path local:
-
-```yaml
-mock_repository:
-  path: ../fake_api
-```
-
-`fake_api` está no `.gitignore` e não existe no repositório — um clone limpo (incluindo o runner do CI) não consegue nem rodar `flutter pub get` neste módulo. Antes de incluir `routecraft_app` na pipeline, é preciso resolver essa dependência (versionar `fake_api`, publicá-lo como pacote, ou substituir por um mock real).
 
 ## Secrets
 
@@ -55,11 +55,11 @@ Nenhum secret é utilizado por esta pipeline atualmente.
 ## Cache
 
 - Dependências Maven (`actions/setup-java`, chave por `pom.xml`)
-- SDK e dependências Flutter (`subosito/flutter-action`, `cache: true`)
+- SDK e dependências Flutter (`subosito/flutter-action`, `cache: true`, um cache por job)
 
 ## Artefatos
 
-Nenhum artefato é preservado atualmente (nem APK, nem build web). A avaliar se `flutter build web` do `travel_matrix` deve virar artefato quando houver deploy automatizado.
+Nenhum artefato é preservado atualmente (nem APK, nem build web). A avaliar se os `flutter build web` de `travel_matrix`/`routecraft_app` devem virar artefato quando houver deploy automatizado.
 
 ## Branch protection
 
@@ -67,6 +67,9 @@ Nenhum artefato é preservado atualmente (nem APK, nem build web). A avaliar se 
 
 - `compass-api`
 - `travel_matrix`
+- `routecraft_app`
+
+(Requer atualização manual da branch protection rule no GitHub para incluir o novo check `routecraft_app` — a pipeline em si já valida o job independente disso.)
 
 ## Comportamento esperado em falhas
 

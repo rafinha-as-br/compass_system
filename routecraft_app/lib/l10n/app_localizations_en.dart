@@ -12,10 +12,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appTitle => 'RouteCraft';
 
   @override
-  String get loginTitle => 'RouteCraft Login';
+  String get appBrandSubtitle => 'Compass System';
+
+  @override
+  String get splashCheckingSession => 'Checking session…';
+
+  @override
+  String get loginTitle => 'Welcome back';
 
   @override
   String get loginEmailLabel => 'Email';
+
+  @override
+  String get loginEmailHint => 'you@email.com';
 
   @override
   String get loginPasswordLabel => 'Password';
@@ -35,6 +44,16 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get loginError => 'An error occurred during login.';
+
+  @override
+  String get loginNoAccountFooter =>
+      'Don\'t have an account? Talk to your agent';
+
+  @override
+  String get loginShowPassword => 'Show password';
+
+  @override
+  String get loginHidePassword => 'Hide password';
 
   @override
   String get forgotPasswordLink => 'Forgot password?';
@@ -90,6 +109,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get accountSettingsNav => 'User Account & Settings';
+
+  @override
+  String homeGreeting(String name) {
+    return 'Hello, $name';
+  }
+
+  @override
+  String get homeSectionInProgress => 'In progress';
+
+  @override
+  String get homeSectionUpcoming => 'Upcoming';
+
+  @override
+  String get homeSectionCompleted => 'Completed';
+
+  @override
+  String get homeEmptyMessage =>
+      'Describe the trip you want to take and your agent will build the itinerary.';
+
+  @override
+  String get homeEmptyCta => 'Create my first route';
 
   @override
   String get homeNavLabel => 'Home';
