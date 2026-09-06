@@ -1,6 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/core/services/auth_service.dart';
+import 'package:routecraft_app/features/notifications/data/repositories/secure_notification_storage.dart';
+import 'package:routecraft_app/features/notifications/domain/repositories/notification_storage.dart';
 import 'package:routecraft_app/features/travels/data/repositories/travel_repository_impl.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
@@ -15,11 +17,14 @@ class AccountState {
   /// travel, so this is `null` until at least one travel has an itinerary.
   final String? agentName;
 
+  final int unreadNotificationsCount;
+
   const AccountState({
     this.isLoading = true,
     this.clientName,
     this.clientEmail,
     this.agentName,
+    this.unreadNotificationsCount = 0,
   });
 }
 
@@ -30,17 +35,21 @@ class AccountController extends ChangeNotifier {
   final TravelUseCases? _travelUseCasesOverride;
   final Future<String?> Function()? _getClientNameOverride;
   final Future<String?> Function()? _getClientEmailOverride;
+  final NotificationStorage? _notificationStorageOverride;
 
-  /// [travelUseCases]/[getClientName]/[getClientEmail] are injectable for
-  /// tests, without depending on the real network/singleton wiring
-  /// (`AuthService.instance` is only touched when no override is given).
+  /// [travelUseCases]/[getClientName]/[getClientEmail]/[notificationStorage]
+  /// are injectable for tests, without depending on the real
+  /// network/storage/singleton wiring (`AuthService.instance` is only
+  /// touched when no override is given).
   AccountController({
     TravelUseCases? travelUseCases,
     Future<String?> Function()? getClientName,
     Future<String?> Function()? getClientEmail,
+    NotificationStorage? notificationStorage,
   })  : _travelUseCasesOverride = travelUseCases,
         _getClientNameOverride = getClientName,
-        _getClientEmailOverride = getClientEmail {
+        _getClientEmailOverride = getClientEmail,
+        _notificationStorageOverride = notificationStorage {
     _fetchData();
   }
 
@@ -50,9 +59,11 @@ class AccountController extends ChangeNotifier {
   AccountController.withState(this._state)
       : _travelUseCasesOverride = null,
         _getClientNameOverride = null,
-        _getClientEmailOverride = null;
+        _getClientEmailOverride = null,
+        _notificationStorageOverride = null;
 
   TravelUseCases get _travelUseCases => _travelUseCasesOverride ?? TravelUseCases(TravelRepositoryImpl());
+  NotificationStorage get _notificationStorage => _notificationStorageOverride ?? SecureNotificationStorage();
 
   Future<String?> _getClientName() =>
       (_getClientNameOverride ?? AuthService.instance.getClientName)();
@@ -68,8 +79,15 @@ class AccountController extends ChangeNotifier {
       final name = await _getClientName();
       final email = await _getClientEmail();
       final agentName = name == null || name.isEmpty ? null : await _findAgentName(name);
+      final unreadCount = await _unreadNotificationsCount();
 
-      _state = AccountState(isLoading: false, clientName: name, clientEmail: email, agentName: agentName);
+      _state = AccountState(
+        isLoading: false,
+        clientName: name,
+        clientEmail: email,
+        agentName: agentName,
+        unreadNotificationsCount: unreadCount,
+      );
     } catch (error) {
       // Degrades to an empty (but non-loading) account view rather than
       // crashing the screen — mirrors HomeController's same defense.
@@ -93,5 +111,18 @@ class AccountController extends ChangeNotifier {
       if (itinerary != null) return itinerary.agentName;
     }
     return null;
+  }
+
+  /// Isolated in its own try/catch so a notification-storage failure only
+  /// zeroes the unread badge instead of degrading the whole account view
+  /// (name/email/agent) the way the outer catch in [_fetchData] would.
+  Future<int> _unreadNotificationsCount() async {
+    try {
+      final notifications = await _notificationStorage.loadNotifications();
+      return notifications.where((n) => !n.read).length;
+    } catch (error) {
+      debugPrint('AccountController: failed to load notifications: $error');
+      return 0;
+    }
   }
 }

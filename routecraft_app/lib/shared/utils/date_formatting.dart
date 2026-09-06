@@ -30,3 +30,7 @@ String formatDateRange(String languageCode, DateTime start, DateTime end) {
 /// A single date as "d MMM yyyy" — e.g. "12 Oct 2026".
 String formatDate(String languageCode, DateTime date) =>
     '${date.day} ${monthAbbreviation(languageCode, date.month)} ${date.year}';
+
+/// A time of day as "HH:mm" — e.g. "09:00". Always 24h, locale-independent.
+String formatTime(DateTime time) =>
+    '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';

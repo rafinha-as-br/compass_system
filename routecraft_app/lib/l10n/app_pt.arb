@@ -111,6 +111,15 @@
   "hubEmptyMessage": "Selecione uma viagem em Início para ver o roteiro.",
   "hubGoToHomeCta": "Ir para o Início",
 
+  "notificationsTitle": "Avisos",
+  "notificationsMarkAllRead": "marcar lidos",
+  "notificationsEmptyMessage": "Nenhum aviso ainda.",
+  "notificationItineraryPublished": "Seu roteiro de {travelName} foi publicado",
+  "notificationItineraryChanged": "O roteiro de {travelName} foi alterado",
+  "notificationRouteReceived": "Rota de {travelName} recebida",
+  "notificationViewTripLink": "Ver viagem",
+  "notificationOpenTripError": "Não foi possível abrir esta viagem.",
+
   "accountTitle": "Minha Conta",
   "logoutButton": "SAIR",
   "notAuthenticated": "Não autenticado.",

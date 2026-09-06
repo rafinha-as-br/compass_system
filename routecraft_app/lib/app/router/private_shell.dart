@@ -4,6 +4,7 @@ import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/app/router/private_shell_scaffold.dart';
 import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
 import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
+import 'package:routecraft_app/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:routecraft_app/features/itinerary_hub/presentation/pages/itinerary_hub_page.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
@@ -50,6 +51,12 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
       GoRoute(
         path: AppRoutes.account,
         builder: (context, state) => const AccountPage(),
+        routes: [
+          GoRoute(
+            path: AppRoutes.notifications,
+            builder: (context, state) => const NotificationsPage(),
+          ),
+        ],
       ),
     ]),
   ],

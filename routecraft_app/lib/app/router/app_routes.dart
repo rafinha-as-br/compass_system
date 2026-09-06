@@ -15,9 +15,11 @@ abstract class AppRoutes {
   /// Sub-routes (relative), reused under more than one branch
   static const createRoute = 'create-route';
   static const followTravel = 'follow';
+  static const notifications = 'notifications';
 
   /// Full paths for navigating to a sub-route from outside its parent.
   static const homeCreateRoute = '$home/$createRoute';
   static const homeFollowTravel = '$home/$followTravel';
   static const itineraryFollowTravel = '$itinerary/$followTravel';
+  static const accountNotifications = '$account/$notifications';
 }

@@ -348,6 +348,36 @@ class AppLocalizationsPt extends AppLocalizations {
   String get hubGoToHomeCta => 'Ir para o Início';
 
   @override
+  String get notificationsTitle => 'Avisos';
+
+  @override
+  String get notificationsMarkAllRead => 'marcar lidos';
+
+  @override
+  String get notificationsEmptyMessage => 'Nenhum aviso ainda.';
+
+  @override
+  String notificationItineraryPublished(String travelName) {
+    return 'Seu roteiro de $travelName foi publicado';
+  }
+
+  @override
+  String notificationItineraryChanged(String travelName) {
+    return 'O roteiro de $travelName foi alterado';
+  }
+
+  @override
+  String notificationRouteReceived(String travelName) {
+    return 'Rota de $travelName recebida';
+  }
+
+  @override
+  String get notificationViewTripLink => 'Ver viagem';
+
+  @override
+  String get notificationOpenTripError => 'Não foi possível abrir esta viagem.';
+
+  @override
   String get accountTitle => 'Minha Conta';
 
   @override

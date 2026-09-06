@@ -704,6 +704,54 @@ abstract class AppLocalizations {
   /// **'Go to Home'**
   String get hubGoToHomeCta;
 
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'mark all read'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @notificationsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet.'**
+  String get notificationsEmptyMessage;
+
+  /// No description provided for @notificationItineraryPublished.
+  ///
+  /// In en, this message translates to:
+  /// **'Your itinerary for {travelName} was published'**
+  String notificationItineraryPublished(String travelName);
+
+  /// No description provided for @notificationItineraryChanged.
+  ///
+  /// In en, this message translates to:
+  /// **'The itinerary for {travelName} was changed'**
+  String notificationItineraryChanged(String travelName);
+
+  /// No description provided for @notificationRouteReceived.
+  ///
+  /// In en, this message translates to:
+  /// **'Route for {travelName} received'**
+  String notificationRouteReceived(String travelName);
+
+  /// No description provided for @notificationViewTripLink.
+  ///
+  /// In en, this message translates to:
+  /// **'View trip'**
+  String get notificationViewTripLink;
+
+  /// No description provided for @notificationOpenTripError.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open this trip.'**
+  String get notificationOpenTripError;
+
   /// No description provided for @accountTitle.
   ///
   /// In en, this message translates to:

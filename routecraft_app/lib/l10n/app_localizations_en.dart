@@ -348,6 +348,36 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubGoToHomeCta => 'Go to Home';
 
   @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsMarkAllRead => 'mark all read';
+
+  @override
+  String get notificationsEmptyMessage => 'No notifications yet.';
+
+  @override
+  String notificationItineraryPublished(String travelName) {
+    return 'Your itinerary for $travelName was published';
+  }
+
+  @override
+  String notificationItineraryChanged(String travelName) {
+    return 'The itinerary for $travelName was changed';
+  }
+
+  @override
+  String notificationRouteReceived(String travelName) {
+    return 'Route for $travelName received';
+  }
+
+  @override
+  String get notificationViewTripLink => 'View trip';
+
+  @override
+  String get notificationOpenTripError => 'Could not open this trip.';
+
+  @override
   String get accountTitle => 'My Account';
 
   @override

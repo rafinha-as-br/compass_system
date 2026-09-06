@@ -152,6 +152,30 @@
   "hubEmptyMessage": "Select a trip from Home to see its itinerary.",
   "hubGoToHomeCta": "Go to Home",
 
+  "notificationsTitle": "Notifications",
+  "notificationsMarkAllRead": "mark all read",
+  "notificationsEmptyMessage": "No notifications yet.",
+  "notificationItineraryPublished": "Your itinerary for {travelName} was published",
+  "@notificationItineraryPublished": {
+    "placeholders": {
+      "travelName": { "type": "String" }
+    }
+  },
+  "notificationItineraryChanged": "The itinerary for {travelName} was changed",
+  "@notificationItineraryChanged": {
+    "placeholders": {
+      "travelName": { "type": "String" }
+    }
+  },
+  "notificationRouteReceived": "Route for {travelName} received",
+  "@notificationRouteReceived": {
+    "placeholders": {
+      "travelName": { "type": "String" }
+    }
+  },
+  "notificationViewTripLink": "View trip",
+  "notificationOpenTripError": "Could not open this trip.",
+
   "accountTitle": "My Account",
   "logoutButton": "LOGOUT",
   "notAuthenticated": "Not authenticated.",

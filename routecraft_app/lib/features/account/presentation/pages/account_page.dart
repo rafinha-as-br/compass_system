@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 
 import 'package:routecraft_app/app/controllers/settings_controller.dart';
 import 'package:routecraft_app/app/global_controllers/auth_controller.dart';
+import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/account/presentation/controllers/account_controller.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
@@ -47,7 +49,12 @@ class _AccountView extends StatelessWidget {
                 ],
                 const SizedBox(height: 32),
                 _MenuItem(icon: Icons.badge_outlined, label: l10n.accountPersonalDataMenu),
-                _MenuItem(icon: Icons.notifications_outlined, label: l10n.accountNotificationsMenu),
+                _MenuItem(
+                  icon: Icons.notifications_outlined,
+                  label: l10n.accountNotificationsMenu,
+                  badgeCount: state.unreadNotificationsCount,
+                  onTap: () => context.push(AppRoutes.accountNotifications),
+                ),
                 _MenuItem(icon: Icons.help_outline, label: l10n.accountHelpMenu),
                 const SizedBox(height: 16),
                 const Divider(),
@@ -157,20 +164,54 @@ class _AgentBlock extends StatelessWidget {
 }
 
 class _MenuItem extends StatelessWidget {
-  const _MenuItem({required this.icon, required this.label});
+  const _MenuItem({required this.icon, required this.label, this.onTap, this.badgeCount});
 
   final IconData icon;
   final String label;
+  final VoidCallback? onTap;
+
+  /// Shown as a small trailing badge when greater than zero.
+  final int? badgeCount;
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
+    final count = badgeCount;
 
     return ListTile(
       leading: Icon(icon),
       title: Text(label),
-      trailing: const Icon(Icons.chevron_right),
-      onTap: () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.comingSoonMessage))),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          if (count != null && count > 0) ...[
+            _UnreadBadge(count: count),
+            const SizedBox(width: 8),
+          ],
+          const Icon(Icons.chevron_right),
+        ],
+      ),
+      onTap: onTap ?? () => ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.comingSoonMessage))),
+    );
+  }
+}
+
+class _UnreadBadge extends StatelessWidget {
+  const _UnreadBadge({required this.count});
+
+  final int count;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+      decoration: BoxDecoration(color: theme.colorScheme.error, borderRadius: BorderRadius.circular(12)),
+      child: Text(
+        '$count',
+        style: theme.textTheme.labelSmall?.copyWith(color: theme.colorScheme.onError, fontWeight: FontWeight.bold),
+      ),
     );
   }
 }
