@@ -1,6 +1,3 @@
-import 'dart:typed_data';
-
-import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:google_fonts/src/google_fonts_base.dart' as google_fonts_base;

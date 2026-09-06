@@ -6,15 +6,19 @@ import 'package:routecraft_app/app/controllers/settings_controller.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/account/presentation/controllers/account_controller.dart';
 import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
+import 'package:routecraft_app/features/travels/domain/entities/itinerary.dart';
+import 'package:routecraft_app/features/travels/domain/entities/itinerary_step.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
+import 'package:routecraft_app/features/travels/domain/entities/transport.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/auth/domain/usecases/login_usecase.dart';
 import 'package:routecraft_app/features/auth/presentation/controllers/login_controller.dart';
 import 'package:routecraft_app/features/auth/presentation/pages/login_page.dart';
+import 'package:routecraft_app/features/home/presentation/controllers/home_controller.dart';
+import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
+import 'package:routecraft_app/features/itinerary_hub/presentation/pages/itinerary_hub_page.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
-import 'package:routecraft_app/features/visualization/presentation/controllers/visualization_controller.dart';
-import 'package:routecraft_app/features/visualization/presentation/pages/visualization_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
 
@@ -40,6 +44,38 @@ Travel _sampleTravel() => Travel(
         destination: 'Rome',
         interestsList: const [],
       ),
+      itinerary: Itinerary(
+        domainId: 'it1',
+        backEndId: 'it1',
+        agentName: 'Ana',
+        itinerarySteps: [
+          // ponytail: fixed far-past date, not DateTime.now() + offset — the
+          // hub computes "days until" against the real clock at render time,
+          // so a relative fixture date would make this golden's rendered
+          // text (and the PNG) drift and fail on a different day. A past
+          // date pins the render to the stable "today" branch forever.
+          ItineraryStep.newTravelSegment(
+            domainId: 's1',
+            backEndId: 's1',
+            title: 'Flight to Rome',
+            startDate: DateTime(2020, 1, 1),
+            finishDate: DateTime(2020, 1, 1, 10),
+            finished: false,
+            startPoint: 'GRU',
+            finishPoint: 'FCO',
+            transport: Transport.newAirplane(
+              domainId: 'tr1',
+              backEndId: 'tr1',
+              flightNumber: 'LA3421',
+              flightCompany: 'LATAM',
+              flightDate: DateTime(2020, 1, 1),
+              departureGate: 'A12',
+              departureAirport: 'GRU',
+              arrivalAirport: 'FCO',
+            ),
+          ),
+        ],
+      ),
     );
 
 Widget _loginScreen() => LoginPage(
@@ -49,11 +85,31 @@ Widget _loginScreen() => LoginPage(
       ),
     );
 
-Widget _visualizationScreen() => VisualizationPage(
-      controller: VisualizationController.withState(
-        VisualizationState(isLoading: false, travels: [_sampleTravel()]),
+Widget _hubRouteCreatedScreen() => ItineraryHubPage(
+      travel: Travel(
+        domainId: 't2',
+        backEndId: 't2',
+        clientName: 'Rafaela Souza',
+        travelName: 'Litoral Norte',
+        travelStatus: TravelStatus.routeCreated,
+        participantsList: const [],
+        routePlan: RoutePlan(
+          domainId: 'r2',
+          backEndId: 'r2',
+          startDate: DateTime(2026, 10, 12),
+          endDate: DateTime(2026, 10, 19),
+          startLocation: 'São Paulo',
+          destination: 'Paraty',
+          interestsList: [
+            InterestPoint(domainId: 'i1', backEndId: null, name: 'Trilha', description: ''),
+            InterestPoint(domainId: 'i2', backEndId: null, name: 'Gastronomia', description: ''),
+            InterestPoint(domainId: 'i3', backEndId: null, name: 'Centro histórico', description: ''),
+          ],
+        ),
       ),
     );
+
+Widget _hubItineraryCreatedScreen() => ItineraryHubPage(travel: _sampleTravel());
 
 Widget _routeCreationScreen() => RouteCreationPage(
       controller: RouteCreationController.withState(const RouteCreationState()),
@@ -73,10 +129,57 @@ Widget _accountScreen() => ChangeNotifierProvider<SettingsController>(
       ),
     );
 
+Widget _routeCreationReviewScreen() {
+  final controller = RouteCreationController.withState(
+    const RouteCreationState(currentStep: routeCreationStepCount),
+  );
+  controller.tripNameController.text = 'Litoral Norte com a família';
+  controller.startLocationController.text = 'São Paulo';
+  controller.destinationController.text = 'Paraty, RJ';
+  controller.setStartDate(DateTime(2026, 10, 12));
+  controller.setEndDate(DateTime(2026, 10, 19));
+  controller.addInterestPoint('Trilha', '');
+  controller.addInterestPoint('Gastronomia', '');
+  controller.addInterestPoint('Centro histórico', '');
+  return RouteCreationPage(controller: controller);
+}
+
+Widget _homeScreen() => HomePage(
+      controller: HomeController.withState(
+        HomeState(
+          isLoading: false,
+          clientName: 'Rafaela Souza',
+          inProgress: [
+            Travel(
+              domainId: 't2',
+              backEndId: 't2',
+              clientName: 'Rafaela Souza',
+              travelName: 'Litoral Norte',
+              travelStatus: TravelStatus.travelStarted,
+              participantsList: const [],
+              routePlan: RoutePlan(
+                domainId: 'r2',
+                backEndId: 'r2',
+                startDate: DateTime(2026, 10, 12),
+                endDate: DateTime(2026, 10, 19),
+                startLocation: 'São Paulo',
+                destination: 'Paraty',
+                interestsList: const [],
+              ),
+            ),
+          ],
+          upcoming: [_sampleTravel()],
+        ),
+      ),
+    );
+
 final _screens = <String, Widget Function()>{
   'login': _loginScreen,
-  'visualization': _visualizationScreen,
+  'home': _homeScreen,
+  'hub_route_created': _hubRouteCreatedScreen,
+  'hub_itinerary_created': _hubItineraryCreatedScreen,
   'route_creation': _routeCreationScreen,
+  'route_creation_review': _routeCreationReviewScreen,
   'account': _accountScreen,
 };
 
