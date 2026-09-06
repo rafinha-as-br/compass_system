@@ -348,6 +348,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubGoToHomeCta => 'Go to Home';
 
   @override
+  String todayDayProgress(int day, int total) {
+    return 'Day $day of $total';
+  }
+
+  @override
+  String get todayInProgressLabel => 'Trip in progress';
+
+  @override
+  String todayStartsIn(String duration) {
+    return 'Starts in $duration';
+  }
+
+  @override
+  String get todayHappeningNow => 'Happening now';
+
+  @override
+  String get todayAddressLabel => 'Address';
+
+  @override
+  String get todayViewStepCta => 'View step';
+
+  @override
+  String get todayAfterThatLabel => 'AFTER THAT';
+
+  @override
   String get notificationsTitle => 'Notifications';
 
   @override

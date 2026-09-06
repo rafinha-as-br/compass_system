@@ -152,6 +152,25 @@
   "hubEmptyMessage": "Select a trip from Home to see its itinerary.",
   "hubGoToHomeCta": "Go to Home",
 
+  "todayDayProgress": "Day {day} of {total}",
+  "@todayDayProgress": {
+    "placeholders": {
+      "day": { "type": "int" },
+      "total": { "type": "int" }
+    }
+  },
+  "todayInProgressLabel": "Trip in progress",
+  "todayStartsIn": "Starts in {duration}",
+  "@todayStartsIn": {
+    "placeholders": {
+      "duration": { "type": "String" }
+    }
+  },
+  "todayHappeningNow": "Happening now",
+  "todayAddressLabel": "Address",
+  "todayViewStepCta": "View step",
+  "todayAfterThatLabel": "AFTER THAT",
+
   "notificationsTitle": "Notifications",
   "notificationsMarkAllRead": "mark all read",
   "notificationsEmptyMessage": "No notifications yet.",

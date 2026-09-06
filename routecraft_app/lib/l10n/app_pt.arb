@@ -111,6 +111,14 @@
   "hubEmptyMessage": "Selecione uma viagem em Início para ver o roteiro.",
   "hubGoToHomeCta": "Ir para o Início",
 
+  "todayDayProgress": "Dia {day} de {total}",
+  "todayInProgressLabel": "Viagem em andamento",
+  "todayStartsIn": "Começa em {duration}",
+  "todayHappeningNow": "Acontecendo agora",
+  "todayAddressLabel": "Endereço",
+  "todayViewStepCta": "Ver etapa",
+  "todayAfterThatLabel": "DEPOIS DISSO",
+
   "notificationsTitle": "Avisos",
   "notificationsMarkAllRead": "marcar lidos",
   "notificationsEmptyMessage": "Nenhum aviso ainda.",

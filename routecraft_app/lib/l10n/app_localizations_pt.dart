@@ -348,6 +348,31 @@ class AppLocalizationsPt extends AppLocalizations {
   String get hubGoToHomeCta => 'Ir para o Início';
 
   @override
+  String todayDayProgress(int day, int total) {
+    return 'Dia $day de $total';
+  }
+
+  @override
+  String get todayInProgressLabel => 'Viagem em andamento';
+
+  @override
+  String todayStartsIn(String duration) {
+    return 'Começa em $duration';
+  }
+
+  @override
+  String get todayHappeningNow => 'Acontecendo agora';
+
+  @override
+  String get todayAddressLabel => 'Endereço';
+
+  @override
+  String get todayViewStepCta => 'Ver etapa';
+
+  @override
+  String get todayAfterThatLabel => 'DEPOIS DISSO';
+
+  @override
   String get notificationsTitle => 'Avisos';
 
   @override

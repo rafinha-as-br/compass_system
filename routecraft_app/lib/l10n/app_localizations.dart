@@ -704,6 +704,48 @@ abstract class AppLocalizations {
   /// **'Go to Home'**
   String get hubGoToHomeCta;
 
+  /// No description provided for @todayDayProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of {total}'**
+  String todayDayProgress(int day, int total);
+
+  /// No description provided for @todayInProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip in progress'**
+  String get todayInProgressLabel;
+
+  /// No description provided for @todayStartsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts in {duration}'**
+  String todayStartsIn(String duration);
+
+  /// No description provided for @todayHappeningNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Happening now'**
+  String get todayHappeningNow;
+
+  /// No description provided for @todayAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get todayAddressLabel;
+
+  /// No description provided for @todayViewStepCta.
+  ///
+  /// In en, this message translates to:
+  /// **'View step'**
+  String get todayViewStepCta;
+
+  /// No description provided for @todayAfterThatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AFTER THAT'**
+  String get todayAfterThatLabel;
+
   /// No description provided for @notificationsTitle.
   ///
   /// In en, this message translates to:
