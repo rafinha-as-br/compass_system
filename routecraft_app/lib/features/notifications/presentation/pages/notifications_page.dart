@@ -143,7 +143,7 @@ class _NotificationTile extends StatelessWidget {
           .showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.notificationOpenTripError)));
       return;
     }
-    context.push(AppRoutes.homeFollowTravel, extra: travel);
+    context.push('${AppRoutes.homeFollowTravel}?${AppRoutes.travelIdQuery(travelId)}', extra: travel);
   }
 
   IconData _iconFor(TravelNotificationType type) => switch (type) {

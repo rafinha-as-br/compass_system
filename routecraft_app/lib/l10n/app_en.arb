@@ -161,6 +161,8 @@
   "hubEmptyTitle": "No trip selected",
   "hubEmptyMessage": "Select a trip from Home to see its itinerary.",
   "hubGoToHomeCta": "Go to Home",
+  "travelNotFoundTitle": "Trip not found",
+  "travelNotFoundMessage": "This trip couldn't be found. It may have been removed.",
 
   "todayDayProgress": "Day {day} of {total}",
   "@todayDayProgress": {

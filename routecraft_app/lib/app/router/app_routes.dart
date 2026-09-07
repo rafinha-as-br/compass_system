@@ -24,4 +24,12 @@ abstract class AppRoutes {
   static const homeFollowTravel = '$home/$followTravel';
   static const itineraryFollowTravel = '$itinerary/$followTravel';
   static const accountNotifications = '$account/$notifications';
+
+  /// Query param carrying the travel's backend id on every route that also
+  /// receives the `Travel` object via `extra` — `extra` doesn't survive a
+  /// deep link or OS-level state restoration, but the URL does, so the id
+  /// stays recoverable even when `extra` doesn't make it.
+  static const travelIdParam = 'travelId';
+
+  static String travelIdQuery(String travelId) => '$travelIdParam=$travelId';
 }

@@ -191,7 +191,11 @@ class _TravelSection extends StatelessWidget {
                 travelName: travel.travelName,
                 routeSummary: _routeSummary(context, travel),
                 status: _chipVariant(travel.travelStatus),
-                onTap: () => _pushAndRefresh(context, AppRoutes.homeFollowTravel, extra: travel),
+                onTap: () => _pushAndRefresh(
+                  context,
+                  '${AppRoutes.homeFollowTravel}?${AppRoutes.travelIdQuery(travel.backEndId!)}',
+                  extra: travel,
+                ),
               ),
             ),
           ),

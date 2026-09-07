@@ -11,6 +11,7 @@ import 'package:routecraft_app/features/itinerary_timeline/presentation/pages/it
 import 'package:routecraft_app/features/itinerary_today/presentation/pages/itinerary_today_page.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
+import 'package:routecraft_app/features/travels/presentation/widgets/travel_resolver.dart';
 
 final privateShellRoute = StatefulShellRoute.indexedStack(
   builder: (context, state, navigationShell) {
@@ -86,13 +87,25 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
 );
 
 Widget _followTravelBuilder(BuildContext context, GoRouterState state) {
-  return ItineraryTodayPage(travel: state.extra as Travel?);
+  return TravelResolver(
+    travel: state.extra as Travel?,
+    travelId: state.uri.queryParameters[AppRoutes.travelIdParam],
+    builder: (context, travel) => ItineraryTodayPage(travel: travel),
+  );
 }
 
 Widget _editRouteBuilder(BuildContext context, GoRouterState state) {
-  return EditRoutePage(travel: state.extra as Travel);
+  return TravelResolver(
+    travel: state.extra as Travel?,
+    travelId: state.uri.queryParameters[AppRoutes.travelIdParam],
+    builder: (context, travel) => EditRoutePage(travel: travel),
+  );
 }
 
 Widget _itineraryTimelineBuilder(BuildContext context, GoRouterState state) {
-  return ItineraryTimelinePage(travel: state.extra as Travel?);
+  return TravelResolver(
+    travel: state.extra as Travel?,
+    travelId: state.uri.queryParameters[AppRoutes.travelIdParam],
+    builder: (context, travel) => ItineraryTimelinePage(travel: travel),
+  );
 }

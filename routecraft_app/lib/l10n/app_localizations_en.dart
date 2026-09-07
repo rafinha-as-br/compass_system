@@ -368,6 +368,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get hubGoToHomeCta => 'Go to Home';
 
   @override
+  String get travelNotFoundTitle => 'Trip not found';
+
+  @override
+  String get travelNotFoundMessage =>
+      'This trip couldn\'t be found. It may have been removed.';
+
+  @override
   String todayDayProgress(int day, int total) {
     return 'Day $day of $total';
   }
