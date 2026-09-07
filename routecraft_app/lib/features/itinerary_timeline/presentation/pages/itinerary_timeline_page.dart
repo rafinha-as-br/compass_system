@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:routecraft_app/app/router/app_routes.dart';
+import 'package:routecraft_app/features/itinerary_timeline/presentation/widgets/step_detail_sheet.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary_step.dart';
 import 'package:routecraft_app/features/travels/domain/entities/transport.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/utils/date_formatting.dart';
 import 'package:routecraft_app/shared/utils/step_icon_mapping.dart';
+import 'package:routecraft_app/shared/widgets/app_bottom_sheet.dart';
 import 'package:routecraft_app/shared/widgets/empty_state_view.dart';
 import 'package:routecraft_app/shared/widgets/step_icon.dart';
 
 /// Read-only, day-paginated view of a trip's full itinerary — wireframe 1f.
 /// Building/reordering steps stays exclusive to the agent in Travel Matrix;
 /// this page only lays out what the agent already published, one day at a
-/// time, including the free-time gaps between steps. Tapping a step is a
-/// stub for now — the step-detail screen is CPS-92, not yet built.
+/// time, including the free-time gaps between steps. Tapping a step opens
+/// its full detail in a bottom sheet (CPS-92).
 class ItineraryTimelinePage extends StatefulWidget {
   const ItineraryTimelinePage({super.key, required this.travel});
 
@@ -185,7 +187,7 @@ class _StepTile extends StatelessWidget {
     return Card(
       margin: EdgeInsets.zero,
       child: InkWell(
-        onTap: () => _showComingSoon(context),
+        onTap: () => AppBottomSheet.show<void>(context, title: step.title, child: StepDetailSheet(step: step)),
         child: Padding(
           padding: const EdgeInsets.all(12),
           child: Row(
@@ -295,11 +297,6 @@ class _DayNavigationBar extends StatelessWidget {
   }
 }
 
-void _showComingSoon(BuildContext context) {
-  final l10n = AppLocalizations.of(context)!;
-  ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(l10n.comingSoonMessage)));
-}
-
 /// One calendar day of the trip: which steps are active that day (sorted by
 /// `startDate`), and the trailing free-time gap to the next step overall,
 /// when there is one.
@@ -349,9 +346,17 @@ List<DayItinerary> buildDayItineraries({
 
     DateTime? freeTimeUntil;
     if (stepsForDay.isNotEmpty) {
-      final lastStep = stepsForDay.reduce((a, b) => a.finishDate.isAfter(b.finishDate) ? a : b);
+      // A step spanning multiple days (e.g. a multi-night Hosting) has a
+      // finishDate far in the future — using it directly would make that
+      // step "the last one" on every day it covers and suppress the gap
+      // entirely. Clamping its contribution to this day's end reflects that
+      // it doesn't occupy any *known* time slot beyond today.
+      DateTime endOfActivityToday(ItineraryStep step) =>
+          step.finishDate.isAfter(nextDayStart) ? nextDayStart : step.finishDate;
+      final lastActivityEnd =
+          stepsForDay.map(endOfActivityToday).reduce((a, b) => a.isAfter(b) ? a : b);
       for (final candidate in sortedSteps) {
-        if (candidate.startDate.isAfter(lastStep.finishDate)) {
+        if (candidate.startDate.isAfter(lastActivityEnd)) {
           freeTimeUntil = candidate.startDate;
           break;
         }

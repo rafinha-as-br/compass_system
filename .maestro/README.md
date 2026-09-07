@@ -33,8 +33,24 @@ permanente.
     │   └── session_persists_on_restart.yaml    — sessão válida sobrevive a restart do app
     └── regression/
         ├── create_route_smoke.yaml             — abre o wizard de criação de rota
-        └── home_screens_smoke.yaml             — navega pelas 4 opções da Home sem crash
+        └── home_screens_smoke.yaml             — navega pelas 3 abas da bottom nav
+                                                    (Início/Roteiro/Conta) sem crash
 ```
+
+## Atualização 2026-09-06 (QA do épico CPS-83/84–97 — RouteCraft Redesign)
+
+A CPS-84 substituiu a Home antiga (4 botões, `Navigator.push`) por
+`go_router` com shell de bottom navigation (Início/Roteiro/Conta). Isso
+quebrou as asserções `"RouteCraft Login"`/`"RouteCraft Home"` em quase
+todos os flows de auth (textos removidos pelo redesenho de CPS-87) e todo
+o corpo do antigo `home_screens_smoke.yaml` (ações "Visualize Routes &
+Itineraries"/"User Account & Settings" não existem mais). Todos os flows
+afetados foram corrigidos e reverificados nesta rodada — `login_success`,
+`login_invalid_credentials`, `login_retry_after_error`,
+`session_persists_on_restart`, `create_route_smoke` rodaram e passaram;
+`reset_password_and_login` teve só a asserção de texto corrigida (mesmo
+texto já confirmado em outras telas), sem re-execução E2E completa nesta
+rodada (exigiria repetir o fluxo de token de reset).
 
 ## Gotcha: `clearState` não limpa o Keychain
 
@@ -86,3 +102,16 @@ maestro test .maestro/routecraft/auth/login_success.yaml # um flow específico
   "sessão forçadamente expirada" sem esperar 24h, mas ainda não existe um
   flow Maestro E2E para esse caminho aqui (requer chamar o endpoint como
   agente pelo Travel Matrix ou via API enquanto o RouteCraft está logado).
+
+- **Bottom nav (CPS-84) não é tocável por texto:** os destinos do
+  `NavigationBar` ("Início"/"Roteiro"/"Conta") só expõem o rótulo via um
+  `content-desc` composto (`"Itinerary\nTab 2 of 3"`) — não existe um nó de
+  `text` com só o rótulo. `tapOn: "Itinerary"` falha com "Element not
+  found", confirmado empiricamente em 2026-09-06 (CLI Maestro 2.8.0), tanto
+  isolado quanto full-flow. Não é um problema de acessibilidade real (um
+  leitor de tela anuncia "Itinerary, Tab 2 of 3" normalmente) — é uma
+  limitação do matcher de texto do Maestro para esse tipo de nó. Solução
+  usada em `home_screens_smoke.yaml`: `tapOn: point: "X%, Y%"` (último
+  recurso documentado na skill `jira-qa-executor`), mirando a faixa
+  aproximada de cada aba (~17%/50%/83% horizontal, ~93% vertical). Se o
+  layout da bottom nav mudar, esses percentuais precisam ser reajustados.

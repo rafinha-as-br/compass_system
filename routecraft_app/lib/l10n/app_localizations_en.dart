@@ -271,7 +271,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String stepsCount(int count) {
-    return '$count steps';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count steps',
+      one: '1 step',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -509,6 +515,84 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get timelineRentalCarLabel => 'Rental car';
+
+  @override
+  String get stepDetailTypeStop => 'Stop';
+
+  @override
+  String get stepDetailTypeHosting => 'Hosting';
+
+  @override
+  String get stepDetailTypeTravelSegment => 'Travel segment';
+
+  @override
+  String get stepDetailTypePlaceholder => 'Placeholder';
+
+  @override
+  String get stepDetailSubtypeAirplane => 'Airplane';
+
+  @override
+  String get stepDetailSubtypeBus => 'Bus';
+
+  @override
+  String get stepDetailName => 'Name';
+
+  @override
+  String get stepDetailDescription => 'Description';
+
+  @override
+  String get stepDetailExperiences => 'Experiences';
+
+  @override
+  String get stepDetailAddress => 'Address';
+
+  @override
+  String get stepDetailCheckIn => 'Check-in';
+
+  @override
+  String get stepDetailCheckOut => 'Check-out';
+
+  @override
+  String get stepDetailOrigin => 'Origin';
+
+  @override
+  String get stepDetailDestination => 'Destination';
+
+  @override
+  String get stepDetailFlight => 'Flight';
+
+  @override
+  String get stepDetailDate => 'Date';
+
+  @override
+  String get stepDetailGate => 'Gate';
+
+  @override
+  String get stepDetailAirports => 'Airports';
+
+  @override
+  String get stepDetailBusLine => 'Bus';
+
+  @override
+  String get stepDetailBusStation => 'Bus station';
+
+  @override
+  String get stepDetailDepartureTime => 'Departure';
+
+  @override
+  String get stepDetailModel => 'Model';
+
+  @override
+  String get stepDetailLicensePlate => 'License plate';
+
+  @override
+  String get stepDetailRentalCompany => 'Rental company';
+
+  @override
+  String get stepDetailPickUp => 'Pick-up';
+
+  @override
+  String get stepDetailDropOff => 'Drop-off';
 
   @override
   String get accountTitle => 'My Account';

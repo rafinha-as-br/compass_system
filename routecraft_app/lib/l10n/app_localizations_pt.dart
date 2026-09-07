@@ -270,7 +270,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String stepsCount(int count) {
-    return '$count etapas';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count etapas',
+      one: '1 etapa',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -509,6 +515,84 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get timelineRentalCarLabel => 'Carro alugado';
+
+  @override
+  String get stepDetailTypeStop => 'Parada';
+
+  @override
+  String get stepDetailTypeHosting => 'Hospedagem';
+
+  @override
+  String get stepDetailTypeTravelSegment => 'Trecho de viagem';
+
+  @override
+  String get stepDetailTypePlaceholder => 'A definir';
+
+  @override
+  String get stepDetailSubtypeAirplane => 'Avião';
+
+  @override
+  String get stepDetailSubtypeBus => 'Ônibus';
+
+  @override
+  String get stepDetailName => 'Nome';
+
+  @override
+  String get stepDetailDescription => 'Descrição';
+
+  @override
+  String get stepDetailExperiences => 'Experiências';
+
+  @override
+  String get stepDetailAddress => 'Endereço';
+
+  @override
+  String get stepDetailCheckIn => 'Check-in';
+
+  @override
+  String get stepDetailCheckOut => 'Check-out';
+
+  @override
+  String get stepDetailOrigin => 'Origem';
+
+  @override
+  String get stepDetailDestination => 'Destino';
+
+  @override
+  String get stepDetailFlight => 'Voo';
+
+  @override
+  String get stepDetailDate => 'Data';
+
+  @override
+  String get stepDetailGate => 'Portão';
+
+  @override
+  String get stepDetailAirports => 'Aeroportos';
+
+  @override
+  String get stepDetailBusLine => 'Ônibus';
+
+  @override
+  String get stepDetailBusStation => 'Rodoviária';
+
+  @override
+  String get stepDetailDepartureTime => 'Horário';
+
+  @override
+  String get stepDetailModel => 'Modelo';
+
+  @override
+  String get stepDetailLicensePlate => 'Placa';
+
+  @override
+  String get stepDetailRentalCompany => 'Locadora';
+
+  @override
+  String get stepDetailPickUp => 'Retirada';
+
+  @override
+  String get stepDetailDropOff => 'Devolução';
 
   @override
   String get accountTitle => 'Minha Conta';
