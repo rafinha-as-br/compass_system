@@ -96,4 +96,41 @@ void main() {
     final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
     expect(snackBar.backgroundColor, AppTheme.lightTheme.colorScheme.error);
   });
+
+  testWidgets('renders the travel dates in Portuguese, not with English month abbreviations', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+    final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: controller,
+        child: MaterialApp(
+          theme: AppTheme.lightTheme,
+          locale: const Locale('pt'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: DefaultTabController(
+            length: 2,
+            child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('jan.'), findsOneWidget);
+    expect(find.textContaining('Jan '), findsNothing);
+  });
 }

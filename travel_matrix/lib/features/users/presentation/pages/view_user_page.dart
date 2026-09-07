@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
@@ -235,6 +236,7 @@ class ViewUserPage extends StatelessWidget {
   }
 
   Widget _buildTravelHistory(ThemeData theme, AppLocalizations l10n) {
+    final dateFormat = DateFormat.yMMMd(l10n.localeName);
     return Card(
       color: theme.colorScheme.surface,
       elevation: 0,
@@ -274,7 +276,7 @@ class ViewUserPage extends StatelessWidget {
                     DataCell(Text(travel.travelName, style: const TextStyle(fontWeight: FontWeight.w500))),
                     DataCell(Text(travel.destination, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
                     DataCell(_buildStatusBadge(theme, travel.status)),
-                    DataCell(Text('${travel.startDate.month}/${travel.startDate.day}/${travel.startDate.year}', style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
+                    DataCell(Text(dateFormat.format(travel.startDate), style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
                   ],
                 );
               }).toList(),

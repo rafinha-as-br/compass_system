@@ -12,6 +12,7 @@ import 'package:travel_matrix/features/users/presentation/controllers/users_cont
 import 'package:travel_matrix/features/users/presentation/pages/view_user_page.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_status_view_model.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/travel_summary_view_model.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/user_stats_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
@@ -127,5 +128,64 @@ void main() {
     final icon = tester.widget<Icon>(find.byIcon(Icons.check_circle_outline));
     expect(icon.color, AppTheme.darkTheme.semanticColors.success);
     expect(icon.color, isNot(TravelAppColors.success));
+  });
+
+  testWidgets('renders the travel history date in Portuguese, not in the US month/day/year format', (
+    tester,
+  ) async {
+    // Janela larga: a tabela de histórico ainda é um DataTable sem scroll
+    // horizontal (migração para AppDataTable é escopo do CPS-107) — em
+    // janelas estreitas ela já estoura mesmo com uma única linha.
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final userWithTravel = UserClientViewModel(
+      backEndId: '1',
+      localId: '1',
+      name: 'Jane Doe',
+      cpf: '000.000.000-00',
+      sex: 'F',
+      phoneNumber: '11999999999',
+      status: const UserClientStatusViewModel(
+        status: ActiveStatusViewModel(),
+        lastLogin: null,
+      ),
+      email: 'jane@example.com',
+      travels: [
+        TravelSummaryViewModel(
+          backEndId: 'travel-1',
+          domainId: 'travel-1',
+          travelName: 'Litoral Norte',
+          destination: 'Ubatuba',
+          status: 'completed',
+          startDate: DateTime(2026, 1, 10),
+        ),
+      ],
+      stats: UserStatsViewModel(totalTravels: '1', uniqueDestinationsCount: '1'),
+    );
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: controller,
+        child: MaterialApp(
+          locale: const Locale('pt'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ViewUserPage(user: userWithTravel),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('jan.'), findsOneWidget);
+    expect(find.text('1/10/2026'), findsNothing);
   });
 }
