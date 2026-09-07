@@ -96,4 +96,48 @@ void main() {
     final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
     expect(snackBar.backgroundColor, AppTheme.lightTheme.colorScheme.error);
   });
+
+  testWidgets(
+    'status chip uses the semantic warning color at 12% alpha, not a solid *Container fallback',
+    (tester) async {
+      tester.view.physicalSize = const Size(1400, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+      final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider.value(
+          value: controller,
+          child: MaterialApp(
+            theme: AppTheme.lightTheme,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: DefaultTabController(
+              length: 2,
+              child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final warning = AppTheme.lightTheme.semanticColors.warning;
+      final chipText = tester.widget<Text>(find.text(travel.statusString));
+      expect(chipText.style?.color, warning);
+
+      final chipContainer = tester.widget<Container>(
+        find.ancestor(of: find.text(travel.statusString), matching: find.byType(Container)).first,
+      );
+      final decoration = chipContainer.decoration as BoxDecoration;
+      expect(decoration.color, warning.withValues(alpha: 0.12));
+    },
+  );
 }
