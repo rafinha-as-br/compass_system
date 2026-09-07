@@ -17,7 +17,7 @@ class LoginState {
 
   const LoginState({
     this.isLoading = false,
-    this.panel = AuthPanel.login,
+    this.panel = AuthPanel.welcome,
     this.errorMessage,
   });
 
