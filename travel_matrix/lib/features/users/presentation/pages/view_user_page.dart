@@ -225,7 +225,7 @@ class ViewUserPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildTravelHistory(theme, l10n),
+        _buildTravelHistory(theme, context, l10n),
         const SizedBox(height: 24),
         _buildSecurityActions(theme, controller, context, l10n),
         const SizedBox(height: 24),
@@ -234,7 +234,7 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTravelHistory(ThemeData theme, AppLocalizations l10n) {
+  Widget _buildTravelHistory(ThemeData theme, BuildContext context, AppLocalizations l10n) {
     return Card(
       color: theme.colorScheme.surface,
       elevation: 0,
@@ -244,11 +244,29 @@ class ViewUserPage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(24),
-            child: Text(
-              l10n.travelHistoryTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.travelHistoryTitle,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    context.go(
+                      '${AppRoutes.users}/${user.localId}/${AppRoutes.userTravelCreate}',
+                      extra: {
+                        'clientId': user.backEndId ?? user.localId,
+                        'clientName': user.name,
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.createTravel),
+                ),
+              ],
             ),
           ),
           const Divider(height: 1),
