@@ -349,9 +349,17 @@ List<DayItinerary> buildDayItineraries({
 
     DateTime? freeTimeUntil;
     if (stepsForDay.isNotEmpty) {
-      final lastStep = stepsForDay.reduce((a, b) => a.finishDate.isAfter(b.finishDate) ? a : b);
+      // A step spanning multiple days (e.g. a multi-night Hosting) has a
+      // finishDate far in the future — using it directly would make that
+      // step "the last one" on every day it covers and suppress the gap
+      // entirely. Clamping its contribution to this day's end reflects that
+      // it doesn't occupy any *known* time slot beyond today.
+      DateTime endOfActivityToday(ItineraryStep step) =>
+          step.finishDate.isAfter(nextDayStart) ? nextDayStart : step.finishDate;
+      final lastActivityEnd =
+          stepsForDay.map(endOfActivityToday).reduce((a, b) => a.isAfter(b) ? a : b);
       for (final candidate in sortedSteps) {
-        if (candidate.startDate.isAfter(lastStep.finishDate)) {
+        if (candidate.startDate.isAfter(lastActivityEnd)) {
           freeTimeUntil = candidate.startDate;
           break;
         }
