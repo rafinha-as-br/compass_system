@@ -1,12 +1,47 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/app/controllers/settings_controller.dart';
 import 'package:routecraft_app/app/global_controllers/auth_controller.dart';
+import 'package:routecraft_app/app/router/app_routes.dart';
+import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/account/presentation/controllers/account_controller.dart';
 import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
+import 'package:routecraft_app/features/notifications/domain/entities/travel_notification.dart';
+import 'package:routecraft_app/features/notifications/domain/repositories/notification_storage.dart';
+import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
+import 'package:routecraft_app/features/travels/domain/repositories/travel_repository.dart';
+import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
+
+class _FakeTravelRepository implements TravelRepository {
+  @override
+  Future<Result<List<Travel>>> getTravelsForClient(String clientName) async => const Result.success([]);
+
+  @override
+  Future<Result<Travel>> getTravel(String id) async => throw UnimplementedError();
+
+  @override
+  Future<Result<Travel>> createTravel(Travel travel) async => throw UnimplementedError();
+}
+
+class _FakeNotificationStorage implements NotificationStorage {
+  List<TravelNotification> notifications = const [];
+
+  @override
+  Future<List<TravelNotification>> loadNotifications() async => notifications;
+
+  @override
+  Future<void> saveNotifications(List<TravelNotification> notifications) async {}
+
+  @override
+  Future<Map<String, TravelSnapshot>> loadSnapshots() async => const {};
+
+  @override
+  Future<void> saveSnapshots(Map<String, TravelSnapshot> snapshots) async {}
+}
 
 Widget _wrap(AccountController controller, {AuthController? authController}) {
   return MultiProvider(
@@ -96,5 +131,80 @@ void main() {
     await tester.pump();
 
     expect(find.text('Coming soon.'), findsOneWidget);
+  });
+
+  testWidgets('clears the unread badge after returning from notifications', (tester) async {
+    final notificationStorage = _FakeNotificationStorage()
+      ..notifications = [
+        TravelNotification(
+          id: 'n1',
+          travelId: 't1',
+          travelName: 'Litoral Norte',
+          type: TravelNotificationType.itineraryPublished,
+          createdAt: DateTime(2026, 1, 1),
+        ),
+      ];
+    final controller = AccountController(
+      travelUseCases: TravelUseCases(_FakeTravelRepository()),
+      getClientName: () async => 'Rafaela Souza',
+      getClientEmail: () async => 'rafaela@email.com',
+      notificationStorage: notificationStorage,
+    );
+    final router = GoRouter(
+      initialLocation: AppRoutes.account,
+      routes: [
+        GoRoute(
+          path: AppRoutes.account,
+          builder: (context, state) => AccountPage(controller: controller),
+          routes: [
+            GoRoute(
+              path: AppRoutes.notifications,
+              // Stands in for NotificationsPage: pops itself right away, as
+              // if the client had just marked every notification as read.
+              builder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) => context.pop());
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsController>(create: (_) => SettingsController()),
+        ChangeNotifierProvider<AuthController>.value(
+          value: AuthController(checkAuthenticated: () async => true),
+        ),
+      ],
+      child: MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('1'), findsOneWidget);
+
+    notificationStorage.notifications = [
+      TravelNotification(
+        id: 'n1',
+        travelId: 't1',
+        travelName: 'Litoral Norte',
+        type: TravelNotificationType.itineraryPublished,
+        createdAt: DateTime(2026, 1, 1),
+        read: true,
+      ),
+    ];
+    await tester.tap(find.text('Notifications'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('1'), findsNothing);
   });
 }

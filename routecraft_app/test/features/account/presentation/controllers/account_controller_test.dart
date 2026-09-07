@@ -1,6 +1,8 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/account/presentation/controllers/account_controller.dart';
+import 'package:routecraft_app/features/notifications/domain/entities/travel_notification.dart';
+import 'package:routecraft_app/features/notifications/domain/repositories/notification_storage.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
@@ -19,6 +21,31 @@ class _FakeTravelRepository implements TravelRepository {
   @override
   Future<Result<Travel>> createTravel(Travel travel) async => throw UnimplementedError();
 }
+
+class _FakeNotificationStorage implements NotificationStorage {
+  List<TravelNotification> notifications = const [];
+
+  @override
+  Future<List<TravelNotification>> loadNotifications() async => notifications;
+
+  @override
+  Future<void> saveNotifications(List<TravelNotification> notifications) async {}
+
+  @override
+  Future<Map<String, TravelSnapshot>> loadSnapshots() async => const {};
+
+  @override
+  Future<void> saveSnapshots(Map<String, TravelSnapshot> snapshots) async {}
+}
+
+TravelNotification _notification(String id, {bool read = false}) => TravelNotification(
+      id: id,
+      travelId: 't1',
+      travelName: 'Litoral Norte',
+      type: TravelNotificationType.itineraryPublished,
+      createdAt: DateTime(2026, 1, 1),
+      read: read,
+    );
 
 RoutePlan _routePlan() => RoutePlan(
       domainId: 'r1',
@@ -117,6 +144,23 @@ void main() {
 
       expect(controller.state.isLoading, isFalse);
       expect(controller.state.clientName, isNull);
+    });
+
+    test('refresh() re-fetches, picking up notifications marked as read since the initial load', () async {
+      final notificationStorage = _FakeNotificationStorage()..notifications = [_notification('n1')];
+      final controller = AccountController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()..nextResult = const Result.success([])),
+        getClientName: () async => 'Maria Silva',
+        getClientEmail: () async => 'maria@example.com',
+        notificationStorage: notificationStorage,
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(controller.state.unreadNotificationsCount, 1);
+
+      notificationStorage.notifications = [_notification('n1', read: true)];
+      await controller.refresh();
+
+      expect(controller.state.unreadNotificationsCount, 0);
     });
   });
 }
