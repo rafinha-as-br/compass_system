@@ -587,7 +587,7 @@ abstract class AppLocalizations {
   /// No description provided for @stepsCount.
   ///
   /// In en, this message translates to:
-  /// **'{count} steps'**
+  /// **'{count, plural, one{1 step} other{{count} steps}}'**
   String stepsCount(int count);
 
   /// No description provided for @noItinerary.
@@ -703,6 +703,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go to Home'**
   String get hubGoToHomeCta;
+
+  /// No description provided for @todayDayProgress.
+  ///
+  /// In en, this message translates to:
+  /// **'Day {day} of {total}'**
+  String todayDayProgress(int day, int total);
+
+  /// No description provided for @todayInProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip in progress'**
+  String get todayInProgressLabel;
+
+  /// No description provided for @todayStartsIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Starts in {duration}'**
+  String todayStartsIn(String duration);
+
+  /// No description provided for @todayHappeningNow.
+  ///
+  /// In en, this message translates to:
+  /// **'Happening now'**
+  String get todayHappeningNow;
+
+  /// No description provided for @todayAddressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get todayAddressLabel;
+
+  /// No description provided for @todayViewStepCta.
+  ///
+  /// In en, this message translates to:
+  /// **'View step'**
+  String get todayViewStepCta;
+
+  /// No description provided for @todayAfterThatLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'AFTER THAT'**
+  String get todayAfterThatLabel;
 
   /// No description provided for @notificationsTitle.
   ///
@@ -889,6 +931,162 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Rental car'**
   String get timelineRentalCarLabel;
+
+  /// No description provided for @stepDetailTypeStop.
+  ///
+  /// In en, this message translates to:
+  /// **'Stop'**
+  String get stepDetailTypeStop;
+
+  /// No description provided for @stepDetailTypeHosting.
+  ///
+  /// In en, this message translates to:
+  /// **'Hosting'**
+  String get stepDetailTypeHosting;
+
+  /// No description provided for @stepDetailTypeTravelSegment.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel segment'**
+  String get stepDetailTypeTravelSegment;
+
+  /// No description provided for @stepDetailTypePlaceholder.
+  ///
+  /// In en, this message translates to:
+  /// **'Placeholder'**
+  String get stepDetailTypePlaceholder;
+
+  /// No description provided for @stepDetailSubtypeAirplane.
+  ///
+  /// In en, this message translates to:
+  /// **'Airplane'**
+  String get stepDetailSubtypeAirplane;
+
+  /// No description provided for @stepDetailSubtypeBus.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus'**
+  String get stepDetailSubtypeBus;
+
+  /// No description provided for @stepDetailName.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get stepDetailName;
+
+  /// No description provided for @stepDetailDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Description'**
+  String get stepDetailDescription;
+
+  /// No description provided for @stepDetailExperiences.
+  ///
+  /// In en, this message translates to:
+  /// **'Experiences'**
+  String get stepDetailExperiences;
+
+  /// No description provided for @stepDetailAddress.
+  ///
+  /// In en, this message translates to:
+  /// **'Address'**
+  String get stepDetailAddress;
+
+  /// No description provided for @stepDetailCheckIn.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-in'**
+  String get stepDetailCheckIn;
+
+  /// No description provided for @stepDetailCheckOut.
+  ///
+  /// In en, this message translates to:
+  /// **'Check-out'**
+  String get stepDetailCheckOut;
+
+  /// No description provided for @stepDetailOrigin.
+  ///
+  /// In en, this message translates to:
+  /// **'Origin'**
+  String get stepDetailOrigin;
+
+  /// No description provided for @stepDetailDestination.
+  ///
+  /// In en, this message translates to:
+  /// **'Destination'**
+  String get stepDetailDestination;
+
+  /// No description provided for @stepDetailFlight.
+  ///
+  /// In en, this message translates to:
+  /// **'Flight'**
+  String get stepDetailFlight;
+
+  /// No description provided for @stepDetailDate.
+  ///
+  /// In en, this message translates to:
+  /// **'Date'**
+  String get stepDetailDate;
+
+  /// No description provided for @stepDetailGate.
+  ///
+  /// In en, this message translates to:
+  /// **'Gate'**
+  String get stepDetailGate;
+
+  /// No description provided for @stepDetailAirports.
+  ///
+  /// In en, this message translates to:
+  /// **'Airports'**
+  String get stepDetailAirports;
+
+  /// No description provided for @stepDetailBusLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus'**
+  String get stepDetailBusLine;
+
+  /// No description provided for @stepDetailBusStation.
+  ///
+  /// In en, this message translates to:
+  /// **'Bus station'**
+  String get stepDetailBusStation;
+
+  /// No description provided for @stepDetailDepartureTime.
+  ///
+  /// In en, this message translates to:
+  /// **'Departure'**
+  String get stepDetailDepartureTime;
+
+  /// No description provided for @stepDetailModel.
+  ///
+  /// In en, this message translates to:
+  /// **'Model'**
+  String get stepDetailModel;
+
+  /// No description provided for @stepDetailLicensePlate.
+  ///
+  /// In en, this message translates to:
+  /// **'License plate'**
+  String get stepDetailLicensePlate;
+
+  /// No description provided for @stepDetailRentalCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'Rental company'**
+  String get stepDetailRentalCompany;
+
+  /// No description provided for @stepDetailPickUp.
+  ///
+  /// In en, this message translates to:
+  /// **'Pick-up'**
+  String get stepDetailPickUp;
+
+  /// No description provided for @stepDetailDropOff.
+  ///
+  /// In en, this message translates to:
+  /// **'Drop-off'**
+  String get stepDetailDropOff;
 
   /// No description provided for @accountTitle.
   ///
