@@ -67,6 +67,12 @@ class HomeController extends ChangeNotifier {
   Future<String?> _getClientName() =>
       (_getClientNameOverride ?? AuthService.instance.getClientName)();
 
+  /// Re-runs the fetch. `StatefulShellRoute.indexedStack` keeps this
+  /// controller alive for the whole app session, so returning from a child
+  /// route (e.g. after creating a route) never re-triggers the constructor's
+  /// fetch on its own — callers must invoke this explicitly.
+  Future<void> refresh() => _fetchData();
+
   Future<void> _fetchData() async {
     _state = const HomeState(isLoading: true);
     notifyListeners();

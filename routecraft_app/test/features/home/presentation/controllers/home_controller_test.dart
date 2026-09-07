@@ -138,5 +138,20 @@ void main() {
       expect(controller.state.isError, isFalse);
       expect(controller.state.completed.map((t) => t.travelName), ['Chapada']);
     });
+
+    test('refresh() re-fetches, picking up a travel created after the initial load', () async {
+      final repository = _FakeTravelRepository()..nextResult = Result.success(const []);
+      final controller = HomeController(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+      expect(controller.state.isEmpty, isTrue);
+
+      repository.nextResult = Result.success([_travel('Nova Rota', TravelStatus.routeCreated)]);
+      await controller.refresh();
+
+      expect(controller.state.upcoming.map((t) => t.travelName), ['Nova Rota']);
+    });
   });
 }

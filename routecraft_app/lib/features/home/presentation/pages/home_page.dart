@@ -53,7 +53,7 @@ class _HomeView extends StatelessWidget {
       floatingActionButton: (state.isLoading || state.isError || state.isEmpty)
           ? null
           : FloatingActionButton.extended(
-              onPressed: () => context.push(AppRoutes.homeCreateRoute),
+              onPressed: () => _pushAndRefresh(context, AppRoutes.homeCreateRoute),
               icon: const Icon(Icons.add),
               label: Text(l10n.createRouteNav),
               backgroundColor: Theme.of(context).colorScheme.secondary,
@@ -109,6 +109,16 @@ class _HomeHeader extends StatelessWidget {
         ],
       ),
     );
+  }
+}
+
+/// Awaits the push before refreshing — the shell keeps [HomeController]
+/// alive across navigation, so a route created (or an itinerary edited) in a
+/// child screen would otherwise never show up back on Início.
+Future<void> _pushAndRefresh(BuildContext context, String location, {Object? extra}) async {
+  await context.push(location, extra: extra);
+  if (context.mounted) {
+    context.read<HomeController>().refresh();
   }
 }
 
@@ -177,7 +187,7 @@ class _TravelSection extends StatelessWidget {
                 travelName: travel.travelName,
                 routeSummary: _routeSummary(context, travel),
                 status: _chipVariant(travel.travelStatus),
-                onTap: () => context.push(AppRoutes.homeFollowTravel, extra: travel),
+                onTap: () => _pushAndRefresh(context, AppRoutes.homeFollowTravel, extra: travel),
               ),
             ),
           ),
@@ -261,7 +271,7 @@ class _EmptyHome extends StatelessWidget {
       title: l10n.noTravelsYet,
       message: l10n.homeEmptyMessage,
       ctaLabel: l10n.homeEmptyCta,
-      onCtaPressed: () => context.push(AppRoutes.homeCreateRoute),
+      onCtaPressed: () => _pushAndRefresh(context, AppRoutes.homeCreateRoute),
     );
   }
 }

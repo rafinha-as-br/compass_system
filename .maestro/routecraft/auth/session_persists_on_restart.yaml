@@ -10,9 +10,9 @@ appId: com.example.routecraft_app
 - eraseText
 - inputText: "senha123"
 - tapOn: "LOGIN"
-- assertVisible: "RouteCraft Home"
+- assertVisible: "My Travels"
 - launchApp:
     clearState: false
-- assertVisible: "RouteCraft Home"
-- assertNotVisible: "RouteCraft Login"
+- assertVisible: "My Travels"
+- assertNotVisible: "Welcome back"
 - takeScreenshot: session_persists_on_restart

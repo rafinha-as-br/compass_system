@@ -49,3 +49,12 @@ String weekdayName(String languageCode, int weekday) {
 /// (matches how times already appear across the RouteCraft wireframes).
 String formatTime(DateTime time) =>
     '${time.hour.toString().padLeft(2, '0')}:${time.minute.toString().padLeft(2, '0')}';
+
+/// A duration as "XhYYmin"/"Xh"/"Ymin" — e.g. "1h05", "2h", "45min".
+String formatDuration(Duration duration) {
+  final hours = duration.inHours;
+  final minutes = duration.inMinutes % 60;
+  if (hours <= 0) return '${minutes}min';
+  if (minutes == 0) return '${hours}h';
+  return '${hours}h${minutes.toString().padLeft(2, '0')}';
+}

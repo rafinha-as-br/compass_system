@@ -53,7 +53,7 @@ class _AccountView extends StatelessWidget {
                   icon: Icons.notifications_outlined,
                   label: l10n.accountNotificationsMenu,
                   badgeCount: state.unreadNotificationsCount,
-                  onTap: () => context.push(AppRoutes.accountNotifications),
+                  onTap: () => _openNotifications(context),
                 ),
                 _MenuItem(icon: Icons.help_outline, label: l10n.accountHelpMenu),
                 const SizedBox(height: 16),
@@ -83,6 +83,16 @@ class _AccountView extends StatelessWidget {
               ],
             ),
     );
+  }
+}
+
+/// Awaits the push before refreshing — the shell keeps [AccountController]
+/// alive across navigation, so marking notifications as read would otherwise
+/// never clear the unread badge back on Conta.
+Future<void> _openNotifications(BuildContext context) async {
+  await context.push(AppRoutes.accountNotifications);
+  if (context.mounted) {
+    context.read<AccountController>().refresh();
   }
 }
 

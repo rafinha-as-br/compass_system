@@ -114,6 +114,40 @@ void main() {
       expect(days[1].freeTimeUntil, isNull);
     });
 
+    test('a multi-day step spanning the whole trip does not suppress the free-time gap', () {
+      // Regression: a Hosting step's finishDate (checkout, days away) used to
+      // always "win" as the day's last step, so no later candidate's
+      // startDate was ever after it — free time never showed up on any day.
+      final hosting = ItineraryStep.newHosting(
+        domainId: 'h1',
+        backEndId: 'h1',
+        title: 'Pousada',
+        startDate: DateTime(2026, 10, 12, 16),
+        finishDate: DateTime(2026, 10, 15, 11),
+        finished: false,
+        name: 'Pousada Vila do Porto',
+        address: 'Rua X',
+        checkIn: DateTime(2026, 10, 12, 16),
+        checkOut: DateTime(2026, 10, 15, 11),
+      );
+      final sightseeing = _stop('s2', DateTime(2026, 10, 14, 10), DateTime(2026, 10, 14, 12), title: 'Passeio');
+
+      final days = buildDayItineraries(
+        tripStart: DateTime(2026, 10, 12),
+        tripEnd: DateTime(2026, 10, 15),
+        steps: [hosting, sightseeing],
+      );
+
+      // Day 1 (hosting checks in at 16:00, nothing else known until the
+      // sightseeing on day 3) and day 2 (hosting only) both point ahead to it.
+      expect(days[0].freeTimeUntil, DateTime(2026, 10, 14, 10));
+      expect(days[1].freeTimeUntil, DateTime(2026, 10, 14, 10));
+      // Day 3 (sightseeing) and day 4 (checkout): nothing is scheduled after
+      // either one, so — like the last day of any itinerary — no gap shows.
+      expect(days[2].freeTimeUntil, isNull);
+      expect(days[3].freeTimeUntil, isNull);
+    });
+
     test('no free-time gap when steps run back-to-back', () {
       final days = buildDayItineraries(
         tripStart: DateTime(2026, 10, 12),
@@ -188,6 +222,7 @@ void main() {
       expect(find.text('07:40'), findsOneWidget);
       expect(find.text('D1'), findsOneWidget);
       expect(find.text('D2'), findsOneWidget);
+      expect(find.text('1 step'), findsOneWidget);
 
       await tester.tap(find.text('D2'));
       await tester.pumpAndSettle();
@@ -265,6 +300,30 @@ void main() {
       expect(find.textContaining('LA3421'), findsOneWidget);
       expect(find.textContaining('Free time'), findsOneWidget);
       expect(find.textContaining('tomorrow'), findsOneWidget);
+    });
+
+    testWidgets('tapping a step opens its detail in a bottom sheet', (tester) async {
+      final itinerary = Itinerary(
+        domainId: 'it1',
+        backEndId: 'it1',
+        agentName: 'Ana',
+        itinerarySteps: [
+          _stop('s1', DateTime(2026, 10, 12, 9), DateTime(2026, 10, 12, 10), title: 'Trilha do Sono'),
+        ],
+      );
+
+      await tester.pumpWidget(_wrap(ItineraryTimelinePage(
+        travel: _travel(
+          routePlan: _routePlan(DateTime(2026, 10, 12), DateTime(2026, 10, 13)),
+          itinerary: itinerary,
+        ),
+      )));
+
+      await tester.tap(find.text('Trilha do Sono'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('Stop'), findsOneWidget);
+      expect(find.text('Name'), findsOneWidget);
     });
   });
 }

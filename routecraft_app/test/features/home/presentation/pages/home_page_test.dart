@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
+import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/home/presentation/controllers/home_controller.dart';
 import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
@@ -61,6 +63,19 @@ Travel _travel(String name, TravelStatus status, {DateTime? startDate}) => Trave
         interestsList: const [],
       ),
     );
+
+class _FakeTravelRepository implements TravelRepository {
+  Result<List<Travel>>? nextResult;
+
+  @override
+  Future<Result<List<Travel>>> getTravelsForClient(String clientName) async => nextResult!;
+
+  @override
+  Future<Result<Travel>> getTravel(String id) async => throw UnimplementedError();
+
+  @override
+  Future<Result<Travel>> createTravel(Travel travel) async => throw UnimplementedError();
+}
 
 void main() {
   testWidgets('shows a skeleton, not a spinner, while fetching', (tester) async {
@@ -159,5 +174,52 @@ void main() {
     expect(find.text('Olá, Rafaela'), findsOneWidget);
     expect(find.text('PRÓXIMAS'), findsOneWidget);
     expect(find.text('São Paulo → Paraty · 12–19 out'), findsOneWidget);
+  });
+
+  testWidgets('refetches after returning from route creation, picking up the new travel', (tester) async {
+    final repository = _FakeTravelRepository()..nextResult = Result.success(const []);
+    final controller = HomeController(
+      travelUseCases: TravelUseCases(repository),
+      getClientName: () async => 'Rafaela Souza',
+    );
+    final router = GoRouter(
+      initialLocation: AppRoutes.home,
+      routes: [
+        GoRoute(
+          path: AppRoutes.home,
+          builder: (context, state) => HomePage(controller: controller),
+          routes: [
+            GoRoute(
+              path: AppRoutes.createRoute,
+              // Stands in for RouteCreationPage: pops itself right away, as
+              // if a route had just been created.
+              builder: (context, state) {
+                WidgetsBinding.instance.addPostFrameCallback((_) => context.pop());
+                return const SizedBox.shrink();
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(MaterialApp.router(
+      routerConfig: router,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+    ));
+    await tester.pumpAndSettle();
+    expect(find.text('No travels yet.'), findsOneWidget);
+
+    repository.nextResult = Result.success([_travel('Nova Rota', TravelStatus.routeCreated)]);
+    await tester.tap(find.text('Create my first route'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Nova Rota'), findsOneWidget);
   });
 }

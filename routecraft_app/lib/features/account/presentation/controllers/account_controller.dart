@@ -71,6 +71,12 @@ class AccountController extends ChangeNotifier {
   Future<String?> _getClientEmail() =>
       (_getClientEmailOverride ?? AuthService.instance.getClientEmail)();
 
+  /// Re-runs the fetch. `StatefulShellRoute.indexedStack` keeps this
+  /// controller alive for the whole app session, so returning from a child
+  /// route (e.g. after marking notifications as read) never re-triggers the
+  /// constructor's fetch on its own — callers must invoke this explicitly.
+  Future<void> refresh() => _fetchData();
+
   Future<void> _fetchData() async {
     _state = const AccountState(isLoading: true);
     notifyListeners();
