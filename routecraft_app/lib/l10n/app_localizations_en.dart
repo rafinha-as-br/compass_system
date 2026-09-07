@@ -537,6 +537,34 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String editRouteDiffParticipantsAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count participants added',
+      one: '1 participant added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String editRouteDiffParticipantsRemoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count participants removed',
+      one: '1 participant removed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get editRouteDiffParticipantsUpdated => 'participant details updated';
+
+  @override
+  String get participantsSectionLabel => 'Participants';
+
+  @override
   String get editRouteSubmitCta => 'Send changes';
 
   @override

@@ -19,4 +19,5 @@ abstract final class ApiEndpoints {
   static String travelById(String id) => '/travels/$id';
   static String travelsByClient(String clientName) => '/travels/client/$clientName';
   static String travelRoute(String travelId) => '/travels/$travelId/route';
+  static String travelParticipants(String travelId) => '/travels/$travelId/participants';
 }
