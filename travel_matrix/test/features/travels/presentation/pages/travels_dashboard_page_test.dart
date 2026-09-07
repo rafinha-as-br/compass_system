@@ -86,6 +86,11 @@ void main() {
 
     expect(find.text('Litoral Norte'), findsNWidgets(2));
     expect(find.text('Maria Silva'), findsNWidgets(2));
+    // Sem coluna de ações e sem botão de criação no topo — a criação de
+    // viagem migrou para a tela do cliente (CPS-105).
+    expect(find.text('Actions'), findsNothing);
+    expect(find.byIcon(Icons.chevron_right), findsNothing);
+    expect(find.text('Create Travel'), findsNothing);
   });
 
   testWidgets('renders the empty state without crashing when there are no travels', (tester) async {
