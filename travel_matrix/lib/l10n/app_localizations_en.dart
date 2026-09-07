@@ -319,9 +319,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get recentTravels => 'Recent Travels';
 
   @override
-  String get activeClientsListTitle => 'Active Clients';
-
-  @override
   String get travelNameColumn => 'Travel Name';
 
   @override

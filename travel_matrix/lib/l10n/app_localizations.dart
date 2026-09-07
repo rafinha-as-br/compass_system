@@ -680,12 +680,6 @@ abstract class AppLocalizations {
   /// **'Recent Travels'**
   String get recentTravels;
 
-  /// No description provided for @activeClientsListTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Active Clients'**
-  String get activeClientsListTitle;
-
   /// No description provided for @travelNameColumn.
   ///
   /// In en, this message translates to:
