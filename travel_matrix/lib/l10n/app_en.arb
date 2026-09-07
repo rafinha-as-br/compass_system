@@ -235,7 +235,6 @@
   "editRouteTitle": "Edit Route",
   "updateRouteButton": "UPDATE ROUTE",
   "createTravelButton": "CREATE TRAVEL",
-  "editRoutePlanButton": "Edit Route Plan",
   "markAsReadyButton": "Mark as Ready",
   "markAsReadyConfirm": "Are you sure you want to mark this travel as ready?",
   "confirmButton": "Confirm",
