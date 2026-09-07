@@ -89,7 +89,7 @@
   "visualizationTitle": "Minhas Viagens",
   "noTravelsYet": "Nenhuma viagem ainda.",
   "itineraryLabel": "Roteiro",
-  "stepsCount": "{count} etapas",
+  "stepsCount": "{count, plural, one{1 etapa} other{{count} etapas}}",
   "noItinerary": "Sem roteiro",
   "routeLabel": "Rota",
 

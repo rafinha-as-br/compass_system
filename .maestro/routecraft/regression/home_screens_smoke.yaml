@@ -1,7 +1,14 @@
 appId: com.example.routecraft_app
 ---
+# Bottom nav destinations (CPS-84) only expose their label via a compound
+# content-desc ("Itinerary\nTab 2 of 3"), not a plain "text" node — Maestro's
+# default text/content-desc matcher does not match a "tapOn: <label>" against
+# it (confirmed empirically during QA of CPS-84/88/90, 2026-09-06). Tapping
+# by percentual point is the documented last-resort selector for this case;
+# see .maestro/README.md.
 - launchApp:
     clearState: true
+- clearKeychain
 - tapOn: "Email"
 - eraseText
 - inputText: "joao.teste@teste.com"
@@ -9,14 +16,16 @@ appId: com.example.routecraft_app
 - eraseText
 - inputText: "senha123"
 - tapOn: "LOGIN"
-- assertVisible: "RouteCraft Home"
-- tapOn: "Visualize Routes & Itineraries"
-- takeScreenshot: visualize_routes_screen
-- back
-- assertVisible: "RouteCraft Home"
-- tapOn: "Follow a Travel"
-- takeScreenshot: follow_travel_screen
-- back
-- assertVisible: "RouteCraft Home"
-- tapOn: "User Account & Settings"
-- takeScreenshot: user_account_screen
+- assertVisible: "My Travels"
+- takeScreenshot: home_screen
+- tapOn:
+    point: "50%, 93%"
+- assertVisible: "No trip selected"
+- takeScreenshot: itinerary_tab_screen
+- tapOn:
+    point: "83%, 93%"
+- assertVisible: "My Account"
+- takeScreenshot: account_tab_screen
+- tapOn:
+    point: "17%, 93%"
+- assertVisible: "My Travels"

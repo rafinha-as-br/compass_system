@@ -271,7 +271,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String stepsCount(int count) {
-    return '$count steps';
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count steps',
+      one: '1 step',
+    );
+    return '$_temp0';
   }
 
   @override

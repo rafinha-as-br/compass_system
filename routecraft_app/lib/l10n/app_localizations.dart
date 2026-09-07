@@ -587,7 +587,7 @@ abstract class AppLocalizations {
   /// No description provided for @stepsCount.
   ///
   /// In en, this message translates to:
-  /// **'{count} steps'**
+  /// **'{count, plural, one{1 step} other{{count} steps}}'**
   String stepsCount(int count);
 
   /// No description provided for @noItinerary.
