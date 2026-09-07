@@ -135,6 +135,23 @@ void main() {
     expect(find.text('RS'), findsOneWidget);
   });
 
+  testWidgets('shows the offline banner with the synced-at date instead of the network-error state', (tester) async {
+    final state = HomeState(
+      isLoading: false,
+      clientName: 'Rafaela Souza',
+      isOffline: true,
+      syncedAt: DateTime(2026, 10, 13),
+      upcoming: [_travel('Serra Gaúcha', TravelStatus.routeCreated)],
+    );
+
+    await tester.pumpWidget(_wrap(HomeController.withState(state)));
+    await tester.pump();
+
+    expect(find.text('Offline · data from 13 Oct 2026'), findsOneWidget);
+    expect(find.text("Couldn't load this"), findsNothing);
+    expect(find.text('Serra Gaúcha'), findsOneWidget);
+  });
+
   testWidgets('groups travels into sections, in urgency order, without empty sections', (tester) async {
     final state = HomeState(
       isLoading: false,

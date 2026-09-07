@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/global_controllers/travel_sync_status_controller.dart';
 import 'package:routecraft_app/features/itinerary_timeline/presentation/pages/itinerary_timeline_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary_step.dart';
@@ -9,16 +11,19 @@ import 'package:routecraft_app/features/travels/domain/entities/transport.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 
-Widget _wrap(Widget child) {
-  return MaterialApp(
-    localizationsDelegates: const [
-      AppLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: child,
+Widget _wrap(Widget child, {TravelSyncStatusController? syncStatus}) {
+  return ChangeNotifierProvider.value(
+    value: syncStatus ?? TravelSyncStatusController(),
+    child: MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    ),
   );
 }
 
@@ -198,6 +203,20 @@ void main() {
       )));
 
       expect(find.text('No trip selected'), findsOneWidget);
+    });
+
+    testWidgets('shows the offline banner when the sync status controller reports offline', (tester) async {
+      final syncStatus = TravelSyncStatusController()..update(isOffline: true, syncedAt: DateTime(2026, 10, 13));
+      final itinerary = Itinerary(domainId: 'it1', backEndId: 'it1', agentName: 'Ana', itinerarySteps: const []);
+
+      await tester.pumpWidget(_wrap(
+        ItineraryTimelinePage(
+          travel: _travel(routePlan: _routePlan(DateTime(2026, 10, 12), DateTime(2026, 10, 13)), itinerary: itinerary),
+        ),
+        syncStatus: syncStatus,
+      ));
+
+      expect(find.text('Offline · data from 13 Oct 2026'), findsOneWidget);
     });
 
     testWidgets('renders day 1 by default with its steps, and an empty day explicitly', (tester) async {

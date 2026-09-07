@@ -344,6 +344,12 @@ abstract class AppLocalizations {
   /// **'Try again'**
   String get networkErrorRetryCta;
 
+  /// No description provided for @offlineBannerLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Offline · data from {date}'**
+  String offlineBannerLabel(String date);
+
   /// No description provided for @homeNavLabel.
   ///
   /// In en, this message translates to:

@@ -140,6 +140,11 @@ class AppLocalizationsPt extends AppLocalizations {
   String get networkErrorRetryCta => 'Tentar de novo';
 
   @override
+  String offlineBannerLabel(String date) {
+    return 'Sem conexão · dados de $date';
+  }
+
+  @override
   String get homeNavLabel => 'Início';
 
   @override

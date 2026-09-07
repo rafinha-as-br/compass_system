@@ -3,6 +3,7 @@ import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/app/controllers/settings_controller.dart';
+import 'package:routecraft_app/app/global_controllers/travel_sync_status_controller.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/account/presentation/controllers/account_controller.dart';
 import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
@@ -86,7 +87,10 @@ Widget _loginScreen() => LoginPage(
       ),
     );
 
-Widget _hubRouteCreatedScreen() => ItineraryHubPage(
+Widget _withSyncStatus(Widget child) =>
+    ChangeNotifierProvider(create: (_) => TravelSyncStatusController(), child: child);
+
+Widget _hubRouteCreatedScreen() => _withSyncStatus(ItineraryHubPage(
       travel: Travel(
         domainId: 't2',
         backEndId: 't2',
@@ -108,13 +112,13 @@ Widget _hubRouteCreatedScreen() => ItineraryHubPage(
           ],
         ),
       ),
-    );
+    ));
 
-Widget _hubItineraryCreatedScreen() => ItineraryHubPage(travel: _sampleTravel());
+Widget _hubItineraryCreatedScreen() => _withSyncStatus(ItineraryHubPage(travel: _sampleTravel()));
 
-Widget _timelineWithStepsScreen() => ItineraryTimelinePage(travel: _sampleTravel());
+Widget _timelineWithStepsScreen() => _withSyncStatus(ItineraryTimelinePage(travel: _sampleTravel()));
 
-Widget _timelineEmptyDayScreen() => ItineraryTimelinePage(
+Widget _timelineEmptyDayScreen() => _withSyncStatus(ItineraryTimelinePage(
       travel: Travel(
         domainId: 't3',
         backEndId: 't3',
@@ -133,7 +137,7 @@ Widget _timelineEmptyDayScreen() => ItineraryTimelinePage(
         ),
         itinerary: Itinerary(domainId: 'it3', backEndId: 'it3', agentName: 'Ana', itinerarySteps: const []),
       ),
-    );
+    ));
 
 Widget _routeCreationScreen() => RouteCreationPage(
       controller: RouteCreationController.withState(const RouteCreationState()),

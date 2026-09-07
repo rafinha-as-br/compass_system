@@ -1,6 +1,7 @@
 import 'package:flutter_test/flutter_test.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/home/presentation/controllers/home_controller.dart';
+import 'package:routecraft_app/features/travels/data/services/travel_cache_service.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/domain/repositories/travel_repository.dart';
@@ -107,6 +108,72 @@ void main() {
 
       expect(controller.state.isLoading, isFalse);
       expect(controller.state.isError, isTrue);
+    });
+
+    test('falls back to the cache and reports offline when a connectivity failure has cached travels', () async {
+      final repository = _FakeTravelRepository()
+        ..nextResult = const Result.failure('Erro de conexão', isConnectivityError: true);
+      final syncedAt = DateTime(2026, 10, 13, 9);
+      bool? reportedOffline;
+      DateTime? reportedSyncedAt;
+
+      final controller = HomeController(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+        readCache: (clientName) async => CachedTravels(
+          travels: [_travel('Bahia', TravelStatus.routeCreated)],
+          syncedAt: syncedAt,
+        ),
+        onSyncStatusChanged: ({required isOffline, syncedAt}) {
+          reportedOffline = isOffline;
+          reportedSyncedAt = syncedAt;
+        },
+      );
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(controller.state.isError, isFalse);
+      expect(controller.state.isOffline, isTrue);
+      expect(controller.state.syncedAt, syncedAt);
+      expect(controller.state.upcoming.map((t) => t.travelName), ['Bahia']);
+      expect(reportedOffline, isTrue);
+      expect(reportedSyncedAt, syncedAt);
+    });
+
+    test('falls back to the network-error state when a connectivity failure has nothing cached', () async {
+      final repository = _FakeTravelRepository()
+        ..nextResult = const Result.failure('Erro de conexão', isConnectivityError: true);
+
+      final controller = HomeController(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+        readCache: (clientName) async => null,
+      );
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(controller.state.isError, isTrue);
+      expect(controller.state.isOffline, isFalse);
+    });
+
+    test('a non-connectivity failure goes straight to the error state without touching the cache', () async {
+      final repository = _FakeTravelRepository()
+        ..nextResult = const Result.failure('Sessão expirada', isConnectivityError: false);
+      var cacheWasRead = false;
+
+      final controller = HomeController(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+        readCache: (clientName) async {
+          cacheWasRead = true;
+          return null;
+        },
+      );
+
+      await Future<void>.delayed(Duration.zero);
+
+      expect(controller.state.isError, isTrue);
+      expect(cacheWasRead, isFalse);
     });
 
     test('surfaces a retry-worthy error state when reading the client name throws', () async {

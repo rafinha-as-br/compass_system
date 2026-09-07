@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/global_controllers/travel_sync_status_controller.dart';
 import 'package:routecraft_app/features/itinerary_hub/presentation/pages/itinerary_hub_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary_step.dart';
@@ -9,16 +11,19 @@ import 'package:routecraft_app/features/travels/domain/entities/transport.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 
-Widget _wrap(Widget child) {
-  return MaterialApp(
-    localizationsDelegates: const [
-      AppLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: child,
+Widget _wrap(Widget child, {TravelSyncStatusController? syncStatus}) {
+  return ChangeNotifierProvider.value(
+    value: syncStatus ?? TravelSyncStatusController(),
+    child: MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    ),
   );
 }
 
@@ -100,6 +105,20 @@ void main() {
 
     expect(find.text('No trip selected'), findsOneWidget);
     expect(find.text('Go to Home'), findsOneWidget);
+  });
+
+  testWidgets('shows the offline banner when the sync status controller reports offline', (tester) async {
+    final syncStatus = TravelSyncStatusController()..update(isOffline: true, syncedAt: DateTime(2026, 10, 13));
+
+    await tester.pumpWidget(_wrap(ItineraryHubPage(travel: _travel(TravelStatus.routeCreated)), syncStatus: syncStatus));
+
+    expect(find.text('Offline · data from 13 Oct 2026'), findsOneWidget);
+  });
+
+  testWidgets('shows no offline banner when the sync status controller reports online', (tester) async {
+    await tester.pumpWidget(_wrap(ItineraryHubPage(travel: _travel(TravelStatus.routeCreated))));
+
+    expect(find.textContaining('Offline ·'), findsNothing);
   });
 
   group('route_created state', () {

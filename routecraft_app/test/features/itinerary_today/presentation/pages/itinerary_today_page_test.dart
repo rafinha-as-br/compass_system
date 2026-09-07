@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/global_controllers/travel_sync_status_controller.dart';
 import 'package:routecraft_app/features/itinerary_today/presentation/pages/itinerary_today_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary_step.dart';
@@ -9,15 +11,18 @@ import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 
 Widget _wrap(Widget child) {
-  return MaterialApp(
-    localizationsDelegates: const [
-      AppLocalizations.delegate,
-      GlobalMaterialLocalizations.delegate,
-      GlobalWidgetsLocalizations.delegate,
-      GlobalCupertinoLocalizations.delegate,
-    ],
-    supportedLocales: AppLocalizations.supportedLocales,
-    home: child,
+  return ChangeNotifierProvider(
+    create: (_) => TravelSyncStatusController(),
+    child: MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: child,
+    ),
   );
 }
 

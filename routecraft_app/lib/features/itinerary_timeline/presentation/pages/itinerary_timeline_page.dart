@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/global_controllers/travel_sync_status_controller.dart';
 import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/itinerary_timeline/presentation/widgets/step_detail_sheet.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary_step.dart';
@@ -10,6 +12,7 @@ import 'package:routecraft_app/shared/utils/date_formatting.dart';
 import 'package:routecraft_app/shared/utils/step_icon_mapping.dart';
 import 'package:routecraft_app/shared/widgets/app_bottom_sheet.dart';
 import 'package:routecraft_app/shared/widgets/empty_state_view.dart';
+import 'package:routecraft_app/shared/widgets/offline_banner.dart';
 import 'package:routecraft_app/shared/widgets/step_icon.dart';
 
 /// Read-only, day-paginated view of a trip's full itinerary — wireframe 1f.
@@ -58,12 +61,14 @@ class _ItineraryTimelinePageState extends State<ItineraryTimelinePage> {
     final selectedDay = days[selectedIndex];
     final languageCode = Localizations.localeOf(context).languageCode;
     final theme = Theme.of(context);
+    final syncStatus = context.watch<TravelSyncStatusController>();
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.itineraryLabel)),
       body: SafeArea(
         child: Column(
           children: [
+            if (syncStatus.isOffline) OfflineBanner(syncedAt: syncStatus.syncedAt!),
             Padding(
               padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
               child: Column(

@@ -4,6 +4,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/app/global_controllers/auth_controller.dart';
+import 'package:routecraft_app/app/global_controllers/travel_sync_status_controller.dart';
 import 'package:routecraft_app/app/router/app_router.dart';
 import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
@@ -12,8 +13,11 @@ import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 
 Widget _wrap(GoRouter router, AuthController auth) {
-  return ChangeNotifierProvider<AuthController>.value(
-    value: auth,
+  return MultiProvider(
+    providers: [
+      ChangeNotifierProvider<AuthController>.value(value: auth),
+      ChangeNotifierProvider(create: (_) => TravelSyncStatusController()),
+    ],
     child: MaterialApp.router(
       routerConfig: router,
       localizationsDelegates: const [

@@ -51,6 +51,12 @@
   "networkErrorTitle": "Couldn't load this",
   "networkErrorMessage": "Check your connection and try again.",
   "networkErrorRetryCta": "Try again",
+  "offlineBannerLabel": "Offline · data from {date}",
+  "@offlineBannerLabel": {
+    "placeholders": {
+      "date": { "type": "String" }
+    }
+  },
 
   "homeNavLabel": "Home",
   "itineraryNavLabel": "Itinerary",
