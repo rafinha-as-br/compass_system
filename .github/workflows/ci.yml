@@ -5,6 +5,7 @@ on:
     branches: [develop, main]
   push:
     branches: [develop]
+  workflow_dispatch:
 
 concurrency:
   group: ci-${{ github.workflow }}-${{ github.ref }}
@@ -92,3 +93,29 @@ jobs:
 
       - name: Build (web)
         run: flutter build web
+
+  update-goldens:
+    name: update-goldens (temporário)
+    if: github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: routecraft_app
+    steps:
+      - uses: actions/checkout@v4
+      - name: Configurar Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          flutter-version: '3.35.5'
+          channel: stable
+          cache: true
+      - name: Instalar dependências
+        run: flutter pub get
+      - name: Regenerar goldens
+        run: flutter test --update-goldens test/golden/ || true
+      - name: Publicar goldens como artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: routecraft-goldens
+          path: routecraft_app/test/golden/goldens/
+          retention-days: 1
