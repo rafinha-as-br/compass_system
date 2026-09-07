@@ -590,9 +590,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createTravelButton => 'CREATE TRAVEL';
 
   @override
-  String get editRoutePlanButton => 'Edit Route Plan';
-
-  @override
   String get markAsReadyButton => 'Mark as Ready';
 
   @override

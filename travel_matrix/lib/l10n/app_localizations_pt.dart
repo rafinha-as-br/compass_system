@@ -596,9 +596,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get createTravelButton => 'CRIAR VIAGEM';
 
   @override
-  String get editRoutePlanButton => 'Editar Plano de Rota';
-
-  @override
   String get markAsReadyButton => 'Marcar como Pronta';
 
   @override

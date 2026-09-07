@@ -1202,12 +1202,6 @@ abstract class AppLocalizations {
   /// **'CREATE TRAVEL'**
   String get createTravelButton;
 
-  /// No description provided for @editRoutePlanButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Route Plan'**
-  String get editRoutePlanButton;
-
   /// No description provided for @markAsReadyButton.
   ///
   /// In en, this message translates to:
