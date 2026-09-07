@@ -257,6 +257,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get routeCreationAddInterestButton => 'Adicionar';
 
   @override
+  String get routeCreationObservationsLabel => 'Observações (opcional)';
+
+  @override
+  String get routeCreationObservationsHint =>
+      'Quer avisar algo pro seu agente? Não dá pra editar depois.';
+
+  @override
   String get routeCreationReviewHeader => 'REVISÃO';
 
   @override
@@ -269,6 +276,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String routeCreationInterestsBlockLabel(int count) {
     return '$count INTERESSES';
   }
+
+  @override
+  String get routeCreationObservationsBlockLabel => 'OBSERVAÇÕES';
 
   @override
   String get routeCreationSubmitCta => 'Enviar para meu agente';

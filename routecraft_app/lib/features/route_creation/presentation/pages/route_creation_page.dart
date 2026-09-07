@@ -324,6 +324,13 @@ class _InterestsStepState extends State<_InterestsStep> {
               label: Text(l10n.routeCreationAddInterestButton),
             ),
           ),
+          const SizedBox(height: 16),
+          AppTextField(
+            controller: controller.observationsController,
+            labelText: l10n.routeCreationObservationsLabel,
+            hintText: l10n.routeCreationObservationsHint,
+            maxLines: 3,
+          ),
         ],
       ),
     );
@@ -372,6 +379,14 @@ class _ReviewStep extends StatelessWidget {
                 : controller.interestPoints.map((p) => p.name).join(' · '),
             onEdit: () => controller.editStep(3),
           ),
+          if (controller.observationsController.text.trim().isNotEmpty) ...[
+            const SizedBox(height: 16),
+            _ReviewBlock(
+              label: l10n.routeCreationObservationsBlockLabel,
+              value: controller.observationsController.text.trim(),
+              onEdit: () => controller.editStep(3),
+            ),
+          ],
           if (state.hasNoSession) ...[
             const SizedBox(height: 16),
             Text(l10n.notAuthenticated, style: TextStyle(color: theme.colorScheme.error)),

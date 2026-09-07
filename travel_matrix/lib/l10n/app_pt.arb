@@ -89,6 +89,9 @@
   "interestPointsCount": "Pontos de Interesse ({count})",
   "noInterestPoints": "Nenhum ponto de interesse definido.",
 
+  "observationsLabel": "Observações do cliente",
+  "noObservations": "Nenhuma observação do cliente.",
+
   "noItineraryCreated": "Nenhum roteiro foi criado ainda.",
 
   "notAuthenticated": "Não autenticado.",

@@ -257,6 +257,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noInterestPoints => 'No interest points defined.';
 
   @override
+  String get observationsLabel => 'Client\'s observations';
+
+  @override
+  String get noObservations => 'No observations from the client.';
+
+  @override
   String get noItineraryCreated => 'No itinerary has been created yet.';
 
   @override
