@@ -84,6 +84,27 @@ void main() {
     expect(find.text('User sessions terminated'), findsOneWidget);
   });
 
+  testWidgets('deactivating a user asks for a reason and shows a success message', (tester) async {
+    when(() => useCases.deactivateUser(any(), any()))
+        .thenAnswer((_) async => const Result.success());
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Deactivate User'));
+    await tester.tap(find.text('Deactivate User'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Client request'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('DEACTIVATE'));
+    await tester.pumpAndSettle();
+
+    verify(() => useCases.deactivateUser('1', 'Client request')).called(1);
+    expect(find.text('User deactivated'), findsOneWidget);
+  });
+
   testWidgets('cancelling the confirmation dialog does not call forceLogout', (tester) async {
     when(() => useCases.forceLogout(any()))
         .thenAnswer((_) async => const Result.success());

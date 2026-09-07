@@ -282,9 +282,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get editUser => 'Edit User';
 
   @override
-  String get viewUser => 'View User';
-
-  @override
   String get deleteUser => 'Delete User';
 
   @override
@@ -449,10 +446,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Immediately terminate all active sessions for this user.';
 
   @override
+  String get deactivateUserActionDescription =>
+      'Deactivate this user\'s account, preventing them from logging in.';
+
+  @override
   String get resetPasswordSuccessMessage => 'Password reset link sent';
 
   @override
   String get resetPasswordFailureMessage => 'Failed to send reset link';
+
+  @override
+  String get deactivateUserSuccessMessage => 'User deactivated';
+
+  @override
+  String get deactivateUserFailureMessage => 'Failed to deactivate user';
 
   @override
   String get forceLogoutSuccessMessage => 'User sessions terminated';
