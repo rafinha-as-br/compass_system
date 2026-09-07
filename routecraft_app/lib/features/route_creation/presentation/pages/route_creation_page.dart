@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
+import 'package:routecraft_app/features/travels/domain/entities/person.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
@@ -89,7 +90,8 @@ class _StepIndicator extends StatelessWidget {
           1 => const _NameStep(),
           2 => const _DatesStep(),
           3 => const _LocationsStep(),
-          _ => const _InterestsStep(),
+          4 => const _InterestsStep(),
+          _ => const _ParticipantsStep(),
         },
       ],
     );
@@ -330,6 +332,180 @@ class _InterestsStepState extends State<_InterestsStep> {
   }
 }
 
+class _ParticipantsStep extends StatefulWidget {
+  const _ParticipantsStep();
+
+  @override
+  State<_ParticipantsStep> createState() => _ParticipantsStepState();
+}
+
+class _ParticipantsStepState extends State<_ParticipantsStep> {
+  final _nameController = TextEditingController();
+  final _ageController = TextEditingController();
+  String? _sex;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _ageController.dispose();
+    super.dispose();
+  }
+
+  void _addParticipant(RouteCreationController controller) {
+    final name = _nameController.text.trim();
+    final age = _ageController.text.trim();
+    final sex = _sex;
+    if (name.isEmpty || age.isEmpty || sex == null) return;
+    controller.addParticipant(name: name, age: age, sex: sex);
+    _nameController.clear();
+    _ageController.clear();
+    setState(() => _sex = null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = context.watch<RouteCreationController>();
+
+    return _WizardStep(
+      title: l10n.routeCreationParticipantsTitle,
+      subtitle: l10n.routeCreationParticipantsSubtitle,
+      onContinue: controller.isParticipantsValid ? controller.nextStep : null,
+      onBack: controller.previousStep,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          for (final person in controller.participants)
+            Padding(
+              key: ValueKey(person.domainId),
+              padding: const EdgeInsets.only(bottom: 12),
+              child: _ParticipantCard(
+                person: person,
+                isClient: controller.isClientParticipant(person),
+                onChanged: (name, age, sex) =>
+                    controller.updateParticipant(person.domainId, name: name, age: age, sex: sex),
+                onRemove: () => controller.removeParticipant(person.domainId),
+              ),
+            ),
+          const Divider(height: 32),
+          AppTextField(controller: _nameController, labelText: l10n.routeCreationParticipantNameLabel),
+          const SizedBox(height: 16),
+          AppTextField(
+            controller: _ageController,
+            labelText: l10n.routeCreationParticipantAgeLabel,
+            keyboardType: TextInputType.number,
+          ),
+          const SizedBox(height: 16),
+          DropdownButtonFormField<String>(
+            initialValue: _sex,
+            decoration: InputDecoration(
+              labelText: l10n.routeCreationParticipantSexLabel,
+              border: const OutlineInputBorder(borderSide: BorderSide(color: TravelAppColors.border)),
+            ),
+            items: [
+              DropdownMenuItem(value: 'M', child: Text(l10n.routeCreationParticipantSexMale)),
+              DropdownMenuItem(value: 'F', child: Text(l10n.routeCreationParticipantSexFemale)),
+              DropdownMenuItem(value: 'O', child: Text(l10n.routeCreationParticipantSexOther)),
+            ],
+            onChanged: (value) => setState(() => _sex = value),
+          ),
+          const SizedBox(height: 8),
+          Align(
+            alignment: Alignment.centerRight,
+            child: TextButton.icon(
+              onPressed: () => _addParticipant(controller),
+              icon: const Icon(Icons.add),
+              label: Text(l10n.routeCreationAddParticipantButton),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ParticipantCard extends StatelessWidget {
+  const _ParticipantCard({
+    required this.person,
+    required this.isClient,
+    required this.onChanged,
+    required this.onRemove,
+  });
+
+  final Person person;
+  final bool isClient;
+  final void Function(String name, String age, String sex) onChanged;
+  final VoidCallback onRemove;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    key: ValueKey('${person.domainId}-name'),
+                    initialValue: person.name,
+                    decoration: InputDecoration(labelText: l10n.routeCreationParticipantNameLabel),
+                    onChanged: (value) => onChanged(value, person.age, person.sex),
+                  ),
+                ),
+                if (isClient)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Chip(label: Text(l10n.routeCreationParticipantYouTag)),
+                  )
+                else
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    tooltip: l10n.editRouteRemoveInterestTooltip,
+                    onPressed: onRemove,
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    key: ValueKey('${person.domainId}-age'),
+                    initialValue: person.age,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(labelText: l10n.routeCreationParticipantAgeLabel),
+                    onChanged: (value) => onChanged(person.name, value, person.sex),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    key: ValueKey('${person.domainId}-sex'),
+                    initialValue: person.sex.isEmpty ? null : person.sex,
+                    decoration: InputDecoration(labelText: l10n.routeCreationParticipantSexLabel),
+                    items: [
+                      DropdownMenuItem(value: 'M', child: Text(l10n.routeCreationParticipantSexMale)),
+                      DropdownMenuItem(value: 'F', child: Text(l10n.routeCreationParticipantSexFemale)),
+                      DropdownMenuItem(value: 'O', child: Text(l10n.routeCreationParticipantSexOther)),
+                    ],
+                    onChanged: (value) => onChanged(person.name, person.age, value ?? ''),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
 class _ReviewStep extends StatelessWidget {
   const _ReviewStep();
 
@@ -371,6 +547,12 @@ class _ReviewStep extends StatelessWidget {
                 ? '—'
                 : controller.interestPoints.map((p) => p.name).join(' · '),
             onEdit: () => controller.editStep(3),
+          ),
+          const SizedBox(height: 16),
+          _ReviewBlock(
+            label: l10n.routeCreationParticipantsBlockLabel(controller.participants.length),
+            value: controller.participants.map((p) => p.name).join(' · '),
+            onEdit: () => controller.editStep(4),
           ),
           if (state.hasNoSession) ...[
             const SizedBox(height: 16),

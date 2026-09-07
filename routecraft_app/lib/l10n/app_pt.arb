@@ -91,6 +91,18 @@
   "routeCreationInterestsBlockLabel": "{count} INTERESSES",
   "routeCreationSubmitCta": "Enviar para meu agente",
 
+  "routeCreationParticipantsTitle": "Quem vai viajar?",
+  "routeCreationParticipantsSubtitle": "Você já está na lista — adicione quem mais for com você.",
+  "routeCreationParticipantNameLabel": "Nome",
+  "routeCreationParticipantAgeLabel": "Idade",
+  "routeCreationParticipantSexLabel": "Sexo",
+  "routeCreationParticipantSexMale": "Masculino",
+  "routeCreationParticipantSexFemale": "Feminino",
+  "routeCreationParticipantSexOther": "Outro",
+  "routeCreationParticipantYouTag": "Você",
+  "routeCreationAddParticipantButton": "Adicionar",
+  "routeCreationParticipantsBlockLabel": "{count, plural, one{1 PARTICIPANTE} other{{count} PARTICIPANTES}}",
+
   "visualizationTitle": "Minhas Viagens",
   "noTravelsYet": "Nenhuma viagem ainda.",
   "itineraryLabel": "Roteiro",

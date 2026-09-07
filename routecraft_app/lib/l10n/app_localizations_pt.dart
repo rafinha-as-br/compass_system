@@ -274,6 +274,48 @@ class AppLocalizationsPt extends AppLocalizations {
   String get routeCreationSubmitCta => 'Enviar para meu agente';
 
   @override
+  String get routeCreationParticipantsTitle => 'Quem vai viajar?';
+
+  @override
+  String get routeCreationParticipantsSubtitle =>
+      'Você já está na lista — adicione quem mais for com você.';
+
+  @override
+  String get routeCreationParticipantNameLabel => 'Nome';
+
+  @override
+  String get routeCreationParticipantAgeLabel => 'Idade';
+
+  @override
+  String get routeCreationParticipantSexLabel => 'Sexo';
+
+  @override
+  String get routeCreationParticipantSexMale => 'Masculino';
+
+  @override
+  String get routeCreationParticipantSexFemale => 'Feminino';
+
+  @override
+  String get routeCreationParticipantSexOther => 'Outro';
+
+  @override
+  String get routeCreationParticipantYouTag => 'Você';
+
+  @override
+  String get routeCreationAddParticipantButton => 'Adicionar';
+
+  @override
+  String routeCreationParticipantsBlockLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count PARTICIPANTES',
+      one: '1 PARTICIPANTE',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get visualizationTitle => 'Minhas Viagens';
 
   @override

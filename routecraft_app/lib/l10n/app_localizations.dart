@@ -590,6 +590,72 @@ abstract class AppLocalizations {
   /// **'Send to my agent'**
   String get routeCreationSubmitCta;
 
+  /// No description provided for @routeCreationParticipantsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Who\'s traveling?'**
+  String get routeCreationParticipantsTitle;
+
+  /// No description provided for @routeCreationParticipantsSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'You\'re already on the list — add anyone else joining.'**
+  String get routeCreationParticipantsSubtitle;
+
+  /// No description provided for @routeCreationParticipantNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get routeCreationParticipantNameLabel;
+
+  /// No description provided for @routeCreationParticipantAgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get routeCreationParticipantAgeLabel;
+
+  /// No description provided for @routeCreationParticipantSexLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Sex'**
+  String get routeCreationParticipantSexLabel;
+
+  /// No description provided for @routeCreationParticipantSexMale.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get routeCreationParticipantSexMale;
+
+  /// No description provided for @routeCreationParticipantSexFemale.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get routeCreationParticipantSexFemale;
+
+  /// No description provided for @routeCreationParticipantSexOther.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get routeCreationParticipantSexOther;
+
+  /// No description provided for @routeCreationParticipantYouTag.
+  ///
+  /// In en, this message translates to:
+  /// **'You'**
+  String get routeCreationParticipantYouTag;
+
+  /// No description provided for @routeCreationAddParticipantButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add'**
+  String get routeCreationAddParticipantButton;
+
+  /// No description provided for @routeCreationParticipantsBlockLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 PARTICIPANT} other{{count} PARTICIPANTS}}'**
+  String routeCreationParticipantsBlockLabel(int count);
+
   /// No description provided for @visualizationTitle.
   ///
   /// In en, this message translates to:

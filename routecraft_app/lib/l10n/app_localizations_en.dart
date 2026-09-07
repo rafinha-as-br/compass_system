@@ -275,6 +275,48 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routeCreationSubmitCta => 'Send to my agent';
 
   @override
+  String get routeCreationParticipantsTitle => 'Who\'s traveling?';
+
+  @override
+  String get routeCreationParticipantsSubtitle =>
+      'You\'re already on the list — add anyone else joining.';
+
+  @override
+  String get routeCreationParticipantNameLabel => 'Name';
+
+  @override
+  String get routeCreationParticipantAgeLabel => 'Age';
+
+  @override
+  String get routeCreationParticipantSexLabel => 'Sex';
+
+  @override
+  String get routeCreationParticipantSexMale => 'Male';
+
+  @override
+  String get routeCreationParticipantSexFemale => 'Female';
+
+  @override
+  String get routeCreationParticipantSexOther => 'Other';
+
+  @override
+  String get routeCreationParticipantYouTag => 'You';
+
+  @override
+  String get routeCreationAddParticipantButton => 'Add';
+
+  @override
+  String routeCreationParticipantsBlockLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count PARTICIPANTS',
+      one: '1 PARTICIPANT',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get visualizationTitle => 'My Travels';
 
   @override
