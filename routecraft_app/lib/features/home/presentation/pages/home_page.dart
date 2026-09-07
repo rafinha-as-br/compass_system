@@ -6,11 +6,11 @@ import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/home/presentation/controllers/home_controller.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
+import 'package:routecraft_app/shared/utils/travel_status_mapping.dart';
 import 'package:routecraft_app/shared/widgets/empty_state_view.dart';
 import 'package:routecraft_app/shared/widgets/offline_banner.dart';
 import 'package:routecraft_app/shared/widgets/skeleton_block.dart';
 import 'package:routecraft_app/shared/widgets/travel_card.dart';
-import 'package:routecraft_app/shared/widgets/travel_status_chip.dart';
 
 class HomePage extends StatelessWidget {
   const HomePage({super.key, this.controller});
@@ -35,7 +35,6 @@ class _HomeView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
     final state = context.watch<HomeController>().state;
 
     return Scaffold(
@@ -54,15 +53,6 @@ class _HomeView extends StatelessWidget {
                     ],
                   ),
                 ),
-      floatingActionButton: (state.isLoading || state.isError || state.isEmpty)
-          ? null
-          : FloatingActionButton.extended(
-              onPressed: () => _pushAndRefresh(context, AppRoutes.homeCreateRoute),
-              icon: const Icon(Icons.add),
-              label: Text(l10n.createRouteNav),
-              backgroundColor: Theme.of(context).colorScheme.secondary,
-              foregroundColor: Theme.of(context).colorScheme.onSecondary,
-            ),
     );
   }
 }
@@ -189,8 +179,8 @@ class _TravelSection extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 8),
               child: TravelCard(
                 travelName: travel.travelName,
-                routeSummary: _routeSummary(context, travel),
-                status: _chipVariant(travel.travelStatus),
+                routeSummary: travelRouteSummary(context, travel),
+                status: travelStatusChipVariant(travel.travelStatus),
                 onTap: () => _pushAndRefresh(context, AppRoutes.homeFollowTravel, extra: travel),
               ),
             ),
@@ -278,43 +268,4 @@ class _EmptyHome extends StatelessWidget {
       onCtaPressed: () => _pushAndRefresh(context, AppRoutes.homeCreateRoute),
     );
   }
-}
-
-TravelStatusChipVariant _chipVariant(TravelStatus status) => switch (status) {
-      TravelStatus.routeCreated => TravelStatusChipVariant.routeCreated,
-      TravelStatus.itineraryCreated => TravelStatusChipVariant.itineraryCreated,
-      TravelStatus.travelStarted => TravelStatusChipVariant.travelStarted,
-      TravelStatus.travelFinished => TravelStatusChipVariant.travelFinished,
-    };
-
-// ponytail: hand-rolled month abbreviations instead of intl's DateFormat —
-// DateFormat needs initializeDateFormatting() per locale, unused anywhere
-// else in this app; wiring it up for one date range isn't worth the setup.
-// Upgrade: switch to DateFormat if a second locale-aware date format shows up.
-const _monthAbbreviationsEn = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', //
-];
-const _monthAbbreviationsPt = [
-  'jan', 'fev', 'mar', 'abr', 'mai', 'jun', 'jul', 'ago', 'set', 'out', 'nov', 'dez', //
-];
-
-String _monthAbbreviation(String languageCode, int month) {
-  final names = languageCode == 'pt' ? _monthAbbreviationsPt : _monthAbbreviationsEn;
-  return names[month - 1];
-}
-
-String _period(String languageCode, DateTime start, DateTime end) {
-  final endLabel = '${end.day} ${_monthAbbreviation(languageCode, end.month)}';
-  if (start.year == end.year && start.month == end.month) {
-    return '${start.day}–$endLabel';
-  }
-  final startLabel = '${start.day} ${_monthAbbreviation(languageCode, start.month)}';
-  return '$startLabel–$endLabel';
-}
-
-String _routeSummary(BuildContext context, Travel travel) {
-  final languageCode = Localizations.localeOf(context).languageCode;
-  final route = travel.routePlan;
-  final period = _period(languageCode, route.startDate, route.endDate);
-  return '${route.startLocation} → ${route.destination} · $period';
 }

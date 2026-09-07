@@ -149,10 +149,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeNavLabel => 'Home';
 
   @override
-  String get itineraryNavLabel => 'Itinerary';
+  String get travelsNavLabel => 'Travels';
 
   @override
   String get accountNavLabel => 'Account';
+
+  @override
+  String get travelsSearchHint => 'Search by name';
+
+  @override
+  String get travelsFilterAll => 'All';
+
+  @override
+  String get travelsNoResultsMessage => 'No travels match your search.';
 
   @override
   String get createRouteTitle => 'Create a Route';

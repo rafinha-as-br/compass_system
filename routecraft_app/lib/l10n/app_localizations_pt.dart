@@ -148,10 +148,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeNavLabel => 'Início';
 
   @override
-  String get itineraryNavLabel => 'Roteiro';
+  String get travelsNavLabel => 'Viagens';
 
   @override
   String get accountNavLabel => 'Conta';
+
+  @override
+  String get travelsSearchHint => 'Buscar por nome';
+
+  @override
+  String get travelsFilterAll => 'Todas';
+
+  @override
+  String get travelsNoResultsMessage => 'Nenhuma viagem corresponde à busca.';
 
   @override
   String get createRouteTitle => 'Criar uma Rota';

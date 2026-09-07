@@ -9,7 +9,7 @@ abstract class AppRoutes {
 
   /// Private — shell branches
   static const home = '/home';
-  static const itinerary = '/itinerary';
+  static const travels = '/travels';
   static const account = '/account';
 
   /// Sub-routes (relative), reused under more than one branch
@@ -22,6 +22,6 @@ abstract class AppRoutes {
   /// Full paths for navigating to a sub-route from outside its parent.
   static const homeCreateRoute = '$home/$createRoute';
   static const homeFollowTravel = '$home/$followTravel';
-  static const itineraryFollowTravel = '$itinerary/$followTravel';
+  static const travelsCreateRoute = '$travels/$createRoute';
   static const accountNotifications = '$account/$notifications';
 }

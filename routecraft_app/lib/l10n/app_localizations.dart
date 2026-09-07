@@ -356,17 +356,35 @@ abstract class AppLocalizations {
   /// **'Home'**
   String get homeNavLabel;
 
-  /// No description provided for @itineraryNavLabel.
+  /// No description provided for @travelsNavLabel.
   ///
   /// In en, this message translates to:
-  /// **'Itinerary'**
-  String get itineraryNavLabel;
+  /// **'Travels'**
+  String get travelsNavLabel;
 
   /// No description provided for @accountNavLabel.
   ///
   /// In en, this message translates to:
   /// **'Account'**
   String get accountNavLabel;
+
+  /// No description provided for @travelsSearchHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Search by name'**
+  String get travelsSearchHint;
+
+  /// No description provided for @travelsFilterAll.
+  ///
+  /// In en, this message translates to:
+  /// **'All'**
+  String get travelsFilterAll;
+
+  /// No description provided for @travelsNoResultsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No travels match your search.'**
+  String get travelsNoResultsMessage;
 
   /// No description provided for @createRouteTitle.
   ///

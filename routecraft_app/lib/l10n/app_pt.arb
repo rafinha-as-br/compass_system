@@ -49,8 +49,12 @@
   "offlineBannerLabel": "Sem conexão · dados de {date}",
 
   "homeNavLabel": "Início",
-  "itineraryNavLabel": "Roteiro",
+  "travelsNavLabel": "Viagens",
   "accountNavLabel": "Conta",
+
+  "travelsSearchHint": "Buscar por nome",
+  "travelsFilterAll": "Todas",
+  "travelsNoResultsMessage": "Nenhuma viagem corresponde à busca.",
 
   "createRouteTitle": "Criar uma Rota",
   "tripInfoStep": "Informações da Viagem",
