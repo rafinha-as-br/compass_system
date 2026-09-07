@@ -136,7 +136,6 @@
     }
   },
   "recentTravels": "Recent Travels",
-  "activeClientsListTitle": "Active Clients",
   "travelNameColumn": "Travel Name",
   "clientNameColumn": "Name",
   "routeColumn": "Route",

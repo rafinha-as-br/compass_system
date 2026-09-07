@@ -86,7 +86,35 @@ void main() {
 
     expect(find.text('Litoral Norte'), findsNWidgets(2));
     expect(find.text('Maria Silva'), findsNWidgets(2));
+    // Sem coluna de ações e sem botão de criação no topo — a criação de
+    // viagem migrou para a tela do cliente (CPS-105).
+    expect(find.text('Actions'), findsNothing);
+    expect(find.byIcon(Icons.chevron_right), findsNothing);
+    expect(find.text('Create Travel'), findsNothing);
   });
+
+  testWidgets(
+    'renders the status chip without overflowing at a narrower window width',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      when(() => travelRepository.getAllTravels())
+          .thenAnswer((_) async => Result.success([_travel('1')]));
+      final controller = TravelsController(
+        travelUseCases: CrudTravelUseCases(travelRepository),
+        routeUseCases: CrudRoute(routeRepository),
+      );
+
+      await tester.pumpWidget(_wrap(controller));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Route Only'), findsOneWidget);
+    },
+  );
 
   testWidgets('renders the empty state without crashing when there are no travels', (tester) async {
     tester.view.physicalSize = const Size(1280, 900);

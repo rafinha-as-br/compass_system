@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -148,5 +149,55 @@ void main() {
     final icon = tester.widget<Icon>(find.byIcon(Icons.check_circle_outline));
     expect(icon.color, AppTheme.darkTheme.semanticColors.success);
     expect(icon.color, isNot(TravelAppColors.success));
+  });
+
+  testWidgets('Create Travel button navigates to travel creation with the client locked', (
+    tester,
+  ) async {
+    final controller = UsersController(useCases: useCases);
+    Map<String, dynamic>? receivedExtra;
+
+    final router = GoRouter(
+      initialLocation: '/users/1',
+      routes: [
+        GoRoute(
+          path: '/users/:id',
+          builder: (context, state) => ChangeNotifierProvider.value(
+            value: controller,
+            child: ViewUserPage(user: _testUser),
+          ),
+          routes: [
+            GoRoute(
+              path: 'create-travel',
+              builder: (context, state) {
+                receivedExtra = state.extra as Map<String, dynamic>?;
+                return const SizedBox();
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Create Travel'));
+    await tester.tap(find.text('Create Travel'));
+    await tester.pumpAndSettle();
+
+    expect(receivedExtra?['clientId'], '1');
+    expect(receivedExtra?['clientName'], 'Jane Doe');
   });
 }
