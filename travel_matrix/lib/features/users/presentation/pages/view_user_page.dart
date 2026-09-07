@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/confirmation_dialog.dart';
+import 'package:travel_matrix/features/users/presentation/pages/deactivate_user_dialog.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
@@ -336,10 +337,10 @@ class ViewUserPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: _buildActionCard(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final cards = [
+                _buildActionCard(
                   theme: theme,
                   title: l10n.resetPasswordActionTitle,
                   description: l10n.resetPasswordActionDescription,
@@ -354,10 +355,7 @@ class ViewUserPage extends StatelessWidget {
                     }
                   },
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildActionCard(
+                _buildActionCard(
                   theme: theme,
                   title: l10n.forceLogoutActionTitle,
                   description: l10n.forceLogoutActionDescription,
@@ -381,8 +379,46 @@ class ViewUserPage extends StatelessWidget {
                     }
                   },
                 ),
-              ),
-            ],
+                _buildActionCard(
+                  theme: theme,
+                  title: l10n.deactivateUserDialogTitle,
+                  description: l10n.deactivateUserActionDescription,
+                  icon: Icons.block,
+                  iconColor: theme.colorScheme.error,
+                  onTap: () async {
+                    final reason = await showDeactivateUserDialog(context, user.name);
+                    if (reason == null || !context.mounted) return;
+
+                    final success = await controller.deactivateUser(user.localId, reason);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(success ? l10n.deactivateUserSuccessMessage : l10n.deactivateUserFailureMessage)),
+                      );
+                    }
+                  },
+                ),
+              ];
+
+              if (constraints.maxWidth < 700) {
+                return Column(
+                  children: [
+                    for (final card in cards) ...[
+                      card,
+                      if (card != cards.last) const SizedBox(height: 16),
+                    ],
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  for (final card in cards) ...[
+                    Expanded(child: card),
+                    if (card != cards.last) const SizedBox(width: 16),
+                  ],
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -420,9 +456,11 @@ class ViewUserPage extends StatelessWidget {
                   child: Icon(icon, color: iconColor, size: 20),
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
               ],
             ),

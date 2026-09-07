@@ -282,9 +282,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get editUser => 'Editar Usuário';
 
   @override
-  String get viewUser => 'Ver Usuário';
-
-  @override
   String get deleteUser => 'Excluir Usuário';
 
   @override
@@ -454,12 +451,22 @@ class AppLocalizationsPt extends AppLocalizations {
       'Encerra imediatamente todas as sessões ativas deste usuário.';
 
   @override
+  String get deactivateUserActionDescription =>
+      'Desativa a conta deste usuário, impedindo o login.';
+
+  @override
   String get resetPasswordSuccessMessage =>
       'Link de redefinição de senha enviado';
 
   @override
   String get resetPasswordFailureMessage =>
       'Falha ao enviar link de redefinição';
+
+  @override
+  String get deactivateUserSuccessMessage => 'Usuário desativado';
+
+  @override
+  String get deactivateUserFailureMessage => 'Falha ao desativar usuário';
 
   @override
   String get forceLogoutSuccessMessage => 'Sessões do usuário encerradas';
