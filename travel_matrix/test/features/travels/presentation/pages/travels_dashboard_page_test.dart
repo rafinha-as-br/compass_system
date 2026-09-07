@@ -93,6 +93,29 @@ void main() {
     expect(find.text('Create Travel'), findsNothing);
   });
 
+  testWidgets(
+    'renders the status chip without overflowing at a narrower window width',
+    (tester) async {
+      tester.view.physicalSize = const Size(800, 600);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      when(() => travelRepository.getAllTravels())
+          .thenAnswer((_) async => Result.success([_travel('1')]));
+      final controller = TravelsController(
+        travelUseCases: CrudTravelUseCases(travelRepository),
+        routeUseCases: CrudRoute(routeRepository),
+      );
+
+      await tester.pumpWidget(_wrap(controller));
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Route Only'), findsOneWidget);
+    },
+  );
+
   testWidgets('renders the empty state without crashing when there are no travels', (tester) async {
     tester.view.physicalSize = const Size(1280, 900);
     tester.view.devicePixelRatio = 1.0;

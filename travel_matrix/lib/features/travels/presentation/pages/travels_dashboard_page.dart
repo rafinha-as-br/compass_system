@@ -220,7 +220,7 @@ class _TravelsTable extends StatelessWidget {
           ),
           AppDataColumn(
             label: l10n.statusColumn,
-            width: const FlexColumnWidth(1),
+            width: const FlexColumnWidth(2),
             cellBuilder: (context, travel) =>
                 _TravelStatusChip(travel: travel, l10n: l10n),
           ),
