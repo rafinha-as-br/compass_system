@@ -167,6 +167,59 @@ void main() {
       expect(find.text('12 Oct · 11:30'), findsOneWidget);
     });
 
+    testWidgets('TravelSegment/Airplane with an empty gate omits the gate tile', (tester) async {
+      await tester.pumpWidget(_wrap(ItineraryStep.newTravelSegment(
+        domainId: 't1b',
+        backEndId: 't1b',
+        title: 'Voo GRU → SDU',
+        startDate: DateTime(2026, 10, 12, 7, 40),
+        finishDate: DateTime(2026, 10, 12, 8, 45),
+        finished: false,
+        startPoint: 'GRU',
+        finishPoint: 'SDU',
+        transport: Transport.newAirplane(
+          domainId: 'tr1b',
+          backEndId: 'tr1b',
+          flightNumber: 'LA3421',
+          flightCompany: 'LATAM',
+          flightDate: DateTime(2026, 10, 12, 7, 40),
+          departureGate: '',
+          departureAirport: 'GRU',
+          arrivalAirport: 'SDU',
+        ),
+      )));
+
+      expect(find.text('Gate'), findsNothing);
+      expect(find.text('GRU → SDU'), findsOneWidget);
+    });
+
+    testWidgets('TravelSegment/Bus with an empty gate omits the gate tile', (tester) async {
+      await tester.pumpWidget(_wrap(ItineraryStep.newTravelSegment(
+        domainId: 't2b',
+        backEndId: 't2b',
+        title: 'Transfer até Paraty',
+        startDate: DateTime(2026, 10, 12, 11, 30),
+        finishDate: DateTime(2026, 10, 12, 15, 30),
+        finished: false,
+        startPoint: 'São Paulo',
+        finishPoint: 'Paraty',
+        transport: Transport.newBus(
+          domainId: 'tr2b',
+          backEndId: 'tr2b',
+          travelNumber: '512',
+          travelCompany: 'Reunidas',
+          departureGate: '',
+          departureDateTime: DateTime(2026, 10, 12, 11, 30),
+          busStationName: 'Terminal Tietê',
+          description: 'Ônibus executivo',
+          details: null,
+        ),
+      )));
+
+      expect(find.text('Gate'), findsNothing);
+      expect(find.text('Terminal Tietê'), findsOneWidget);
+    });
+
     testWidgets('TravelSegment/RentalCar shows model, plate, company and pick-up/drop-off', (tester) async {
       await tester.pumpWidget(_wrap(ItineraryStep.newTravelSegment(
         domainId: 't3',
