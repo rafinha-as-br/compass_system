@@ -157,11 +157,12 @@ void main() {
 
     expect(find.text('Litoral Norte'), findsOneWidget);
     expect(find.text('Serra Gaúcha'), findsOneWidget);
-    expect(find.text('São Paulo → Paraty · 12–19 Oct'), findsNWidgets(2));
+    expect(find.text('São Paulo → Paraty'), findsNWidgets(2));
+    expect(find.text('12–19 Oct'), findsNWidgets(2));
     expect(find.byType(FloatingActionButton), findsOneWidget);
   });
 
-  testWidgets('renders the greeting and route summary localized in Portuguese', (tester) async {
+  testWidgets('renders the greeting and route/period localized in Portuguese', (tester) async {
     final state = HomeState(
       isLoading: false,
       clientName: 'Rafaela Souza',
@@ -173,7 +174,8 @@ void main() {
 
     expect(find.text('Olá, Rafaela'), findsOneWidget);
     expect(find.text('PRÓXIMAS'), findsOneWidget);
-    expect(find.text('São Paulo → Paraty · 12–19 out'), findsOneWidget);
+    expect(find.text('São Paulo → Paraty'), findsOneWidget);
+    expect(find.text('12–19 out'), findsOneWidget);
   });
 
   testWidgets('refetches after returning from route creation, picking up the new travel', (tester) async {
