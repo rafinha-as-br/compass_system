@@ -5,8 +5,10 @@ import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/confirmation_dialog.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/travel_summary_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
+import 'package:travel_matrix/shared/widgets/app_data_table.dart';
 
 import '../view_models/client_status_view_model.dart';
 
@@ -225,7 +227,7 @@ class ViewUserPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildTravelHistory(theme, l10n),
+        _buildTravelHistory(theme, context, l10n),
         const SizedBox(height: 24),
         _buildSecurityActions(theme, controller, context, l10n),
         const SizedBox(height: 24),
@@ -234,7 +236,14 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTravelHistory(ThemeData theme, AppLocalizations l10n) {
+  Widget _buildTravelHistory(ThemeData theme, BuildContext context, AppLocalizations l10n) {
+    final headerStyle = TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+    );
+    final mutedStyle = TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6));
+
     return Card(
       color: theme.colorScheme.surface,
       elevation: 0,
@@ -260,24 +269,40 @@ class ViewUserPage extends StatelessWidget {
               ),
             )
           else
-            DataTable(
-              headingRowColor: WidgetStateProperty.all(theme.colorScheme.surfaceContainerHighest),
+            AppDataTable<TravelSummaryViewModel>(
+              items: user.travels,
+              onRowTap: (context, travel) =>
+                  context.go('${AppRoutes.travels}/${travel.domainId}'),
               columns: [
-                DataColumn(label: Text(l10n.travelNameColumn.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                DataColumn(label: Text(l10n.destinationLabel.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                DataColumn(label: Text(l10n.statusColumn.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                DataColumn(label: Text(l10n.startDateLabel.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
+                AppDataColumn(
+                  label: l10n.travelNameColumn.toUpperCase(),
+                  width: const FlexColumnWidth(3),
+                  headerBuilder: (context) => Text(l10n.travelNameColumn.toUpperCase(), style: headerStyle),
+                  cellBuilder: (context, travel) =>
+                      Text(travel.travelName, style: const TextStyle(fontWeight: FontWeight.w500)),
+                ),
+                AppDataColumn(
+                  label: l10n.destinationLabel.toUpperCase(),
+                  width: const FlexColumnWidth(2),
+                  headerBuilder: (context) => Text(l10n.destinationLabel.toUpperCase(), style: headerStyle),
+                  cellBuilder: (context, travel) => Text(travel.destination, style: mutedStyle),
+                ),
+                AppDataColumn(
+                  label: l10n.statusColumn.toUpperCase(),
+                  width: const FlexColumnWidth(2),
+                  headerBuilder: (context) => Text(l10n.statusColumn.toUpperCase(), style: headerStyle),
+                  cellBuilder: (context, travel) => _buildStatusBadge(theme, travel.status),
+                ),
+                AppDataColumn(
+                  label: l10n.startDateLabel.toUpperCase(),
+                  width: const FlexColumnWidth(2),
+                  headerBuilder: (context) => Text(l10n.startDateLabel.toUpperCase(), style: headerStyle),
+                  cellBuilder: (context, travel) => Text(
+                    '${travel.startDate.month}/${travel.startDate.day}/${travel.startDate.year}',
+                    style: mutedStyle,
+                  ),
+                ),
               ],
-              rows: user.travels.map((travel) {
-                return DataRow(
-                  cells: [
-                    DataCell(Text(travel.travelName, style: const TextStyle(fontWeight: FontWeight.w500))),
-                    DataCell(Text(travel.destination, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                    DataCell(_buildStatusBadge(theme, travel.status)),
-                    DataCell(Text('${travel.startDate.month}/${travel.startDate.day}/${travel.startDate.year}', style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                  ],
-                );
-              }).toList(),
             ),
         ],
       ),
