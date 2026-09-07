@@ -6,3 +6,7 @@
 ## for flutter context
 .idea/
 .vscode
+
+## for python scripts (compass-api/scripts)
+__pycache__/
+*.pyc
