@@ -1,6 +1,5 @@
 package com.compass.compass_system.controllers;
 
-import com.compass.compass_system.entities.ClientUser;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import com.compass.compass_system.travel.Travel;
 import com.compass.compass_system.travel.TravelRepository;
@@ -44,19 +43,6 @@ public class DashboardController {
                 .limit(10)
                 .collect(Collectors.toList());
 
-        // Active clients list
-        List<ClientUser> activeClientsList = clientRepository.findByIsActiveTrue();
-        List<Map<String, Object>> clientMaps = activeClientsList.stream()
-                .map(client -> {
-                    Map<String, Object> m = new LinkedHashMap<>();
-                    m.put("id", String.valueOf(client.getId()));
-                    m.put("name", client.getName());
-                    m.put("email", client.getEmail());
-                    m.put("phoneNumber", client.getPhone());
-                    return m;
-                })
-                .collect(Collectors.toList());
-
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", "success");
 
@@ -66,7 +52,6 @@ public class DashboardController {
         data.put("pendingItineraries", (int) pendingItineraries);
         data.put("activeClients", (int) activeClients);
         data.put("recentTravels", recentTravels);
-        data.put("activeClientsList", clientMaps);
 
         response.put("data", data);
         response.put("message", null);

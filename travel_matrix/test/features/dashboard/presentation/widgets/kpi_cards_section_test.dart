@@ -12,7 +12,6 @@ const _dashboard = DashboardViewModel(
   pendingItineraries: 5,
   activeClients: 9,
   recentTravels: [],
-  activeClientsList: [],
 );
 
 Widget _wrap(ThemeData theme) {
