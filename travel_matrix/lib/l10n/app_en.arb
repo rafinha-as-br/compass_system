@@ -243,6 +243,7 @@
   "markAsReadyFailure": "Failed to mark travel as ready",
   "needsItineraryFirstTooltip": "You need to create an itinerary first",
   "markAsReadyTooltip": "Mark travel as ready",
+  "travelActionsMenuTooltip": "Travel actions",
   "routeViewTab": "Route View",
   "itineraryViewTab": "Itinerary View",
   "travelersCount": "{count} Travelers",

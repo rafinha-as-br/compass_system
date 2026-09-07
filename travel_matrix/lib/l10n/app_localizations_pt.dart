@@ -618,6 +618,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get markAsReadyTooltip => 'Marcar viagem como pronta';
 
   @override
+  String get travelActionsMenuTooltip => 'Ações da viagem';
+
+  @override
   String get routeViewTab => 'Ver Rota';
 
   @override
