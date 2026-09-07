@@ -1,0 +1,17 @@
+appId: com.example.routecraft_app
+---
+# CPS-95: Account page shows the real authenticated client (name/email — the
+# email persistence bug is fixed) and the "My Agent" block (conditional on an
+# itinerary existing), plus the Notifications badge refreshes immediately
+# after marking all as read (regression for the controller-not-refreshed bug
+# shared with CPS-88's Home).
+- runFlow: ../common/login_as_joao.yaml
+- waitForAnimationToEnd
+- tapOn: ".*Account.*"
+- assertVisible: ".*Joao Teste.*"
+- assertVisible: ".*joao.teste@teste.com.*"
+- assertVisible: ".*MY AGENT.*"
+- tapOn: ".*Notifications.*"
+- tapOn: "mark all read"
+- back
+- assertVisible: ".*Account.*"

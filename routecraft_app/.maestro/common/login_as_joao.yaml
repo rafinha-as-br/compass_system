@@ -1,0 +1,15 @@
+appId: com.example.routecraft_app
+---
+# Shared subflow: logs in as the QA test client "Joao Teste" (joao.teste@teste.com).
+# Password is the compass-api default reset value ("compass123") — see .maestro/README.md.
+- launchApp:
+    clearState: true
+- tapOn: "Email"
+- eraseText: 50
+- inputText: "joao.teste@teste.com"
+- tapOn: "Password"
+- eraseText: 50
+- inputText: "compass123"
+- hideKeyboard
+- tapOn: "LOGIN"
+- assertVisible: "My Travels"

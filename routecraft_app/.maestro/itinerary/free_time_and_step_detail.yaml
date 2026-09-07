@@ -1,0 +1,29 @@
+appId: com.example.routecraft_app
+---
+# CPS-91 + CPS-92: full timeline for a trip with a multi-day step (Hosting)
+# still shows a correct "free time" gap on days it covers (regression for the
+# bug where a multi-day step suppressed free time for the whole trip), and
+# tapping a step opens CPS-92's detail bottom sheet with the right subtype
+# fields.
+#
+# Known open defect (CPS-92): the Bus transport's "Gate" info tile always
+# renders even when `departureGate` is empty, showing a label with no value.
+# See routecraft_app/lib/features/itinerary_timeline/presentation/widgets/step_detail_sheet.dart
+# (`_transportTiles`, `Bus` case) — needs an `if (departureGate.isNotEmpty)`
+# guard like the `Stop`/`PlaceholderStep` cases already have.
+- runFlow: ../common/login_as_joao.yaml
+- waitForAnimationToEnd
+- tapOn: ".*QA Trip CPS-89.*"
+- tapOn: "Open full itinerary"
+- assertVisible: "Day 1 · Monday"
+- assertVisible: ".*Free time.*"
+- tapOn: ".*Flight to Tokyo.*"
+- assertVisible: "Travel segment · Airplane"
+- assertVisible: "Origin"
+- assertVisible: "Sao Paulo (GRU)"
+- back
+- tapOn: ".*Shinjuku Granbell Hotel.*"
+- assertVisible: "Hosting"
+- assertVisible: "Check-in"
+- assertVisible: "Check-out"
+- back

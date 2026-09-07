@@ -1,0 +1,12 @@
+appId: com.example.routecraft_app
+---
+# CPS-93: tapping an in-progress trip from Home lands on the "Today" tracking
+# view (not the read-only hub), showing day progress and the focused step
+# computed locally from step dates/`finished`, plus a shortcut to the full
+# itinerary (CPS-91).
+- runFlow: ../common/login_as_joao.yaml
+- waitForAnimationToEnd
+- tapOn: ".*QA Trip CPS-89.*"
+- assertVisible: "Trip in progress"
+- assertVisible: ".*Flight to Tokyo.*"
+- assertVisible: "Open full itinerary"

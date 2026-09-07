@@ -1,0 +1,22 @@
+appId: com.example.routecraft_app
+---
+# CPS-88: Home lists travels grouped by urgency (in progress -> upcoming ->
+# completed), each section rendered only when non-empty, real data (no mock
+# fallback). Depends on the QA fixture travels seeded for "Joao Teste" — see
+# .maestro/README.md.
+#
+# Note: TravelCard (Card + InkWell) merges its Semantics into one node per
+# card ("<name>\n<route>"), so card assertions below match with ".*" rather
+# than the exact visible title — an exact string only matches a standalone
+# text node, not a merged one.
+- runFlow: ../common/login_as_joao.yaml
+- waitForAnimationToEnd
+- assertVisible: "IN PROGRESS"
+- assertVisible: ".*QA Trip CPS-89.*"
+- assertVisible: "In progress"
+- assertVisible: "UPCOMING"
+- assertVisible: ".*QA Trip Two.*"
+- assertVisible: "Awaiting agent"
+- assertVisible: "COMPLETED"
+- assertVisible: ".*QA Trip Finished.*"
+- assertVisible: "Completed"
