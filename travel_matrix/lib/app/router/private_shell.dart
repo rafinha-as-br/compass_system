@@ -43,20 +43,6 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
         builder: (context, state) => const TravelsDashboardPage(),
         routes: [
           GoRoute(
-            path: AppRoutes.travelCreate,
-            builder: (context, state) {
-              final extra = state.extra as Map<String, dynamic>?;
-              final controller = extra?['controller'] as TravelsController?;
-              if (controller == null) {
-                return const TravelsDashboardPage();
-              }
-              return ChangeNotifierProvider<TravelsController>.value(
-                value: controller,
-                child: const TravelCreationPage(),
-              );
-            },
-          ),
-          GoRoute(
             path: AppRoutes.travelView,
             builder: (context, state) {
               final extra = state.extra as Map<String, dynamic>?;
@@ -182,6 +168,27 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
                   }
 
                   return EditUserPage(user: user);
+                },
+              ),
+              GoRoute(
+                path: AppRoutes.userTravelCreate,
+                redirect: (context, state) {
+                  final extra = state.extra as Map<String, dynamic>?;
+                  if (extra?['clientId'] == null) {
+                    final userId = state.pathParameters['id']!;
+                    return _userPath(userId);
+                  }
+                  return null;
+                },
+                builder: (context, state) {
+                  final extra = state.extra as Map<String, dynamic>;
+                  return ChangeNotifierProvider<TravelsController>(
+                    create: (_) => TravelsController(),
+                    child: TravelCreationPage(
+                      clientId: extra['clientId'] as String,
+                      clientName: extra['clientName'] as String,
+                    ),
+                  );
                 },
               ),
             ],

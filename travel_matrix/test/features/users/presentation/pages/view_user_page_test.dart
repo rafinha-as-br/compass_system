@@ -110,6 +110,27 @@ void main() {
     expect(find.text('User sessions terminated'), findsOneWidget);
   });
 
+  testWidgets('deactivating a user asks for a reason and shows a success message', (tester) async {
+    when(() => useCases.deactivateUser(any(), any()))
+        .thenAnswer((_) async => const Result.success());
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Deactivate User'));
+    await tester.tap(find.text('Deactivate User'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Client request'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('DEACTIVATE'));
+    await tester.pumpAndSettle();
+
+    verify(() => useCases.deactivateUser('1', 'Client request')).called(1);
+    expect(find.text('User deactivated'), findsOneWidget);
+  });
+
   testWidgets('cancelling the confirmation dialog does not call forceLogout', (tester) async {
     when(() => useCases.forceLogout(any()))
         .thenAnswer((_) async => const Result.success());
@@ -199,5 +220,55 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(openedTravelId, 'travel-1');
+  });
+
+  testWidgets('Create Travel button navigates to travel creation with the client locked', (
+    tester,
+  ) async {
+    final controller = UsersController(useCases: useCases);
+    Map<String, dynamic>? receivedExtra;
+
+    final router = GoRouter(
+      initialLocation: '/users/1',
+      routes: [
+        GoRoute(
+          path: '/users/:id',
+          builder: (context, state) => ChangeNotifierProvider.value(
+            value: controller,
+            child: ViewUserPage(user: _testUser),
+          ),
+          routes: [
+            GoRoute(
+              path: 'create-travel',
+              builder: (context, state) {
+                receivedExtra = state.extra as Map<String, dynamic>?;
+                return const SizedBox();
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Create Travel'));
+    await tester.tap(find.text('Create Travel'));
+    await tester.pumpAndSettle();
+
+    expect(receivedExtra?['clientId'], '1');
+    expect(receivedExtra?['clientName'], 'Jane Doe');
   });
 }

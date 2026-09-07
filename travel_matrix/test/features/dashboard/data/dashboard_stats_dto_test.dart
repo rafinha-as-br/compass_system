@@ -3,7 +3,7 @@ import 'package:travel_matrix/features/dashboard/data/dtos/dashboard_stats_dto.d
 
 void main() {
   group('DashboardStatsDto', () {
-    test('fromJson maps top-level KPIs and nested lists', () {
+    test('fromJson maps top-level KPIs and recent travels', () {
       final dto = DashboardStatsDto.fromJson({
         'totalTravels': 12,
         'completedItineraries': 7,
@@ -23,14 +23,6 @@ void main() {
             },
           },
         ],
-        'activeClientsList': [
-          {
-            'id': '1',
-            'name': 'Maria Silva',
-            'email': 'maria@compass.com',
-            'phoneNumber': '11999999999',
-          },
-        ],
       });
 
       expect(dto.totalTravels, 12);
@@ -38,7 +30,6 @@ void main() {
       expect(dto.pendingItineraries, 5);
       expect(dto.activeClients, 9);
       expect(dto.recentTravels, hasLength(1));
-      expect(dto.activeClientsList, hasLength(1));
 
       final travel = dto.recentTravels.single;
       expect(travel.id, '1');
@@ -49,10 +40,6 @@ void main() {
       expect(travel.startLocation, 'São Paulo');
       expect(travel.status, 'itinerary_created');
       expect(travel.hasItinerary, isTrue);
-
-      final client = dto.activeClientsList.single;
-      expect(client.name, 'Maria Silva');
-      expect(client.email, 'maria@compass.com');
     });
 
     test('fromJson defaults missing fields to empty/zero values', () {
@@ -60,7 +47,6 @@ void main() {
 
       expect(dto.totalTravels, 0);
       expect(dto.recentTravels, isEmpty);
-      expect(dto.activeClientsList, isEmpty);
     });
 
     test('fromJson defaults travel status to route_created and hasItinerary to false '
@@ -83,7 +69,6 @@ void main() {
         'pendingItineraries': 2,
         'activeClients': 4,
         'recentTravels': const [],
-        'activeClientsList': const [],
       });
 
       final domain = dto.toDomain();

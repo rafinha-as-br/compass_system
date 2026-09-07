@@ -19,7 +19,6 @@ void main() {
     pendingItineraries: 5,
     activeClients: 9,
     recentTravels: [],
-    activeClientsList: [],
   );
 
   test('loads the dashboard and exposes it through state on success', () async {

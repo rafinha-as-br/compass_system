@@ -81,8 +81,6 @@ class _DashboardContent extends StatelessWidget {
           KpiCardsSection(dashboard: dashboard, l10n: l10n),
           const SizedBox(height: 28),
           _RecentTravelsTable(travels: dashboard.recentTravels, l10n: l10n),
-          const SizedBox(height: 28),
-          _ActiveClientsList(clients: dashboard.activeClientsList, l10n: l10n),
         ],
       ),
     );
@@ -209,73 +207,5 @@ class _StatusChip extends StatelessWidget {
         ),
       ),
     );
-  }
-}
-
-class _ActiveClientsList extends StatelessWidget {
-  final List<DashboardClientRowViewModel> clients;
-  final AppLocalizations l10n;
-
-  const _ActiveClientsList({
-    required this.clients,
-    required this.l10n,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
-    return Card(
-      elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(8),
-        side: BorderSide(color: theme.colorScheme.outlineVariant),
-      ),
-      child: Padding(
-        padding: const EdgeInsets.all(20),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              l10n.activeClientsListTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-            const SizedBox(height: 12),
-            for (final client in clients)
-              ListTile(
-                contentPadding: EdgeInsets.zero,
-                leading: CircleAvatar(
-                  backgroundColor:
-                      theme.colorScheme.primary.withValues(alpha: 0.12),
-                  child: Text(
-                    _initials(client.name),
-                    style: TextStyle(
-                      color: theme.colorScheme.primary,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                ),
-                title: Text(client.name),
-                subtitle: Text(client.email),
-                trailing: Text(
-                  client.phoneNumber,
-                  style: theme.textTheme.bodySmall?.copyWith(
-                    color: theme.colorScheme.onSurface.withValues(alpha: 0.62),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  String _initials(String name) {
-    final parts = name.trim().split(RegExp(r'\s+'));
-    if (parts.isEmpty || parts.first.isEmpty) return '?';
-    if (parts.length == 1) return parts.first[0].toUpperCase();
-    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 }

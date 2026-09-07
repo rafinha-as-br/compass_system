@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_matrix/app/app_injector.dart';
@@ -12,6 +13,7 @@ import 'package:travel_matrix/features/users/domain/entities/user_stats.dart';
 import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/users_dashboard_page.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 
@@ -79,5 +81,58 @@ void main() {
 
     final icon = tester.widget<Icon>(find.byIcon(Icons.check_circle_outline));
     expect(icon.color, AppTheme.lightTheme.semanticColors.success);
+  });
+
+  testWidgets('has no per-row actions column — view and deactivate icons are gone', (tester) async {
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(_wrap(controller, themeMode: ThemeMode.light));
+    await tester.pumpAndSettle();
+
+    expect(find.byIcon(Icons.remove_red_eye_outlined), findsNothing);
+    expect(find.byIcon(Icons.block), findsNothing);
+    expect(find.text('Actions'), findsNothing);
+  });
+
+  testWidgets('tapping a row navigates to that client, whole row clickable', (tester) async {
+    final controller = UsersController(useCases: useCases);
+    Map<String, dynamic>? receivedExtra;
+
+    final router = GoRouter(
+      initialLocation: '/users',
+      routes: [
+        GoRoute(
+          path: '/users',
+          builder: (context, state) =>
+              Scaffold(body: UsersDashboardPage(controller: controller)),
+        ),
+        GoRoute(
+          path: '/users/:id',
+          builder: (context, state) {
+            receivedExtra = state.extra as Map<String, dynamic>?;
+            return const SizedBox();
+          },
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Jane Doe'));
+    await tester.pumpAndSettle();
+
+    expect((receivedExtra?['user'] as UserClientViewModel?)?.name, 'Jane Doe');
   });
 }

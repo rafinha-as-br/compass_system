@@ -32,14 +32,6 @@ final _stats = DashboardStats(
       hasItinerary: true,
     ),
   ],
-  activeClientsList: const [
-    DashboardClientSummary(
-      id: '1',
-      name: 'Maria Silva',
-      email: 'maria@compass.com',
-      phoneNumber: '11999999999',
-    ),
-  ],
 );
 
 Widget _wrap(DashboardController controller) {
