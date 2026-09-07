@@ -320,9 +320,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get recentTravels => 'Viagens Recentes';
 
   @override
-  String get activeClientsListTitle => 'Clientes Ativos';
-
-  @override
   String get travelNameColumn => 'Nome da Viagem';
 
   @override
