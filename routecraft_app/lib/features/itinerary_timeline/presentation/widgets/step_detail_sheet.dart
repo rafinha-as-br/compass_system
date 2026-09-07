@@ -86,7 +86,8 @@ List<Widget> _transportTiles(Transport transport, AppLocalizations l10n, String 
         [
           InfoTile(icon: Icons.flight_outlined, label: l10n.stepDetailFlight, value: '$flightNumber · $flightCompany'),
           InfoTile(icon: Icons.event_outlined, label: l10n.stepDetailDate, value: _formatDateTime(languageCode, flightDate)),
-          InfoTile(icon: Icons.door_front_door_outlined, label: l10n.stepDetailGate, value: departureGate),
+          if (departureGate.isNotEmpty)
+            InfoTile(icon: Icons.door_front_door_outlined, label: l10n.stepDetailGate, value: departureGate),
           InfoTile(icon: Icons.map_outlined, label: l10n.stepDetailAirports, value: '$departureAirport → $arrivalAirport'),
         ],
       Bus(
@@ -98,7 +99,8 @@ List<Widget> _transportTiles(Transport transport, AppLocalizations l10n, String 
       ) =>
         [
           InfoTile(icon: Icons.directions_bus_outlined, label: l10n.stepDetailBusLine, value: '$travelNumber · $travelCompany'),
-          InfoTile(icon: Icons.door_front_door_outlined, label: l10n.stepDetailGate, value: departureGate),
+          if (departureGate.isNotEmpty)
+            InfoTile(icon: Icons.door_front_door_outlined, label: l10n.stepDetailGate, value: departureGate),
           InfoTile(icon: Icons.store_outlined, label: l10n.stepDetailBusStation, value: busStationName),
           InfoTile(
             icon: Icons.event_outlined,
