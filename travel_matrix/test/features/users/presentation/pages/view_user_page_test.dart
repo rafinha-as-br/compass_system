@@ -13,6 +13,7 @@ import 'package:travel_matrix/features/users/presentation/controllers/users_cont
 import 'package:travel_matrix/features/users/presentation/pages/view_user_page.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_status_view_model.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/travel_summary_view_model.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/user_stats_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
@@ -33,6 +34,31 @@ final _testUser = UserClientViewModel(
   email: 'jane@example.com',
   travels: const [],
   stats: UserStatsViewModel(totalTravels: '0', uniqueDestinationsCount: '0'),
+);
+
+final _testUserWithTravel = UserClientViewModel(
+  backEndId: '1',
+  localId: '1',
+  name: 'Jane Doe',
+  cpf: '000.000.000-00',
+  sex: 'F',
+  phoneNumber: '11999999999',
+  status: const UserClientStatusViewModel(
+    status: ActiveStatusViewModel(),
+    lastLogin: null,
+  ),
+  email: 'jane@example.com',
+  travels: [
+    TravelSummaryViewModel(
+      backEndId: 'travel-1',
+      domainId: 'travel-1',
+      travelName: 'Litoral Norte',
+      destination: 'Ubatuba',
+      status: 'completed',
+      startDate: DateTime(2026, 1, 10),
+    ),
+  ],
+  stats: UserStatsViewModel(totalTravels: '1', uniqueDestinationsCount: '1'),
 );
 
 Widget _wrap(UsersController controller) {
@@ -149,6 +175,51 @@ void main() {
     final icon = tester.widget<Icon>(find.byIcon(Icons.check_circle_outline));
     expect(icon.color, AppTheme.darkTheme.semanticColors.success);
     expect(icon.color, isNot(TravelAppColors.success));
+  });
+
+  testWidgets('tapping a travel history row navigates to that travel', (tester) async {
+    final controller = UsersController(useCases: useCases);
+    String? openedTravelId;
+
+    final router = GoRouter(
+      initialLocation: '/users/1',
+      routes: [
+        GoRoute(
+          path: '/users/1',
+          builder: (context, state) => ChangeNotifierProvider.value(
+            value: controller,
+            child: ViewUserPage(user: _testUserWithTravel),
+          ),
+        ),
+        GoRoute(
+          path: '/travels/:id',
+          builder: (context, state) {
+            openedTravelId = state.pathParameters['id'];
+            return const SizedBox();
+          },
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Litoral Norte'));
+    await tester.tap(find.text('Litoral Norte'));
+    await tester.pumpAndSettle();
+
+    expect(openedTravelId, 'travel-1');
   });
 
   testWidgets('Create Travel button navigates to travel creation with the client locked', (

@@ -1,13 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/dashboard/presentation/controllers/dashboard_controller.dart';
 import 'package:travel_matrix/features/dashboard/presentation/view_models/dashboard_view_model.dart';
 import 'package:travel_matrix/features/dashboard/presentation/widgets/kpi_cards_section.dart';
 import 'package:travel_matrix/features/dashboard/presentation/widgets/welcome_banner.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
+import 'package:travel_matrix/shared/widgets/app_data_table.dart';
 
 class DashboardPage extends StatelessWidget {
   final DashboardController? controller;
@@ -122,38 +125,39 @@ class _RecentTravelsTable extends StatelessWidget {
                 child: Text(l10n.noTravelsCreated),
               )
             else
-              LayoutBuilder(
-                builder: (context, constraints) {
-                  return SingleChildScrollView(
-                    scrollDirection: Axis.horizontal,
-                    child: ConstrainedBox(
-                      constraints: BoxConstraints(minWidth: constraints.maxWidth),
-                      child: DataTable(
-                        headingRowColor: WidgetStatePropertyAll(
-                          theme.colorScheme.surfaceContainerHighest,
-                        ),
-                        columns: [
-                          DataColumn(label: Text(l10n.travelNameColumn)),
-                          DataColumn(label: Text(l10n.clientLabel)),
-                          DataColumn(label: Text(l10n.routeColumn)),
-                          DataColumn(label: Text(l10n.startDateLabel)),
-                          DataColumn(label: Text(l10n.statusColumn)),
-                        ],
-                        rows: travels.map((travel) {
-                          return DataRow(
-                            cells: [
-                              DataCell(Text(travel.travelName)),
-                              DataCell(Text(travel.clientName)),
-                              DataCell(Text(travel.route)),
-                              DataCell(Text(dateFormat.format(travel.startDate))),
-                              DataCell(_StatusChip(travel: travel, l10n: l10n)),
-                            ],
-                          );
-                        }).toList(),
-                      ),
-                    ),
-                  );
-                },
+              AppDataTable<DashboardTravelRowViewModel>(
+                items: travels,
+                onRowTap: (context, travel) =>
+                    context.go('${AppRoutes.travels}/${travel.id}'),
+                columns: [
+                  AppDataColumn(
+                    label: l10n.travelNameColumn,
+                    width: const FlexColumnWidth(2),
+                    cellBuilder: (context, travel) => Text(travel.travelName),
+                  ),
+                  AppDataColumn(
+                    label: l10n.clientLabel,
+                    width: const FlexColumnWidth(2),
+                    cellBuilder: (context, travel) => Text(travel.clientName),
+                  ),
+                  AppDataColumn(
+                    label: l10n.routeColumn,
+                    width: const FlexColumnWidth(2),
+                    cellBuilder: (context, travel) => Text(travel.route),
+                  ),
+                  AppDataColumn(
+                    label: l10n.startDateLabel,
+                    width: const FlexColumnWidth(2),
+                    cellBuilder: (context, travel) =>
+                        Text(dateFormat.format(travel.startDate)),
+                  ),
+                  AppDataColumn(
+                    label: l10n.statusColumn,
+                    width: const FlexColumnWidth(2),
+                    cellBuilder: (context, travel) =>
+                        _StatusChip(travel: travel, l10n: l10n),
+                  ),
+                ],
               ),
           ],
         ),
