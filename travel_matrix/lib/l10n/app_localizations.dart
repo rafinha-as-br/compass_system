@@ -614,12 +614,6 @@ abstract class AppLocalizations {
   /// **'Edit User'**
   String get editUser;
 
-  /// No description provided for @viewUser.
-  ///
-  /// In en, this message translates to:
-  /// **'View User'**
-  String get viewUser;
-
   /// No description provided for @deleteUser.
   ///
   /// In en, this message translates to:
@@ -679,12 +673,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Recent Travels'**
   String get recentTravels;
-
-  /// No description provided for @activeClientsListTitle.
-  ///
-  /// In en, this message translates to:
-  /// **'Active Clients'**
-  String get activeClientsListTitle;
 
   /// No description provided for @travelNameColumn.
   ///
@@ -938,6 +926,12 @@ abstract class AppLocalizations {
   /// **'Immediately terminate all active sessions for this user.'**
   String get forceLogoutActionDescription;
 
+  /// No description provided for @deactivateUserActionDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Deactivate this user\'s account, preventing them from logging in.'**
+  String get deactivateUserActionDescription;
+
   /// No description provided for @resetPasswordSuccessMessage.
   ///
   /// In en, this message translates to:
@@ -949,6 +943,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to send reset link'**
   String get resetPasswordFailureMessage;
+
+  /// No description provided for @deactivateUserSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'User deactivated'**
+  String get deactivateUserSuccessMessage;
+
+  /// No description provided for @deactivateUserFailureMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to deactivate user'**
+  String get deactivateUserFailureMessage;
 
   /// No description provided for @forceLogoutSuccessMessage.
   ///
@@ -1196,12 +1202,6 @@ abstract class AppLocalizations {
   /// **'CREATE TRAVEL'**
   String get createTravelButton;
 
-  /// No description provided for @editRoutePlanButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Route Plan'**
-  String get editRoutePlanButton;
-
   /// No description provided for @markAsReadyButton.
   ///
   /// In en, this message translates to:
@@ -1243,6 +1243,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mark travel as ready'**
   String get markAsReadyTooltip;
+
+  /// No description provided for @travelActionsMenuTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel actions'**
+  String get travelActionsMenuTooltip;
 
   /// No description provided for @routeViewTab.
   ///

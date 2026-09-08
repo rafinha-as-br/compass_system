@@ -282,9 +282,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get editUser => 'Editar Usuário';
 
   @override
-  String get viewUser => 'Ver Usuário';
-
-  @override
   String get deleteUser => 'Excluir Usuário';
 
   @override
@@ -318,9 +315,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get recentTravels => 'Viagens Recentes';
-
-  @override
-  String get activeClientsListTitle => 'Clientes Ativos';
 
   @override
   String get travelNameColumn => 'Nome da Viagem';
@@ -454,12 +448,22 @@ class AppLocalizationsPt extends AppLocalizations {
       'Encerra imediatamente todas as sessões ativas deste usuário.';
 
   @override
+  String get deactivateUserActionDescription =>
+      'Desativa a conta deste usuário, impedindo o login.';
+
+  @override
   String get resetPasswordSuccessMessage =>
       'Link de redefinição de senha enviado';
 
   @override
   String get resetPasswordFailureMessage =>
       'Falha ao enviar link de redefinição';
+
+  @override
+  String get deactivateUserSuccessMessage => 'Usuário desativado';
+
+  @override
+  String get deactivateUserFailureMessage => 'Falha ao desativar usuário';
 
   @override
   String get forceLogoutSuccessMessage => 'Sessões do usuário encerradas';
@@ -592,9 +596,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get createTravelButton => 'CRIAR VIAGEM';
 
   @override
-  String get editRoutePlanButton => 'Editar Plano de Rota';
-
-  @override
   String get markAsReadyButton => 'Marcar como Pronta';
 
   @override
@@ -616,6 +617,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get markAsReadyTooltip => 'Marcar viagem como pronta';
+
+  @override
+  String get travelActionsMenuTooltip => 'Ações da viagem';
 
   @override
   String get routeViewTab => 'Ver Rota';

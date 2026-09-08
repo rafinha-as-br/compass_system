@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/users/presentation/controllers/users_controller.dart';
 import 'package:travel_matrix/features/users/presentation/pages/confirmation_dialog.dart';
+import 'package:travel_matrix/features/users/presentation/pages/deactivate_user_dialog.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/travel_summary_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
+import 'package:travel_matrix/shared/widgets/app_data_table.dart';
 
 import '../view_models/client_status_view_model.dart';
 
@@ -225,7 +229,7 @@ class ViewUserPage extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildTravelHistory(theme, l10n),
+        _buildTravelHistory(theme, context, l10n),
         const SizedBox(height: 24),
         _buildSecurityActions(theme, controller, context, l10n),
         const SizedBox(height: 24),
@@ -234,7 +238,15 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTravelHistory(ThemeData theme, AppLocalizations l10n) {
+  Widget _buildTravelHistory(ThemeData theme, BuildContext context, AppLocalizations l10n) {
+    final dateFormat = DateFormat.yMMMd(l10n.localeName);
+    final headerStyle = TextStyle(
+      fontSize: 12,
+      fontWeight: FontWeight.bold,
+      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+    );
+    final mutedStyle = TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6));
+
     return Card(
       color: theme.colorScheme.surface,
       elevation: 0,
@@ -244,11 +256,29 @@ class ViewUserPage extends StatelessWidget {
         children: [
           Padding(
             padding: const EdgeInsets.all(24),
-            child: Text(
-              l10n.travelHistoryTitle,
-              style: theme.textTheme.titleLarge?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Text(
+                  l10n.travelHistoryTitle,
+                  style: theme.textTheme.titleLarge?.copyWith(
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    context.go(
+                      '${AppRoutes.users}/${user.localId}/${AppRoutes.userTravelCreate}',
+                      extra: {
+                        'clientId': user.backEndId ?? user.localId,
+                        'clientName': user.name,
+                      },
+                    );
+                  },
+                  icon: const Icon(Icons.add),
+                  label: Text(l10n.createTravel),
+                ),
+              ],
             ),
           ),
           const Divider(height: 1),
@@ -260,24 +290,40 @@ class ViewUserPage extends StatelessWidget {
               ),
             )
           else
-            DataTable(
-              headingRowColor: WidgetStateProperty.all(theme.colorScheme.surfaceContainerHighest),
+            AppDataTable<TravelSummaryViewModel>(
+              items: user.travels,
+              onRowTap: (context, travel) =>
+                  context.go('${AppRoutes.travels}/${travel.domainId}'),
               columns: [
-                DataColumn(label: Text(l10n.travelNameColumn.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                DataColumn(label: Text(l10n.destinationLabel.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                DataColumn(label: Text(l10n.statusColumn.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                DataColumn(label: Text(l10n.startDateLabel.toUpperCase(), style: TextStyle(fontSize: 12, fontWeight: FontWeight.bold, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
+                AppDataColumn(
+                  label: l10n.travelNameColumn.toUpperCase(),
+                  width: const FlexColumnWidth(3),
+                  headerBuilder: (context) => Text(l10n.travelNameColumn.toUpperCase(), style: headerStyle),
+                  cellBuilder: (context, travel) =>
+                      Text(travel.travelName, style: const TextStyle(fontWeight: FontWeight.w500)),
+                ),
+                AppDataColumn(
+                  label: l10n.destinationLabel.toUpperCase(),
+                  width: const FlexColumnWidth(2),
+                  headerBuilder: (context) => Text(l10n.destinationLabel.toUpperCase(), style: headerStyle),
+                  cellBuilder: (context, travel) => Text(travel.destination, style: mutedStyle),
+                ),
+                AppDataColumn(
+                  label: l10n.statusColumn.toUpperCase(),
+                  width: const FlexColumnWidth(2),
+                  headerBuilder: (context) => Text(l10n.statusColumn.toUpperCase(), style: headerStyle),
+                  cellBuilder: (context, travel) => _buildStatusBadge(theme, travel.status),
+                ),
+                AppDataColumn(
+                  label: l10n.startDateLabel.toUpperCase(),
+                  width: const FlexColumnWidth(2),
+                  headerBuilder: (context) => Text(l10n.startDateLabel.toUpperCase(), style: headerStyle),
+                  cellBuilder: (context, travel) => Text(
+                    dateFormat.format(travel.startDate),
+                    style: mutedStyle,
+                  ),
+                ),
               ],
-              rows: user.travels.map((travel) {
-                return DataRow(
-                  cells: [
-                    DataCell(Text(travel.travelName, style: const TextStyle(fontWeight: FontWeight.w500))),
-                    DataCell(Text(travel.destination, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                    DataCell(_buildStatusBadge(theme, travel.status)),
-                    DataCell(Text('${travel.startDate.month}/${travel.startDate.day}/${travel.startDate.year}', style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                  ],
-                );
-              }).toList(),
             ),
         ],
       ),
@@ -336,10 +382,10 @@ class ViewUserPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          Row(
-            children: [
-              Expanded(
-                child: _buildActionCard(
+          LayoutBuilder(
+            builder: (context, constraints) {
+              final cards = [
+                _buildActionCard(
                   theme: theme,
                   title: l10n.resetPasswordActionTitle,
                   description: l10n.resetPasswordActionDescription,
@@ -354,10 +400,7 @@ class ViewUserPage extends StatelessWidget {
                     }
                   },
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: _buildActionCard(
+                _buildActionCard(
                   theme: theme,
                   title: l10n.forceLogoutActionTitle,
                   description: l10n.forceLogoutActionDescription,
@@ -381,8 +424,46 @@ class ViewUserPage extends StatelessWidget {
                     }
                   },
                 ),
-              ),
-            ],
+                _buildActionCard(
+                  theme: theme,
+                  title: l10n.deactivateUserDialogTitle,
+                  description: l10n.deactivateUserActionDescription,
+                  icon: Icons.block,
+                  iconColor: theme.colorScheme.error,
+                  onTap: () async {
+                    final reason = await showDeactivateUserDialog(context, user.name);
+                    if (reason == null || !context.mounted) return;
+
+                    final success = await controller.deactivateUser(user.localId, reason);
+                    if (context.mounted) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text(success ? l10n.deactivateUserSuccessMessage : l10n.deactivateUserFailureMessage)),
+                      );
+                    }
+                  },
+                ),
+              ];
+
+              if (constraints.maxWidth < 700) {
+                return Column(
+                  children: [
+                    for (final card in cards) ...[
+                      card,
+                      if (card != cards.last) const SizedBox(height: 16),
+                    ],
+                  ],
+                );
+              }
+
+              return Row(
+                children: [
+                  for (final card in cards) ...[
+                    Expanded(child: card),
+                    if (card != cards.last) const SizedBox(width: 16),
+                  ],
+                ],
+              );
+            },
           ),
         ],
       ),
@@ -420,9 +501,11 @@ class ViewUserPage extends StatelessWidget {
                   child: Icon(icon, color: iconColor, size: 20),
                 ),
                 const SizedBox(width: 12),
-                Text(
-                  title,
-                  style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                Expanded(
+                  child: Text(
+                    title,
+                    style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16),
+                  ),
                 ),
               ],
             ),
