@@ -23,16 +23,18 @@ class _FakeTravelRepository implements TravelRepository {
   Future<Result<List<Travel>>> getTravelsForClient(String clientName) async => throw UnimplementedError();
 }
 
-RouteCreationController _controllerAtReview({
+Future<RouteCreationController> _controllerAtReview({
   required TravelUseCases travelUseCases,
   required Future<String?> Function() getClientName,
-}) {
+}) async {
   final controller = RouteCreationController(travelUseCases: travelUseCases, getClientName: getClientName);
+  await Future<void>.delayed(Duration.zero); // let the client auto-participant load
   controller.tripNameController.text = 'My Trip';
   controller.setStartDate(DateTime(2026, 1, 1));
   controller.setEndDate(DateTime(2026, 1, 10));
   controller.startLocationController.text = 'SP';
   controller.destinationController.text = 'Lisbon';
+  controller.updateParticipant(controller.participants.single.domainId, age: '30', sex: 'F');
   for (var i = 0; i < routeCreationStepCount; i++) {
     controller.nextStep();
   }
@@ -140,13 +142,15 @@ void main() {
 
       controller.nextStep();
 
-      expect(controller.state.isReviewStep, isTrue);
+      // Arrived at the participants step (5th), not the review — interests
+      // didn't block advancement even with none added.
+      expect(controller.state.currentStep, 4);
     });
 
-    test('editStep jumps back from the review to the given step', () {
-      final controller = _controllerAtReview(
+    test('editStep jumps back from the review to the given step', () async {
+      final controller = await _controllerAtReview(
         travelUseCases: TravelUseCases(_FakeTravelRepository()),
-        getClientName: () async => null,
+        getClientName: () async => 'Maria Silva',
       );
       expect(controller.state.isReviewStep, isTrue);
 
@@ -201,7 +205,7 @@ void main() {
           ),
         ));
 
-      final controller = _controllerAtReview(
+      final controller = await _controllerAtReview(
         travelUseCases: TravelUseCases(repository),
         getClientName: () async => 'Maria Silva',
       );
@@ -217,7 +221,7 @@ void main() {
 
     test('fails fast without calling the repository when there is no session', () async {
       final repository = _FakeTravelRepository();
-      final controller = _controllerAtReview(
+      final controller = await _controllerAtReview(
         travelUseCases: TravelUseCases(repository),
         getClientName: () async => null,
       );
@@ -231,7 +235,7 @@ void main() {
 
     test('surfaces the repository failure message', () async {
       final repository = _FakeTravelRepository()..nextCreateResult = const Result.failure('Erro de rede');
-      final controller = _controllerAtReview(
+      final controller = await _controllerAtReview(
         travelUseCases: TravelUseCases(repository),
         getClientName: () async => 'Maria Silva',
       );
@@ -245,7 +249,7 @@ void main() {
     test('a new attempt clears the previous failure message, even when the retry has no session', () async {
       final repository = _FakeTravelRepository()..nextCreateResult = const Result.failure('Erro de rede');
       String? clientName = 'Maria Silva';
-      final controller = _controllerAtReview(
+      final controller = await _controllerAtReview(
         travelUseCases: TravelUseCases(repository),
         getClientName: () async => clientName,
       );
@@ -288,10 +292,121 @@ void main() {
     });
   });
 
+  group('RouteCreationController participants', () {
+    test('the client is added automatically once the client name resolves', () async {
+      final controller = RouteCreationController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(controller.participants, hasLength(1));
+      expect(controller.participants.single.name, 'Maria Silva');
+      expect(controller.isClientParticipant(controller.participants.single), isTrue);
+    });
+
+    test('the client cannot be removed', () async {
+      final controller = RouteCreationController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+      final clientId = controller.participants.single.domainId;
+
+      controller.removeParticipant(clientId);
+
+      expect(controller.participants, hasLength(1));
+    });
+
+    test('addParticipant appends a participant that can be removed', () async {
+      final controller = RouteCreationController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      controller.addParticipant(name: 'João', age: '10', sex: 'M');
+
+      expect(controller.participants, hasLength(2));
+      final added = controller.participants.last;
+      expect(added.name, 'João');
+      expect(controller.isClientParticipant(added), isFalse);
+
+      controller.removeParticipant(added.domainId);
+
+      expect(controller.participants, hasLength(1));
+    });
+
+    test('updateParticipant changes only the given fields', () async {
+      final controller = RouteCreationController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+      final clientId = controller.participants.single.domainId;
+
+      controller.updateParticipant(clientId, age: '35');
+      controller.updateParticipant(clientId, sex: 'F');
+
+      final client = controller.participants.single;
+      expect(client.name, 'Maria Silva');
+      expect(client.age, '35');
+      expect(client.sex, 'F');
+    });
+
+    test('isParticipantsValid is false until every participant has name/age/sex filled', () async {
+      final controller = RouteCreationController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      expect(controller.isParticipantsValid, isFalse); // client's age/sex still empty
+
+      controller.updateParticipant(controller.participants.single.domainId, age: '30', sex: 'F');
+      expect(controller.isParticipantsValid, isTrue);
+
+      controller.addParticipant(name: 'João', age: '', sex: 'M');
+      expect(controller.isParticipantsValid, isFalse); // new participant missing age
+    });
+
+    test('submitRoute sends the real participants list', () async {
+      final repository = _FakeTravelRepository()
+        ..nextCreateResult = Result.success(Travel(
+          domainId: 'd1',
+          backEndId: 'assigned-id',
+          clientName: 'Maria Silva',
+          travelName: 'My Trip',
+          travelStatus: TravelStatus.routeCreated,
+          participantsList: const [],
+          routePlan: RoutePlan(
+            domainId: 'd-route',
+            backEndId: null,
+            startDate: DateTime(2026, 1, 1),
+            endDate: DateTime(2026, 1, 10),
+            startLocation: 'SP',
+            destination: 'Lisbon',
+            interestsList: const [],
+          ),
+        ));
+      final controller = await _controllerAtReview(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+      );
+      controller.addParticipant(name: 'João', age: '10', sex: 'M');
+
+      await controller.submitRoute();
+
+      expect(repository.capturedTravel?.participantsList, hasLength(2));
+      expect(repository.capturedTravel?.participantsList.map((p) => p.name), contains('João'));
+      expect(repository.capturedTravel?.participantsList.map((p) => p.name), contains('Maria Silva'));
+    });
+  });
+
   group('RouteCreationController observations', () {
     test('submitRoute sends the trimmed observations text', () async {
       final repository = _FakeTravelRepository()..nextCreateResult = Result.success(_dummyTravel());
-      final controller = _controllerAtReview(
+      final controller = await _controllerAtReview(
         travelUseCases: TravelUseCases(repository),
         getClientName: () async => 'Maria Silva',
       );
@@ -304,7 +419,7 @@ void main() {
 
     test('submitRoute sends null when observations is left empty', () async {
       final repository = _FakeTravelRepository()..nextCreateResult = Result.success(_dummyTravel());
-      final controller = _controllerAtReview(
+      final controller = await _controllerAtReview(
         travelUseCases: TravelUseCases(repository),
         getClientName: () async => 'Maria Silva',
       );

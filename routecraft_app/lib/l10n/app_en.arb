@@ -125,6 +125,23 @@
   "routeCreationObservationsBlockLabel": "OBSERVATIONS",
   "routeCreationSubmitCta": "Send to my agent",
 
+  "routeCreationParticipantsTitle": "Who's traveling?",
+  "routeCreationParticipantsSubtitle": "You're already on the list — add anyone else joining.",
+  "routeCreationParticipantNameLabel": "Name",
+  "routeCreationParticipantAgeLabel": "Age",
+  "routeCreationParticipantSexLabel": "Sex",
+  "routeCreationParticipantSexMale": "Male",
+  "routeCreationParticipantSexFemale": "Female",
+  "routeCreationParticipantSexOther": "Other",
+  "routeCreationParticipantYouTag": "You",
+  "routeCreationAddParticipantButton": "Add",
+  "routeCreationParticipantsBlockLabel": "{count, plural, one{1 PARTICIPANT} other{{count} PARTICIPANTS}}",
+  "@routeCreationParticipantsBlockLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+
   "visualizationTitle": "My Travels",
   "noTravelsYet": "No travels yet.",
   "itineraryLabel": "Itinerary",

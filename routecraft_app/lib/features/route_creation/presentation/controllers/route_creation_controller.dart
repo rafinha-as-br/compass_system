@@ -3,14 +3,15 @@ import 'package:uuid/uuid.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/core/services/auth_service.dart';
 import 'package:routecraft_app/features/travels/data/repositories/travel_repository_impl.dart';
+import 'package:routecraft_app/features/travels/domain/entities/person.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 
-/// Number of guided data-entry steps (name, dates, locations, interests)
-/// before the review screen — [RouteCreationState.currentStep] `4` is the
-/// review, one past this count.
-const routeCreationStepCount = 4;
+/// Number of guided data-entry steps (name, dates, locations, interests,
+/// participants) before the review screen —
+/// [RouteCreationState.currentStep] `5` is the review, one past this count.
+const routeCreationStepCount = 5;
 
 class RouteCreationState {
   final int currentStep;
@@ -67,6 +68,7 @@ class RouteCreationController extends ChangeNotifier {
     startLocationController.addListener(notifyListeners);
     destinationController.addListener(notifyListeners);
     observationsController.addListener(notifyListeners);
+    _addClientAsParticipant();
   }
 
   /// Test-only: starts from a fixed state instead of the default (empty)
@@ -150,6 +152,54 @@ class RouteCreationController extends ChangeNotifier {
     notifyListeners();
   }
 
+  // Step 5 — participants. The client is added automatically and can't be
+  // removed — [isClientParticipant] tracks which entry that is without
+  // adding an "isClient" field to the shared [Person] contract.
+  final List<Person> participants = [];
+  String? _clientParticipantId;
+
+  bool isClientParticipant(Person person) => person.domainId == _clientParticipantId;
+
+  bool get isParticipantsValid =>
+      participants.isNotEmpty &&
+      participants.every((p) => p.name.trim().isNotEmpty && p.age.trim().isNotEmpty && p.sex.trim().isNotEmpty);
+
+  Future<void> _addClientAsParticipant() async {
+    final clientName = await _getClientName();
+    final client = Person(domainId: const Uuid().v4(), backEndId: null, name: clientName ?? '', age: '', sex: '');
+    _clientParticipantId = client.domainId;
+    participants.insert(0, client);
+    notifyListeners();
+  }
+
+  void addParticipant({required String name, required String age, required String sex}) {
+    participants.add(Person(domainId: const Uuid().v4(), backEndId: null, name: name, age: age, sex: sex));
+    notifyListeners();
+  }
+
+  /// No-op for the client's own entry — the UI never offers a way to
+  /// trigger this for it (no remove button on that row), but guarding here
+  /// too keeps the invariant enforced at the controller, not just the view.
+  void removeParticipant(String domainId) {
+    if (domainId == _clientParticipantId) return;
+    participants.removeWhere((p) => p.domainId == domainId);
+    notifyListeners();
+  }
+
+  void updateParticipant(String domainId, {String? name, String? age, String? sex}) {
+    final index = participants.indexWhere((p) => p.domainId == domainId);
+    if (index == -1) return;
+    final current = participants[index];
+    participants[index] = Person(
+      domainId: current.domainId,
+      backEndId: current.backEndId,
+      name: name ?? current.name,
+      age: age ?? current.age,
+      sex: sex ?? current.sex,
+    );
+    notifyListeners();
+  }
+
   /// Free-text note to the agent, scoped to the whole trip — optional, and
   /// (per the backend contract) never editable again once the route is
   /// submitted, so there is deliberately no `setObservations`/update path.
@@ -160,6 +210,7 @@ class RouteCreationController extends ChangeNotifier {
         1 => isDatesValid,
         2 => isLocationsValid,
         3 => true,
+        4 => isParticipantsValid,
         _ => false,
       };
 
@@ -211,7 +262,7 @@ class RouteCreationController extends ChangeNotifier {
       clientName: clientName,
       travelName: tripNameController.text.trim(),
       travelStatus: TravelStatus.routeCreated,
-      participantsList: const [],
+      participantsList: participants,
       routePlan: routePlan,
       observations: observations.isEmpty ? null : observations,
     );
