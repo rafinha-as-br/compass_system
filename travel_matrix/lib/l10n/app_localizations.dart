@@ -1244,6 +1244,12 @@ abstract class AppLocalizations {
   /// **'Mark travel as ready'**
   String get markAsReadyTooltip;
 
+  /// No description provided for @travelActionsMenuTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel actions'**
+  String get travelActionsMenuTooltip;
+
   /// No description provided for @routeViewTab.
   ///
   /// In en, this message translates to:

@@ -19,12 +19,12 @@ class _MockCrudTravelUseCases extends Mock implements CrudTravelUseCases {}
 
 class _MockCrudRoute extends Mock implements CrudRoute {}
 
-Travel _buildNotReadyTravel() {
+Travel _buildNotReadyTravel({String travelName = 'Travel'}) {
   return Travel(
     domainId: '1',
     backEndId: '1',
     clientName: 'Client',
-    travelName: 'Travel',
+    travelName: travelName,
     travelStatus: TravelStatus.routeCreated,
     participantsList: const [],
     routePlan: RoutePlan(
@@ -86,16 +86,60 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    await tester.tap(find.byIcon(Icons.check_circle_outline));
+    await tester.tap(find.byIcon(Icons.more_vert));
     await tester.pumpAndSettle();
 
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    await tester.tap(find.text(l10n.markAsReadyButton));
+    await tester.pumpAndSettle();
+
     await tester.tap(find.text(l10n.confirmButton));
     await tester.pumpAndSettle();
 
     final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
     expect(snackBar.backgroundColor, AppTheme.lightTheme.colorScheme.error);
   });
+
+  testWidgets(
+    'does not overflow at a narrow window width, even with a long travel title',
+    (tester) async {
+      tester.view.physicalSize = const Size(360, 800);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+      final travel = TravelViewModel.fromDomain(
+        _buildNotReadyTravel(
+          travelName: 'A very long travel name that would never fit next to three action buttons',
+        ),
+      );
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider.value(
+          value: controller,
+          child: MaterialApp(
+            theme: AppTheme.lightTheme,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: DefaultTabController(
+              length: 2,
+              child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
+            ),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(tester.takeException(), isNull);
+      expect(find.byIcon(Icons.more_vert), findsOneWidget);
+    },
+  );
 
   testWidgets(
     'status chip uses the semantic warning color at 12% alpha, not a solid *Container fallback',

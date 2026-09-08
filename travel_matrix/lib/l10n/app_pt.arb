@@ -218,6 +218,7 @@
   "markAsReadyFailure": "Falha ao marcar viagem como pronta",
   "needsItineraryFirstTooltip": "Você precisa criar um roteiro primeiro",
   "markAsReadyTooltip": "Marcar viagem como pronta",
+  "travelActionsMenuTooltip": "Ações da viagem",
   "routeViewTab": "Ver Rota",
   "itineraryViewTab": "Ver Roteiro",
   "travelersCount": "{count} Viajantes",

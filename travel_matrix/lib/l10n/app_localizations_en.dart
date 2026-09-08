@@ -613,6 +613,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get markAsReadyTooltip => 'Mark travel as ready';
 
   @override
+  String get travelActionsMenuTooltip => 'Travel actions';
+
+  @override
   String get routeViewTab => 'Route View';
 
   @override
