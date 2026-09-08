@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
@@ -238,6 +239,7 @@ class ViewUserPage extends StatelessWidget {
   }
 
   Widget _buildTravelHistory(ThemeData theme, BuildContext context, AppLocalizations l10n) {
+    final dateFormat = DateFormat.yMMMd(l10n.localeName);
     final headerStyle = TextStyle(
       fontSize: 12,
       fontWeight: FontWeight.bold,
@@ -317,7 +319,7 @@ class ViewUserPage extends StatelessWidget {
                   width: const FlexColumnWidth(2),
                   headerBuilder: (context) => Text(l10n.startDateLabel.toUpperCase(), style: headerStyle),
                   cellBuilder: (context, travel) => Text(
-                    '${travel.startDate.month}/${travel.startDate.day}/${travel.startDate.year}',
+                    dateFormat.format(travel.startDate),
                     style: mutedStyle,
                   ),
                 ),
