@@ -10,7 +10,6 @@ abstract class AppRoutes {
   static const account = '/account';
 
   /// Travels Sub-Routes
-  static const travelCreate = 'create';
   static const travelView = ':id';
   static const routeCreate = 'route';
   static const itineraryCreate = 'itinerary';
@@ -19,4 +18,5 @@ abstract class AppRoutes {
   static const userCreate = 'create';
   static const userView = ':id';
   static const userEdit = 'edit';
+  static const userTravelCreate = 'create-travel';
 }

@@ -68,7 +68,8 @@ Widget _gallery() => Padding(
           const SizedBox(height: 16),
           const TravelCard(
             travelName: 'Lisbon 2025',
-            routeSummary: 'São Paulo → Lisbon',
+            route: 'São Paulo → Lisbon',
+            period: '10–15 dez',
             status: TravelStatusChipVariant.itineraryCreated,
           ),
           const SizedBox(height: 16),

@@ -651,6 +651,60 @@ class AppLocalizationsPt extends AppLocalizations {
   String get comingSoonMessage => 'Em breve.';
 
   @override
+  String get personalDataTitle => 'Dados pessoais';
+
+  @override
+  String get personalDataNameLabel => 'Nome';
+
+  @override
+  String get personalDataPhoneLabel => 'Telefone';
+
+  @override
+  String get personalDataAgeLabel => 'Idade';
+
+  @override
+  String get personalDataGenderLabel => 'Gênero';
+
+  @override
+  String get personalDataCpfLabel => 'CPF';
+
+  @override
+  String get personalDataEmailLabel => 'E-mail';
+
+  @override
+  String get personalDataSaveButton => 'Salvar';
+
+  @override
+  String get personalDataSaveSuccessMessage => 'Dados salvos com sucesso.';
+
+  @override
+  String get personalDataResetPasswordButton => 'Resetar senha';
+
+  @override
+  String get personalDataResetPasswordConfirmTitle => 'Resetar senha?';
+
+  @override
+  String get personalDataResetPasswordConfirmMessage =>
+      'Sua senha será redefinida para a senha padrão. Você vai precisar dela para entrar novamente.';
+
+  @override
+  String get personalDataResetPasswordSuccessMessage =>
+      'Senha resetada com sucesso.';
+
+  @override
+  String get personalDataGenericErrorMessage =>
+      'Algo deu errado. Tente novamente.';
+
+  @override
+  String get maleGenderLabel => 'Masculino';
+
+  @override
+  String get femaleGenderLabel => 'Feminino';
+
+  @override
+  String get otherGenderLabel => 'Outro';
+
+  @override
   String get travelStatusRouteCreated => 'Aguardando agente';
 
   @override

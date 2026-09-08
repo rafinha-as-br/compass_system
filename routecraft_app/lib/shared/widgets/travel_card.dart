@@ -6,14 +6,16 @@ import 'package:routecraft_app/shared/widgets/travel_status_chip.dart';
 /// about the `Travel` domain entity.
 class TravelCard extends StatelessWidget {
   final String travelName;
-  final String routeSummary;
+  final String route;
+  final String period;
   final TravelStatusChipVariant status;
   final VoidCallback? onTap;
 
   const TravelCard({
     super.key,
     required this.travelName,
-    required this.routeSummary,
+    required this.route,
+    required this.period,
     required this.status,
     this.onTap,
   });
@@ -42,11 +44,18 @@ class TravelCard extends StatelessWidget {
                     ),
                     const SizedBox(height: 4),
                     Text(
-                      routeSummary,
+                      route,
                       style: theme.textTheme.bodyMedium?.copyWith(
                         color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                       ),
+                      maxLines: 1,
                       overflow: TextOverflow.ellipsis,
+                    ),
+                    Text(
+                      period,
+                      style: theme.textTheme.bodyMedium?.copyWith(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                      ),
                     ),
                   ],
                 ),

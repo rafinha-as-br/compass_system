@@ -4,7 +4,7 @@ import 'package:travel_matrix/features/dashboard/presentation/view_models/dashbo
 
 void main() {
   group('DashboardViewModel', () {
-    test('fromDomain round-trips the KPIs and nested lists', () {
+    test('fromDomain round-trips the KPIs and recent travels', () {
       final stats = DashboardStats(
         totalTravels: 12,
         completedItineraries: 7,
@@ -22,21 +22,12 @@ void main() {
             hasItinerary: true,
           ),
         ],
-        activeClientsList: const [
-          DashboardClientSummary(
-            id: '1',
-            name: 'Maria Silva',
-            email: 'maria@compass.com',
-            phoneNumber: '11999999999',
-          ),
-        ],
       );
 
       final viewModel = DashboardViewModel.fromDomain(stats);
 
       expect(viewModel.totalTravels, stats.totalTravels);
       expect(viewModel.recentTravels, hasLength(1));
-      expect(viewModel.activeClientsList, hasLength(1));
 
       final travel = viewModel.recentTravels.single;
       expect(travel.clientName, 'Maria Silva');
@@ -44,10 +35,6 @@ void main() {
       // O ViewModel mantém o status bruto do backend — a tradução para
       // texto exibível fica a cargo da camada de apresentação (l10n).
       expect(travel.status, 'itinerary_created');
-
-      final client = viewModel.activeClientsList.single;
-      expect(client.name, 'Maria Silva');
-      expect(client.email, 'maria@compass.com');
     });
   });
 }

@@ -140,6 +140,10 @@ public class ClientUserController {
         if (body.containsKey("sex")) client.setGender((String) body.get("sex"));
         if (body.containsKey("phoneNumber")) client.setPhone((String) body.get("phoneNumber"));
         if (body.containsKey("email")) client.setEmail((String) body.get("email"));
+        if (body.containsKey("age")) {
+            Object age = body.get("age");
+            client.setAge(age == null ? null : ((Number) age).intValue());
+        }
 
         ClientUser saved = clientRepository.save(client);
 
@@ -222,6 +226,7 @@ public class ClientUserController {
         map.put("name", client.getName());
         map.put("cpf", client.getCpf());
         map.put("sex", client.getGender());
+        map.put("age", client.getAge());
         map.put("phoneNumber", client.getPhone());
         map.put("email", client.getEmail());
         map.put("isActive", client.getIsActive());
