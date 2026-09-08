@@ -115,6 +115,7 @@ void main() {
     await tester.pumpAndSettle();
     await tester.tap(find.text('Female').last);
     await tester.pumpAndSettle();
+    await tester.ensureVisible(find.text('NEXT'));
     await tester.tap(find.text('NEXT'));
     await tester.pumpAndSettle();
 
