@@ -4,7 +4,6 @@ class DashboardStats {
   final int pendingItineraries;
   final int activeClients;
   final List<DashboardTravelSummary> recentTravels;
-  final List<DashboardClientSummary> activeClientsList;
 
   const DashboardStats({
     required this.totalTravels,
@@ -12,7 +11,6 @@ class DashboardStats {
     required this.pendingItineraries,
     required this.activeClients,
     required this.recentTravels,
-    required this.activeClientsList,
   });
 }
 
@@ -35,19 +33,5 @@ class DashboardTravelSummary {
     required this.startDate,
     required this.status,
     required this.hasItinerary,
-  });
-}
-
-class DashboardClientSummary {
-  final String id;
-  final String name;
-  final String email;
-  final String phoneNumber;
-
-  const DashboardClientSummary({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
   });
 }

@@ -21,7 +21,6 @@ void main() {
     pendingItineraries: 5,
     activeClients: 9,
     recentTravels: [],
-    activeClientsList: [],
   );
 
   test('returns the stats from the repository on success', () async {
