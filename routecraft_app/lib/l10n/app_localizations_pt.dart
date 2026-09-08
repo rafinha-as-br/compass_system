@@ -257,6 +257,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get routeCreationAddInterestButton => 'Adicionar';
 
   @override
+  String get routeCreationObservationsLabel => 'Observações (opcional)';
+
+  @override
+  String get routeCreationObservationsHint =>
+      'Quer avisar algo pro seu agente? Não dá pra editar depois.';
+
+  @override
   String get routeCreationReviewHeader => 'REVISÃO';
 
   @override
@@ -269,6 +276,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String routeCreationInterestsBlockLabel(int count) {
     return '$count INTERESSES';
   }
+
+  @override
+  String get routeCreationObservationsBlockLabel => 'OBSERVAÇÕES';
 
   @override
   String get routeCreationSubmitCta => 'Enviar para meu agente';
@@ -408,6 +418,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get hubGoToHomeCta => 'Ir para o Início';
+
+  @override
+  String get travelNotFoundTitle => 'Viagem não encontrada';
+
+  @override
+  String get travelNotFoundMessage =>
+      'Não foi possível encontrar esta viagem. Ela pode ter sido removida.';
 
   @override
   String todayDayProgress(int day, int total) {
@@ -681,6 +698,60 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get comingSoonMessage => 'Em breve.';
+
+  @override
+  String get personalDataTitle => 'Dados pessoais';
+
+  @override
+  String get personalDataNameLabel => 'Nome';
+
+  @override
+  String get personalDataPhoneLabel => 'Telefone';
+
+  @override
+  String get personalDataAgeLabel => 'Idade';
+
+  @override
+  String get personalDataGenderLabel => 'Gênero';
+
+  @override
+  String get personalDataCpfLabel => 'CPF';
+
+  @override
+  String get personalDataEmailLabel => 'E-mail';
+
+  @override
+  String get personalDataSaveButton => 'Salvar';
+
+  @override
+  String get personalDataSaveSuccessMessage => 'Dados salvos com sucesso.';
+
+  @override
+  String get personalDataResetPasswordButton => 'Resetar senha';
+
+  @override
+  String get personalDataResetPasswordConfirmTitle => 'Resetar senha?';
+
+  @override
+  String get personalDataResetPasswordConfirmMessage =>
+      'Sua senha será redefinida para a senha padrão. Você vai precisar dela para entrar novamente.';
+
+  @override
+  String get personalDataResetPasswordSuccessMessage =>
+      'Senha resetada com sucesso.';
+
+  @override
+  String get personalDataGenericErrorMessage =>
+      'Algo deu errado. Tente novamente.';
+
+  @override
+  String get maleGenderLabel => 'Masculino';
+
+  @override
+  String get femaleGenderLabel => 'Feminino';
+
+  @override
+  String get otherGenderLabel => 'Outro';
 
   @override
   String get travelStatusRouteCreated => 'Aguardando agente';

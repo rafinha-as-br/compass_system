@@ -63,6 +63,11 @@ class Travel {
   final List<Person> participantsList;
   /// Travel events log list, these events are done by the Client user
   final List<TravelEvent>? eventsLog;
+  /// Free-text note from the client to the agent, scoped to the whole trip.
+  /// Set once at creation in RouteCraft — never edited here, but must be
+  /// round-tripped on every [Travel] update (e.g. [CrudTravelUseCases.markAsReady])
+  /// or a full-object PUT silently wipes it.
+  final String? observations;
 
 
   Travel({
@@ -75,6 +80,7 @@ class Travel {
     required this.travelStatus,
     this.itinerary,
     this.eventsLog,
+    this.observations,
   });
 
 }

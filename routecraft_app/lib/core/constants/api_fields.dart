@@ -19,6 +19,7 @@ abstract final class TravelApiFields {
   static const String routePlan = 'routePlan';
   static const String itinerary = 'itinerary';
   static const String participants = 'participants';
+  static const String observations = 'observations';
 }
 
 abstract final class PersonApiFields {
@@ -26,6 +27,19 @@ abstract final class PersonApiFields {
   static const String name = CommonApiFields.name;
   static const String age = 'age';
   static const String sex = 'sex';
+}
+
+/// Field names for `GET /users/me`, `GET /users/{id}` and `PUT /users/{id}`
+/// (ClientUserController's `mapClientToResponse`) — distinct from
+/// [PersonApiFields] because it also carries CPF/e-mail/phone.
+abstract final class ClientProfileApiFields {
+  static const String id = CommonApiFields.id;
+  static const String name = CommonApiFields.name;
+  static const String cpf = 'cpf';
+  static const String sex = 'sex';
+  static const String age = 'age';
+  static const String phoneNumber = 'phoneNumber';
+  static const String email = 'email';
 }
 
 abstract final class RoutePlanApiFields {

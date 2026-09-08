@@ -122,15 +122,60 @@ void main() {
     expect(authController.isAuthenticated, isFalse);
   });
 
-  testWidgets('tapping a menu item shows a coming-soon message instead of navigating anywhere broken', (tester) async {
+  testWidgets('tapping a menu item without a real screen yet shows a coming-soon message', (tester) async {
     await tester.pumpWidget(_wrap(AccountController.withState(
       const AccountState(isLoading: false, clientName: 'Rafaela Souza'),
     )));
 
-    await tester.tap(find.text('Personal data'));
+    await tester.tap(find.text('Help'));
     await tester.pump();
 
     expect(find.text('Coming soon.'), findsOneWidget);
+  });
+
+  testWidgets('tapping "Personal data" navigates to the personal data screen', (tester) async {
+    final controller = AccountController.withState(
+      const AccountState(isLoading: false, clientName: 'Rafaela Souza'),
+    );
+    final router = GoRouter(
+      initialLocation: AppRoutes.account,
+      routes: [
+        GoRoute(
+          path: AppRoutes.account,
+          builder: (context, state) => AccountPage(controller: controller),
+          routes: [
+            GoRoute(
+              path: AppRoutes.personalData,
+              builder: (context, state) => const Scaffold(body: Text('Personal Data Screen')),
+            ),
+          ],
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(MultiProvider(
+      providers: [
+        ChangeNotifierProvider<SettingsController>(create: (_) => SettingsController()),
+        ChangeNotifierProvider<AuthController>.value(
+          value: AuthController(checkAuthenticated: () async => true),
+        ),
+      ],
+      child: MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
+    ));
+
+    await tester.tap(find.text('Personal data'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Personal Data Screen'), findsOneWidget);
   });
 
   testWidgets('clears the unread badge after returning from notifications', (tester) async {

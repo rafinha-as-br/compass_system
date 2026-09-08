@@ -189,9 +189,14 @@ class _TravelSection extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 8),
               child: TravelCard(
                 travelName: travel.travelName,
-                routeSummary: _routeSummary(context, travel),
+                route: _routeText(travel),
+                period: _periodText(context, travel),
                 status: _chipVariant(travel.travelStatus),
-                onTap: () => _pushAndRefresh(context, AppRoutes.homeFollowTravel, extra: travel),
+                onTap: () => _pushAndRefresh(
+                  context,
+                  '${AppRoutes.homeFollowTravel}?${AppRoutes.travelIdQuery(travel.backEndId!)}',
+                  extra: travel,
+                ),
               ),
             ),
           ),
@@ -312,9 +317,13 @@ String _period(String languageCode, DateTime start, DateTime end) {
   return '$startLabel–$endLabel';
 }
 
-String _routeSummary(BuildContext context, Travel travel) {
+String _routeText(Travel travel) {
+  final route = travel.routePlan;
+  return '${route.startLocation} → ${route.destination}';
+}
+
+String _periodText(BuildContext context, Travel travel) {
   final languageCode = Localizations.localeOf(context).languageCode;
   final route = travel.routePlan;
-  final period = _period(languageCode, route.startDate, route.endDate);
-  return '${route.startLocation} → ${route.destination} · $period';
+  return _period(languageCode, route.startDate, route.endDate);
 }

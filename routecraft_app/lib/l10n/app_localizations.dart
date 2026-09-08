@@ -560,6 +560,18 @@ abstract class AppLocalizations {
   /// **'Add'**
   String get routeCreationAddInterestButton;
 
+  /// No description provided for @routeCreationObservationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Observations (optional)'**
+  String get routeCreationObservationsLabel;
+
+  /// No description provided for @routeCreationObservationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything you\'d like your agent to know? You won\'t be able to edit this later.'**
+  String get routeCreationObservationsHint;
+
   /// No description provided for @routeCreationReviewHeader.
   ///
   /// In en, this message translates to:
@@ -583,6 +595,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} INTERESTS'**
   String routeCreationInterestsBlockLabel(int count);
+
+  /// No description provided for @routeCreationObservationsBlockLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OBSERVATIONS'**
+  String get routeCreationObservationsBlockLabel;
 
   /// No description provided for @routeCreationSubmitCta.
   ///
@@ -793,6 +811,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Go to Home'**
   String get hubGoToHomeCta;
+
+  /// No description provided for @travelNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip not found'**
+  String get travelNotFoundTitle;
+
+  /// No description provided for @travelNotFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This trip couldn\'t be found. It may have been removed.'**
+  String get travelNotFoundMessage;
 
   /// No description provided for @todayDayProgress.
   ///
@@ -1237,6 +1267,108 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Coming soon.'**
   String get comingSoonMessage;
+
+  /// No description provided for @personalDataTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Personal data'**
+  String get personalDataTitle;
+
+  /// No description provided for @personalDataNameLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get personalDataNameLabel;
+
+  /// No description provided for @personalDataPhoneLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Phone'**
+  String get personalDataPhoneLabel;
+
+  /// No description provided for @personalDataAgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get personalDataAgeLabel;
+
+  /// No description provided for @personalDataGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Gender'**
+  String get personalDataGenderLabel;
+
+  /// No description provided for @personalDataCpfLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'CPF'**
+  String get personalDataCpfLabel;
+
+  /// No description provided for @personalDataEmailLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'E-mail'**
+  String get personalDataEmailLabel;
+
+  /// No description provided for @personalDataSaveButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get personalDataSaveButton;
+
+  /// No description provided for @personalDataSaveSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Data saved successfully.'**
+  String get personalDataSaveSuccessMessage;
+
+  /// No description provided for @personalDataResetPasswordButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password'**
+  String get personalDataResetPasswordButton;
+
+  /// No description provided for @personalDataResetPasswordConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Reset password?'**
+  String get personalDataResetPasswordConfirmTitle;
+
+  /// No description provided for @personalDataResetPasswordConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your password will be reset to the default password. You\'ll need it to sign in again.'**
+  String get personalDataResetPasswordConfirmMessage;
+
+  /// No description provided for @personalDataResetPasswordSuccessMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Password reset successfully.'**
+  String get personalDataResetPasswordSuccessMessage;
+
+  /// No description provided for @personalDataGenericErrorMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong. Please try again.'**
+  String get personalDataGenericErrorMessage;
+
+  /// No description provided for @maleGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Male'**
+  String get maleGenderLabel;
+
+  /// No description provided for @femaleGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Female'**
+  String get femaleGenderLabel;
+
+  /// No description provided for @otherGenderLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get otherGenderLabel;
 
   /// No description provided for @travelStatusRouteCreated.
   ///

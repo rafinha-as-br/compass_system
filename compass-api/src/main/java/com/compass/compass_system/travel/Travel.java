@@ -15,6 +15,14 @@ public class Travel {
     private String travelName;
     private String travelStatus;
 
+    // Free-text note from the client to the agent, scoped to the whole trip
+    // (not a single interest point). Set once at creation; no endpoint below
+    // ever updates it — the isolated route/itinerary/participants upserts
+    // touch only their own nested resource, and there is deliberately no
+    // "edit observations" endpoint.
+    @Column(length = 2000)
+    private String observations;
+
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "route_plan_id")
     private RoutePlan routePlan;
@@ -49,6 +57,9 @@ public class Travel {
 
     public String getTravelStatus() { return travelStatus; }
     public void setTravelStatus(String travelStatus) { this.travelStatus = travelStatus; }
+
+    public String getObservations() { return observations; }
+    public void setObservations(String observations) { this.observations = observations; }
 
     public RoutePlan getRoutePlan() { return routePlan; }
     public void setRoutePlan(RoutePlan routePlan) { this.routePlan = routePlan; }
