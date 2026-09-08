@@ -57,6 +57,7 @@ class TravelControllerTest {
         travel.setClientName("Maria Silva");
         travel.setTravelName("Lisbon 2025");
         travel.setTravelStatus("route_created");
+        travel.setObservations("Viajando com um bebê de colo, precisamos de berço no hotel.");
 
         RoutePlan routePlan = new RoutePlan();
         routePlan.setStartDate("2025-08-01T00:00:00.000Z");
@@ -84,6 +85,7 @@ class TravelControllerTest {
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.clientName").value("Maria Silva"))
                 .andExpect(jsonPath("$.travelStatus").value("route_created"))
+                .andExpect(jsonPath("$.observations").value("Viajando com um bebê de colo, precisamos de berço no hotel."))
                 .andExpect(jsonPath("$.routePlan.id").isNotEmpty())
                 .andExpect(jsonPath("$.routePlan.interestPoints[0].id").isNotEmpty())
                 .andExpect(jsonPath("$.participants[0].id").isNotEmpty())
@@ -107,7 +109,8 @@ class TravelControllerTest {
                 .header("Authorization", authHeader()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(createdTravelId))
-                .andExpect(jsonPath("$.travelName").value("Lisbon 2025"));
+                .andExpect(jsonPath("$.travelName").value("Lisbon 2025"))
+                .andExpect(jsonPath("$.observations").value("Viajando com um bebê de colo, precisamos de berço no hotel."));
     }
 
     @Test
@@ -262,6 +265,18 @@ class TravelControllerTest {
 
     @Test
     @Order(8)
+    void shouldKeepObservationsUntouchedByIsolatedUpdates() throws Exception {
+        // No endpoint edits observations after creation — this is the whole
+        // point of the "not editable after creation" rule: it's just never
+        // wired to any update path, route/itinerary upserts included.
+        mockMvc.perform(get("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.observations").value("Viajando com um bebê de colo, precisamos de berço no hotel."));
+    }
+
+    @Test
+    @Order(9)
     void shouldDeleteTravel() throws Exception {
         mockMvc.perform(delete("/travels/" + createdTravelId)
                 .header("Authorization", authHeader()))

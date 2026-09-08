@@ -42,6 +42,7 @@ class _NotificationsView extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
+        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop()),
         title: Text(l10n.notificationsTitle),
         actions: [
           TextButton(
@@ -143,7 +144,12 @@ class _NotificationTile extends StatelessWidget {
           .showSnackBar(SnackBar(content: Text(AppLocalizations.of(context)!.notificationOpenTripError)));
       return;
     }
-    context.push(AppRoutes.homeFollowTravel, extra: travel);
+    // `push` would stack this route on top of the current branch (Conta,
+    // branch 2) even though `/home/follow` belongs to Início (branch 0) — the
+    // screen would render outside its own StatefulShellBranch stack, with no
+    // local Navigator entry to pop back to. `go` re-resolves the location
+    // against the shell's branches, switching to Início and pushing there.
+    context.go('${AppRoutes.homeFollowTravel}?${AppRoutes.travelIdQuery(travelId)}', extra: travel);
   }
 
   IconData _iconFor(TravelNotificationType type) => switch (type) {

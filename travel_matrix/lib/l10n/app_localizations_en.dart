@@ -257,6 +257,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get noInterestPoints => 'No interest points defined.';
 
   @override
+  String get observationsLabel => 'Client\'s observations';
+
+  @override
+  String get noObservations => 'No observations from the client.';
+
+  @override
   String get noItineraryCreated => 'No itinerary has been created yet.';
 
   @override
@@ -280,9 +286,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get editUser => 'Edit User';
-
-  @override
-  String get viewUser => 'View User';
 
   @override
   String get deleteUser => 'Delete User';
@@ -317,9 +320,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get recentTravels => 'Recent Travels';
-
-  @override
-  String get activeClientsListTitle => 'Active Clients';
 
   @override
   String get travelNameColumn => 'Travel Name';
@@ -452,10 +452,20 @@ class AppLocalizationsEn extends AppLocalizations {
       'Immediately terminate all active sessions for this user.';
 
   @override
+  String get deactivateUserActionDescription =>
+      'Deactivate this user\'s account, preventing them from logging in.';
+
+  @override
   String get resetPasswordSuccessMessage => 'Password reset link sent';
 
   @override
   String get resetPasswordFailureMessage => 'Failed to send reset link';
+
+  @override
+  String get deactivateUserSuccessMessage => 'User deactivated';
+
+  @override
+  String get deactivateUserFailureMessage => 'Failed to deactivate user';
 
   @override
   String get forceLogoutSuccessMessage => 'User sessions terminated';
@@ -586,9 +596,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createTravelButton => 'CREATE TRAVEL';
 
   @override
-  String get editRoutePlanButton => 'Edit Route Plan';
-
-  @override
   String get markAsReadyButton => 'Mark as Ready';
 
   @override
@@ -610,6 +617,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get markAsReadyTooltip => 'Mark travel as ready';
+
+  @override
+  String get travelActionsMenuTooltip => 'Travel actions';
 
   @override
   String get routeViewTab => 'Route View';
