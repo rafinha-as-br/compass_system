@@ -118,6 +118,8 @@
   "hubEmptyTitle": "Nenhuma viagem selecionada",
   "hubEmptyMessage": "Selecione uma viagem em Início para ver o roteiro.",
   "hubGoToHomeCta": "Ir para o Início",
+  "travelNotFoundTitle": "Viagem não encontrada",
+  "travelNotFoundMessage": "Não foi possível encontrar esta viagem. Ela pode ter sido removida.",
 
   "todayDayProgress": "Dia {day} de {total}",
   "todayInProgressLabel": "Viagem em andamento",

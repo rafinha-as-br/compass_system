@@ -149,7 +149,7 @@ class _NotificationTile extends StatelessWidget {
     // screen would render outside its own StatefulShellBranch stack, with no
     // local Navigator entry to pop back to. `go` re-resolves the location
     // against the shell's branches, switching to Início and pushing there.
-    context.go(AppRoutes.homeFollowTravel, extra: travel);
+    context.go('${AppRoutes.homeFollowTravel}?${AppRoutes.travelIdQuery(travelId)}', extra: travel);
   }
 
   IconData _iconFor(TravelNotificationType type) => switch (type) {

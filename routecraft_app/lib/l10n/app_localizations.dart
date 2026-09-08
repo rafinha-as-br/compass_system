@@ -746,6 +746,18 @@ abstract class AppLocalizations {
   /// **'Go to Home'**
   String get hubGoToHomeCta;
 
+  /// No description provided for @travelNotFoundTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Trip not found'**
+  String get travelNotFoundTitle;
+
+  /// No description provided for @travelNotFoundMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'This trip couldn\'t be found. It may have been removed.'**
+  String get travelNotFoundMessage;
+
   /// No description provided for @todayDayProgress.
   ///
   /// In en, this message translates to:
