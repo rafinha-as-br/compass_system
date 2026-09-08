@@ -6,7 +6,6 @@ class DashboardStatsDto {
   final int pendingItineraries;
   final int activeClients;
   final List<DashboardTravelSummaryDto> recentTravels;
-  final List<DashboardClientSummaryDto> activeClientsList;
 
   const DashboardStatsDto({
     required this.totalTravels,
@@ -14,7 +13,6 @@ class DashboardStatsDto {
     required this.pendingItineraries,
     required this.activeClients,
     required this.recentTravels,
-    required this.activeClientsList,
   });
 
   factory DashboardStatsDto.fromJson(Map<String, dynamic> json) {
@@ -26,10 +24,6 @@ class DashboardStatsDto {
       recentTravels: (json['recentTravels'] as List<dynamic>? ?? const [])
           .map((e) => DashboardTravelSummaryDto.fromJson(e as Map<String, dynamic>))
           .toList(),
-      activeClientsList:
-          (json['activeClientsList'] as List<dynamic>? ?? const [])
-              .map((e) => DashboardClientSummaryDto.fromJson(e as Map<String, dynamic>))
-              .toList(),
     );
   }
 
@@ -40,7 +34,6 @@ class DashboardStatsDto {
       pendingItineraries: pendingItineraries,
       activeClients: activeClients,
       recentTravels: recentTravels.map((e) => e.toDomain()).toList(),
-      activeClientsList: activeClientsList.map((e) => e.toDomain()).toList(),
     );
   }
 }
@@ -91,38 +84,6 @@ class DashboardTravelSummaryDto {
       startDate: startDate,
       status: status,
       hasItinerary: hasItinerary,
-    );
-  }
-}
-
-class DashboardClientSummaryDto {
-  final String id;
-  final String name;
-  final String email;
-  final String phoneNumber;
-
-  const DashboardClientSummaryDto({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-  });
-
-  factory DashboardClientSummaryDto.fromJson(Map<String, dynamic> json) {
-    return DashboardClientSummaryDto(
-      id: json['id'] as String? ?? '',
-      name: json['name'] as String? ?? '',
-      email: json['email'] as String? ?? '',
-      phoneNumber: json['phoneNumber'] as String? ?? '',
-    );
-  }
-
-  DashboardClientSummary toDomain() {
-    return DashboardClientSummary(
-      id: id,
-      name: name,
-      email: email,
-      phoneNumber: phoneNumber,
     );
   }
 }

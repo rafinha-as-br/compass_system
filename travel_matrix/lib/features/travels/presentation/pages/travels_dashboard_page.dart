@@ -8,6 +8,7 @@ import 'package:travel_matrix/features/travels/presentation/controllers/travels_
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
+import 'package:travel_matrix/shared/widgets/app_data_table.dart';
 
 class TravelsDashboardPage extends StatelessWidget {
   final TravelsController? controller;
@@ -53,26 +54,11 @@ class _TravelsDashboardViewState extends State<_TravelsDashboardView> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Text(
-                l10n.allTravels,
-                style: theme.textTheme.headlineSmall?.copyWith(
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              ElevatedButton.icon(
-                onPressed: () {
-                  context.go(
-                    '${AppRoutes.travels}/${AppRoutes.travelCreate}',
-                    extra: {'controller': controller},
-                  );
-                },
-                icon: const Icon(Icons.add),
-                label: Text(l10n.createTravel),
-              ),
-            ],
+          Text(
+            l10n.allTravels,
+            style: theme.textTheme.headlineSmall?.copyWith(
+              fontWeight: FontWeight.bold,
+            ),
           ),
           const SizedBox(height: 20),
           Row(
@@ -204,64 +190,49 @@ class _TravelsTable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final dateFormat = DateFormat.yMMMd(l10n.localeName);
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-            constraints: BoxConstraints(minWidth: constraints.maxWidth),
-            child: DataTable(
-              headingRowColor: WidgetStatePropertyAll(
-                theme.colorScheme.surfaceContainerHighest,
-              ),
-              dataRowMaxHeight: 68,
-              dataRowMinHeight: 56,
-              columns: [
-                DataColumn(label: Text(l10n.travelNameColumn)),
-                DataColumn(label: Text(l10n.clientLabel)),
-                DataColumn(label: Text(l10n.routeColumn)),
-                DataColumn(label: Text(l10n.statusColumn)),
-                DataColumn(label: Text(l10n.datesColumn)),
-                DataColumn(label: Text(l10n.actionsColumn)),
-              ],
-              rows: travels.map((travel) {
-                final dates =
-                    '${dateFormat.format(travel.route.startDate)} - ${dateFormat.format(travel.route.endDate)}';
-                return DataRow(
-                  cells: [
-                    DataCell(Text(travel.travelTitle)),
-                    DataCell(Text(travel.clientName)),
-                    DataCell(
-                      Text(
-                        '${travel.route.start} -> ${travel.route.destination}',
-                      ),
-                    ),
-                    DataCell(_TravelStatusChip(travel: travel, l10n: l10n)),
-                    DataCell(Text(dates)),
-                    DataCell(
-                      IconButton(
-                        icon: const Icon(Icons.chevron_right),
-                        tooltip: l10n.viewTravel,
-                        onPressed: () {
-                          context.go(
-                            '${AppRoutes.travels}/${travel.localId}',
-                            extra: {'travel': travel, 'controller': controller},
-                          );
-                        },
-                      ),
-                    ),
-                  ],
-                );
-              }).toList(),
+    return SingleChildScrollView(
+      child: AppDataTable<TravelViewModel>(
+        items: travels,
+        onRowTap: (context, travel) {
+          context.go(
+            '${AppRoutes.travels}/${travel.localId}',
+            extra: {'travel': travel, 'controller': controller},
+          );
+        },
+        columns: [
+          AppDataColumn(
+            label: l10n.travelNameColumn,
+            width: const FlexColumnWidth(2),
+            cellBuilder: (context, travel) => Text(travel.travelTitle),
+          ),
+          AppDataColumn(
+            label: l10n.clientLabel,
+            width: const FlexColumnWidth(2),
+            cellBuilder: (context, travel) => Text(travel.clientName),
+          ),
+          AppDataColumn(
+            label: l10n.routeColumn,
+            width: const FlexColumnWidth(2),
+            cellBuilder: (context, travel) =>
+                Text('${travel.route.start} -> ${travel.route.destination}'),
+          ),
+          AppDataColumn(
+            label: l10n.statusColumn,
+            width: const FlexColumnWidth(2),
+            cellBuilder: (context, travel) =>
+                _TravelStatusChip(travel: travel, l10n: l10n),
+          ),
+          AppDataColumn(
+            label: l10n.datesColumn,
+            width: const FlexColumnWidth(2),
+            cellBuilder: (context, travel) => Text(
+              '${dateFormat.format(travel.route.startDate)} - ${dateFormat.format(travel.route.endDate)}',
             ),
           ),
-        ),
-      );
-    },
+        ],
+      ),
     );
   }
 }
