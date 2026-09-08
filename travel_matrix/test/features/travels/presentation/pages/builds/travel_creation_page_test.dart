@@ -14,38 +14,15 @@ import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/builds/travel_creation_page.dart';
-import 'package:travel_matrix/features/users/domain/entities/user.dart';
-import 'package:travel_matrix/features/users/domain/entities/user_stats.dart';
-import 'package:travel_matrix/features/users/domain/entities/user_status.dart';
-import 'package:travel_matrix/features/users/domain/user_client_repository.dart';
-import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 
 class _MockCrudTravelUseCases extends Mock implements CrudTravelUseCases {}
 
 class _MockCrudRoute extends Mock implements CrudRoute {}
 
-class _MockUserClientRepository extends Mock implements UserClientRepository {}
-
-UserClient _buildClient() {
-  return UserClient(
-    backEndId: 'client-1',
-    domainId: 'client-1',
-    name: 'Maria Silva',
-    cpf: '123',
-    sex: 'F',
-    phoneNumber: '11999999999',
-    status: UserClientStatus(status: ActiveStatus(), lastLogin: null),
-    email: 'maria@compass.com',
-    travels: const [],
-    stats: UserStats(totalTravels: 0, uniqueDestinationsCount: 0),
-  );
-}
-
 void main() {
   late _MockCrudTravelUseCases travelUseCases;
   late _MockCrudRoute routeUseCases;
-  late _MockUserClientRepository userRepository;
 
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
@@ -54,10 +31,8 @@ void main() {
 
     travelUseCases = _MockCrudTravelUseCases();
     routeUseCases = _MockCrudRoute();
-    userRepository = _MockUserClientRepository();
 
     when(() => travelUseCases.readAll()).thenAnswer((_) async => Result.success(<Travel>[]));
-    when(() => userRepository.getAllUsers()).thenAnswer((_) async => Result.success([_buildClient()]));
   });
 
   Widget wrap(AuthController auth, {Locale? locale}) {
@@ -67,7 +42,8 @@ void main() {
       routes: [
         GoRoute(
           path: '/create',
-          builder: (context, state) => TravelCreationPage(userUseCases: UserUseCases(userRepository)),
+          builder: (context, state) =>
+              const TravelCreationPage(clientId: 'client-1', clientName: 'Maria Silva'),
         ),
         GoRoute(path: '/travels', builder: (context, state) => const SizedBox()),
       ],
@@ -113,6 +89,23 @@ void main() {
     final captured = verify(() => travelUseCases.createFromRequest(captureAny())).captured;
     final request = captured.single as Map<String, dynamic>;
     expect(request['agentId'], 'agent-9');
+    expect(request['clientId'], 'client-1');
+  });
+
+  testWidgets('shows the client name locked, with no dropdown to pick a different client', (
+    tester,
+  ) async {
+    final auth = AuthController();
+    auth.debugSetUserData({'id': 'agent-9', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    await tester.pumpWidget(wrap(auth));
+    await tester.pumpAndSettle();
+
+    final clientField = tester.widget<TextFormField>(
+      find.widgetWithText(TextFormField, 'Maria Silva'),
+    );
+    expect(clientField.enabled, isFalse);
+    expect(find.byType(DropdownButtonFormField<String>), findsNothing);
   });
 
   testWidgets('submitting without an authenticated agent shows an error and never calls the backend', (

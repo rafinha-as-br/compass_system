@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:routecraft_app/app/app.dart';
 import 'package:routecraft_app/app/controllers/settings_controller.dart';
 import 'package:routecraft_app/app/global_controllers/auth_controller.dart';
+import 'package:routecraft_app/app/global_controllers/travel_sync_status_controller.dart';
 import 'package:routecraft_app/app/router/app_router.dart';
 import 'package:routecraft_app/app/splash_screen.dart';
 
@@ -30,6 +31,7 @@ class AppBootstrap extends StatelessWidget {
           providers: [
             ChangeNotifierProvider.value(value: settingsController),
             ChangeNotifierProvider.value(value: authController),
+            ChangeNotifierProvider(create: (_) => TravelSyncStatusController()),
             Provider.value(value: appRouter),
           ],
           child: RouteCraftApp(router: appRouter.router),

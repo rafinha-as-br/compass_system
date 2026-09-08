@@ -141,6 +141,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get networkErrorRetryCta => 'Try again';
 
   @override
+  String offlineBannerLabel(String date) {
+    return 'Offline · data from $date';
+  }
+
+  @override
   String get homeNavLabel => 'Home';
 
   @override

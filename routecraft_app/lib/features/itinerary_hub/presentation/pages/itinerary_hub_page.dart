@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/global_controllers/travel_sync_status_controller.dart';
 import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/travels/domain/entities/itinerary_step.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
@@ -9,6 +11,7 @@ import 'package:routecraft_app/shared/utils/date_formatting.dart';
 import 'package:routecraft_app/shared/utils/step_icon_mapping.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
 import 'package:routecraft_app/shared/widgets/empty_state_view.dart';
+import 'package:routecraft_app/shared/widgets/offline_banner.dart';
 import 'package:routecraft_app/shared/widgets/step_icon.dart';
 import 'package:routecraft_app/shared/widgets/travel_status_chip.dart';
 
@@ -25,6 +28,7 @@ class ItineraryHubPage extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     final travel = this.travel;
+    final syncStatus = context.watch<TravelSyncStatusController>();
 
     return Scaffold(
       body: SafeArea(
@@ -36,19 +40,26 @@ class ItineraryHubPage extends StatelessWidget {
                 ctaLabel: l10n.hubGoToHomeCta,
                 onCtaPressed: () => context.go(AppRoutes.home),
               )
-            : SingleChildScrollView(
-                padding: const EdgeInsets.all(24),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    _HubHeader(travel: travel),
-                    const SizedBox(height: 24),
-                    if (travel.hasItinerary)
-                      _ItineraryCreatedBody(travel: travel)
-                    else
-                      _RouteCreatedBody(travel: travel),
-                  ],
-                ),
+            : Column(
+                children: [
+                  if (syncStatus.isOffline) OfflineBanner(syncedAt: syncStatus.syncedAt!),
+                  Expanded(
+                    child: SingleChildScrollView(
+                      padding: const EdgeInsets.all(24),
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          _HubHeader(travel: travel),
+                          const SizedBox(height: 24),
+                          if (travel.hasItinerary)
+                            _ItineraryCreatedBody(travel: travel)
+                          else
+                            _RouteCreatedBody(travel: travel),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
               ),
       ),
     );

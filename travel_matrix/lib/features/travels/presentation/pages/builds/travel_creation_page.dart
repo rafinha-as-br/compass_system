@@ -5,17 +5,7 @@ import 'package:travel_matrix/features/travels/presentation/controllers/travels_
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
-import 'package:travel_matrix/features/users/data/user_client_data_source.dart';
-import 'package:travel_matrix/features/users/data/user_repository_impl.dart';
-import 'package:travel_matrix/features/users/domain/user_crud_use_cases.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
-
-/// Simple helper class to populate the client dropdown.
-class _ClientItem {
-  final String id;
-  final String name;
-  _ClientItem({required this.id, required this.name});
-}
 
 /// Simple helper class for interest point data before API submission.
 class _InterestPointItem {
@@ -30,63 +20,43 @@ class _InterestPointItem {
   Map<String, dynamic> toMap() => {'name': name, 'description': description};
 }
 
-/// Page for creating a new [Travel].
+/// Page for creating a new [Travel] for a specific, already-known client.
 ///
-/// The agent fills in the travel name, client, route details (locations, dates),
-/// and optionally adds interest points. On submit, delegates to
-/// [TravelsController.createTravel] and pops on success.
+/// The client is locked (never chosen from a dropdown): this page is only
+/// reached from that client's own screen, with [clientId]/[clientName]
+/// passed in. The agent fills in the travel name and route details
+/// (locations, dates), and optionally adds interest points. On submit,
+/// delegates to [TravelsController.createTravel] and pops on success.
 ///
 /// Note: itinerary creation happens separately via [ItineraryBuildPage]
 /// after the travel has been created.
 class TravelCreationPage extends StatefulWidget {
-  const TravelCreationPage({super.key, this.userUseCases});
+  const TravelCreationPage({
+    super.key,
+    required this.clientId,
+    required this.clientName,
+  });
 
-  /// Overrides the default [UserUseCases]. Exposed for widget tests.
-  final UserUseCases? userUseCases;
+  final String clientId;
+  final String clientName;
 
   @override
   State<TravelCreationPage> createState() => _TravelCreationPageState();
 }
 
 class _TravelCreationPageState extends State<TravelCreationPage> {
-  late final _userUseCases =
-      widget.userUseCases ?? UserUseCases(UserClientRepositoryImpl(UserClientDataSource()));
   final _formKey = GlobalKey<FormState>();
   final _travelNameCtrl = TextEditingController();
   final _startLocationCtrl = TextEditingController();
   final _destinationCtrl = TextEditingController();
   DateTime _startDate = DateTime.now().add(const Duration(days: 7));
   DateTime _endDate = DateTime.now().add(const Duration(days: 14));
-  String _selectedClientId = '';
   bool _isSubmitting = false;
-  List<_ClientItem> _clients = [];
-  bool _isLoadingClients = true;
 
   // Interest points
   final List<_InterestPointItem> _interestPoints = [];
   final _poiNameCtrl = TextEditingController();
   final _poiDescCtrl = TextEditingController();
-
-  @override
-  void initState() {
-    super.initState();
-    _loadClients();
-  }
-
-  Future<void> _loadClients() async {
-    final result = await _userUseCases.getAllUsers();
-    if (result.isSuccess && result.data != null && mounted) {
-      setState(() {
-        _clients = result.data!
-            .map((user) => _ClientItem(id: user.backEndId ?? user.domainId, name: user.name))
-            .toList();
-        if (_clients.isNotEmpty) {
-          _selectedClientId = _clients.first.id;
-        }
-        _isLoadingClients = false;
-      });
-    }
-  }
 
   @override
   void dispose() {
@@ -115,12 +85,13 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
 
   Future<void> _submit() async {
     if (!_formKey.currentState!.validate()) return;
-    if (_selectedClientId.isEmpty) return;
 
     final agentId = context.read<AuthController>().userId;
     if (agentId == null) {
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(AppLocalizations.of(context)!.sessionExpiredMessage)),
+        SnackBar(
+          content: Text(AppLocalizations.of(context)!.sessionExpiredMessage),
+        ),
       );
       return;
     }
@@ -130,7 +101,7 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
     final controller = context.read<TravelsController>();
 
     final success = await controller.createTravel({
-      'clientId': _selectedClientId,
+      'clientId': widget.clientId,
       'agentId': agentId,
       'travelName': _travelNameCtrl.text,
       'routePlan': {
@@ -167,223 +138,206 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
           },
         ),
       ),
-      body: _isLoadingClients
-          ? const Center(child: CircularProgressIndicator())
-          : SingleChildScrollView(
-              padding: const EdgeInsets.all(24),
-              child: Center(
-                child: ConstrainedBox(
-                  constraints: const BoxConstraints(maxWidth: 600),
-                  child: Form(
-                    key: _formKey,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.stretch,
-                      children: [
-                        Text(
-                          l10n.stepCreateRoute,
-                          style: theme.textTheme.titleLarge?.copyWith(
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          l10n.stepCreateRouteHint,
-                          style: TextStyle(
-                            color: theme.colorScheme.onSurface.withValues(
-                              alpha: 0.6,
-                            ),
-                          ),
-                        ),
-                        const SizedBox(height: 24),
-                        TextFormField(
-                          controller: _travelNameCtrl,
+      body: SingleChildScrollView(
+        padding: const EdgeInsets.all(24),
+        child: Center(
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxWidth: 600),
+            child: Form(
+              key: _formKey,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Text(
+                    l10n.stepCreateRoute,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    l10n.stepCreateRouteHint,
+                    style: TextStyle(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                    ),
+                  ),
+                  const SizedBox(height: 24),
+                  TextFormField(
+                    controller: _travelNameCtrl,
+                    decoration: InputDecoration(
+                      labelText: l10n.travelNameLabel,
+                      border: const OutlineInputBorder(),
+                    ),
+                    validator: (v) =>
+                        v!.isEmpty ? l10n.travelNameRequired : null,
+                  ),
+                  const SizedBox(height: 16),
+                  TextFormField(
+                    initialValue: widget.clientName,
+                    enabled: false,
+                    decoration: InputDecoration(
+                      labelText: l10n.clientLabel,
+                      border: const OutlineInputBorder(),
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextFormField(
+                          controller: _startLocationCtrl,
                           decoration: InputDecoration(
-                            labelText: l10n.travelNameLabel,
+                            labelText: l10n.startLocationLabel,
                             border: const OutlineInputBorder(),
                           ),
                           validator: (v) =>
-                              v!.isEmpty ? l10n.travelNameRequired : null,
+                              v!.isEmpty ? l10n.requiredField : null,
                         ),
-                        const SizedBox(height: 16),
-                        DropdownButtonFormField<String>(
-                          initialValue: _selectedClientId.isEmpty
-                              ? null
-                              : _selectedClientId,
+                      ),
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: TextFormField(
+                          controller: _destinationCtrl,
                           decoration: InputDecoration(
-                            labelText: l10n.clientLabel,
+                            labelText: l10n.destinationLabel,
                             border: const OutlineInputBorder(),
                           ),
-                          items: _clients
-                              .map(
-                                (c) => DropdownMenuItem(
-                                  value: c.id,
-                                  child: Text(c.name),
-                                ),
-                              )
-                              .toList(),
-                          onChanged: (v) =>
-                              setState(() => _selectedClientId = v ?? ''),
+                          validator: (v) =>
+                              v!.isEmpty ? l10n.requiredField : null,
                         ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextFormField(
-                                controller: _startLocationCtrl,
-                                decoration: InputDecoration(
-                                  labelText: l10n.startLocationLabel,
-                                  border: const OutlineInputBorder(),
-                                ),
-                                validator: (v) =>
-                                    v!.isEmpty ? l10n.requiredField : null,
-                              ),
-                            ),
-                            const SizedBox(width: 16),
-                            Expanded(
-                              child: TextFormField(
-                                controller: _destinationCtrl,
-                                decoration: InputDecoration(
-                                  labelText: l10n.destinationLabel,
-                                  border: const OutlineInputBorder(),
-                                ),
-                                validator: (v) =>
-                                    v!.isEmpty ? l10n.requiredField : null,
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 16),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(l10n.startDateLabel),
-                                subtitle: Text(
-                                  '${_startDate.day}/${_startDate.month}/${_startDate.year}',
-                                ),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.calendar_today),
-                                  onPressed: () async {
-                                    final picked = await showDatePicker(
-                                      context: context,
-                                      initialDate: _startDate,
-                                      firstDate: DateTime.now(),
-                                      lastDate: DateTime(2030),
-                                    );
-                                    if (picked != null) {
-                                      setState(() => _startDate = picked);
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                            Expanded(
-                              child: ListTile(
-                                contentPadding: EdgeInsets.zero,
-                                title: Text(l10n.endDateLabel),
-                                subtitle: Text(
-                                  '${_endDate.day}/${_endDate.month}/${_endDate.year}',
-                                ),
-                                trailing: IconButton(
-                                  icon: const Icon(Icons.calendar_today),
-                                  onPressed: () async {
-                                    final picked = await showDatePicker(
-                                      context: context,
-                                      initialDate: _endDate,
-                                      firstDate: DateTime.now(),
-                                      lastDate: DateTime(2030),
-                                    );
-                                    if (picked != null) {
-                                      setState(() => _endDate = picked);
-                                    }
-                                  },
-                                ),
-                              ),
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 24),
-                        const Divider(),
-                        const SizedBox(height: 16),
-                        Text(
-                          l10n.interestPointsTitle,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            fontWeight: FontWeight.w600,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 16),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(l10n.startDateLabel),
+                          subtitle: Text(
+                            '${_startDate.day}/${_startDate.month}/${_startDate.year}',
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.calendar_today),
+                            onPressed: () async {
+                              final picked = await showDatePicker(
+                                context: context,
+                                initialDate: _startDate,
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2030),
+                              );
+                              if (picked != null) {
+                                setState(() => _startDate = picked);
+                              }
+                            },
                           ),
                         ),
-                        const SizedBox(height: 8),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: _poiNameCtrl,
-                                decoration: InputDecoration(
-                                  labelText: l10n.pointNameLabel,
-                                  border: const OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            Expanded(
-                              child: TextField(
-                                controller: _poiDescCtrl,
-                                decoration: InputDecoration(
-                                  labelText: l10n.descriptionLabel,
-                                  border: const OutlineInputBorder(),
-                                ),
-                              ),
-                            ),
-                            const SizedBox(width: 8),
-                            IconButton(
-                              onPressed: _addInterestPoint,
-                              icon: const Icon(Icons.add_circle),
-                              color: theme.colorScheme.secondary,
-                            ),
-                          ],
-                        ),
-                        const SizedBox(height: 8),
-                        ..._interestPoints.map(
-                          (p) => Card(
-                            child: ListTile(
-                              leading: const Icon(Icons.place),
-                              title: Text(p.name),
-                              subtitle: Text(p.description),
-                              trailing: IconButton(
-                                icon: const Icon(Icons.close, size: 18),
-                                onPressed: () {
-                                  setState(() => _interestPoints.remove(p));
-                                },
-                              ),
-                            ),
+                      ),
+                      Expanded(
+                        child: ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(l10n.endDateLabel),
+                          subtitle: Text(
+                            '${_endDate.day}/${_endDate.month}/${_endDate.year}',
+                          ),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.calendar_today),
+                            onPressed: () async {
+                              final picked = await showDatePicker(
+                                context: context,
+                                initialDate: _endDate,
+                                firstDate: DateTime.now(),
+                                lastDate: DateTime(2030),
+                              );
+                              if (picked != null) {
+                                setState(() => _endDate = picked);
+                              }
+                            },
                           ),
                         ),
-                        const SizedBox(height: 32),
-                        SizedBox(
-                          height: 48,
-                          child: ElevatedButton(
-                            onPressed: _isSubmitting ? null : _submit,
-                            style: ElevatedButton.styleFrom(
-                              backgroundColor: theme.colorScheme.secondary,
-                              foregroundColor: theme.colorScheme.onSecondary,
-                            ),
-                            child: _isSubmitting
-                                ? const SizedBox(
-                                    width: 20,
-                                    height: 20,
-                                    child: CircularProgressIndicator(
-                                      strokeWidth: 2,
-                                    ),
-                                  )
-                                : Text(l10n.createTravelButton),
-                          ),
-                        ),
-                      ],
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 24),
+                  const Divider(),
+                  const SizedBox(height: 16),
+                  Text(
+                    l10n.interestPointsTitle,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      fontWeight: FontWeight.w600,
                     ),
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  Row(
+                    children: [
+                      Expanded(
+                        child: TextField(
+                          controller: _poiNameCtrl,
+                          decoration: InputDecoration(
+                            labelText: l10n.pointNameLabel,
+                            border: const OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Expanded(
+                        child: TextField(
+                          controller: _poiDescCtrl,
+                          decoration: InputDecoration(
+                            labelText: l10n.descriptionLabel,
+                            border: const OutlineInputBorder(),
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      IconButton(
+                        onPressed: _addInterestPoint,
+                        icon: const Icon(Icons.add_circle),
+                        color: theme.colorScheme.secondary,
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 8),
+                  ..._interestPoints.map(
+                    (p) => Card(
+                      child: ListTile(
+                        leading: const Icon(Icons.place),
+                        title: Text(p.name),
+                        subtitle: Text(p.description),
+                        trailing: IconButton(
+                          icon: const Icon(Icons.close, size: 18),
+                          onPressed: () {
+                            setState(() => _interestPoints.remove(p));
+                          },
+                        ),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 32),
+                  SizedBox(
+                    height: 48,
+                    child: ElevatedButton(
+                      onPressed: _isSubmitting ? null : _submit,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: theme.colorScheme.secondary,
+                        foregroundColor: theme.colorScheme.onSecondary,
+                      ),
+                      child: _isSubmitting
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(strokeWidth: 2),
+                            )
+                          : Text(l10n.createTravelButton),
+                    ),
+                  ),
+                ],
               ),
             ),
+          ),
+        ),
+      ),
     );
   }
 }

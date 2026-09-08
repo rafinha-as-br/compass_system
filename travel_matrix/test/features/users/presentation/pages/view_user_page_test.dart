@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -12,6 +13,7 @@ import 'package:travel_matrix/features/users/presentation/controllers/users_cont
 import 'package:travel_matrix/features/users/presentation/pages/view_user_page.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_status_view_model.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
+import 'package:travel_matrix/features/users/presentation/view_models/travel_summary_view_model.dart';
 import 'package:travel_matrix/features/users/presentation/view_models/user_stats_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
@@ -32,6 +34,31 @@ final _testUser = UserClientViewModel(
   email: 'jane@example.com',
   travels: const [],
   stats: UserStatsViewModel(totalTravels: '0', uniqueDestinationsCount: '0'),
+);
+
+final _testUserWithTravel = UserClientViewModel(
+  backEndId: '1',
+  localId: '1',
+  name: 'Jane Doe',
+  cpf: '000.000.000-00',
+  sex: 'F',
+  phoneNumber: '11999999999',
+  status: const UserClientStatusViewModel(
+    status: ActiveStatusViewModel(),
+    lastLogin: null,
+  ),
+  email: 'jane@example.com',
+  travels: [
+    TravelSummaryViewModel(
+      backEndId: 'travel-1',
+      domainId: 'travel-1',
+      travelName: 'Litoral Norte',
+      destination: 'Ubatuba',
+      status: 'completed',
+      startDate: DateTime(2026, 1, 10),
+    ),
+  ],
+  stats: UserStatsViewModel(totalTravels: '1', uniqueDestinationsCount: '1'),
 );
 
 Widget _wrap(UsersController controller) {
@@ -83,6 +110,27 @@ void main() {
     expect(find.text('User sessions terminated'), findsOneWidget);
   });
 
+  testWidgets('deactivating a user asks for a reason and shows a success message', (tester) async {
+    when(() => useCases.deactivateUser(any(), any()))
+        .thenAnswer((_) async => const Result.success());
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Deactivate User'));
+    await tester.tap(find.text('Deactivate User'));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.text('Client request'));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('DEACTIVATE'));
+    await tester.pumpAndSettle();
+
+    verify(() => useCases.deactivateUser('1', 'Client request')).called(1);
+    expect(find.text('User deactivated'), findsOneWidget);
+  });
+
   testWidgets('cancelling the confirmation dialog does not call forceLogout', (tester) async {
     when(() => useCases.forceLogout(any()))
         .thenAnswer((_) async => const Result.success());
@@ -127,5 +175,157 @@ void main() {
     final icon = tester.widget<Icon>(find.byIcon(Icons.check_circle_outline));
     expect(icon.color, AppTheme.darkTheme.semanticColors.success);
     expect(icon.color, isNot(TravelAppColors.success));
+  });
+
+  testWidgets('renders the travel history date in Portuguese, not in the US month/day/year format', (
+    tester,
+  ) async {
+    // Janela larga: em janelas estreitas a tabela já estoura mesmo com uma única linha.
+    tester.view.physicalSize = const Size(1400, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    final userWithTravel = UserClientViewModel(
+      backEndId: '1',
+      localId: '1',
+      name: 'Jane Doe',
+      cpf: '000.000.000-00',
+      sex: 'F',
+      phoneNumber: '11999999999',
+      status: const UserClientStatusViewModel(
+        status: ActiveStatusViewModel(),
+        lastLogin: null,
+      ),
+      email: 'jane@example.com',
+      travels: [
+        TravelSummaryViewModel(
+          backEndId: 'travel-1',
+          domainId: 'travel-1',
+          travelName: 'Litoral Norte',
+          destination: 'Ubatuba',
+          status: 'completed',
+          startDate: DateTime(2026, 1, 10),
+        ),
+      ],
+      stats: UserStatsViewModel(totalTravels: '1', uniqueDestinationsCount: '1'),
+    );
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: controller,
+        child: MaterialApp(
+          locale: const Locale('pt'),
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: ViewUserPage(user: userWithTravel),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('jan.'), findsOneWidget);
+    expect(find.text('1/10/2026'), findsNothing);
+  });
+
+  testWidgets('tapping a travel history row navigates to that travel', (tester) async {
+    final controller = UsersController(useCases: useCases);
+    String? openedTravelId;
+
+    final router = GoRouter(
+      initialLocation: '/users/1',
+      routes: [
+        GoRoute(
+          path: '/users/1',
+          builder: (context, state) => ChangeNotifierProvider.value(
+            value: controller,
+            child: ViewUserPage(user: _testUserWithTravel),
+          ),
+        ),
+        GoRoute(
+          path: '/travels/:id',
+          builder: (context, state) {
+            openedTravelId = state.pathParameters['id'];
+            return const SizedBox();
+          },
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Litoral Norte'));
+    await tester.tap(find.text('Litoral Norte'));
+    await tester.pumpAndSettle();
+
+    expect(openedTravelId, 'travel-1');
+  });
+
+  testWidgets('Create Travel button navigates to travel creation with the client locked', (
+    tester,
+  ) async {
+    final controller = UsersController(useCases: useCases);
+    Map<String, dynamic>? receivedExtra;
+
+    final router = GoRouter(
+      initialLocation: '/users/1',
+      routes: [
+        GoRoute(
+          path: '/users/:id',
+          builder: (context, state) => ChangeNotifierProvider.value(
+            value: controller,
+            child: ViewUserPage(user: _testUser),
+          ),
+          routes: [
+            GoRoute(
+              path: 'create-travel',
+              builder: (context, state) {
+                receivedExtra = state.extra as Map<String, dynamic>?;
+                return const SizedBox();
+              },
+            ),
+          ],
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(
+      MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Create Travel'));
+    await tester.tap(find.text('Create Travel'));
+    await tester.pumpAndSettle();
+
+    expect(receivedExtra?['clientId'], '1');
+    expect(receivedExtra?['clientName'], 'Jane Doe');
   });
 }

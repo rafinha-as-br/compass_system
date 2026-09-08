@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import 'package:routecraft_app/app/global_controllers/travel_sync_status_controller.dart';
 import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/features/home/presentation/controllers/home_controller.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/widgets/empty_state_view.dart';
+import 'package:routecraft_app/shared/widgets/offline_banner.dart';
 import 'package:routecraft_app/shared/widgets/skeleton_block.dart';
 import 'package:routecraft_app/shared/widgets/travel_card.dart';
 import 'package:routecraft_app/shared/widgets/travel_status_chip.dart';
@@ -21,7 +23,8 @@ class HomePage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return ChangeNotifierProvider(
-      create: (_) => controller ?? HomeController(),
+      create: (context) =>
+          controller ?? HomeController(onSyncStatusChanged: context.read<TravelSyncStatusController>().update),
       child: const _HomeView(),
     );
   }
@@ -43,6 +46,7 @@ class _HomeView extends StatelessWidget {
               : SafeArea(
                   child: Column(
                     children: [
+                      if (state.isOffline) OfflineBanner(syncedAt: state.syncedAt!),
                       _HomeHeader(clientName: state.clientName),
                       Expanded(
                         child: state.isEmpty ? const _EmptyHome() : _TravelSectionsList(state: state),

@@ -46,6 +46,7 @@
   "networkErrorTitle": "Não foi possível carregar",
   "networkErrorMessage": "Verifique sua conexão e tente novamente.",
   "networkErrorRetryCta": "Tentar de novo",
+  "offlineBannerLabel": "Sem conexão · dados de {date}",
 
   "homeNavLabel": "Início",
   "itineraryNavLabel": "Roteiro",
