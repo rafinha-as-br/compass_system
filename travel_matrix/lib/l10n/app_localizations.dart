@@ -572,6 +572,18 @@ abstract class AppLocalizations {
   /// **'No interest points defined.'**
   String get noInterestPoints;
 
+  /// No description provided for @observationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Client\'s observations'**
+  String get observationsLabel;
+
+  /// No description provided for @noObservations.
+  ///
+  /// In en, this message translates to:
+  /// **'No observations from the client.'**
+  String get noObservations;
+
   /// No description provided for @noItineraryCreated.
   ///
   /// In en, this message translates to:

@@ -560,6 +560,18 @@ abstract class AppLocalizations {
   /// **'Add'**
   String get routeCreationAddInterestButton;
 
+  /// No description provided for @routeCreationObservationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Observations (optional)'**
+  String get routeCreationObservationsLabel;
+
+  /// No description provided for @routeCreationObservationsHint.
+  ///
+  /// In en, this message translates to:
+  /// **'Anything you\'d like your agent to know? You won\'t be able to edit this later.'**
+  String get routeCreationObservationsHint;
+
   /// No description provided for @routeCreationReviewHeader.
   ///
   /// In en, this message translates to:
@@ -583,6 +595,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{count} INTERESTS'**
   String routeCreationInterestsBlockLabel(int count);
+
+  /// No description provided for @routeCreationObservationsBlockLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'OBSERVATIONS'**
+  String get routeCreationObservationsBlockLabel;
 
   /// No description provided for @routeCreationSubmitCta.
   ///

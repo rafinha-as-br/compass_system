@@ -85,10 +85,13 @@
   "routeCreationInterestNameLabel": "Interesse",
   "routeCreationInterestDescriptionLabel": "Descrição (opcional)",
   "routeCreationAddInterestButton": "Adicionar",
+  "routeCreationObservationsLabel": "Observações (opcional)",
+  "routeCreationObservationsHint": "Quer avisar algo pro seu agente? Não dá pra editar depois.",
   "routeCreationReviewHeader": "REVISÃO",
   "routeCreationReviewTitle": "Confirme sua rota",
   "routeCreationNameBlockLabel": "NOME",
   "routeCreationInterestsBlockLabel": "{count} INTERESSES",
+  "routeCreationObservationsBlockLabel": "OBSERVAÇÕES",
   "routeCreationSubmitCta": "Enviar para meu agente",
 
   "visualizationTitle": "Minhas Viagens",

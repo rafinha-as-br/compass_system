@@ -19,6 +19,7 @@ abstract final class TravelApiFields {
   static const String routePlan = 'routePlan';
   static const String itinerary = 'itinerary';
   static const String participants = 'participants';
+  static const String observations = 'observations';
 }
 
 abstract final class PersonApiFields {

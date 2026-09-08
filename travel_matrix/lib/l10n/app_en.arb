@@ -94,6 +94,9 @@
   },
   "noInterestPoints": "No interest points defined.",
 
+  "observationsLabel": "Client's observations",
+  "noObservations": "No observations from the client.",
+
   "noItineraryCreated": "No itinerary has been created yet.",
 
   "notAuthenticated": "Not authenticated.",

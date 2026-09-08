@@ -66,6 +66,9 @@ class TravelViewModel{
   final ItineraryViewModel? itinerary;
   final List<PersonViewModel> participants;
   final List<TravelEventViewModel>? events;
+  /// Free-text note from the client to the agent — read-only, but still
+  /// carried through so [toDomain] never drops it on a full-object update.
+  final String? observations;
 
 
   TravelViewModel({
@@ -78,6 +81,7 @@ class TravelViewModel{
     required this.participants,
     required this.events,
     this.itinerary,
+    this.observations,
   });
 
   /// Factory constructor from domain model
@@ -92,6 +96,7 @@ class TravelViewModel{
       participants: travel.participantsList.map((x) => PersonViewModel.fromDomain(x)).toList(),
       events: travel.eventsLog?.map((x) => TravelEventViewModel.fromDomain(x)).toList(),
       itinerary: travel.itinerary == null ? null : ItineraryViewModel.fromDomain(travel.itinerary!),
+      observations: travel.observations,
 
     );
   }
@@ -108,6 +113,7 @@ class TravelViewModel{
       travelStatus: status.toDomain(),
       itinerary: itinerary?.toDomain(),
       eventsLog: events?.map((x) => x.toDomain()).toList(),
+      observations: observations,
     );
   }
 

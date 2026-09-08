@@ -257,6 +257,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get noInterestPoints => 'Nenhum ponto de interesse definido.';
 
   @override
+  String get observationsLabel => 'Observações do cliente';
+
+  @override
+  String get noObservations => 'Nenhuma observação do cliente.';
+
+  @override
   String get noItineraryCreated => 'Nenhum roteiro foi criado ainda.';
 
   @override

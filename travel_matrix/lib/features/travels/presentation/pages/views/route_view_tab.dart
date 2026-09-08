@@ -64,6 +64,28 @@ class RouteViewTab extends StatelessWidget {
                 ),
               ),
             ),
+          const SizedBox(height: 24),
+          Text(l10n.observationsLabel,
+              style: theme.textTheme.titleMedium
+                  ?.copyWith(fontWeight: FontWeight.w600)),
+          const SizedBox(height: 8),
+          Card(
+            margin: EdgeInsets.zero,
+            child: Padding(
+              padding: const EdgeInsets.all(12),
+              child: Text(
+                travel.observations?.trim().isNotEmpty == true
+                    ? travel.observations!
+                    : l10n.noObservations,
+                style: travel.observations?.trim().isNotEmpty == true
+                    ? null
+                    : TextStyle(
+                        color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                        fontStyle: FontStyle.italic,
+                      ),
+              ),
+            ),
+          ),
         ],
       ),
     );
