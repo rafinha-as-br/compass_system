@@ -116,7 +116,13 @@ void main() {
       expect(notifications, 2);
     });
 
-    test('showLogin alterna o painel entre login e welcome, e notifica uma vez', () {
+    test('estado inicial começa no painel welcome', () {
+      final controller = LoginController(repository: _FakeAuthRepository());
+
+      expect(controller.state.panel, AuthPanel.welcome);
+    });
+
+    test('showLogin alterna o painel entre welcome e login, e notifica uma vez', () {
       final controller = LoginController(repository: _FakeAuthRepository());
 
       var notifications = 0;
@@ -124,12 +130,12 @@ void main() {
 
       controller.showLogin();
 
-      expect(controller.state.panel, AuthPanel.welcome);
+      expect(controller.state.panel, AuthPanel.login);
       expect(notifications, 1);
 
       controller.showLogin();
 
-      expect(controller.state.panel, AuthPanel.login);
+      expect(controller.state.panel, AuthPanel.welcome);
       expect(notifications, 2);
     });
 

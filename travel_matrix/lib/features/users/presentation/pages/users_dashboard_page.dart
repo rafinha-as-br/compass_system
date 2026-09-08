@@ -6,8 +6,8 @@ import 'package:travel_matrix/features/users/presentation/controllers/users_cont
 import 'package:travel_matrix/features/users/presentation/view_models/client_view_model.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
-import 'package:travel_matrix/features/users/presentation/pages/deactivate_user_dialog.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/widgets/app_data_table.dart';
 
 import '../view_models/client_status_view_model.dart';
 
@@ -221,119 +221,86 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        return SingleChildScrollView(
-          child: SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: ConstrainedBox(
-            constraints: BoxConstraints(minWidth: constraints.maxWidth),
-            child: DataTable(
-              headingRowColor: WidgetStateProperty.all(
-                theme.colorScheme.surfaceContainerHighest,
-              ),
-              dataRowMaxHeight: 64,
-              dataRowMinHeight: 64,
-              columns: [
-                DataColumn(label: Text(l10n.clientNameColumn, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text(l10n.loginEmailLabel, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text(l10n.phoneLabel, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text(l10n.statusColumn, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
-                DataColumn(label: Text(l10n.actionsColumn, style: TextStyle(color: theme.colorScheme.onSurface, fontWeight: FontWeight.w600))),
+    return SingleChildScrollView(
+      child: AppDataTable<UserClientViewModel>(
+        items: users,
+        onRowTap: (context, user) => _navigateToUser(context, user, controller),
+        columns: [
+          AppDataColumn(
+            label: l10n.clientNameColumn,
+            width: const FlexColumnWidth(2),
+            cellBuilder: (context, user) => Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                CircleAvatar(
+                  radius: 16,
+                  backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
+                  child: Text(
+                    user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
+                    style: TextStyle(
+                      fontSize: 14,
+                      color: theme.colorScheme.primary,
+                      fontWeight: FontWeight.bold,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Text(user.name, style: const TextStyle(fontWeight: FontWeight.w600)),
               ],
-              rows: users.map((user) {
-                return DataRow(
-                  cells: [
-                    DataCell(
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          CircleAvatar(
-                            radius: 16,
-                            backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.1),
-                            child: Text(
-                              user.name.isNotEmpty ? user.name[0].toUpperCase() : '?',
-                              style: TextStyle(
-                                fontSize: 14,
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Text(
-                            user.name,
-                            style: const TextStyle(fontWeight: FontWeight.w600),
-                          ),
-                        ],
-                      ),
+            ),
+          ),
+          AppDataColumn(
+            label: l10n.loginEmailLabel,
+            width: const FlexColumnWidth(2),
+            cellBuilder: (context, user) => Text(
+              user.email,
+              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+            ),
+          ),
+          AppDataColumn(
+            label: l10n.phoneLabel,
+            width: const FlexColumnWidth(2),
+            cellBuilder: (context, user) => Text(
+              user.phoneNumber,
+              style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+            ),
+          ),
+          AppDataColumn(
+            label: l10n.statusColumn,
+            width: const FlexColumnWidth(2),
+            cellBuilder: (context, user) {
+              final isActive = user.status.status is ActiveStatusViewModel;
+              final color = isActive ? theme.semanticColors.success : theme.colorScheme.error;
+              return Container(
+                padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                decoration: BoxDecoration(
+                  color: color.withValues(alpha: 0.1),
+                  borderRadius: BorderRadius.circular(16),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      isActive ? Icons.check_circle_outline : Icons.highlight_off,
+                      size: 14,
+                      color: color,
                     ),
-                    DataCell(Text(user.email, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                    DataCell(Text(user.phoneNumber, style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)))),
-                    DataCell(
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                        decoration: BoxDecoration(
-                          color: user.status.status is ActiveStatusViewModel
-                              ? theme.semanticColors.success.withValues(alpha: 0.1)
-                              : theme.colorScheme.error.withValues(alpha: 0.1),
-                          borderRadius: BorderRadius.circular(16),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Icon(
-                              user.status.status is ActiveStatusViewModel ? Icons.check_circle_outline : Icons.highlight_off,
-                              size: 14,
-                              color: user.status.status is ActiveStatusViewModel ? theme.semanticColors.success : theme.colorScheme.error,
-                            ),
-                            const SizedBox(width: 4),
-                            Text(
-                              user.status.status is ActiveStatusViewModel ? l10n.activeStatusLabel : l10n.inactiveStatusLabel,
-                              style: TextStyle(
-                                fontSize: 12,
-                                fontWeight: FontWeight.w600,
-                                color: user.status.status is ActiveStatusViewModel
-                                    ? theme.semanticColors.success
-                                    : theme.colorScheme.error,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    DataCell(
-                      Row(
-                        mainAxisSize: MainAxisSize.min,
-                        children: [
-                          IconButton(
-                            icon: const Icon(Icons.remove_red_eye_outlined, size: 20),
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            tooltip: l10n.viewUser,
-                            onPressed: () => _navigateToUser(context, user, controller),
-                          ),
-                          IconButton(
-                            icon: const Icon(Icons.block, size: 20),
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                            tooltip: l10n.deactivateUserDialogTitle,
-                            onPressed: () async {
-                              final reason = await showDeactivateUserDialog(context, user.name);
-                              if (reason != null) {
-                                controller.deactivateUser(user.localId, reason);
-                              }
-                            },
-                          ),
-                        ],
+                    const SizedBox(width: 4),
+                    Text(
+                      isActive ? l10n.activeStatusLabel : l10n.inactiveStatusLabel,
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: color,
                       ),
                     ),
                   ],
-                );
-              }).toList(),
-            ),
+                ),
+              );
+            },
           ),
-        ),
-      );
-    },
+        ],
+      ),
     );
   }
 

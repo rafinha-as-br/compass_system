@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
@@ -28,6 +29,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
     final l10n = AppLocalizations.of(context)!;
     final mutedColor = theme.colorScheme.onSurface.withValues(alpha: 0.6);
     final statusColor = _getTravelStatusColor(theme);
+    final dateFormat = DateFormat.yMMMd(l10n.localeName);
 
     return Container(
       decoration: BoxDecoration(
@@ -222,7 +224,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                   ),
                   const SizedBox(width: 4),
                   Text(
-                    '${_formatDate(travel.route.startDate)} - ${_formatDate(travel.route.endDate)}',
+                    '${dateFormat.format(travel.route.startDate)} - ${dateFormat.format(travel.route.endDate)}',
                     style: TextStyle(
                       color: mutedColor,
                       fontWeight: FontWeight.w600,
@@ -259,11 +261,6 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
 
   @override
   Size get preferredSize => const Size.fromHeight(190);
-
-  String _formatDate(DateTime date) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${months[date.month - 1]} ${date.day}, ${date.year}';
-  }
 
   /// Base color for the status chip — always applied at 12% alpha for the
   /// background, matching the pattern already used by the other status
