@@ -48,7 +48,11 @@ class _AccountView extends StatelessWidget {
                   _AgentBlock(name: state.agentName!),
                 ],
                 const SizedBox(height: 32),
-                _MenuItem(icon: Icons.badge_outlined, label: l10n.accountPersonalDataMenu),
+                _MenuItem(
+                  icon: Icons.badge_outlined,
+                  label: l10n.accountPersonalDataMenu,
+                  onTap: () => context.push(AppRoutes.accountPersonalData),
+                ),
                 _MenuItem(
                   icon: Icons.notifications_outlined,
                   label: l10n.accountNotificationsMenu,
