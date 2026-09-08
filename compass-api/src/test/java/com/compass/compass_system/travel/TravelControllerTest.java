@@ -25,6 +25,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -232,6 +233,38 @@ class TravelControllerTest {
 
     @Test
     @Order(7)
+    void shouldUpsertParticipants() throws Exception {
+        Person client = new Person();
+        client.setName("Maria Silva");
+        client.setAge("34");
+        client.setSex("F");
+
+        Person child = new Person();
+        child.setName("Joaquim Silva");
+        child.setAge("8");
+        child.setSex("M");
+
+        mockMvc.perform(put("/travels/" + createdTravelId + "/participants")
+                .header("Authorization", authHeader())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(List.of(client, child))))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").isNotEmpty())
+                .andExpect(jsonPath("$[0].name").value("Maria Silva"))
+                .andExpect(jsonPath("$[1].name").value("Joaquim Silva"))
+                .andExpect(jsonPath("$[1].age").value("8"));
+
+        mockMvc.perform(get("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.participants", hasSize(2)))
+                // The route/itinerary from previous steps stay untouched.
+                .andExpect(jsonPath("$.routePlan.destination").value("Porto"))
+                .andExpect(jsonPath("$.travelStatus").value("itinerary_created"));
+    }
+
+    @Test
+    @Order(8)
     void shouldKeepObservationsUntouchedByIsolatedUpdates() throws Exception {
         // No endpoint edits observations after creation — this is the whole
         // point of the "not editable after creation" rule: it's just never
@@ -243,7 +276,7 @@ class TravelControllerTest {
     }
 
     @Test
-    @Order(8)
+    @Order(9)
     void shouldDeleteTravel() throws Exception {
         mockMvc.perform(delete("/travels/" + createdTravelId)
                 .header("Authorization", authHeader()))

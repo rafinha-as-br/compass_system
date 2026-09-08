@@ -992,6 +992,30 @@ abstract class AppLocalizations {
   /// **'{count, plural, one{1 interest removed} other{{count} interests removed}}'**
   String editRouteDiffInterestsRemoved(int count);
 
+  /// No description provided for @editRouteDiffParticipantsAdded.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 participant added} other{{count} participants added}}'**
+  String editRouteDiffParticipantsAdded(int count);
+
+  /// No description provided for @editRouteDiffParticipantsRemoved.
+  ///
+  /// In en, this message translates to:
+  /// **'{count, plural, one{1 participant removed} other{{count} participants removed}}'**
+  String editRouteDiffParticipantsRemoved(int count);
+
+  /// No description provided for @editRouteDiffParticipantsUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'participant details updated'**
+  String get editRouteDiffParticipantsUpdated;
+
+  /// No description provided for @participantsSectionLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get participantsSectionLabel;
+
   /// No description provided for @editRouteSubmitCta.
   ///
   /// In en, this message translates to:

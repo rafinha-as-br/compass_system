@@ -279,6 +279,20 @@
       "count": { "type": "int" }
     }
   },
+  "editRouteDiffParticipantsAdded": "{count, plural, one{1 participant added} other{{count} participants added}}",
+  "@editRouteDiffParticipantsAdded": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "editRouteDiffParticipantsRemoved": "{count, plural, one{1 participant removed} other{{count} participants removed}}",
+  "@editRouteDiffParticipantsRemoved": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "editRouteDiffParticipantsUpdated": "participant details updated",
+  "participantsSectionLabel": "Participants",
   "editRouteSubmitCta": "Send changes",
   "editRouteSubmitError": "Failed to update route: {error}",
   "@editRouteSubmitError": {

@@ -129,4 +129,33 @@ public class TravelController {
         Travel saved = travelRepository.save(travel);
         return ResponseEntity.ok(saved.getRoutePlan());
     }
+
+    // ─── PUT /travels/{travelId}/participants ──────────────────────────────────
+    // Upsert: fully replaces the participants list on a Travel. Isolated from
+    // route/itinerary, same pattern as upsertRoutePlan.
+    @PutMapping("/{travelId}/participants")
+    public ResponseEntity<List<Person>> upsertParticipants(
+            @PathVariable String travelId,
+            @RequestBody List<Person> incoming) {
+
+        Optional<Travel> opt = travelRepository.findById(travelId);
+        if (opt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Travel travel = opt.get();
+
+        // Mutate the existing Hibernate-managed collection in place — handing
+        // setParticipants a brand-new List instance instead (breaking its
+        // link to the persistent collection) throws
+        // "collection with cascade=all-delete-orphan was no longer
+        // referenced" on flush. Clearing + re-adding lets orphanRemoval
+        // delete what's no longer present and persist what's new.
+        List<Person> participants = travel.getParticipants();
+        participants.clear();
+        participants.addAll(incoming);
+
+        Travel saved = travelRepository.save(travel);
+        return ResponseEntity.ok(saved.getParticipants());
+    }
 }
