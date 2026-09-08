@@ -1,8 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
-import 'package:travel_matrix/app/router/app_routes.dart';
-import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 
@@ -28,27 +24,6 @@ class RouteViewTab extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Align(
-            alignment: Alignment.centerRight,
-            child: ElevatedButton.icon(
-              onPressed: () {
-                context.go(
-                  '${AppRoutes.travels}/${travel.localId}/${AppRoutes.routeCreate}',
-                  extra: {
-                    'travel': travel,
-                    'controller': context.read<TravelsController>(),
-                  },
-                );
-              },
-              icon: const Icon(Icons.edit_road),
-              label: Text(l10n.editRoutePlanButton),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: theme.colorScheme.secondary,
-                foregroundColor: theme.colorScheme.onSecondary,
-              ),
-            ),
-          ),
-          const SizedBox(height: 16),
           Text(l10n.routeDetails,
               style: theme.textTheme.titleLarge
                   ?.copyWith(fontWeight: FontWeight.bold)),

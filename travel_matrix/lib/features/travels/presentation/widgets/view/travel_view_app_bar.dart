@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 
 /// This appBar is used in the Travel_View_page, responsible for showing:
@@ -26,6 +28,8 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final mutedColor = theme.colorScheme.onSurface.withValues(alpha: 0.6);
+    final statusColor = _getTravelStatusColor(theme);
+    final dateFormat = DateFormat.yMMMd(l10n.localeName);
 
     return Container(
       decoration: BoxDecoration(
@@ -189,13 +193,13 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                       vertical: 4,
                     ),
                     decoration: BoxDecoration(
-                      color: _getTravelStatusBgColor(context),
+                      color: statusColor.withValues(alpha: 0.12),
                       borderRadius: BorderRadius.circular(20),
                     ),
                     child: Text(
                       travel.statusString,
                       style: TextStyle(
-                        color: _getTravelStatusFgColor(context),
+                        color: statusColor,
                         fontSize: 11,
                         fontWeight: FontWeight.w600,
                         letterSpacing: 0.5,
@@ -227,7 +231,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                         const SizedBox(width: 4),
                         Flexible(
                           child: Text(
-                            '${_formatDate(travel.route.startDate)} - ${_formatDate(travel.route.endDate)}',
+                            '${dateFormat.format(travel.route.startDate)} - ${dateFormat.format(travel.route.endDate)}',
                             style: TextStyle(
                               color: mutedColor,
                               fontWeight: FontWeight.w600,
@@ -275,36 +279,21 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   @override
   Size get preferredSize => const Size.fromHeight(220);
 
-  String _formatDate(DateTime date) {
-    const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-    return '${months[date.month - 1]} ${date.day}, ${date.year}';
-  }
-
-  Color _getTravelStatusBgColor(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
+  /// Base color for the status chip — always applied at 12% alpha for the
+  /// background, matching the pattern already used by the other status
+  /// chips in the app (e.g. dashboard's travel status chip), instead of the
+  /// solid *Container tokens (undefined in [ColorScheme], so they silently
+  /// fell back to the full-strength color).
+  Color _getTravelStatusColor(ThemeData theme) {
     switch (travel.status) {
       case TravelStatusViewModel.notReady:
-        return scheme.errorContainer;
+        return theme.semanticColors.warning;
       case TravelStatusViewModel.ready:
-        return scheme.primaryContainer;
+        return theme.semanticColors.success;
       case TravelStatusViewModel.inProgress:
-        return scheme.secondaryContainer;
+        return theme.colorScheme.primary;
       case TravelStatusViewModel.completed:
-        return scheme.tertiaryContainer;
-    }
-  }
-
-  Color _getTravelStatusFgColor(BuildContext context) {
-    final scheme = Theme.of(context).colorScheme;
-    switch (travel.status) {
-      case TravelStatusViewModel.notReady:
-        return scheme.onErrorContainer;
-      case TravelStatusViewModel.ready:
-        return scheme.onPrimaryContainer;
-      case TravelStatusViewModel.inProgress:
-        return scheme.onSecondaryContainer;
-      case TravelStatusViewModel.completed:
-        return scheme.onTertiaryContainer;
+        return theme.colorScheme.secondary;
     }
   }
 }
