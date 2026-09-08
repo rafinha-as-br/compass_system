@@ -176,7 +176,8 @@ void main() {
     expect(find.text('Serra Gaúcha'), findsOneWidget);
     expect(find.text('São Paulo → Paraty'), findsNWidgets(2));
     expect(find.text('12–19 Oct'), findsNWidgets(2));
-    expect(find.byType(FloatingActionButton), findsOneWidget);
+    // The FAB moved to the Viagens tab (CPS-127) — Início no longer has one.
+    expect(find.byType(FloatingActionButton), findsNothing);
   });
 
   testWidgets('renders the greeting and route/period localized in Portuguese', (tester) async {

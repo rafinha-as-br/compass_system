@@ -59,8 +59,12 @@
   },
 
   "homeNavLabel": "Home",
-  "itineraryNavLabel": "Itinerary",
+  "travelsNavLabel": "Travels",
   "accountNavLabel": "Account",
+
+  "travelsSearchHint": "Search by name",
+  "travelsFilterAll": "All",
+  "travelsNoResultsMessage": "No travels match your search.",
 
   "createRouteTitle": "Create a Route",
   "tripInfoStep": "Trip Info",

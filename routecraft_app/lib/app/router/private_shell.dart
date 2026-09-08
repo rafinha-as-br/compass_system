@@ -7,11 +7,11 @@ import 'package:routecraft_app/features/account/presentation/pages/personal_data
 import 'package:routecraft_app/features/edit_route/presentation/pages/edit_route_page.dart';
 import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
 import 'package:routecraft_app/features/notifications/presentation/pages/notifications_page.dart';
-import 'package:routecraft_app/features/itinerary_hub/presentation/pages/itinerary_hub_page.dart';
 import 'package:routecraft_app/features/itinerary_timeline/presentation/pages/itinerary_timeline_page.dart';
 import 'package:routecraft_app/features/itinerary_today/presentation/pages/itinerary_today_page.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
+import 'package:routecraft_app/features/travels/presentation/pages/travels_page.dart';
 import 'package:routecraft_app/features/travels/presentation/widgets/travel_resolver.dart';
 
 final privateShellRoute = StatefulShellRoute.indexedStack(
@@ -47,25 +47,15 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
       ),
     ]),
 
-    // Branch 1: Roteiro
+    // Branch 1: Viagens
     StatefulShellBranch(routes: [
       GoRoute(
-        path: AppRoutes.itinerary,
-        builder: (context, state) => const ItineraryHubPage(travel: null),
+        path: AppRoutes.travels,
+        builder: (context, state) => const TravelsPage(),
         routes: [
           GoRoute(
-            path: AppRoutes.followTravel,
-            builder: _followTravelBuilder,
-            routes: [
-              GoRoute(
-                path: AppRoutes.editRoute,
-                builder: _editRouteBuilder,
-              ),
-              GoRoute(
-                path: AppRoutes.itineraryTimeline,
-                builder: _itineraryTimelineBuilder,
-              ),
-            ],
+            path: AppRoutes.createRoute,
+            builder: (context, state) => const RouteCreationPage(),
           ),
         ],
       ),
