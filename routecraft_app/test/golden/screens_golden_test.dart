@@ -169,6 +169,8 @@ Widget _routeCreationReviewScreen() {
   controller.addInterestPoint('Trilha', '');
   controller.addInterestPoint('Gastronomia', '');
   controller.addInterestPoint('Centro histórico', '');
+  controller.addParticipant(name: 'Rafaela Souza', age: '34', sex: 'F');
+  controller.addParticipant(name: 'Marcos Souza', age: '36', sex: 'M');
   return RouteCreationPage(controller: controller);
 }
 

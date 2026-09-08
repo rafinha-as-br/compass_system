@@ -4,9 +4,12 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/edit_route/presentation/controllers/edit_route_controller.dart';
 import 'package:routecraft_app/features/edit_route/presentation/pages/edit_route_page.dart';
+import 'package:routecraft_app/features/travels/domain/entities/person.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
+import 'package:routecraft_app/features/travels/domain/repositories/participants_repository.dart';
 import 'package:routecraft_app/features/travels/domain/repositories/route_repository.dart';
+import 'package:routecraft_app/features/travels/domain/usecases/participants_usecases.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/route_usecases.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 
@@ -15,6 +18,12 @@ class _FakeRouteRepository implements RouteRepository {
 
   @override
   Future<Result<RoutePlan>> updateRoute(String travelId, RoutePlan routePlan) async => nextUpdateResult!;
+}
+
+class _FakeParticipantsRepository implements ParticipantsRepository {
+  @override
+  Future<Result<List<Person>>> updateParticipants(String travelId, List<Person> participants) async =>
+      Result.success(participants);
 }
 
 RoutePlan _originalRoute() => RoutePlan(
@@ -35,11 +44,11 @@ Travel _travel(TravelStatus status) => Travel(
       clientName: 'Rafaela Souza',
       travelName: 'Litoral Norte',
       travelStatus: status,
-      participantsList: const [],
+      participantsList: [Person(domainId: 'p1', backEndId: 'p1', name: 'Rafaela Souza', age: '30', sex: 'F')],
       routePlan: _originalRoute(),
     );
 
-Widget _wrap(Travel travel, {RouteRepository? repository}) {
+Widget _wrap(Travel travel, {RouteRepository? repository, ParticipantsRepository? participantsRepository}) {
   return MaterialApp(
     localizationsDelegates: const [
       AppLocalizations.delegate,
@@ -54,7 +63,10 @@ Widget _wrap(Travel travel, {RouteRepository? repository}) {
         travelId: travel.backEndId!,
         original: travel.routePlan,
         showPublishedWarning: travel.hasItinerary,
+        clientName: travel.clientName,
+        originalParticipants: travel.participantsList,
         routeUseCases: RouteUseCases(repository ?? _FakeRouteRepository()),
+        participantsUseCases: ParticipantsUseCases(participantsRepository ?? _FakeParticipantsRepository()),
       ),
     ),
   );
@@ -121,6 +133,66 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('Route updated successfully!'), findsOneWidget);
+  });
+
+  testWidgets('the client participant has no remove button, shown as "You" instead', (tester) async {
+    await tester.pumpWidget(_wrap(_travel(TravelStatus.routeCreated)));
+
+    expect(find.text('Rafaela Souza'), findsOneWidget);
+    expect(find.text('You'), findsOneWidget);
+    expect(find.byIcon(Icons.delete_outline), findsNothing);
+  });
+
+  testWidgets('marking a non-client participant for removal strikes it through with an undo action', (tester) async {
+    tester.view.physicalSize = const Size(1080, 2400);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    final travel = _travel(TravelStatus.routeCreated);
+    final travelWithChild = Travel(
+      domainId: travel.domainId,
+      backEndId: travel.backEndId,
+      clientName: travel.clientName,
+      travelName: travel.travelName,
+      travelStatus: travel.travelStatus,
+      participantsList: [
+        ...travel.participantsList,
+        Person(domainId: 'p2', backEndId: 'p2', name: 'João', age: '10', sex: 'M'),
+      ],
+      routePlan: travel.routePlan,
+    );
+    final controller = EditRouteController(
+      travelId: travelWithChild.backEndId!,
+      original: travelWithChild.routePlan,
+      showPublishedWarning: travelWithChild.hasItinerary,
+      clientName: travelWithChild.clientName,
+      originalParticipants: travelWithChild.participantsList,
+      routeUseCases: RouteUseCases(_FakeRouteRepository()),
+      participantsUseCases: ParticipantsUseCases(_FakeParticipantsRepository()),
+    );
+
+    await tester.pumpWidget(MaterialApp(
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: EditRoutePage(travel: travelWithChild, controller: controller),
+    ));
+
+    expect(find.byIcon(Icons.delete_outline), findsOneWidget);
+    await tester.tap(find.byIcon(Icons.delete_outline));
+    await tester.pump();
+
+    expect(find.text('João'), findsOneWidget);
+    expect(find.textContaining('1 participant removed'), findsOneWidget);
+
+    await tester.tap(find.text('undo').last);
+    await tester.pump();
+
+    expect(find.textContaining('participant removed'), findsNothing);
   });
 
   testWidgets('a failed submission surfaces the error message and stays on the form', (tester) async {

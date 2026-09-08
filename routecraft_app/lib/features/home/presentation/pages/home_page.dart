@@ -179,9 +179,14 @@ class _TravelSection extends StatelessWidget {
               padding: const EdgeInsets.only(bottom: 8),
               child: TravelCard(
                 travelName: travel.travelName,
-                routeSummary: travelRouteSummary(context, travel),
+                route: travelRouteText(travel),
+                period: travelPeriodText(context, travel),
                 status: travelStatusChipVariant(travel.travelStatus),
-                onTap: () => _pushAndRefresh(context, AppRoutes.homeFollowTravel, extra: travel),
+                onTap: () => _pushAndRefresh(
+                  context,
+                  '${AppRoutes.homeFollowTravel}?${AppRoutes.travelIdQuery(travel.backEndId!)}',
+                  extra: travel,
+                ),
               ),
             ),
           ),

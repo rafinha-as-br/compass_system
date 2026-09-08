@@ -13,11 +13,17 @@ TravelStatusChipVariant travelStatusChipVariant(TravelStatus status) => switch (
       TravelStatus.travelFinished => TravelStatusChipVariant.travelFinished,
     };
 
-/// "origem → destino · período" summary line for a [TravelCard] — used
+/// "origem → destino" for a [TravelCard] — used wherever a [Travel] is
+/// rendered as a card (Início, Viagens).
+String travelRouteText(Travel travel) {
+  final route = travel.routePlan;
+  return '${route.startLocation} → ${route.destination}';
+}
+
+/// The travel's date range, formatted for the current locale — used
 /// wherever a [Travel] is rendered as a card (Início, Viagens).
-String travelRouteSummary(BuildContext context, Travel travel) {
+String travelPeriodText(BuildContext context, Travel travel) {
   final languageCode = Localizations.localeOf(context).languageCode;
   final route = travel.routePlan;
-  final period = formatDateRange(languageCode, route.startDate, route.endDate);
-  return '${route.startLocation} → ${route.destination} · $period';
+  return formatDateRange(languageCode, route.startDate, route.endDate);
 }

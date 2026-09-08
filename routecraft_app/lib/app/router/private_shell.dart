@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:routecraft_app/app/router/app_routes.dart';
 import 'package:routecraft_app/app/router/private_shell_scaffold.dart';
 import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
+import 'package:routecraft_app/features/account/presentation/pages/personal_data_page.dart';
 import 'package:routecraft_app/features/edit_route/presentation/pages/edit_route_page.dart';
 import 'package:routecraft_app/features/home/presentation/pages/home_page.dart';
 import 'package:routecraft_app/features/notifications/presentation/pages/notifications_page.dart';
@@ -11,6 +12,7 @@ import 'package:routecraft_app/features/itinerary_today/presentation/pages/itine
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/presentation/pages/travels_page.dart';
+import 'package:routecraft_app/features/travels/presentation/widgets/travel_resolver.dart';
 
 final privateShellRoute = StatefulShellRoute.indexedStack(
   builder: (context, state, navigationShell) {
@@ -69,6 +71,10 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
             path: AppRoutes.notifications,
             builder: (context, state) => const NotificationsPage(),
           ),
+          GoRoute(
+            path: AppRoutes.personalData,
+            builder: (context, state) => const PersonalDataPage(),
+          ),
         ],
       ),
     ]),
@@ -76,13 +82,25 @@ final privateShellRoute = StatefulShellRoute.indexedStack(
 );
 
 Widget _followTravelBuilder(BuildContext context, GoRouterState state) {
-  return ItineraryTodayPage(travel: state.extra as Travel?);
+  return TravelResolver(
+    travel: state.extra as Travel?,
+    travelId: state.uri.queryParameters[AppRoutes.travelIdParam],
+    builder: (context, travel) => ItineraryTodayPage(travel: travel),
+  );
 }
 
 Widget _editRouteBuilder(BuildContext context, GoRouterState state) {
-  return EditRoutePage(travel: state.extra as Travel);
+  return TravelResolver(
+    travel: state.extra as Travel?,
+    travelId: state.uri.queryParameters[AppRoutes.travelIdParam],
+    builder: (context, travel) => EditRoutePage(travel: travel),
+  );
 }
 
 Widget _itineraryTimelineBuilder(BuildContext context, GoRouterState state) {
-  return ItineraryTimelinePage(travel: state.extra as Travel?);
+  return TravelResolver(
+    travel: state.extra as Travel?,
+    travelId: state.uri.queryParameters[AppRoutes.travelIdParam],
+    builder: (context, travel) => ItineraryTimelinePage(travel: travel),
+  );
 }

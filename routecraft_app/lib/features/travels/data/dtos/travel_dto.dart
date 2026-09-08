@@ -13,6 +13,7 @@ class TravelDTO {
   final RoutePlanDTO routePlan;
   final ItineraryDTO? itinerary;
   final List<PersonDTO> participants;
+  final String? observations;
 
   TravelDTO({
     required this.id,
@@ -22,6 +23,7 @@ class TravelDTO {
     required this.routePlan,
     required this.participants,
     this.itinerary,
+    this.observations,
   });
 
   factory TravelDTO.fromJson(Map<String, dynamic> json) {
@@ -38,6 +40,7 @@ class TravelDTO {
           .map((x) => PersonDTO.fromJson(x as Map<String, dynamic>))
           .toList(),
       itinerary: itinerary == null ? null : ItineraryDTO.fromJson(itinerary as Map<String, dynamic>),
+      observations: json[TravelApiFields.observations]?.toString(),
     );
   }
 
@@ -50,6 +53,7 @@ class TravelDTO {
       TravelApiFields.routePlan: routePlan.toJson(),
       TravelApiFields.itinerary: itinerary?.toJson(),
       TravelApiFields.participants: participants.map((x) => x.toJson()).toList(),
+      TravelApiFields.observations: observations,
     };
   }
 
@@ -63,6 +67,7 @@ class TravelDTO {
       routePlan: routePlan.toDomain(),
       participantsList: participants.map((x) => x.toDomain()).toList(),
       itinerary: itinerary?.toDomain(),
+      observations: observations,
     );
   }
 
@@ -74,6 +79,7 @@ class TravelDTO {
       travelStatus: travel.travelStatus.toApiValue(),
       routePlan: RoutePlanDTO.fromDomain(travel.routePlan),
       participants: travel.participantsList.map(PersonDTO.fromDomain).toList(),
+      observations: travel.observations,
     );
   }
 }

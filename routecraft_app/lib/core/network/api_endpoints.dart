@@ -19,4 +19,10 @@ abstract final class ApiEndpoints {
   static String travelById(String id) => '/travels/$id';
   static String travelsByClient(String clientName) => '/travels/client/$clientName';
   static String travelRoute(String travelId) => '/travels/$travelId/route';
+  static String travelParticipants(String travelId) => '/travels/$travelId/participants';
+
+  // Users
+  static const String currentUser = '/users/me';
+  static String userById(String id) => '/users/$id';
+  static String userResetPassword(String id) => '/users/$id/reset-password';
 }

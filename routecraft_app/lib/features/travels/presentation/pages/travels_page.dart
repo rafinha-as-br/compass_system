@@ -150,9 +150,13 @@ class _TravelsListView extends StatelessWidget {
                       padding: const EdgeInsets.only(bottom: 8),
                       child: TravelCard(
                         travelName: travel.travelName,
-                        routeSummary: travelRouteSummary(context, travel),
+                        route: travelRouteText(travel),
+                        period: travelPeriodText(context, travel),
                         status: travelStatusChipVariant(travel.travelStatus),
-                        onTap: () => context.go(AppRoutes.homeFollowTravel, extra: travel),
+                        onTap: () => context.go(
+                          '${AppRoutes.homeFollowTravel}?${AppRoutes.travelIdQuery(travel.backEndId!)}',
+                          extra: travel,
+                        ),
                       ),
                     );
                   },

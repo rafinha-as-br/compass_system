@@ -267,6 +267,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get routeCreationAddInterestButton => 'Add';
 
   @override
+  String get routeCreationObservationsLabel => 'Observations (optional)';
+
+  @override
+  String get routeCreationObservationsHint =>
+      'Anything you\'d like your agent to know? You won\'t be able to edit this later.';
+
+  @override
   String get routeCreationReviewHeader => 'REVIEW';
 
   @override
@@ -281,7 +288,52 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get routeCreationObservationsBlockLabel => 'OBSERVATIONS';
+
+  @override
   String get routeCreationSubmitCta => 'Send to my agent';
+
+  @override
+  String get routeCreationParticipantsTitle => 'Who\'s traveling?';
+
+  @override
+  String get routeCreationParticipantsSubtitle =>
+      'You\'re already on the list — add anyone else joining.';
+
+  @override
+  String get routeCreationParticipantNameLabel => 'Name';
+
+  @override
+  String get routeCreationParticipantAgeLabel => 'Age';
+
+  @override
+  String get routeCreationParticipantSexLabel => 'Sex';
+
+  @override
+  String get routeCreationParticipantSexMale => 'Male';
+
+  @override
+  String get routeCreationParticipantSexFemale => 'Female';
+
+  @override
+  String get routeCreationParticipantSexOther => 'Other';
+
+  @override
+  String get routeCreationParticipantYouTag => 'You';
+
+  @override
+  String get routeCreationAddParticipantButton => 'Add';
+
+  @override
+  String routeCreationParticipantsBlockLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count PARTICIPANTS',
+      one: '1 PARTICIPANT',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get visualizationTitle => 'My Travels';
@@ -375,6 +427,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get hubGoToHomeCta => 'Go to Home';
+
+  @override
+  String get travelNotFoundTitle => 'Trip not found';
+
+  @override
+  String get travelNotFoundMessage =>
+      'This trip couldn\'t be found. It may have been removed.';
 
   @override
   String todayDayProgress(int day, int total) {
@@ -502,6 +561,34 @@ class AppLocalizationsEn extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String editRouteDiffParticipantsAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count participants added',
+      one: '1 participant added',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String editRouteDiffParticipantsRemoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count participants removed',
+      one: '1 participant removed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get editRouteDiffParticipantsUpdated => 'participant details updated';
+
+  @override
+  String get participantsSectionLabel => 'Participants';
 
   @override
   String get editRouteSubmitCta => 'Send changes';
@@ -648,6 +735,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get comingSoonMessage => 'Coming soon.';
+
+  @override
+  String get personalDataTitle => 'Personal data';
+
+  @override
+  String get personalDataNameLabel => 'Name';
+
+  @override
+  String get personalDataPhoneLabel => 'Phone';
+
+  @override
+  String get personalDataAgeLabel => 'Age';
+
+  @override
+  String get personalDataGenderLabel => 'Gender';
+
+  @override
+  String get personalDataCpfLabel => 'CPF';
+
+  @override
+  String get personalDataEmailLabel => 'E-mail';
+
+  @override
+  String get personalDataSaveButton => 'Save';
+
+  @override
+  String get personalDataSaveSuccessMessage => 'Data saved successfully.';
+
+  @override
+  String get personalDataResetPasswordButton => 'Reset password';
+
+  @override
+  String get personalDataResetPasswordConfirmTitle => 'Reset password?';
+
+  @override
+  String get personalDataResetPasswordConfirmMessage =>
+      'Your password will be reset to the default password. You\'ll need it to sign in again.';
+
+  @override
+  String get personalDataResetPasswordSuccessMessage =>
+      'Password reset successfully.';
+
+  @override
+  String get personalDataGenericErrorMessage =>
+      'Something went wrong. Please try again.';
+
+  @override
+  String get maleGenderLabel => 'Male';
+
+  @override
+  String get femaleGenderLabel => 'Female';
+
+  @override
+  String get otherGenderLabel => 'Other';
 
   @override
   String get travelStatusRouteCreated => 'Awaiting agent';

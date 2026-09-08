@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/features/edit_route/presentation/controllers/edit_route_controller.dart';
+import 'package:routecraft_app/features/travels/domain/entities/person.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
@@ -33,6 +34,8 @@ class EditRoutePage extends StatelessWidget {
             travelId: travel.backEndId!,
             original: travel.routePlan,
             showPublishedWarning: travel.hasItinerary,
+            clientName: travel.clientName,
+            originalParticipants: travel.participantsList,
           ),
       child: const _EditRouteView(),
     );
@@ -115,6 +118,8 @@ class _EditRouteView extends StatelessWidget {
               ),
               const SizedBox(height: 24),
               const _InterestsSection(),
+              const SizedBox(height: 24),
+              const _ParticipantsSection(),
               if (controller.hasChanges) ...[
                 const SizedBox(height: 24),
                 _PendingChangesBlock(controller: controller),
@@ -313,6 +318,200 @@ class _InterestRow extends StatelessWidget {
           else
             IconButton(onPressed: onRemove, icon: const Icon(Icons.close), tooltip: l10n.editRouteRemoveInterestTooltip),
         ],
+      ),
+    );
+  }
+}
+
+class _ParticipantsSection extends StatefulWidget {
+  const _ParticipantsSection();
+
+  @override
+  State<_ParticipantsSection> createState() => _ParticipantsSectionState();
+}
+
+class _ParticipantsSectionState extends State<_ParticipantsSection> {
+  final _nameController = TextEditingController();
+  final _ageController = TextEditingController();
+  String? _sex;
+
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _ageController.dispose();
+    super.dispose();
+  }
+
+  void _addParticipant(EditRouteController controller) {
+    final name = _nameController.text.trim();
+    final age = _ageController.text.trim();
+    final sex = _sex;
+    if (name.isEmpty || age.isEmpty || sex == null) return;
+    controller.addParticipant(name: name, age: age, sex: sex);
+    _nameController.clear();
+    _ageController.clear();
+    setState(() => _sex = null);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = context.watch<EditRouteController>();
+    final theme = Theme.of(context);
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Text(
+          l10n.participantsSectionLabel,
+          style: theme.textTheme.labelMedium?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+        ),
+        const SizedBox(height: 8),
+        for (final person in controller.participants)
+          Padding(
+            key: ValueKey(person.domainId),
+            padding: const EdgeInsets.only(bottom: 12),
+            child: _ParticipantRow(
+              person: person,
+              isClient: controller.isClientParticipant(person),
+              pendingRemoval: controller.isParticipantPendingRemoval(person.domainId),
+              onChanged: (name, age, sex) =>
+                  controller.updateParticipant(person.domainId, name: name, age: age, sex: sex),
+              onRemove: () => controller.markParticipantForRemoval(person.domainId),
+              onUndo: () => controller.undoParticipantRemoval(person.domainId),
+            ),
+          ),
+        AppTextField(controller: _nameController, labelText: l10n.routeCreationParticipantNameLabel),
+        const SizedBox(height: 16),
+        AppTextField(
+          controller: _ageController,
+          labelText: l10n.routeCreationParticipantAgeLabel,
+          keyboardType: TextInputType.number,
+        ),
+        const SizedBox(height: 16),
+        DropdownButtonFormField<String>(
+          initialValue: _sex,
+          decoration: InputDecoration(labelText: l10n.routeCreationParticipantSexLabel),
+          items: [
+            DropdownMenuItem(value: 'M', child: Text(l10n.routeCreationParticipantSexMale)),
+            DropdownMenuItem(value: 'F', child: Text(l10n.routeCreationParticipantSexFemale)),
+            DropdownMenuItem(value: 'O', child: Text(l10n.routeCreationParticipantSexOther)),
+          ],
+          onChanged: (value) => setState(() => _sex = value),
+        ),
+        const SizedBox(height: 8),
+        Align(
+          alignment: Alignment.centerRight,
+          child: TextButton.icon(
+            onPressed: () => _addParticipant(controller),
+            icon: const Icon(Icons.add),
+            label: Text(l10n.routeCreationAddParticipantButton),
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _ParticipantRow extends StatelessWidget {
+  const _ParticipantRow({
+    required this.person,
+    required this.isClient,
+    required this.pendingRemoval,
+    required this.onChanged,
+    required this.onRemove,
+    required this.onUndo,
+  });
+
+  final Person person;
+  final bool isClient;
+  final bool pendingRemoval;
+  final void Function(String name, String age, String sex) onChanged;
+  final VoidCallback onRemove;
+  final VoidCallback onUndo;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final theme = Theme.of(context);
+
+    if (pendingRemoval) {
+      return Row(
+        children: [
+          Expanded(
+            child: Text(
+              person.name,
+              style: theme.textTheme.bodyLarge?.copyWith(
+                decoration: TextDecoration.lineThrough,
+                color: theme.colorScheme.onSurface.withValues(alpha: 0.4),
+              ),
+            ),
+          ),
+          TextButton(onPressed: onUndo, child: Text(l10n.editRouteUndoLink)),
+        ],
+      );
+    }
+
+    return Card(
+      margin: EdgeInsets.zero,
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    key: ValueKey('${person.domainId}-name'),
+                    initialValue: person.name,
+                    decoration: InputDecoration(labelText: l10n.routeCreationParticipantNameLabel),
+                    onChanged: (value) => onChanged(value, person.age, person.sex),
+                  ),
+                ),
+                if (isClient)
+                  Padding(
+                    padding: const EdgeInsets.only(left: 8),
+                    child: Chip(label: Text(l10n.routeCreationParticipantYouTag)),
+                  )
+                else
+                  IconButton(
+                    icon: const Icon(Icons.delete_outline),
+                    tooltip: l10n.editRouteRemoveInterestTooltip,
+                    onPressed: onRemove,
+                  ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Row(
+              children: [
+                Expanded(
+                  child: TextFormField(
+                    key: ValueKey('${person.domainId}-age'),
+                    initialValue: person.age,
+                    keyboardType: TextInputType.number,
+                    decoration: InputDecoration(labelText: l10n.routeCreationParticipantAgeLabel),
+                    onChanged: (value) => onChanged(person.name, value, person.sex),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: DropdownButtonFormField<String>(
+                    key: ValueKey('${person.domainId}-sex'),
+                    initialValue: person.sex.isEmpty ? null : person.sex,
+                    decoration: InputDecoration(labelText: l10n.routeCreationParticipantSexLabel),
+                    items: [
+                      DropdownMenuItem(value: 'M', child: Text(l10n.routeCreationParticipantSexMale)),
+                      DropdownMenuItem(value: 'F', child: Text(l10n.routeCreationParticipantSexFemale)),
+                      DropdownMenuItem(value: 'O', child: Text(l10n.routeCreationParticipantSexOther)),
+                    ],
+                    onChanged: (value) => onChanged(person.name, person.age, value ?? ''),
+                  ),
+                ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
