@@ -66,6 +66,7 @@ class RouteCreationController extends ChangeNotifier {
     tripNameController.addListener(notifyListeners);
     startLocationController.addListener(notifyListeners);
     destinationController.addListener(notifyListeners);
+    observationsController.addListener(notifyListeners);
   }
 
   /// Test-only: starts from a fixed state instead of the default (empty)
@@ -149,6 +150,11 @@ class RouteCreationController extends ChangeNotifier {
     notifyListeners();
   }
 
+  /// Free-text note to the agent, scoped to the whole trip — optional, and
+  /// (per the backend contract) never editable again once the route is
+  /// submitted, so there is deliberately no `setObservations`/update path.
+  final observationsController = TextEditingController();
+
   bool _isStepValid(int step) => switch (step) {
         0 => isNameValid,
         1 => isDatesValid,
@@ -197,6 +203,8 @@ class RouteCreationController extends ChangeNotifier {
       interestsList: interestPoints,
     );
 
+    final observations = observationsController.text.trim();
+
     final travel = Travel(
       domainId: const Uuid().v4(),
       backEndId: null,
@@ -205,6 +213,7 @@ class RouteCreationController extends ChangeNotifier {
       travelStatus: TravelStatus.routeCreated,
       participantsList: const [],
       routePlan: routePlan,
+      observations: observations.isEmpty ? null : observations,
     );
 
     final result = await _travelUseCases.createTravel(travel);
@@ -222,6 +231,7 @@ class RouteCreationController extends ChangeNotifier {
     tripNameController.dispose();
     startLocationController.dispose();
     destinationController.dispose();
+    observationsController.dispose();
     super.dispose();
   }
 }

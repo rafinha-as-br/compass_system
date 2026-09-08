@@ -287,4 +287,49 @@ void main() {
       expect(controller.interestPoints, isEmpty);
     });
   });
+
+  group('RouteCreationController observations', () {
+    test('submitRoute sends the trimmed observations text', () async {
+      final repository = _FakeTravelRepository()..nextCreateResult = Result.success(_dummyTravel());
+      final controller = _controllerAtReview(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+      );
+      controller.observationsController.text = '  Viajando com bebê de colo.  ';
+
+      await controller.submitRoute();
+
+      expect(repository.capturedTravel?.observations, 'Viajando com bebê de colo.');
+    });
+
+    test('submitRoute sends null when observations is left empty', () async {
+      final repository = _FakeTravelRepository()..nextCreateResult = Result.success(_dummyTravel());
+      final controller = _controllerAtReview(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+      );
+
+      await controller.submitRoute();
+
+      expect(repository.capturedTravel?.observations, isNull);
+    });
+  });
 }
+
+Travel _dummyTravel() => Travel(
+      domainId: 'd1',
+      backEndId: 'assigned-id',
+      clientName: 'Maria Silva',
+      travelName: 'My Trip',
+      travelStatus: TravelStatus.routeCreated,
+      participantsList: const [],
+      routePlan: RoutePlan(
+        domainId: 'd-route',
+        backEndId: null,
+        startDate: DateTime(2026, 1, 1),
+        endDate: DateTime(2026, 1, 10),
+        startLocation: 'SP',
+        destination: 'Lisbon',
+        interestsList: const [],
+      ),
+    );

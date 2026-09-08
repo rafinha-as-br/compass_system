@@ -18,12 +18,14 @@ abstract class AppRoutes {
   static const notifications = 'notifications';
   static const editRoute = 'edit-route';
   static const itineraryTimeline = 'timeline';
+  static const personalData = 'personal-data';
 
   /// Full paths for navigating to a sub-route from outside its parent.
   static const homeCreateRoute = '$home/$createRoute';
   static const homeFollowTravel = '$home/$followTravel';
   static const itineraryFollowTravel = '$itinerary/$followTravel';
   static const accountNotifications = '$account/$notifications';
+  static const accountPersonalData = '$account/$personalData';
 
   /// Query param carrying the travel's backend id on every route that also
   /// receives the `Travel` object via `extra` — `extra` doesn't survive a
