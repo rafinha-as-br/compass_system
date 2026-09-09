@@ -8,6 +8,7 @@ import 'package:routecraft_app/core/network/clients/travel_api_client.dart';
 import 'package:routecraft_app/core/network/http_api_client.dart';
 import 'package:routecraft_app/features/travels/data/datasources/travel_data_source.dart';
 import 'package:routecraft_app/features/travels/data/repositories/travel_repository_impl.dart';
+import 'package:routecraft_app/features/travels/data/services/travel_cache_service.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 
@@ -83,6 +84,61 @@ void main() {
       final repository = _repositoryWith(MockClient((request) async {
         throw http.ClientException('connection refused');
       }));
+
+      final result = await repository.getTravel('t1');
+
+      expect(result.isSuccess, isFalse);
+      expect((result as Failure<Travel>).isConnectivityError, isTrue);
+    });
+
+    test('falls back to the cached travel matching the id on a network error', () async {
+      final cachedTravel = Travel(
+        domainId: 'local-1',
+        backEndId: 't1',
+        clientName: 'Maria Silva',
+        travelName: 'Lisbon 2025',
+        travelStatus: TravelStatus.routeCreated,
+        participantsList: const [],
+        routePlan: RoutePlan(
+          domainId: 'local-route',
+          backEndId: null,
+          startDate: DateTime(2025, 8, 1),
+          endDate: DateTime(2025, 8, 15),
+          startLocation: 'São Paulo',
+          destination: 'Lisbon',
+          interestsList: const [],
+        ),
+      );
+      final dataSource = TravelDataSource(
+        client: TravelApiClient(HttpApiClient.forTesting(MockClient((request) async {
+          throw http.ClientException('connection refused');
+        }))),
+        getToken: () async => 'test-token',
+      );
+      final repository = TravelRepositoryImpl(
+        dataSource: dataSource,
+        getClientName: () async => 'Maria Silva',
+        readCache: (clientName) async => CachedTravels(travels: [cachedTravel], syncedAt: DateTime(2025, 8, 1)),
+      );
+
+      final result = await repository.getTravel('t1');
+
+      expect(result.isSuccess, isTrue);
+      expect((result as Success<Travel>).data.backEndId, 't1');
+    });
+
+    test('propagates the connectivity Failure when no cached travel matches the id', () async {
+      final dataSource = TravelDataSource(
+        client: TravelApiClient(HttpApiClient.forTesting(MockClient((request) async {
+          throw http.ClientException('connection refused');
+        }))),
+        getToken: () async => 'test-token',
+      );
+      final repository = TravelRepositoryImpl(
+        dataSource: dataSource,
+        getClientName: () async => 'Maria Silva',
+        readCache: (clientName) async => null,
+      );
 
       final result = await repository.getTravel('t1');
 
