@@ -86,6 +86,19 @@ maestro test .maestro/routecraft/auth/login_success.yaml # um flow específico
   auth — não há flow de cadastro automatizado aqui ainda. Usuário CLIENTE de
   referência usado nestes flows: `joao.teste@teste.com` / `senha123`.
 
+  **Gotcha confirmado em 2026-09-08:** a senha real atual desse usuário no
+  banco de QA é `compass123`, não `senha123` — os flows deste diretório
+  (`login_success.yaml` e os demais em `auth/`) falham com "E-mail ou senha
+  incorretos" até serem corrigidos ou até a senha ser resetada de volta.
+  Suspeita: uma rodada de QA anterior usou o fluxo de reset de senha (ver
+  `routecraft_app/.maestro/README.md`, que já documenta `compass123` como
+  senha corrente) e a alterou no banco compartilhado, sem atualizar estes
+  flows. Além disso, existe uma **segunda árvore de flows Maestro** em
+  `routecraft_app/.maestro/` (common/home/itinerary/account), mais recente
+  e com o `login_as_joao.yaml` já usando a senha correta — as duas árvores
+  não foram consolidadas; decidir com Rafinha qual delas é a canônica antes
+  da próxima rodada, em vez de as duas continuarem divergindo.
+
 ## Testabilidade — limitações conhecidas
 
 - **Expiração de JWT (CPS-45):** o token expira em 24h

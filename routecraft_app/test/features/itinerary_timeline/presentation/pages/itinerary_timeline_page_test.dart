@@ -242,6 +242,7 @@ void main() {
       expect(find.text('D1'), findsOneWidget);
       expect(find.text('D2'), findsOneWidget);
       expect(find.text('1 step'), findsOneWidget);
+      expect(find.byIcon(Icons.arrow_back), findsOneWidget); // explicit back button, CPS-121
 
       await tester.tap(find.text('D2'));
       await tester.pumpAndSettle();

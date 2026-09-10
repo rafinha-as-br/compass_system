@@ -22,6 +22,38 @@ O projeto conta com testes de integração cobrindo todo o ciclo do CRUD. Eles r
 ./mvnw test
 ```
 
+### Populando Dados de Teste
+
+O banco sobe vazio — sem clientes nem viagens, o que deixa listagens,
+agrupamentos por status e estados vazios do RouteCraft indistinguíveis entre
+si. Com a API rodando (`docker-compose up -d --build`), rode:
+
+```bash
+python compass-api/scripts/seed_test_data.py
+```
+
+O script usa só a biblioteca padrão do Python (sem dependências extras) e
+popula a API **pelos endpoints HTTP reais** (nunca escreve direto no banco):
+cadastra 5 clientes e cria 4 viagens para cada um — uma em cada estado do
+ciclo de vida (`route_created`, `itinerary_created`, `travel_started`,
+`travel_finished`), com exatamente 1 viagem "em andamento"
+(`travel_started`) por cliente. As viagens com itinerário recebem passos
+reais de tipos variados (hospedagem, parada, e trecho de avião/ônibus/carro
+alugado, alternando por viagem).
+
+É repetível: rodar de novo reaproveita o login dos clientes já cadastrados
+(a API responde 400 em cadastro duplicado) e cria mais um lote de viagens.
+Para resetar o banco entre execuções, use `docker-compose down -v` antes de
+subir de novo.
+
+Por padrão aponta para `http://localhost:8081`; para outro host, edite a
+constante `BASE_URL` no topo do script.
+
+Self-check das funções puras (sem precisar da API rodando):
+```bash
+python compass-api/scripts/test_seed_test_data.py
+```
+
 ---
 
 ## 🔌 Endpoints da API

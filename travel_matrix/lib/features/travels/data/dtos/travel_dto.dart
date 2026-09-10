@@ -31,6 +31,11 @@ class TravelDTO {
   /// Travel events DTO list
   final List<TravelEventDTO>? eventsLog;
 
+  /// Free-text note from the client to the agent — read-only here, but
+  /// still carried through every field so a full-object update (e.g.
+  /// [CrudTravelUseCases.markAsReady]) doesn't silently wipe it.
+  final String? observations;
+
   TravelDTO({
     required this.id,
     required this.clientName,
@@ -40,6 +45,7 @@ class TravelDTO {
     required this.participants,
     this.eventsLog,
     this.itinerary,
+    this.observations,
   });
 
   /// From json factory constructor
@@ -67,6 +73,7 @@ class TravelDTO {
           : ItineraryDTO.fromJson(
               json[TravelApiFields.itinerary] as Map<String, dynamic>,
             ),
+      observations: json[TravelApiFields.observations]?.toString(),
     );
   }
 
@@ -83,6 +90,7 @@ class TravelDTO {
           .map((x) => x.toJson())
           .toList(),
       TravelApiFields.events: eventsLog?.map((x) => x.toJson()).toList(),
+      TravelApiFields.observations: observations,
     };
   }
 
@@ -98,6 +106,7 @@ class TravelDTO {
       travelStatus: TravelStatus.fromApiValue(travelStatus),
       eventsLog: eventsLog?.map((x) => x.toDomain()).toList(),
       itinerary: itinerary?.toDomain(),
+      observations: observations,
     );
   }
 
@@ -118,6 +127,7 @@ class TravelDTO {
       itinerary: travel.itinerary == null
           ? null
           : ItineraryDTO.fromDomain(itinerary: travel.itinerary!),
+      observations: travel.observations,
     );
   }
 }

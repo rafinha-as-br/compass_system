@@ -225,6 +225,7 @@ void main() {
       expect(find.text('Check-in'), findsOneWidget);
       expect(find.text('Jantar no centro histórico'), findsOneWidget);
       expect(find.byIcon(Icons.check_circle), findsOneWidget); // the finished check-in
+      expect(find.byIcon(Icons.arrow_back), findsOneWidget); // explicit back button, CPS-121
     });
 
     testWidgets('shows "Happening now" instead of a countdown while the focused step is in progress', (tester) async {

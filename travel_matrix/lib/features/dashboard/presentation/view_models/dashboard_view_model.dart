@@ -6,7 +6,6 @@ class DashboardViewModel {
   final int pendingItineraries;
   final int activeClients;
   final List<DashboardTravelRowViewModel> recentTravels;
-  final List<DashboardClientRowViewModel> activeClientsList;
 
   const DashboardViewModel({
     required this.totalTravels,
@@ -14,7 +13,6 @@ class DashboardViewModel {
     required this.pendingItineraries,
     required this.activeClients,
     required this.recentTravels,
-    required this.activeClientsList,
   });
 
   factory DashboardViewModel.fromDomain(DashboardStats stats) {
@@ -25,8 +23,6 @@ class DashboardViewModel {
       activeClients: stats.activeClients,
       recentTravels:
           stats.recentTravels.map(DashboardTravelRowViewModel.fromDomain).toList(),
-      activeClientsList:
-          stats.activeClientsList.map(DashboardClientRowViewModel.fromDomain).toList(),
     );
   }
 }
@@ -66,29 +62,6 @@ class DashboardTravelRowViewModel {
       startDate: travel.startDate,
       status: travel.status,
       hasItinerary: travel.hasItinerary,
-    );
-  }
-}
-
-class DashboardClientRowViewModel {
-  final String id;
-  final String name;
-  final String email;
-  final String phoneNumber;
-
-  const DashboardClientRowViewModel({
-    required this.id,
-    required this.name,
-    required this.email,
-    required this.phoneNumber,
-  });
-
-  factory DashboardClientRowViewModel.fromDomain(DashboardClientSummary client) {
-    return DashboardClientRowViewModel(
-      id: client.id,
-      name: client.name,
-      email: client.email,
-      phoneNumber: client.phoneNumber,
     );
   }
 }

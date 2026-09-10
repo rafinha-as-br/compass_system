@@ -89,6 +89,9 @@
   "interestPointsCount": "Pontos de Interesse ({count})",
   "noInterestPoints": "Nenhum ponto de interesse definido.",
 
+  "observationsLabel": "Observações do cliente",
+  "noObservations": "Nenhuma observação do cliente.",
+
   "noItineraryCreated": "Nenhum roteiro foi criado ainda.",
 
   "notAuthenticated": "Não autenticado.",
@@ -98,7 +101,6 @@
   "usersTitle": "Usuários",
   "createUser": "Criar Usuário",
   "editUser": "Editar Usuário",
-  "viewUser": "Ver Usuário",
   "deleteUser": "Excluir Usuário",
   "deleteUserConfirm": "Tem certeza que deseja excluir este usuário?",
 
@@ -122,7 +124,6 @@
     }
   },
   "recentTravels": "Viagens Recentes",
-  "activeClientsListTitle": "Clientes Ativos",
   "travelNameColumn": "Nome da Viagem",
   "clientNameColumn": "Nome",
   "routeColumn": "Rota",
@@ -166,8 +167,11 @@
   "resetPasswordActionDescription": "Envia um link para o e-mail do usuário redefinir a senha com segurança.",
   "forceLogoutActionTitle": "Forçar Logout",
   "forceLogoutActionDescription": "Encerra imediatamente todas as sessões ativas deste usuário.",
+  "deactivateUserActionDescription": "Desativa a conta deste usuário, impedindo o login.",
   "resetPasswordSuccessMessage": "Link de redefinição de senha enviado",
   "resetPasswordFailureMessage": "Falha ao enviar link de redefinição",
+  "deactivateUserSuccessMessage": "Usuário desativado",
+  "deactivateUserFailureMessage": "Falha ao desativar usuário",
   "forceLogoutSuccessMessage": "Sessões do usuário encerradas",
   "forceLogoutFailureMessage": "Falha ao encerrar sessões",
   "travelStatsTitle": "Estatísticas de Viagem",
@@ -210,7 +214,6 @@
   "editRouteTitle": "Editar Rota",
   "updateRouteButton": "ATUALIZAR ROTA",
   "createTravelButton": "CRIAR VIAGEM",
-  "editRoutePlanButton": "Editar Plano de Rota",
   "markAsReadyButton": "Marcar como Pronta",
   "markAsReadyConfirm": "Tem certeza que deseja marcar esta viagem como pronta?",
   "confirmButton": "Confirmar",
@@ -218,6 +221,7 @@
   "markAsReadyFailure": "Falha ao marcar viagem como pronta",
   "needsItineraryFirstTooltip": "Você precisa criar um roteiro primeiro",
   "markAsReadyTooltip": "Marcar viagem como pronta",
+  "travelActionsMenuTooltip": "Ações da viagem",
   "routeViewTab": "Ver Rota",
   "itineraryViewTab": "Ver Roteiro",
   "travelersCount": "{count} Viajantes",

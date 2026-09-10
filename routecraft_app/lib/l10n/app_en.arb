@@ -59,8 +59,12 @@
   },
 
   "homeNavLabel": "Home",
-  "itineraryNavLabel": "Itinerary",
+  "travelsNavLabel": "Travels",
   "accountNavLabel": "Account",
+
+  "travelsSearchHint": "Search by name",
+  "travelsFilterAll": "All",
+  "travelsNoResultsMessage": "No travels match your search.",
 
   "createRouteTitle": "Create a Route",
   "tripInfoStep": "Trip Info",
@@ -111,6 +115,8 @@
   "routeCreationInterestNameLabel": "Interest",
   "routeCreationInterestDescriptionLabel": "Description (optional)",
   "routeCreationAddInterestButton": "Add",
+  "routeCreationObservationsLabel": "Observations (optional)",
+  "routeCreationObservationsHint": "Anything you'd like your agent to know? You won't be able to edit this later.",
   "routeCreationReviewHeader": "REVIEW",
   "routeCreationReviewTitle": "Confirm your route",
   "routeCreationNameBlockLabel": "NAME",
@@ -120,7 +126,25 @@
       "count": { "type": "int" }
     }
   },
+  "routeCreationObservationsBlockLabel": "OBSERVATIONS",
   "routeCreationSubmitCta": "Send to my agent",
+
+  "routeCreationParticipantsTitle": "Who's traveling?",
+  "routeCreationParticipantsSubtitle": "You're already on the list — add anyone else joining.",
+  "routeCreationParticipantNameLabel": "Name",
+  "routeCreationParticipantAgeLabel": "Age",
+  "routeCreationParticipantSexLabel": "Sex",
+  "routeCreationParticipantSexMale": "Male",
+  "routeCreationParticipantSexFemale": "Female",
+  "routeCreationParticipantSexOther": "Other",
+  "routeCreationParticipantYouTag": "You",
+  "routeCreationAddParticipantButton": "Add",
+  "routeCreationParticipantsBlockLabel": "{count, plural, one{1 PARTICIPANT} other{{count} PARTICIPANTS}}",
+  "@routeCreationParticipantsBlockLabel": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
 
   "visualizationTitle": "My Travels",
   "noTravelsYet": "No travels yet.",
@@ -161,6 +185,8 @@
   "hubEmptyTitle": "No trip selected",
   "hubEmptyMessage": "Select a trip from Home to see its itinerary.",
   "hubGoToHomeCta": "Go to Home",
+  "travelNotFoundTitle": "Trip not found",
+  "travelNotFoundMessage": "This trip couldn't be found. It may have been removed.",
 
   "todayDayProgress": "Day {day} of {total}",
   "@todayDayProgress": {
@@ -257,6 +283,20 @@
       "count": { "type": "int" }
     }
   },
+  "editRouteDiffParticipantsAdded": "{count, plural, one{1 participant added} other{{count} participants added}}",
+  "@editRouteDiffParticipantsAdded": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "editRouteDiffParticipantsRemoved": "{count, plural, one{1 participant removed} other{{count} participants removed}}",
+  "@editRouteDiffParticipantsRemoved": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "editRouteDiffParticipantsUpdated": "participant details updated",
+  "participantsSectionLabel": "Participants",
   "editRouteSubmitCta": "Send changes",
   "editRouteSubmitError": "Failed to update route: {error}",
   "@editRouteSubmitError": {
@@ -326,6 +366,24 @@
     }
   },
   "comingSoonMessage": "Coming soon.",
+
+  "personalDataTitle": "Personal data",
+  "personalDataNameLabel": "Name",
+  "personalDataPhoneLabel": "Phone",
+  "personalDataAgeLabel": "Age",
+  "personalDataGenderLabel": "Gender",
+  "personalDataCpfLabel": "CPF",
+  "personalDataEmailLabel": "E-mail",
+  "personalDataSaveButton": "Save",
+  "personalDataSaveSuccessMessage": "Data saved successfully.",
+  "personalDataResetPasswordButton": "Reset password",
+  "personalDataResetPasswordConfirmTitle": "Reset password?",
+  "personalDataResetPasswordConfirmMessage": "Your password will be reset to the default password. You'll need it to sign in again.",
+  "personalDataResetPasswordSuccessMessage": "Password reset successfully.",
+  "personalDataGenericErrorMessage": "Something went wrong. Please try again.",
+  "maleGenderLabel": "Male",
+  "femaleGenderLabel": "Female",
+  "otherGenderLabel": "Other",
 
   "travelStatusRouteCreated": "Awaiting agent",
   "travelStatusItineraryCreated": "Itinerary published",

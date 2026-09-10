@@ -64,7 +64,10 @@ class _ItineraryTimelinePageState extends State<ItineraryTimelinePage> {
     final syncStatus = context.watch<TravelSyncStatusController>();
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.itineraryLabel)),
+      appBar: AppBar(
+        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop()),
+        title: Text(l10n.itineraryLabel),
+      ),
       body: SafeArea(
         child: Column(
           children: [

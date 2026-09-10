@@ -148,10 +148,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeNavLabel => 'Início';
 
   @override
-  String get itineraryNavLabel => 'Roteiro';
+  String get travelsNavLabel => 'Viagens';
 
   @override
   String get accountNavLabel => 'Conta';
+
+  @override
+  String get travelsSearchHint => 'Buscar por nome';
+
+  @override
+  String get travelsFilterAll => 'Todas';
+
+  @override
+  String get travelsNoResultsMessage => 'Nenhuma viagem corresponde à busca.';
 
   @override
   String get createRouteTitle => 'Criar uma Rota';
@@ -257,6 +266,13 @@ class AppLocalizationsPt extends AppLocalizations {
   String get routeCreationAddInterestButton => 'Adicionar';
 
   @override
+  String get routeCreationObservationsLabel => 'Observações (opcional)';
+
+  @override
+  String get routeCreationObservationsHint =>
+      'Quer avisar algo pro seu agente? Não dá pra editar depois.';
+
+  @override
   String get routeCreationReviewHeader => 'REVISÃO';
 
   @override
@@ -271,7 +287,52 @@ class AppLocalizationsPt extends AppLocalizations {
   }
 
   @override
+  String get routeCreationObservationsBlockLabel => 'OBSERVAÇÕES';
+
+  @override
   String get routeCreationSubmitCta => 'Enviar para meu agente';
+
+  @override
+  String get routeCreationParticipantsTitle => 'Quem vai viajar?';
+
+  @override
+  String get routeCreationParticipantsSubtitle =>
+      'Você já está na lista — adicione quem mais for com você.';
+
+  @override
+  String get routeCreationParticipantNameLabel => 'Nome';
+
+  @override
+  String get routeCreationParticipantAgeLabel => 'Idade';
+
+  @override
+  String get routeCreationParticipantSexLabel => 'Sexo';
+
+  @override
+  String get routeCreationParticipantSexMale => 'Masculino';
+
+  @override
+  String get routeCreationParticipantSexFemale => 'Feminino';
+
+  @override
+  String get routeCreationParticipantSexOther => 'Outro';
+
+  @override
+  String get routeCreationParticipantYouTag => 'Você';
+
+  @override
+  String get routeCreationAddParticipantButton => 'Adicionar';
+
+  @override
+  String routeCreationParticipantsBlockLabel(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count PARTICIPANTES',
+      one: '1 PARTICIPANTE',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get visualizationTitle => 'Minhas Viagens';
@@ -366,6 +427,13 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get hubGoToHomeCta => 'Ir para o Início';
+
+  @override
+  String get travelNotFoundTitle => 'Viagem não encontrada';
+
+  @override
+  String get travelNotFoundMessage =>
+      'Não foi possível encontrar esta viagem. Ela pode ter sido removida.';
 
   @override
   String todayDayProgress(int day, int total) {
@@ -493,6 +561,35 @@ class AppLocalizationsPt extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String editRouteDiffParticipantsAdded(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count participantes adicionados',
+      one: '1 participante adicionado',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String editRouteDiffParticipantsRemoved(int count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count participantes removidos',
+      one: '1 participante removido',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get editRouteDiffParticipantsUpdated =>
+      'dados de participante atualizados';
+
+  @override
+  String get participantsSectionLabel => 'Participantes';
 
   @override
   String get editRouteSubmitCta => 'Enviar alterações';
@@ -639,6 +736,60 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get comingSoonMessage => 'Em breve.';
+
+  @override
+  String get personalDataTitle => 'Dados pessoais';
+
+  @override
+  String get personalDataNameLabel => 'Nome';
+
+  @override
+  String get personalDataPhoneLabel => 'Telefone';
+
+  @override
+  String get personalDataAgeLabel => 'Idade';
+
+  @override
+  String get personalDataGenderLabel => 'Gênero';
+
+  @override
+  String get personalDataCpfLabel => 'CPF';
+
+  @override
+  String get personalDataEmailLabel => 'E-mail';
+
+  @override
+  String get personalDataSaveButton => 'Salvar';
+
+  @override
+  String get personalDataSaveSuccessMessage => 'Dados salvos com sucesso.';
+
+  @override
+  String get personalDataResetPasswordButton => 'Resetar senha';
+
+  @override
+  String get personalDataResetPasswordConfirmTitle => 'Resetar senha?';
+
+  @override
+  String get personalDataResetPasswordConfirmMessage =>
+      'Sua senha será redefinida para a senha padrão. Você vai precisar dela para entrar novamente.';
+
+  @override
+  String get personalDataResetPasswordSuccessMessage =>
+      'Senha resetada com sucesso.';
+
+  @override
+  String get personalDataGenericErrorMessage =>
+      'Algo deu errado. Tente novamente.';
+
+  @override
+  String get maleGenderLabel => 'Masculino';
+
+  @override
+  String get femaleGenderLabel => 'Feminino';
+
+  @override
+  String get otherGenderLabel => 'Outro';
 
   @override
   String get travelStatusRouteCreated => 'Aguardando agente';
