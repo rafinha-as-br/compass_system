@@ -572,6 +572,18 @@ abstract class AppLocalizations {
   /// **'No interest points defined.'**
   String get noInterestPoints;
 
+  /// No description provided for @observationsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Client\'s observations'**
+  String get observationsLabel;
+
+  /// No description provided for @noObservations.
+  ///
+  /// In en, this message translates to:
+  /// **'No observations from the client.'**
+  String get noObservations;
+
   /// No description provided for @noItineraryCreated.
   ///
   /// In en, this message translates to:
@@ -1202,12 +1214,6 @@ abstract class AppLocalizations {
   /// **'CREATE TRAVEL'**
   String get createTravelButton;
 
-  /// No description provided for @editRoutePlanButton.
-  ///
-  /// In en, this message translates to:
-  /// **'Edit Route Plan'**
-  String get editRoutePlanButton;
-
   /// No description provided for @markAsReadyButton.
   ///
   /// In en, this message translates to:
@@ -1249,6 +1255,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Mark travel as ready'**
   String get markAsReadyTooltip;
+
+  /// No description provided for @travelActionsMenuTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel actions'**
+  String get travelActionsMenuTooltip;
 
   /// No description provided for @routeViewTab.
   ///

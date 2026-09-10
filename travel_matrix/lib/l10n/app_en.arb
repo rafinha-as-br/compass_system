@@ -94,6 +94,9 @@
   },
   "noInterestPoints": "No interest points defined.",
 
+  "observationsLabel": "Client's observations",
+  "noObservations": "No observations from the client.",
+
   "noItineraryCreated": "No itinerary has been created yet.",
 
   "notAuthenticated": "Not authenticated.",
@@ -236,7 +239,6 @@
   "editRouteTitle": "Edit Route",
   "updateRouteButton": "UPDATE ROUTE",
   "createTravelButton": "CREATE TRAVEL",
-  "editRoutePlanButton": "Edit Route Plan",
   "markAsReadyButton": "Mark as Ready",
   "markAsReadyConfirm": "Are you sure you want to mark this travel as ready?",
   "confirmButton": "Confirm",
@@ -244,6 +246,7 @@
   "markAsReadyFailure": "Failed to mark travel as ready",
   "needsItineraryFirstTooltip": "You need to create an itinerary first",
   "markAsReadyTooltip": "Mark travel as ready",
+  "travelActionsMenuTooltip": "Travel actions",
   "routeViewTab": "Route View",
   "itineraryViewTab": "Itinerary View",
   "travelersCount": "{count} Travelers",

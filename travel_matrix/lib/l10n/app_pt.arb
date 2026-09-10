@@ -89,6 +89,9 @@
   "interestPointsCount": "Pontos de Interesse ({count})",
   "noInterestPoints": "Nenhum ponto de interesse definido.",
 
+  "observationsLabel": "Observações do cliente",
+  "noObservations": "Nenhuma observação do cliente.",
+
   "noItineraryCreated": "Nenhum roteiro foi criado ainda.",
 
   "notAuthenticated": "Não autenticado.",
@@ -211,7 +214,6 @@
   "editRouteTitle": "Editar Rota",
   "updateRouteButton": "ATUALIZAR ROTA",
   "createTravelButton": "CRIAR VIAGEM",
-  "editRoutePlanButton": "Editar Plano de Rota",
   "markAsReadyButton": "Marcar como Pronta",
   "markAsReadyConfirm": "Tem certeza que deseja marcar esta viagem como pronta?",
   "confirmButton": "Confirmar",
@@ -219,6 +221,7 @@
   "markAsReadyFailure": "Falha ao marcar viagem como pronta",
   "needsItineraryFirstTooltip": "Você precisa criar um roteiro primeiro",
   "markAsReadyTooltip": "Marcar viagem como pronta",
+  "travelActionsMenuTooltip": "Ações da viagem",
   "routeViewTab": "Ver Rota",
   "itineraryViewTab": "Ver Roteiro",
   "travelersCount": "{count} Viajantes",

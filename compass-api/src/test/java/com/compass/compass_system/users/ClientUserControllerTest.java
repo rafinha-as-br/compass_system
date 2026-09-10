@@ -22,6 +22,7 @@ import java.util.Map;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -58,6 +59,7 @@ class ClientUserControllerTest {
         client.setName("Maria Cliente");
         client.setEmail("cliente@matrix.com");
         client.setPassword(BCrypt.hashpw("senha123", BCrypt.gensalt()));
+        client.setAge(30);
         clientId = clientUserRepository.save(client).getId();
 
         AgentUser agent = new AgentUser();
@@ -160,5 +162,52 @@ class ClientUserControllerTest {
         travel.setRoutePlan(routePlan);
 
         travelRepository.save(travel);
+    }
+
+    @Test
+    void authenticatedUserResponseIncludesAge() throws Exception {
+        String token = login("cliente@matrix.com");
+
+        mockMvc.perform(get("/users/me").header("Authorization", "Bearer " + token))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.age").value(30));
+    }
+
+    @Test
+    void updateUserPersistsEditableFieldsIncludingAge() throws Exception {
+        Map<String, Object> body = Map.of(
+                "name", "Maria Atualizada",
+                "phoneNumber", "11999998888",
+                "age", 42,
+                "sex", "F");
+
+        mockMvc.perform(put("/users/" + clientId)
+                        .header("Authorization", "Bearer " + agentToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.name").value("Maria Atualizada"))
+                .andExpect(jsonPath("$.data.phoneNumber").value("11999998888"))
+                .andExpect(jsonPath("$.data.age").value(42))
+                .andExpect(jsonPath("$.data.sex").value("F"));
+
+        ClientUser updated = clientUserRepository.findById(clientId).orElseThrow();
+        org.junit.jupiter.api.Assertions.assertEquals(42, updated.getAge());
+    }
+
+    @Test
+    void updateUserAcceptsAnExplicitNullAgeWithoutError() throws Exception {
+        Map<String, Object> body = new java.util.HashMap<>();
+        body.put("age", null);
+
+        mockMvc.perform(put("/users/" + clientId)
+                        .header("Authorization", "Bearer " + agentToken)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(body)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.age").value(org.hamcrest.Matchers.nullValue()));
+
+        ClientUser updated = clientUserRepository.findById(clientId).orElseThrow();
+        org.junit.jupiter.api.Assertions.assertNull(updated.getAge());
     }
 }

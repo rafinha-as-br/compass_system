@@ -50,7 +50,10 @@ class ItineraryTodayPage extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Scaffold(
-      appBar: AppBar(title: Text(l10n.itineraryLabel)),
+      appBar: AppBar(
+        leading: IconButton(icon: const Icon(Icons.arrow_back), onPressed: () => context.pop()),
+        title: Text(l10n.itineraryLabel),
+      ),
       body: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(24),
@@ -204,7 +207,10 @@ void _showComingSoon(BuildContext context) {
 
 void _openFullItinerary(BuildContext context, Travel travel) {
   final currentLocation = GoRouterState.of(context).matchedLocation;
-  context.push('$currentLocation/${AppRoutes.itineraryTimeline}', extra: travel);
+  context.push(
+    '$currentLocation/${AppRoutes.itineraryTimeline}?${AppRoutes.travelIdQuery(travel.backEndId!)}',
+    extra: travel,
+  );
 }
 
 @immutable

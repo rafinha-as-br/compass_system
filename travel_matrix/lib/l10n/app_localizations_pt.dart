@@ -257,6 +257,12 @@ class AppLocalizationsPt extends AppLocalizations {
   String get noInterestPoints => 'Nenhum ponto de interesse definido.';
 
   @override
+  String get observationsLabel => 'Observações do cliente';
+
+  @override
+  String get noObservations => 'Nenhuma observação do cliente.';
+
+  @override
   String get noItineraryCreated => 'Nenhum roteiro foi criado ainda.';
 
   @override
@@ -596,9 +602,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get createTravelButton => 'CRIAR VIAGEM';
 
   @override
-  String get editRoutePlanButton => 'Editar Plano de Rota';
-
-  @override
   String get markAsReadyButton => 'Marcar como Pronta';
 
   @override
@@ -620,6 +623,9 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get markAsReadyTooltip => 'Marcar viagem como pronta';
+
+  @override
+  String get travelActionsMenuTooltip => 'Ações da viagem';
 
   @override
   String get routeViewTab => 'Ver Rota';

@@ -59,6 +59,14 @@ void main() {
     expect(markAllRead.onPressed, isNotNull);
   });
 
+  testWidgets('shows an explicit back button (CPS-121)', (tester) async {
+    await tester.pumpWidget(_wrap(NotificationsPage(
+      controller: NotificationsController.withState(const NotificationsState(isLoading: false)),
+    )));
+
+    expect(find.byIcon(Icons.arrow_back), findsOneWidget);
+  });
+
   testWidgets('"mark all read" is disabled once every notification is already read', (tester) async {
     final controller = NotificationsController.withState(NotificationsState(
       isLoading: false,

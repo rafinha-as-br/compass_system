@@ -52,6 +52,10 @@ class Travel {
   final Itinerary? itinerary;
   final List<Person> participantsList;
 
+  /// Free-text note from the client to the agent, scoped to the whole
+  /// trip. Set once at creation — there is no edit endpoint for it.
+  final String? observations;
+
   Travel({
     required this.domainId,
     required this.backEndId,
@@ -61,6 +65,7 @@ class Travel {
     required this.routePlan,
     required this.participantsList,
     this.itinerary,
+    this.observations,
   });
 
   /// True once the agent has moved the travel past the initial route-only

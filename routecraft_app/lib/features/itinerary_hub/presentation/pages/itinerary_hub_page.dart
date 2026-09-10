@@ -335,12 +335,15 @@ void _showComingSoon(BuildContext context) {
 
 void _openEditRoute(BuildContext context, Travel travel) {
   final currentLocation = GoRouterState.of(context).matchedLocation;
-  context.push('$currentLocation/${AppRoutes.editRoute}', extra: travel);
+  context.push('$currentLocation/${AppRoutes.editRoute}?${AppRoutes.travelIdQuery(travel.backEndId!)}', extra: travel);
 }
 
 void _openFullItinerary(BuildContext context, Travel travel) {
   final currentLocation = GoRouterState.of(context).matchedLocation;
-  context.push('$currentLocation/${AppRoutes.itineraryTimeline}', extra: travel);
+  context.push(
+    '$currentLocation/${AppRoutes.itineraryTimeline}?${AppRoutes.travelIdQuery(travel.backEndId!)}',
+    extra: travel,
+  );
 }
 
 TravelStatusChipVariant _chipVariant(TravelStatus status) => switch (status) {

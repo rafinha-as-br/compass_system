@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 
-/// Persistent bottom navigation for the authenticated area (Início/Roteiro/
+/// Persistent bottom navigation for the authenticated area (Início/Viagens/
 /// Conta), preserving each branch's navigation stack via `IndexedStack`.
 class PrivateShellScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -25,9 +25,9 @@ class PrivateShellScaffold extends StatelessWidget {
             label: l10n.homeNavLabel,
           ),
           NavigationDestination(
-            icon: const Icon(Icons.map_outlined),
-            selectedIcon: const Icon(Icons.map),
-            label: l10n.itineraryNavLabel,
+            icon: const Icon(Icons.luggage_outlined),
+            selectedIcon: const Icon(Icons.luggage),
+            label: l10n.travelsNavLabel,
           ),
           NavigationDestination(
             icon: const Icon(Icons.person_outline),

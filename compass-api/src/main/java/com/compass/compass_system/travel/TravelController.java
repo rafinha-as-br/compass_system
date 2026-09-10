@@ -53,12 +53,19 @@ public class TravelController {
     // Full update: replaces all nested data. Preserves existing IDs when provided.
     @PutMapping("/{id}")
     public ResponseEntity<Travel> updateTravel(@PathVariable String id, @RequestBody Travel incoming) {
-        if (!travelRepository.existsById(id)) {
+        Optional<Travel> opt = travelRepository.findById(id);
+        if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
 
         // Force the path-variable ID onto the entity so JPA knows this is an update.
         incoming.setId(id);
+
+        // observations has no edit endpoint by design — a caller that doesn't
+        // carry it forward (e.g. Travel Matrix re-submitting the travel just
+        // to flip travelStatus) would otherwise silently wipe it here, the
+        // one full-replace path that isn't isolated to its own sub-resource.
+        incoming.setObservations(opt.get().getObservations());
 
         Travel saved = travelRepository.save(incoming);
         return ResponseEntity.ok(saved);
@@ -121,5 +128,34 @@ public class TravelController {
 
         Travel saved = travelRepository.save(travel);
         return ResponseEntity.ok(saved.getRoutePlan());
+    }
+
+    // ─── PUT /travels/{travelId}/participants ──────────────────────────────────
+    // Upsert: fully replaces the participants list on a Travel. Isolated from
+    // route/itinerary, same pattern as upsertRoutePlan.
+    @PutMapping("/{travelId}/participants")
+    public ResponseEntity<List<Person>> upsertParticipants(
+            @PathVariable String travelId,
+            @RequestBody List<Person> incoming) {
+
+        Optional<Travel> opt = travelRepository.findById(travelId);
+        if (opt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Travel travel = opt.get();
+
+        // Mutate the existing Hibernate-managed collection in place — handing
+        // setParticipants a brand-new List instance instead (breaking its
+        // link to the persistent collection) throws
+        // "collection with cascade=all-delete-orphan was no longer
+        // referenced" on flush. Clearing + re-adding lets orphanRemoval
+        // delete what's no longer present and persist what's new.
+        List<Person> participants = travel.getParticipants();
+        participants.clear();
+        participants.addAll(incoming);
+
+        Travel saved = travelRepository.save(travel);
+        return ResponseEntity.ok(saved.getParticipants());
     }
 }
