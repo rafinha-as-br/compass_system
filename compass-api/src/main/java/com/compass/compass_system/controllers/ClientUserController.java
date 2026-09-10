@@ -5,6 +5,9 @@ import com.compass.compass_system.entities.ClientUser;
 import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import com.compass.compass_system.security.JwtUtil;
+import com.compass.compass_system.travel.RoutePlan;
+import com.compass.compass_system.travel.Travel;
+import com.compass.compass_system.travel.TravelRepository;
 import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,6 +30,9 @@ public class ClientUserController {
 
     @Autowired
     private AgentUserRepository agentRepository;
+
+    @Autowired
+    private TravelRepository travelRepository;
 
     @Autowired
     private JwtUtil jwtUtil;
@@ -83,7 +89,8 @@ public class ClientUserController {
     }
 
     // ─── GET /users/{id} ───────────────────────────────────────────────────────
-    // Returns a client user by ID.
+    // Returns a client user by ID, including their travels and travel stats —
+    // Travel Matrix's user detail page (CPS-107) reads both.
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getUserById(@PathVariable Long id) {
         Optional<ClientUser> opt = clientRepository.findById(id);
@@ -93,7 +100,7 @@ public class ClientUserController {
 
         Map<String, Object> response = new LinkedHashMap<>();
         response.put("status", "success");
-        response.put("data", mapClientToResponse(opt.get()));
+        response.put("data", mapClientToDetailResponse(opt.get()));
         response.put("message", null);
         return ResponseEntity.ok(response);
     }
@@ -239,6 +246,42 @@ public class ClientUserController {
         statusObj.put("status", innerStatus);
         statusObj.put("last_login", null);
         map.put("status", statusObj);
+
+        return map;
+    }
+
+    // ─── Helper: adds travels + stats to the base client mapping ───────────────
+    // Only the user detail page needs this — the plain list endpoint
+    // (`getAllUsers`) doesn't show per-user travels, so it stays on the
+    // cheaper `mapClientToResponse` with no extra query per row.
+    private Map<String, Object> mapClientToDetailResponse(ClientUser client) {
+        Map<String, Object> map = mapClientToResponse(client);
+
+        List<Travel> travels = travelRepository.findByClientName(client.getName());
+        List<Map<String, Object>> travelSummaries = new ArrayList<>();
+        Set<String> destinations = new HashSet<>();
+        for (Travel travel : travels) {
+            RoutePlan routePlan = travel.getRoutePlan();
+            String destination = routePlan != null ? routePlan.getDestination() : null;
+
+            Map<String, Object> summary = new LinkedHashMap<>();
+            summary.put("backEndId", travel.getId());
+            summary.put("travelName", travel.getTravelName());
+            summary.put("destination", destination);
+            summary.put("status", travel.getTravelStatus());
+            summary.put("startDate", routePlan != null ? routePlan.getStartDate() : null);
+            travelSummaries.add(summary);
+
+            if (destination != null && !destination.isBlank()) {
+                destinations.add(destination);
+            }
+        }
+        map.put("travels", travelSummaries);
+
+        Map<String, Object> stats = new LinkedHashMap<>();
+        stats.put("totalTravels", travels.size());
+        stats.put("uniqueDestinationsCount", destinations.size());
+        map.put("stats", stats);
 
         return map;
     }

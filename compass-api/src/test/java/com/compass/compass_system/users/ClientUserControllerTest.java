@@ -4,6 +4,9 @@ import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.entities.ClientUser;
 import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.repositories.ClientUserRepository;
+import com.compass.compass_system.travel.RoutePlan;
+import com.compass.compass_system.travel.Travel;
+import com.compass.compass_system.travel.TravelRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,11 +43,15 @@ class ClientUserControllerTest {
     @Autowired
     private AgentUserRepository agentUserRepository;
 
+    @Autowired
+    private TravelRepository travelRepository;
+
     private Long clientId;
     private String agentToken;
 
     @BeforeEach
     void setUp() throws Exception {
+        travelRepository.deleteAll();
         clientUserRepository.deleteAll();
         agentUserRepository.deleteAll();
 
@@ -117,6 +124,44 @@ class ClientUserControllerTest {
         mockMvc.perform(post("/users/999999/force-logout")
                         .header("Authorization", "Bearer " + agentToken))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void getUserByIdIncludesTravelsAndStats() throws Exception {
+        saveTravel("Maria Cliente", "Lisboa");
+        saveTravel("Maria Cliente", "Lisboa");
+        saveTravel("Maria Cliente", "Porto");
+
+        mockMvc.perform(get("/users/" + clientId).header("Authorization", "Bearer " + agentToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.travels.length()").value(3))
+                .andExpect(jsonPath("$.data.stats.totalTravels").value(3))
+                .andExpect(jsonPath("$.data.stats.uniqueDestinationsCount").value(2));
+    }
+
+    @Test
+    void getUserByIdWithNoTravelsReturnsEmptyTravelsAndZeroStats() throws Exception {
+        mockMvc.perform(get("/users/" + clientId).header("Authorization", "Bearer " + agentToken))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.travels.length()").value(0))
+                .andExpect(jsonPath("$.data.stats.totalTravels").value(0))
+                .andExpect(jsonPath("$.data.stats.uniqueDestinationsCount").value(0));
+    }
+
+    private void saveTravel(String clientName, String destination) {
+        RoutePlan routePlan = new RoutePlan();
+        routePlan.setStartDate("2026-10-01T00:00:00.000Z");
+        routePlan.setFinishDate("2026-10-10T00:00:00.000Z");
+        routePlan.setStartLocation("São Paulo");
+        routePlan.setDestination(destination);
+
+        Travel travel = new Travel();
+        travel.setClientName(clientName);
+        travel.setTravelName("Viagem a " + destination);
+        travel.setTravelStatus("route_created");
+        travel.setRoutePlan(routePlan);
+
+        travelRepository.save(travel);
     }
 
     @Test
