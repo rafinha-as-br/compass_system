@@ -1,0 +1,31 @@
+appId: com.example.routecraft_app
+---
+# CPS-98 (correction, PR #138) — phase 1/2 of the offline cache cold-start
+# regression pair (run together with offline_cache_cold_start.yaml, with
+# `adb reverse --remove tcp:8081` run between the two — see this directory's
+# README for the exact sequence).
+#
+# This phase runs fully online: logs in fresh (populating the offline cache
+# via the Home load's `getTravelsForClient`) and opens QA Trip CPS-89 via
+# Notifications' "View trip" (not by tapping the trip from a list — that
+# path always carries the `Travel` object via `extra` and never exercises
+# `TravelRepositoryImpl.getTravel(id)`, the method CPS-98's correction
+# fixed). Confirms the baseline works online before phase 2 forces the
+# offline/cache-only path through the same navigation.
+- runFlow: ../common/login_as_joao.yaml
+- waitForAnimationToEnd
+- tapOn:
+    point: "83%, 93%"
+- waitForAnimationToEnd
+- tapOn: ".*Notifications.*"
+- waitForAnimationToEnd
+- tapOn:
+    text: "View trip"
+    below: ".*QA Trip CPS-89.*"
+- waitForAnimationToEnd
+- assertVisible: "Itinerary"
+- assertNotVisible: "Trip not found"
+- tapOn: "Open full itinerary"
+- waitForAnimationToEnd
+- assertNotVisible: ".*Offline.*"
+- stopApp

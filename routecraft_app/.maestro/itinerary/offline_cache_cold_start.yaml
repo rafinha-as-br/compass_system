@@ -1,0 +1,48 @@
+appId: com.example.routecraft_app
+---
+# CPS-98 (correction, PR #138) — phase 2/2. Run offline_cache_seed_online.yaml
+# first, then break connectivity, then this flow.
+#
+# `adb reverse tcp:8081 tcp:8081` does NOT gate this app's connectivity —
+# `ApiEndpoints.baseUrl` hardcodes `http://10.0.2.2:8081` on Android (the
+# emulator's built-in host-loopback alias), which bypasses any adb reverse
+# tunnel entirely. To actually simulate offline, stop the backend itself:
+# `docker stop compass_backend` (compass-api/). Restart it with
+# `docker start compass_backend` afterwards for any other flow that needs
+# the backend.
+#
+# Reproduces the exact scenario CPS-98's QA reprovation described: a cold
+# start with no `Travel` object in memory, offline. Before the fix,
+# `TravelRepositoryImpl.getTravel(id)` had no cache fallback (only
+# `getTravelsForClient` did) — a cold start or direct navigation without the
+# in-memory object fell straight to the "Trip not found" error screen
+# despite the trip being fully cached from the prior online session. Login
+# session survives (`launchApp` without `clearState`, secure storage keeps
+# the token); Home reloads from cache (its own fetch fails offline) and
+# marks the app offline globally via `TravelSyncStatusController`.
+- launchApp:
+    clearState: false
+- waitForAnimationToEnd
+# HomeController's own fetch (HttpApiClient's 15s request timeout) is what
+# flips TravelSyncStatusController.isOffline globally — give it time to
+# fail before navigating away, or the banner assertion below races it.
+- extendedWaitUntil:
+    visible: ".*Offline.*"
+    timeout: 20000
+- tapOn:
+    point: "83%, 93%"
+- waitForAnimationToEnd
+- tapOn: ".*Notifications.*"
+- waitForAnimationToEnd
+- tapOn:
+    text: "View trip"
+    below: ".*QA Trip CPS-89.*"
+- waitForAnimationToEnd
+- assertVisible: "Itinerary"
+- assertNotVisible: "Trip not found"
+- takeScreenshot: cps98_cold_start_offline_today
+- tapOn: "Open full itinerary"
+- waitForAnimationToEnd
+- assertVisible: ".*Offline.*"
+- assertVisible: ".*Flight to Tokyo.*"
+- takeScreenshot: cps98_cold_start_offline_timeline
