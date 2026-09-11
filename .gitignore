@@ -7,3 +7,7 @@
 
 ## for flutter context
 .idea/
+
+# pacote de demo gerado localmente
+deploy/demo/dist/
+deploy/demo/.images-loaded
