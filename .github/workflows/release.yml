@@ -127,7 +127,7 @@ jobs:
             echo "Versoes embarcadas neste pacote:"
             echo "  routecraft_app  $(grep '^version:' routecraft_app/pubspec.yaml | cut -d' ' -f2)"
             echo "  travel_matrix   $(grep '^version:' travel_matrix/pubspec.yaml | cut -d' ' -f2)"
-            echo "  compass-api     $(basename compass-api/target/*.jar)"
+            echo "  compass-api     $(basename compass-api/target/*.jar .jar | sed 's/^compass-system-//')"
             echo ""
             echo "Um componente sem versao nova nesta rodada aparece com a versao"
             echo "que ja' estava no repositorio."
@@ -169,16 +169,31 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -e
+          # As notas da Release saem de .github/release-notes/<comp>-<versao>.md,
+          # escrito pela jira-release-executor a partir do campo Resumo das
+          # issues - texto corrido que qualquer pessoa entende, nao uma lista
+          # de PRs. Sem o arquivo (dispatch manual, sem o Claude no circuito)
+          # cai no --generate-notes automatico do GitHub.
           tag_and_release () {
             local comp="$1" version="$2"; shift 2
             [ -z "$version" ] && return 0
             local tag="$comp/v$version"
+            local notes=".github/release-notes/$comp-$version.md"
             git tag -a "$tag" -m "$comp v$version"
             git push origin "$tag"
-            gh release create "$tag" "$@" \
-              --title "$comp v$version" \
-              --target "${{ steps.branch.outputs.name }}" \
-              --generate-notes
+            if [ -f "$notes" ]; then
+              echo "Release notes: $notes"
+              gh release create "$tag" "$@" \
+                --title "$comp v$version" \
+                --target "${{ steps.branch.outputs.name }}" \
+                --notes-file "$notes"
+            else
+              echo "Release notes: $notes nao existe, usando --generate-notes"
+              gh release create "$tag" "$@" \
+                --title "$comp v$version" \
+                --target "${{ steps.branch.outputs.name }}" \
+                --generate-notes
+            fi
           }
 
           cd routecraft_app/build/web && zip -qr "$GITHUB_WORKSPACE/routecraft_app-web.zip" . && cd "$GITHUB_WORKSPACE"
