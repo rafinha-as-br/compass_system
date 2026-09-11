@@ -15,6 +15,12 @@ Tudo roda offline. Único pré-requisito: **Docker Desktop aberto**.
 | Travel Matrix | http://localhost:8082 |
 | API | http://localhost:8081 |
 
+## Que versoes estao aqui dentro
+
+Veja o `VERSOES.txt`. Cada componente tem versao propria e sobe no seu
+proprio ritmo, entao um pacote pode ter, por exemplo, o routecraft_app
+0.2.0 junto do compass-api 0.0.1.
+
 ## Dados de exemplo
 
 O banco começa vazio. Para popular com 5 clientes e 20 roteiros
