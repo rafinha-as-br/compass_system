@@ -102,11 +102,10 @@ jobs:
       - name: Build compass-api (jar)
         run: cd compass-api && ./mvnw -B package -DskipTests
 
-      - name: Build routecraft_app (web + apk)
+      - name: Build routecraft_app (apk)
         run: |
           cd routecraft_app
           flutter pub get
-          flutter build web --release
           flutter build apk --release
           mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/routecraft_app.apk
 
@@ -118,61 +117,17 @@ jobs:
           flutter build apk --release
           mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/travel_matrix.apk
 
-      # -------------------------------------------------------- web zips
+      # -------------------------------------------------------- web zip
       # Feito aqui (nao so' na hora do release final) para que o artefato
       # de pre-release por componente ja' carregue o build web zipado.
-      - name: Zipar os builds web
+      # Nao existe versao web do routecraft_app - so o travel_matrix precisa.
+      - name: Zipar o build web do travel_matrix
         run: |
           set -e
-          cd routecraft_app/build/web && zip -qr "$GITHUB_WORKSPACE/routecraft_app-web.zip" . && cd "$GITHUB_WORKSPACE"
-          cd travel_matrix/build/web  && zip -qr "$GITHUB_WORKSPACE/travel_matrix-web.zip" . && cd "$GITHUB_WORKSPACE"
-
-      # -------------------------------------------------- pacote de demo
-      # compass-demo.zip carrega .release/runtime/ (Runtime Package do projeto,
-      # ver .release/project.yml) mais as imagens Docker ja salvas, prontas
-      # pra rodar offline via INICIAR.bat.
-      - name: Montar o pacote de demo (compass-demo.zip)
-        run: |
-          set -e
-          OUT=dist/compass-demo
-          mkdir -p "$OUT/web" "$OUT/seed"
-          cp -r routecraft_app/build/web "$OUT/web/routecraft"
-          cp -r travel_matrix/build/web  "$OUT/web/travel_matrix"
-          cp compass-api/scripts/seed_test_data.py "$OUT/seed/"
-
-          {
-            echo "Compass System - pacote de demonstracao"
-            echo "execucao ${{ github.run_number }}  |  commit $(git rev-parse --short HEAD)"
-            echo "gerado em $(date -u '+%Y-%m-%d %H:%M UTC')"
-            echo ""
-            echo "Versoes embarcadas neste pacote:"
-            echo "  routecraft_app  $(grep '^version:' routecraft_app/pubspec.yaml | cut -d' ' -f2)"
-            echo "  travel_matrix   $(grep '^version:' travel_matrix/pubspec.yaml | cut -d' ' -f2)"
-            echo "  compass-api     $(basename compass-api/target/*.jar)"
-            echo ""
-            echo "Um componente sem versao nova nesta rodada aparece com a versao"
-            echo "que ja' estava no repositorio."
-          } > "$OUT/VERSOES.txt"
-          cp .release/runtime/docker-compose.yml .release/runtime/nginx-spa.conf \
-             .release/runtime/*.bat .release/runtime/LEIA-ME.md "$OUT/"
-
-          docker build -t compass-demo/api:local compass-api
-          docker pull postgres:15
-          docker pull nginx:alpine
-          docker save -o "$OUT/images.tar" compass-demo/api:local postgres:15 nginx:alpine
-
-          (cd dist && zip -qr compass-demo.zip compass-demo)
-          ls -lh dist/compass-demo.zip
+          cd travel_matrix/build/web && zip -qr "$GITHUB_WORKSPACE/travel_matrix-web.zip" . && cd "$GITHUB_WORKSPACE"
 
       # ------------------------------------------------------------ artefatos
       # Sobem antes das tags: se a publicacao falhar, os arquivos ja estao la.
-      - name: Publicar artefatos da rodada
-        uses: actions/upload-artifact@v4
-        with:
-          name: compass-demo
-          path: dist/compass-demo.zip
-          retention-days: 30
-
       # Um artefato por componente, nomeado "<chave-do-manifesto>-<versao>":
       # e' o nome que o orchestrate.ps1 busca (gh run download --name) para
       # coletar uma pre-release, que nao tem GitHub Release. So sobe quando
@@ -190,9 +145,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: routecraft_app-${{ inputs.routecraft_version }}
-          path: |
-            routecraft_app-web.zip
-            routecraft_app/build/app/outputs/flutter-apk/routecraft_app.apk
+          path: routecraft_app/build/app/outputs/flutter-apk/routecraft_app.apk
           retention-days: 30
 
       - name: Publicar artefato - travel_matrix
@@ -251,7 +204,7 @@ jobs:
           }
 
           tag_and_release compass-api "${{ inputs.api_version }}" compass-api/target/*.jar
-          tag_and_release routecraft_app "${{ inputs.routecraft_version }}" routecraft_app-web.zip routecraft_app/build/app/outputs/flutter-apk/routecraft_app.apk
+          tag_and_release routecraft_app "${{ inputs.routecraft_version }}" routecraft_app/build/app/outputs/flutter-apk/routecraft_app.apk
           tag_and_release travel_matrix "${{ inputs.travel_matrix_version }}" travel_matrix-web.zip travel_matrix/build/app/outputs/flutter-apk/travel_matrix.apk
 
       - name: Resumo
@@ -264,6 +217,4 @@ jobs:
             echo "- routecraft_app: \`${{ inputs.routecraft_version || 'nao versionado' }}\`"
             echo "- travel_matrix: \`${{ inputs.travel_matrix_version || 'nao versionado' }}\`"
             echo "- compass-api: \`${{ inputs.api_version || 'nao versionado' }}\`"
-            echo ""
-            echo "Baixe o pacote rodavel no artefato **compass-demo** desta execucao."
           } >> "$GITHUB_STEP_SUMMARY"

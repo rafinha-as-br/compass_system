@@ -33,7 +33,7 @@ components:
     version: 0.0.1
     version_file: routecraft_app/pubspec.yaml
     dispatch_input: routecraft_version
-    artifacts: [web_zip, apk]
+    artifacts: [apk]  # so mobile - nao existe versao web do routecraft
     depends_on: [compass_api]
 
   travel_matrix:
@@ -52,9 +52,8 @@ full_release:
   exclusions: []
 
 # ------------------------------------------------------------- runtime package
-# INICIAR.bat sobe banco + backend + os dois apps web via docker compose,
-# usando as imagens ja salvas dentro do compass-demo.zip (ver release.yml).
+# Sem Runtime Package: o pacote de demo rodavel (docker compose + images.tar)
+# era uma implementacao anterior ao ciclo de versoes por componente e foi
+# removido - a distribuicao e' so os artefatos por componente (jar/web/apk).
 runtime_package:
-  required: true
-  entrypoint: .release/runtime/INICIAR.bat
-  source: .release/runtime
+  required: false
