@@ -1,0 +1,11 @@
+# Builda a imagem do compass_api a partir do JAR JA PUBLICADO
+# (artifacts/compass_api/*.jar, coletado pelo Orchestrator) - nunca a partir
+# do codigo-fonte, que nao existe dentro da distribuicao. O build context
+# desta imagem e' a raiz da distribuicao (ver docker-compose.yml: context: ..).
+FROM eclipse-temurin:17-jre
+
+WORKDIR /app
+COPY artifacts/compass_api/*.jar app.jar
+
+EXPOSE 8081
+ENTRYPOINT ["java", "-jar", "app.jar"]
