@@ -118,6 +118,15 @@ jobs:
           flutter build apk --release
           mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/travel_matrix.apk
 
+      # -------------------------------------------------------- web zips
+      # Feito aqui (nao so' na hora do release final) para que o artefato
+      # de pre-release por componente ja' carregue o build web zipado.
+      - name: Zipar os builds web
+        run: |
+          set -e
+          cd routecraft_app/build/web && zip -qr "$GITHUB_WORKSPACE/routecraft_app-web.zip" . && cd "$GITHUB_WORKSPACE"
+          cd travel_matrix/build/web  && zip -qr "$GITHUB_WORKSPACE/travel_matrix-web.zip" . && cd "$GITHUB_WORKSPACE"
+
       # -------------------------------------------------- pacote de demo
       # compass-demo.zip carrega .release/runtime/ (Runtime Package do projeto,
       # ver .release/project.yml) mais as imagens Docker ja salvas, prontas
@@ -164,13 +173,35 @@ jobs:
           path: dist/compass-demo.zip
           retention-days: 30
 
-      - name: Publicar artefatos por componente
+      # Um artefato por componente, nomeado "<chave-do-manifesto>-<versao>":
+      # e' o nome que o orchestrate.ps1 busca (gh run download --name) para
+      # coletar uma pre-release, que nao tem GitHub Release. So sobe quando
+      # o componente recebeu versao nesta rodada (input correspondente nao-vazio).
+      - name: Publicar artefato - compass_api
+        if: ${{ inputs.api_version != '' }}
         uses: actions/upload-artifact@v4
         with:
-          name: componentes
+          name: compass_api-${{ inputs.api_version }}
+          path: compass-api/target/*.jar
+          retention-days: 30
+
+      - name: Publicar artefato - routecraft_app
+        if: ${{ inputs.routecraft_version != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: routecraft_app-${{ inputs.routecraft_version }}
           path: |
-            compass-api/target/*.jar
+            routecraft_app-web.zip
             routecraft_app/build/app/outputs/flutter-apk/routecraft_app.apk
+          retention-days: 30
+
+      - name: Publicar artefato - travel_matrix
+        if: ${{ inputs.travel_matrix_version != '' }}
+        uses: actions/upload-artifact@v4
+        with:
+          name: travel_matrix-${{ inputs.travel_matrix_version }}
+          path: |
+            travel_matrix-web.zip
             travel_matrix/build/app/outputs/flutter-apk/travel_matrix.apk
           retention-days: 30
 
@@ -182,9 +213,6 @@ jobs:
           RELEASE_TYPE: ${{ inputs.release_type }}
         run: |
           set -e
-          cd routecraft_app/build/web && zip -qr "$GITHUB_WORKSPACE/routecraft_app-web.zip" . && cd "$GITHUB_WORKSPACE"
-          cd travel_matrix/build/web  && zip -qr "$GITHUB_WORKSPACE/travel_matrix-web.zip" . && cd "$GITHUB_WORKSPACE"
-
           # A tag existe sempre (inclusive em pre-release): amarra artefato <->
           # commit no release-manifest.yml da distribuicao. A GitHub Release so
           # e criada em release_type=final. Notas em .github/release-notes/,

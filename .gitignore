@@ -17,3 +17,7 @@ deploy/demo/.images-loaded
 
 # Release requests: registro operacional local, nao historico do produto (isso e' o release-manifest.yml)
 .release/requests/
+
+# Staging local do orchestrate.ps1 (dist/staging + artifacts baixados): saida
+# efemera, o artefato real e' o ZIP que vai pro Drive, nao o git.
+.release/dist/
