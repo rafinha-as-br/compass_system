@@ -52,10 +52,9 @@ full_release:
   exclusions: []
 
 # ------------------------------------------------------------- runtime package
-# Reaproveita o pacote de demo ja existente (deploy/demo/) em vez de duplicar:
 # INICIAR.bat sobe banco + backend + os dois apps web via docker compose,
 # usando as imagens ja salvas dentro do compass-demo.zip (ver release.yml).
 runtime_package:
   required: true
-  entrypoint: deploy/demo/INICIAR.bat
-  source: deploy/demo
+  entrypoint: .release/runtime/INICIAR.bat
+  source: .release/runtime
