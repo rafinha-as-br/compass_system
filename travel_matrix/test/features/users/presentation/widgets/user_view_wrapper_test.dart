@@ -5,6 +5,7 @@ import 'package:mocktail/mocktail.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/features/users/domain/entities/travel_summary.dart';
 import 'package:travel_matrix/features/users/domain/entities/user.dart';
 import 'package:travel_matrix/features/users/domain/entities/user_status.dart';
 import 'package:travel_matrix/features/users/domain/entities/user_stats.dart';
@@ -46,6 +47,8 @@ void main() {
       final staleUser = _buildUser(phoneNumber: '11911111111');
       when(() => useCases.getAllUsers())
           .thenAnswer((_) async => Result.success([staleUser]));
+      when(() => useCases.getUser(any()))
+          .thenAnswer((_) async => Result.success(staleUser));
       final controller = UsersController(useCases: useCases);
 
       // Mesma combinação que a navegação real passa na primeira visita à
@@ -83,6 +86,59 @@ void main() {
 
       expect(find.text('11922222222'), findsOneWidget);
       expect(find.text('11911111111'), findsNothing);
+    },
+  );
+
+  testWidgets(
+    'fetches the user detail endpoint and shows travels the listing never carried',
+    (tester) async {
+      // GET /users (the listing) doesn't populate travels/stats — only
+      // GET /users/{id} does — so the list-derived user always starts empty.
+      final listUser = _buildUser(phoneNumber: '11911111111');
+      when(() => useCases.getAllUsers())
+          .thenAnswer((_) async => Result.success([listUser]));
+
+      final detailedUser = UserClient(
+        backEndId: listUser.backEndId,
+        domainId: listUser.domainId,
+        name: listUser.name,
+        cpf: listUser.cpf,
+        sex: listUser.sex,
+        phoneNumber: listUser.phoneNumber,
+        status: listUser.status,
+        email: listUser.email,
+        travels: [
+          TravelSummary(
+            backEndId: 't1',
+            domainId: 't1',
+            travelName: 'Rio Trip',
+            destination: 'Rio de Janeiro',
+            status: 'completed',
+            startDate: DateTime(2026, 1, 1),
+          ),
+        ],
+        stats: UserStats(totalTravels: 1, uniqueDestinationsCount: 1),
+      );
+      when(() => useCases.getUser('1'))
+          .thenAnswer((_) async => Result.success(detailedUser));
+
+      final controller = UsersController(useCases: useCases);
+
+      await tester.pumpWidget(
+        MaterialApp(
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: UserViewWrapper(userId: '1', initialController: controller),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('Rio de Janeiro'), findsOneWidget);
     },
   );
 }

@@ -82,6 +82,43 @@ class UsersController extends ChangeNotifier {
     }
   }
 
+  /// Fetches the single-user detail (`GET /users/{id}`) and merges it into
+  /// [state.users] — `getAllUsers` (the listing) doesn't populate
+  /// `travels`/`stats` for each user, only the detail endpoint does, so the
+  /// user page needs this on top of whatever `fetchUsers` already loaded.
+  /// Failures are silent: the list-derived user (without travels/stats)
+  /// still renders, this is a progressive enhancement, not a requirement.
+  Future<void> fetchUserDetail(String userId) async {
+    try {
+      final result = await _useCases.getUser(userId);
+      if (!result.isSuccess || result.data == null) return;
+
+      final detail = UserClientViewModel.fromDomain(user: result.data!);
+      final users = _state.users.map((u) {
+        return u.backEndId == userId ? detail : u;
+      }).toList();
+      if (!users.any((u) => u.backEndId == userId)) {
+        users.add(detail);
+      }
+
+      // copyWith resets errorMessage/hasLoadError to null/false unless
+      // explicitly re-passed (see UsersState.copyWith below) — carry the
+      // current values over so a successful detail fetch doesn't silently
+      // clear an unrelated load-error flag on a controller shared with the
+      // dashboard page.
+      _state = _state.copyWith(
+        users: users,
+        errorMessage: _state.errorMessage,
+        hasLoadError: _state.hasLoadError,
+      );
+      notifyListeners();
+    } catch (e) {
+      // Not surfaced to the UI on purpose (see method doc), but still
+      // logged instead of swallowed outright.
+      debugPrint('fetchUserDetail($userId) failed: $e');
+    }
+  }
+
   Future<bool> deactivateUser(String userId, String reason) async {
     try {
       final result = await _useCases.deactivateUser(userId, reason);

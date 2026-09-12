@@ -149,6 +149,79 @@ void main() {
     expect(controller.state.errorMessage, contains('timeout'));
   });
 
+  group('fetchUserDetail', () {
+    test('merges travels/stats from the detail endpoint into the matching list entry', () async {
+      when(() => useCases.getAllUsers())
+          .thenAnswer((_) async => Result.success([_buildUser('1')]));
+      final controller = UsersController(useCases: useCases);
+      await pumpEventQueue();
+      expect(controller.state.users.single.travels, isEmpty);
+
+      final base = _buildUser('1');
+      final detailed = UserClient(
+        backEndId: base.backEndId,
+        domainId: base.domainId,
+        name: base.name,
+        cpf: base.cpf,
+        sex: base.sex,
+        phoneNumber: base.phoneNumber,
+        status: base.status,
+        email: base.email,
+        travels: [
+          TravelSummary(
+            backEndId: 't1',
+            domainId: 't1',
+            travelName: 'Rio Trip',
+            destination: 'Rio de Janeiro',
+            status: 'completed',
+            startDate: DateTime(2026, 1, 1),
+          ),
+        ],
+        stats: UserStats(totalTravels: 1, uniqueDestinationsCount: 1),
+      );
+      when(() => useCases.getUser('1'))
+          .thenAnswer((_) async => Result.success(detailed));
+
+      await controller.fetchUserDetail('1');
+
+      expect(controller.state.users, hasLength(1));
+      expect(controller.state.users.single.travels, hasLength(1));
+      expect(controller.state.users.single.stats.totalTravels, '1');
+    });
+
+    test(
+      'does not clear an existing hasLoadError flag on a controller shared with the dashboard',
+      () async {
+        when(() => useCases.getAllUsers())
+            .thenAnswer((_) async => const Result.failure('Network error'));
+        final controller = UsersController(useCases: useCases);
+        await pumpEventQueue();
+        expect(controller.state.hasLoadError, isTrue);
+
+        when(() => useCases.getUser('1'))
+            .thenAnswer((_) async => Result.success(_buildUser('1')));
+        await controller.fetchUserDetail('1');
+
+        expect(controller.state.hasLoadError, isTrue);
+      },
+    );
+
+    test('leaves the list-derived user untouched when the detail fetch fails', () async {
+      when(() => useCases.getAllUsers())
+          .thenAnswer((_) async => Result.success([_buildUser('1')]));
+      final controller = UsersController(useCases: useCases);
+      await pumpEventQueue();
+
+      when(() => useCases.getUser('1'))
+          .thenAnswer((_) async => const Result.failure('offline'));
+
+      await controller.fetchUserDetail('1');
+
+      expect(controller.state.users, hasLength(1));
+      expect(controller.state.users.single.travels, isEmpty);
+    });
+  });
+
   group('createUser', () {
     test('builds a NewUser from the raw form map and delegates to the use case', () async {
       when(() => useCases.getAllUsers()).thenAnswer((_) async => Result.success(const []));

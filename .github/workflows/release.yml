@@ -4,23 +4,32 @@ name: Release
 # recebeu versao, builda os tres, publica os artefatos e cria uma tag/Release
 # por componente. Deixe um campo de versao em branco para nao versionar
 # aquele componente nesta rodada.
+#
+# release_type distingue pre-release (so tag + artefato) de final (tag +
+# artefato + GitHub Release, com as notas de .github/release-notes/). publish
+# nao e um terceiro tipo: diz se esta execucao publica ou so builda/valida.
 on:
   workflow_dispatch:
     inputs:
       routecraft_version:
-        description: 'Versao do routecraft_app (ex.: 1.1.0) - vazio = nao versiona'
+        description: 'Versao do routecraft_app (ex.: 1.1.0 ou 1.1.0-rc.1) - vazio = nao versiona'
         required: false
         default: ''
       travel_matrix_version:
-        description: 'Versao do travel_matrix (ex.: 1.1.0) - vazio = nao versiona'
+        description: 'Versao do travel_matrix (ex.: 1.1.0 ou 1.1.0-rc.1) - vazio = nao versiona'
         required: false
         default: ''
       api_version:
-        description: 'Versao do compass-api (ex.: 0.1.0) - vazio = nao versiona'
+        description: 'Versao do compass-api (ex.: 0.1.0 ou 0.1.0-rc.1) - vazio = nao versiona'
         required: false
         default: ''
+      release_type:
+        description: 'Tipo da versao produzida'
+        type: choice
+        options: [pre_release, final]
+        default: pre_release
       publish:
-        description: 'Criar tags e GitHub Releases ao final'
+        description: 'Criar tags e (em final) GitHub Releases'
         type: boolean
         default: true
 
@@ -99,7 +108,7 @@ jobs:
           flutter pub get
           flutter build web --release
           flutter build apk --release
-          mv build/app/outputs/flutter-apk/app-release.apk              build/app/outputs/flutter-apk/routecraft_app.apk
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/routecraft_app.apk
 
       - name: Build travel_matrix (web + apk)
         run: |
@@ -107,9 +116,12 @@ jobs:
           flutter pub get
           flutter build web --release
           flutter build apk --release
-          mv build/app/outputs/flutter-apk/app-release.apk              build/app/outputs/flutter-apk/travel_matrix.apk
+          mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/travel_matrix.apk
 
       # -------------------------------------------------- pacote de demo
+      # compass-demo.zip carrega deploy/demo/ (Runtime Package do projeto,
+      # ver .release/project.yml) mais as imagens Docker ja salvas, prontas
+      # pra rodar offline via INICIAR.bat.
       - name: Montar o pacote de demo (compass-demo.zip)
         run: |
           set -e
@@ -163,26 +175,52 @@ jobs:
           retention-days: 30
 
       # -------------------------------------------------- tags + releases
-      - name: Criar tags e GitHub Releases
+      - name: Criar tags e, em release final, as GitHub Releases
         if: inputs.publish
         env:
           GH_TOKEN: ${{ github.token }}
+          RELEASE_TYPE: ${{ inputs.release_type }}
         run: |
           set -e
+          cd routecraft_app/build/web && zip -qr "$GITHUB_WORKSPACE/routecraft_app-web.zip" . && cd "$GITHUB_WORKSPACE"
+          cd travel_matrix/build/web  && zip -qr "$GITHUB_WORKSPACE/travel_matrix-web.zip" . && cd "$GITHUB_WORKSPACE"
+
+          # A tag existe sempre (inclusive em pre-release): amarra artefato <->
+          # commit no release-manifest.yml da distribuicao. A GitHub Release so
+          # e criada em release_type=final. Notas em .github/release-notes/,
+          # com fallback para a versao base e depois para --generate-notes.
           tag_and_release () {
             local comp="$1" version="$2"; shift 2
             [ -z "$version" ] && return 0
+
             local tag="$comp/v$version"
             git tag -a "$tag" -m "$comp v$version"
             git push origin "$tag"
-            gh release create "$tag" "$@" \
-              --title "$comp v$version" \
-              --target "${{ steps.branch.outputs.name }}" \
-              --generate-notes
-          }
+            echo "tag criada: $tag"
 
-          cd routecraft_app/build/web && zip -qr "$GITHUB_WORKSPACE/routecraft_app-web.zip" . && cd "$GITHUB_WORKSPACE"
-          cd travel_matrix/build/web  && zip -qr "$GITHUB_WORKSPACE/travel_matrix-web.zip" . && cd "$GITHUB_WORKSPACE"
+            if [ "$RELEASE_TYPE" != "final" ]; then
+              echo "release_type=$RELEASE_TYPE - sem GitHub Release, so' tag + artefato"
+              return 0
+            fi
+
+            local base="${version%%-*}"
+            local notes=".github/release-notes/$comp-$version.md"
+            [ -f "$notes" ] || notes=".github/release-notes/$comp-$base.md"
+
+            if [ -f "$notes" ]; then
+              echo "Release notes: $notes"
+              gh release create "$tag" "$@" \
+                --title "$comp v$version" \
+                --target "${{ steps.branch.outputs.name }}" \
+                --notes-file "$notes"
+            else
+              echo "Sem arquivo de notas, usando --generate-notes"
+              gh release create "$tag" "$@" \
+                --title "$comp v$version" \
+                --target "${{ steps.branch.outputs.name }}" \
+                --generate-notes
+            fi
+          }
 
           tag_and_release compass-api "${{ inputs.api_version }}" compass-api/target/*.jar
           tag_and_release routecraft_app "${{ inputs.routecraft_version }}" routecraft_app-web.zip routecraft_app/build/app/outputs/flutter-apk/routecraft_app.apk
@@ -194,6 +232,7 @@ jobs:
             echo "### Release"
             echo ""
             echo "- Branch: \`${{ steps.branch.outputs.name }}\`"
+            echo "- Tipo: \`${{ inputs.release_type }}\`  |  publish: \`${{ inputs.publish }}\`"
             echo "- routecraft_app: \`${{ inputs.routecraft_version || 'nao versionado' }}\`"
             echo "- travel_matrix: \`${{ inputs.travel_matrix_version || 'nao versionado' }}\`"
             echo "- compass-api: \`${{ inputs.api_version || 'nao versionado' }}\`"
