@@ -220,7 +220,10 @@ foreach ($name in $declared) {
 
     $version = $null
     if ($isCarried) { $version = $req.carried[$name] } else { $version = $req.version_scope[$name] }
-    $tag  = "$name/v$version"
+    # A tag usa o nome do componente conforme o release.yml o publica, que
+    # e' o path (ex.: compass-api, com hifen) e nao necessariamente a chave
+    # do manifesto (compass_api, com underscore, usada como identificador YAML).
+    $tag  = "$($c.path)/v$version"
     $dest = Join-Path $stage "artifacts\$name"
     New-Item -ItemType Directory -Force -Path $dest | Out-Null
 
