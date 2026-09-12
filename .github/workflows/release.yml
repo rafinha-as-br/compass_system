@@ -119,7 +119,7 @@ jobs:
           mv build/app/outputs/flutter-apk/app-release.apk build/app/outputs/flutter-apk/travel_matrix.apk
 
       # -------------------------------------------------- pacote de demo
-      # compass-demo.zip carrega deploy/demo/ (Runtime Package do projeto,
+      # compass-demo.zip carrega .release/runtime/ (Runtime Package do projeto,
       # ver .release/project.yml) mais as imagens Docker ja salvas, prontas
       # pra rodar offline via INICIAR.bat.
       - name: Montar o pacote de demo (compass-demo.zip)
@@ -144,8 +144,8 @@ jobs:
             echo "Um componente sem versao nova nesta rodada aparece com a versao"
             echo "que ja' estava no repositorio."
           } > "$OUT/VERSOES.txt"
-          cp deploy/demo/docker-compose.yml deploy/demo/nginx-spa.conf \
-             deploy/demo/*.bat deploy/demo/LEIA-ME.md "$OUT/"
+          cp .release/runtime/docker-compose.yml .release/runtime/nginx-spa.conf \
+             .release/runtime/*.bat .release/runtime/LEIA-ME.md "$OUT/"
 
           docker build -t compass-demo/api:local compass-api
           docker pull postgres:15

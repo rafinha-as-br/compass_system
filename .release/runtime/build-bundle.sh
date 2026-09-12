@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Gera o pacote de demo autocontido em deploy/demo/dist/compass-demo/.
+# Gera o pacote de demo autocontido em .release/runtime/dist/compass-demo/.
 # Mesmo processo que o release.yml vai rodar no CI - mantenha os dois em sincronia.
 set -euo pipefail
 
