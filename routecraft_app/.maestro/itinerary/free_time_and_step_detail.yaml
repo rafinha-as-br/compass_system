@@ -6,11 +6,13 @@ appId: com.example.routecraft_app
 # tapping a step opens CPS-92's detail bottom sheet with the right subtype
 # fields.
 #
-# Known open defect (CPS-92): the Bus transport's "Gate" info tile always
-# renders even when `departureGate` is empty, showing a label with no value.
-# See routecraft_app/lib/features/itinerary_timeline/presentation/widgets/step_detail_sheet.dart
-# (`_transportTiles`, `Bus` case) — needs an `if (departureGate.isNotEmpty)`
-# guard like the `Stop`/`PlaceholderStep` cases already have.
+# Fixed defect (CPS-92, confirmed 2026-09-10): the Bus transport's "Gate"
+# info tile used to always render even when `departureGate` was empty,
+# showing a label with no value. `step_detail_sheet.dart` (`_transportTiles`,
+# `Bus`/`Airplane` cases) now guards it with `if (departureGate.isNotEmpty)`.
+# The steps below re-check the exact fixture that reproduced the bug
+# ("Bus to Kyoto", `departureGate: null` in QA Trip CPS-89) — Gate must not
+# be visible.
 - runFlow: ../common/login_as_joao.yaml
 - waitForAnimationToEnd
 - tapOn: ".*QA Trip CPS-89.*"
@@ -26,4 +28,10 @@ appId: com.example.routecraft_app
 - assertVisible: "Hosting"
 - assertVisible: "Check-in"
 - assertVisible: "Check-out"
+- back
+- tapOn: "D3"
+- tapOn: ".*Bus to Kyoto.*"
+- assertVisible: "Travel segment · Bus"
+- assertNotVisible: "Gate"
+- takeScreenshot: cps92_bus_gate_fix_evidence
 - back

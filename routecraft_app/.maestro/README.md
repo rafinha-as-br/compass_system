@@ -15,10 +15,18 @@ skill) for the process these flows are part of.
 │   └── travels_grouped_by_status.yaml   (CPS-88)
 ├── itinerary/
 │   ├── today_focused_step.yaml          (CPS-93)
-│   └── free_time_and_step_detail.yaml   (CPS-91 / CPS-92)
+│   ├── free_time_and_step_detail.yaml   (CPS-91 / CPS-92)
+│   ├── offline_cache_seed_online.yaml   (CPS-98, phase 1/2 — run online first)
+│   └── offline_cache_cold_start.yaml    (CPS-98, phase 2/2 — run offline after)
 └── account/
     └── account_page_and_notifications.yaml (CPS-95)
 ```
+
+`offline_cache_seed_online.yaml` / `offline_cache_cold_start.yaml` are a
+pair, not independent flows — run the first online, break connectivity (see
+the comment inside `offline_cache_cold_start.yaml` for how — `adb reverse`
+does **not** gate this app's connectivity on Android, `docker stop
+compass_backend` does), then run the second.
 
 A flow here is a **permanent regression asset**, reused across QA rounds —
 different from one-off manual exploration done via `adb`/screenshots during
@@ -34,8 +42,17 @@ maestro test .maestro/home/travels_grouped_by_status.yaml   # one flow
 
 Requires the `QA_-_Claude` AVD booted (`emulator -avd QA_-_Claude`), the
 debug APK installed (`flutter build apk --debug` + `adb install -r`), the
-`compass-api` backend reachable (`adb reverse tcp:8081 tcp:8081`), and the QA
-fixture data below already seeded.
+`compass-api` backend reachable, and the QA fixture data below already
+seeded.
+
+**`adb reverse` is not needed for this app.** `ApiEndpoints.baseUrl`
+hardcodes `http://10.0.2.2:8081` on Android — the emulator's built-in
+host-loopback alias — so the backend is reachable without any `adb reverse`
+tunnel, and removing/adding one has no effect on this app's connectivity
+(confirmed 2026-09-10 while building the CPS-98 offline flows: `adb reverse
+--remove tcp:8081` did not break the app's connection at all). To actually
+simulate offline for a flow, stop the backend itself (`docker stop
+compass_backend`), not the tunnel.
 
 ## QA fixture data this trip relies on
 
@@ -72,10 +89,7 @@ the current date.
 
 ## Known open defects surfaced by these flows
 
-* **CPS-92** — `Bus`'s "Gate" info tile in `StepDetailSheet` always renders
-  even when `departureGate` is empty, showing a label with no value under it
-  (violates the "no field shown as an empty label" acceptance criterion).
-  See the comment in `free_time_and_step_detail.yaml` and
-  `step_detail_sheet.dart` (`_transportTiles`, `Bus` case) — needs the same
-  `if (value.isNotEmpty)` guard already used for `Stop`/`PlaceholderStep`'s
-  optional fields.
+None currently open. **CPS-92**'s `Bus`/`Airplane` empty-"Gate" defect
+(previously documented here) was fixed and reverified 2026-09-10 —
+`free_time_and_step_detail.yaml` now asserts the tile stays hidden for the
+"Bus to Kyoto" fixture step.

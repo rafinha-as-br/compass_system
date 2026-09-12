@@ -10,3 +10,7 @@
 ## for python scripts (compass-api/scripts)
 __pycache__/
 *.pyc
+
+# pacote de demo gerado localmente
+deploy/demo/dist/
+deploy/demo/.images-loaded
