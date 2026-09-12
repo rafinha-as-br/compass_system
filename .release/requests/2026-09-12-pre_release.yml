@@ -20,7 +20,7 @@ release_request:
   ref: develop
 
   commits:
-    compass_system: 1cc1113
+    compass_system: e2f8890
 
   issues:
     travel_matrix: [CPS-107]
