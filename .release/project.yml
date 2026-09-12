@@ -52,8 +52,11 @@ full_release:
   exclusions: []
 
 # ------------------------------------------------------------- runtime package
-# Sem Runtime Package: o pacote de demo rodavel (docker compose + images.tar)
-# era uma implementacao anterior ao ciclo de versoes por componente e foi
-# removido - a distribuicao e' so os artefatos por componente (jar/web/apk).
+# Sobe compass_api + travel_matrix via docker compose, a partir dos artefatos
+# JA PUBLICADOS que o Orchestrator coleta (jar / web_zip) - a imagem da API e'
+# buildada localmente no primeiro start (Dockerfile.api), nunca a partir do
+# codigo-fonte. routecraft_app fica de fora (so' APK, instala-se a parte).
 runtime_package:
-  required: false
+  required: true
+  entrypoint: .release/runtime/INICIAR.bat
+  source: .release/runtime
