@@ -227,13 +227,16 @@ foreach ($name in $declared) {
     $dest = Join-Path $stage "artifacts\$name"
     New-Item -ItemType Directory -Force -Path $dest | Out-Null
 
-    # De onde vem o artefato depende do tipo (ver release-lifecycle.md 9.3):
-    #   FINAL      -> existe GitHub Release do componente
-    #   PRE_RELEASE-> nao existe Release; vem do artefato da execucao
-    #   carried    -> sempre de uma versao ja' publicada
-    $fromRelease = ($isFinal -or $isCarried)
+    # De onde vem o artefato depende do tipo da PROPRIA versao (ver
+    # release-lifecycle.md 9.3), nao do tipo do request atual: um componente
+    # carried pode ter sido publicado como pre-release numa rodada anterior,
+    # e o release.yml so cria GitHub Release quando release_type=final
+    # (pre-release fica so em tag + artefato de execucao - ver release.yml).
+    #   versao final        -> existe GitHub Release do componente
+    #   versao pre-release  -> nao existe Release; vem do artefato da execucao
+    $isFinalVersion = if ($isCarried) { $version -notmatch '-(rc|beta|alpha)\.' } else { $isFinal }
 
-    if ($fromRelease) {
+    if ($isFinalVersion) {
         gh release download $tag --repo $r.remote --dir $dest 2>$null
         if ($LASTEXITCODE -ne 0) {
             if ($isCarried) {
