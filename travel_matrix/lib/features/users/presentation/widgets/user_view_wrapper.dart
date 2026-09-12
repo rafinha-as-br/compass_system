@@ -36,6 +36,11 @@ class _UserViewWrapperState extends State<UserViewWrapper> {
     super.initState();
     _ownsController = widget.initialController == null;
     _controller = widget.initialController ?? UsersController();
+    // GET /users (the listing behind `_controller.state.users`) doesn't
+    // include travels/stats — only GET /users/{id} does — so this page
+    // needs its own fetch on top of whatever the shared controller already
+    // loaded.
+    _controller.fetchUserDetail(widget.userId);
   }
 
   @override
