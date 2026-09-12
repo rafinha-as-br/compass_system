@@ -1,0 +1,61 @@
+# Manifesto central do projeto Compass System.
+# Ver: "9. Configurar o ciclo de Release" no Confluence (space CS1).
+
+project:
+  id: compass_system
+  name: Compass System
+  topology: monorepo
+  version: 0.1.0
+
+# ---------------------------------------------------------------- repositorios
+# Monorepo declara UM repositorio com path "."
+repositories:
+  - id: compass_system
+    remote: rafinha-as-br/compass_system
+    path: .
+
+# ------------------------------------------------------------------ componentes
+components:
+  compass_api:
+    repository: compass_system
+    path: compass-api
+    type: spring_boot
+    version: 0.0.1
+    version_file: compass-api/pom.xml
+    dispatch_input: api_version
+    artifacts: [jar]
+    depends_on: []
+
+  routecraft_app:
+    repository: compass_system
+    path: routecraft_app
+    type: flutter
+    version: 0.0.1
+    version_file: routecraft_app/pubspec.yaml
+    dispatch_input: routecraft_version
+    artifacts: [web_zip, apk]
+    depends_on: [compass_api]
+
+  travel_matrix:
+    repository: compass_system
+    path: travel_matrix
+    type: flutter
+    version: 0.0.1
+    version_file: travel_matrix/pubspec.yaml
+    dispatch_input: travel_matrix_version
+    artifacts: [web_zip, apk]
+    depends_on: [compass_api]
+
+# --------------------------------------------------------------- release completa
+full_release:
+  components: ALL
+  exclusions: []
+
+# ------------------------------------------------------------- runtime package
+# Reaproveita o pacote de demo ja existente (deploy/demo/) em vez de duplicar:
+# INICIAR.bat sobe banco + backend + os dois apps web via docker compose,
+# usando as imagens ja salvas dentro do compass-demo.zip (ver release.yml).
+runtime_package:
+  required: true
+  entrypoint: deploy/demo/INICIAR.bat
+  source: deploy/demo
