@@ -1,6 +1,7 @@
 package com.compass.compass_system.security;
 
 import com.compass.compass_system.entities.ClientUser;
+import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -34,6 +35,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     @Autowired
     private ClientUserRepository clientUserRepository;
 
+    @Autowired
+    private AgentUserRepository agentUserRepository;
+
     @Override
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
@@ -60,16 +64,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     /**
-     * Um token CLIENTE emitido antes do force-logout do usuário é rejeitado
-     * mesmo que ainda não tenha expirado naturalmente. Agentes não têm essa
-     * funcionalidade hoje, então tokens AGENTE nunca são afetados por aqui.
+     * CLIENTE: um token emitido antes do force-logout do usuário é rejeitado
+     * mesmo que ainda não tenha expirado naturalmente.
+     *
+     * AGENTE: um token de agente que já não existe (removido da empresa pelo
+     * OWNER, módulo company) é rejeitado — é o que dá efeito real à remoção,
+     * já que o JWT é stateless.
      */
     private boolean isSessionInvalidated(String token) {
-        if (!"CLIENTE".equals(jwtUtil.getUserTypeFromToken(token))) {
+        String userType = jwtUtil.getUserTypeFromToken(token);
+        String email = jwtUtil.getEmailFromToken(token);
+
+        if ("AGENTE".equals(userType)) {
+            return agentUserRepository.findByEmail(email).isEmpty();
+        }
+
+        if (!"CLIENTE".equals(userType)) {
             return false;
         }
 
-        Optional<ClientUser> clientOpt = clientUserRepository.findByEmail(jwtUtil.getEmailFromToken(token));
+        Optional<ClientUser> clientOpt = clientUserRepository.findByEmail(email);
         if (clientOpt.isEmpty()) {
             return false;
         }
