@@ -59,6 +59,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Trata erros de permissão (usuário autenticado, mas sem acesso à operação).
+     */
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenException ex) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                "Acesso negado",
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    /**
      * Trata erros de regra de negócio (ex: email já cadastrado).
      */
     @ExceptionHandler(BusinessException.class)

@@ -4,9 +4,12 @@ import com.compass.compass_system.itinerary.Hosting;
 import com.compass.compass_system.itinerary.Itinerary;
 import com.compass.compass_system.itinerary.Stop;
 import com.compass.compass_system.itinerary.TravelSegment;
+import com.compass.compass_system.entities.AgentUser;
+import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.security.JwtUtil;
 import com.compass.compass_system.transport.Airplane;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.MethodOrderer;
 import org.junit.jupiter.api.Order;
 import org.junit.jupiter.api.Test;
@@ -43,6 +46,22 @@ class TravelControllerTest {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private AgentUserRepository agentUserRepository;
+
+    // O filtro JWT rejeita token de agente que não existe no banco (remoção
+    // de agente pelo módulo company), então o agente do token precisa existir.
+    @BeforeEach
+    void ensureAgentExists() {
+        if (agentUserRepository.findByEmail("agent@matrix.com").isEmpty()) {
+            AgentUser agent = new AgentUser();
+            agent.setName("Agent");
+            agent.setEmail("agent@matrix.com");
+            agent.setPassword("hash");
+            agentUserRepository.save(agent);
+        }
+    }
 
     static String createdTravelId;
 
