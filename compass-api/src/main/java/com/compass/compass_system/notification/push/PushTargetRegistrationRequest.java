@@ -4,7 +4,7 @@ package com.compass.compass_system.notification.push;
 // controller validates that pairing before persisting.
 public record PushTargetRegistrationRequest(
         PushPlatform platform,
-        String androidTopic,
+        String androidEndpoint,
         String webEndpoint,
         String webP256dh,
         String webAuth) {

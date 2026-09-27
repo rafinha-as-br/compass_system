@@ -9,7 +9,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
 
 import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
-import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withServerError;
@@ -17,7 +17,9 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 class AndroidPushDispatcherTest {
 
-    private static final String NTFY_URL = "http://ntfy:80/";
+    // The distributor mints this per registration — the dispatcher never
+    // knows a topic, it just POSTs to whatever endpoint the client stored.
+    private static final String ENDPOINT_URL = "http://ntfy:80/up1a2b3c4d5e";
 
     private PushTarget androidTarget() {
         PushTarget target = new PushTarget();
@@ -25,7 +27,7 @@ class AndroidPushDispatcherTest {
         target.setRecipientType(NotificationRecipientType.CLIENT);
         target.setRecipientId(1L);
         target.setPlatform(PushPlatform.ANDROID);
-        target.setAndroidTopic("compass-client-1");
+        target.setAndroidEndpoint(ENDPOINT_URL);
         return target;
     }
 
@@ -40,29 +42,28 @@ class AndroidPushDispatcherTest {
     }
 
     @Test
-    void postsTheNotificationToNtfyAsJsonWithTheDeepLinkPayload() {
+    void postsDirectlyToTheTargetsOwnEndpointWithTheDeepLinkHeader() {
         RestTemplate restTemplate = new RestTemplate();
         MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
-        server.expect(requestTo(NTFY_URL))
+        server.expect(requestTo(ENDPOINT_URL))
                 .andExpect(method(HttpMethod.POST))
-                .andExpect(jsonPath("$.topic").value("compass-client-1"))
-                .andExpect(jsonPath("$.message").value("Seu itinerário foi publicado."))
-                .andExpect(jsonPath("$.click").value("routecraft://travel/t1"))
+                .andExpect(header("X-Title", "Compass"))
+                .andExpect(header("X-Click", "routecraft://travel/t1"))
                 .andRespond(withSuccess());
 
-        AndroidPushDispatcher dispatcher = new AndroidPushDispatcher(restTemplate, NTFY_URL);
+        AndroidPushDispatcher dispatcher = new AndroidPushDispatcher(restTemplate);
         dispatcher.send(androidTarget(), sampleNotification());
 
         server.verify();
     }
 
     @Test
-    void neverThrowsWhenNtfyRespondsWithAnError() {
+    void neverThrowsWhenTheEndpointRespondsWithAnError() {
         RestTemplate restTemplate = new RestTemplate();
         MockRestServiceServer server = MockRestServiceServer.bindTo(restTemplate).build();
-        server.expect(requestTo(NTFY_URL)).andRespond(withServerError());
+        server.expect(requestTo(ENDPOINT_URL)).andRespond(withServerError());
 
-        AndroidPushDispatcher dispatcher = new AndroidPushDispatcher(restTemplate, NTFY_URL);
+        AndroidPushDispatcher dispatcher = new AndroidPushDispatcher(restTemplate);
 
         assertDoesNotThrow(() -> dispatcher.send(androidTarget(), sampleNotification()));
     }

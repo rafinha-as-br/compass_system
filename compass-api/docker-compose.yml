@@ -25,9 +25,13 @@ services:
       - "5672:5672"
       - "15672:15672"
 
-  # Relay self-hosted de UnifiedPush (CPS-146) — o RouteCraft (Android) se
-  # inscreve num tópico aqui em vez de depender do ntfy.sh público ou de
-  # qualquer infra de push da Google/Firebase.
+  # Relay self-hosted de UnifiedPush — o RouteCraft (Android) aponta seu
+  # distribuidor UnifiedPush para cá em vez de depender do ntfy.sh público
+  # ou de qualquer infra de push da Google/Firebase. O compass-api não fala
+  # com este serviço diretamente: cada PushTarget já chega com sua própria
+  # URL de endpoint (mintada pelo distribuidor no registro), então não é
+  # uma dependência de subida do backend — só precisa estar no ar para os
+  # dispositivos reais conseguirem se registrar e receber push.
   ntfy:
     image: binwiederhier/ntfy
     container_name: compass_ntfy
@@ -43,7 +47,6 @@ services:
     depends_on:
       - db
       - rabbitmq
-      - ntfy
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/compass_db
       SPRING_DATASOURCE_USERNAME: compass_user
@@ -51,4 +54,3 @@ services:
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_USERNAME: compass_user
       SPRING_RABBITMQ_PASSWORD: compass_password
-      PUSH_NTFY_BASE_URL: http://ntfy:80/

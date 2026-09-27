@@ -65,7 +65,7 @@ class PushTargetControllerTest {
 
     @Test
     void registersAnAndroidTargetForTheAuthenticatedRecipient() throws Exception {
-        Map<String, Object> body = Map.of("platform", "ANDROID", "androidTopic", "compass-client-1");
+        Map<String, Object> body = Map.of("platform", "ANDROID", "androidEndpoint", "http://ntfy:80/up-compass-client-1");
 
         mockMvc.perform(post("/push-targets")
                         .header("Authorization", clientAuthHeader())
@@ -74,12 +74,12 @@ class PushTargetControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").isNotEmpty())
                 .andExpect(jsonPath("$.recipientType").value("CLIENT"))
-                .andExpect(jsonPath("$.androidTopic").value("compass-client-1"));
+                .andExpect(jsonPath("$.androidEndpoint").value("http://ntfy:80/up-compass-client-1"));
     }
 
     @Test
-    void reregisteringTheSameTopicReusesTheExistingRowInsteadOfDuplicating() throws Exception {
-        Map<String, Object> body = Map.of("platform", "ANDROID", "androidTopic", "compass-client-1");
+    void reregisteringTheSameEndpointReusesTheExistingRowInsteadOfDuplicating() throws Exception {
+        Map<String, Object> body = Map.of("platform", "ANDROID", "androidEndpoint", "http://ntfy:80/up-compass-client-1");
 
         MvcResult first = mockMvc.perform(post("/push-targets")
                         .header("Authorization", clientAuthHeader())
@@ -118,7 +118,7 @@ class PushTargetControllerTest {
     }
 
     @Test
-    void rejectsAnAndroidRegistrationMissingTheTopic() throws Exception {
+    void rejectsAnAndroidRegistrationMissingTheEndpoint() throws Exception {
         Map<String, Object> body = Map.of("platform", "ANDROID");
 
         mockMvc.perform(post("/push-targets")
@@ -130,7 +130,7 @@ class PushTargetControllerTest {
 
     @Test
     void unregistersOwnTarget() throws Exception {
-        Map<String, Object> body = Map.of("platform", "ANDROID", "androidTopic", "compass-client-1");
+        Map<String, Object> body = Map.of("platform", "ANDROID", "androidEndpoint", "http://ntfy:80/up-compass-client-1");
         MvcResult result = mockMvc.perform(post("/push-targets")
                         .header("Authorization", clientAuthHeader())
                         .contentType(MediaType.APPLICATION_JSON)
@@ -144,7 +144,7 @@ class PushTargetControllerTest {
 
     @Test
     void cannotUnregisterAnotherRecipientsTarget() throws Exception {
-        Map<String, Object> body = Map.of("platform", "ANDROID", "androidTopic", "compass-client-1");
+        Map<String, Object> body = Map.of("platform", "ANDROID", "androidEndpoint", "http://ntfy:80/up-compass-client-1");
         MvcResult result = mockMvc.perform(post("/push-targets")
                         .header("Authorization", clientAuthHeader())
                         .contentType(MediaType.APPLICATION_JSON)

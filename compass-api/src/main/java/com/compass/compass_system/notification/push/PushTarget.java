@@ -12,9 +12,12 @@ import java.time.Instant;
 import java.util.UUID;
 
 // One device/session's push destination for a recipient — a user can have
-// several (one per device). Android carries a UnifiedPush topic; Web
-// carries a standard PushSubscription (endpoint + keys). Only the pair
-// matching `platform` is ever populated; the other stays null.
+// several (one per device). Both platforms carry an opaque endpoint URL to
+// POST to: for Android, the UnifiedPush *distributor* (not this app) mints
+// it on registration and hands it back via `onNewEndpoint` — the app never
+// chooses or knows a topic name, it just relays this URL. Web's is the
+// standard PushSubscription endpoint. Only the field matching `platform` is
+// ever populated; the other stays null.
 @Entity
 public class PushTarget {
 
@@ -29,7 +32,8 @@ public class PushTarget {
     @Enumerated(EnumType.STRING)
     private PushPlatform platform;
 
-    private String androidTopic;
+    @Column(length = 1000)
+    private String androidEndpoint;
 
     @Column(length = 1000)
     private String webEndpoint;
@@ -60,8 +64,8 @@ public class PushTarget {
     public PushPlatform getPlatform() { return platform; }
     public void setPlatform(PushPlatform platform) { this.platform = platform; }
 
-    public String getAndroidTopic() { return androidTopic; }
-    public void setAndroidTopic(String androidTopic) { this.androidTopic = androidTopic; }
+    public String getAndroidEndpoint() { return androidEndpoint; }
+    public void setAndroidEndpoint(String androidEndpoint) { this.androidEndpoint = androidEndpoint; }
 
     public String getWebEndpoint() { return webEndpoint; }
     public void setWebEndpoint(String webEndpoint) { this.webEndpoint = webEndpoint; }

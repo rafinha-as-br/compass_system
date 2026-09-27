@@ -54,7 +54,7 @@ public class PushTargetController {
         target.setRecipientType(recipient.type());
         target.setRecipientId(recipient.id());
         target.setPlatform(request.platform());
-        target.setAndroidTopic(request.androidTopic());
+        target.setAndroidEndpoint(request.androidEndpoint());
         target.setWebEndpoint(request.webEndpoint());
         target.setWebP256dh(request.webP256dh());
         target.setWebAuth(request.webAuth());
@@ -64,8 +64,8 @@ public class PushTargetController {
 
     private java.util.Optional<PushTarget> findExisting(Recipient recipient, PushTargetRegistrationRequest request) {
         return switch (request.platform()) {
-            case ANDROID -> pushTargetRepository.findByRecipientTypeAndRecipientIdAndPlatformAndAndroidTopic(
-                    recipient.type(), recipient.id(), PushPlatform.ANDROID, request.androidTopic());
+            case ANDROID -> pushTargetRepository.findByRecipientTypeAndRecipientIdAndPlatformAndAndroidEndpoint(
+                    recipient.type(), recipient.id(), PushPlatform.ANDROID, request.androidEndpoint());
             case WEB -> pushTargetRepository.findByRecipientTypeAndRecipientIdAndPlatformAndWebEndpoint(
                     recipient.type(), recipient.id(), PushPlatform.WEB, request.webEndpoint());
         };
@@ -93,7 +93,7 @@ public class PushTargetController {
             throw new BusinessException("platform é obrigatório.");
         }
         boolean valid = switch (request.platform()) {
-            case ANDROID -> request.androidTopic() != null && !request.androidTopic().isBlank();
+            case ANDROID -> request.androidEndpoint() != null && !request.androidEndpoint().isBlank();
             case WEB -> request.webEndpoint() != null && request.webP256dh() != null && request.webAuth() != null;
         };
         if (!valid) {
