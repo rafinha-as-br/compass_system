@@ -15,6 +15,12 @@ public class Travel {
     private String travelName;
     private String travelStatus;
 
+    // Set at creation from the payload Travel Matrix already sends
+    // (clientId/agentId); nullable so travels created before these fields
+    // existed simply can't resolve a notification recipient — no backfill.
+    private Long clientId;
+    private Long agentId;
+
     // Free-text note from the client to the agent, scoped to the whole trip
     // (not a single interest point). Set once at creation; no endpoint below
     // ever updates it — the isolated route/itinerary/participants upserts
@@ -51,6 +57,12 @@ public class Travel {
 
     public String getClientName() { return clientName; }
     public void setClientName(String clientName) { this.clientName = clientName; }
+
+    public Long getClientId() { return clientId; }
+    public void setClientId(Long clientId) { this.clientId = clientId; }
+
+    public Long getAgentId() { return agentId; }
+    public void setAgentId(Long agentId) { this.agentId = agentId; }
 
     public String getTravelName() { return travelName; }
     public void setTravelName(String travelName) { this.travelName = travelName; }
