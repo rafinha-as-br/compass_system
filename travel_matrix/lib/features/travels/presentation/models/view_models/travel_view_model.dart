@@ -1,6 +1,7 @@
 
 
 import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:travel_matrix/features/travels/domain/entities/person.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_event_view_model.dart';
@@ -185,6 +186,26 @@ class TravelViewModel{
     }
   }
 
+  /// Returns a copy with the given fields replaced — used after a
+  /// sub-resource mutation (e.g. participants) that only returns that
+  /// piece back from the API, not the whole [Travel].
+  TravelViewModel copyWith({
+    List<PersonViewModel>? participants,
+  }) {
+    return TravelViewModel(
+      backEndId: backEndId,
+      localId: localId,
+      clientName: clientName,
+      travelTitle: travelTitle,
+      status: status,
+      route: route,
+      participants: participants ?? this.participants,
+      events: events,
+      itinerary: itinerary,
+      observations: observations,
+    );
+  }
+
 }
 
 /// Person view model class, used to represent a [Person] on the UI
@@ -236,7 +257,10 @@ class PersonViewModel{
     ){
     return PersonViewModel(
       backEndId: null,
-      localId: name,
+      // Uuid, not `name` — matches RoutePlanViewModel/InterestPointViewModel's
+      // own `fromLocal` convention. Two participants can share the same
+      // name, and [id] is used to tell list items apart (e.g. on removal).
+      localId: const Uuid().v4(),
       name: name,
       age: age,
       sex: sex,
