@@ -1,0 +1,29 @@
+appId: com.example.routecraft_app
+---
+# CPS-128: cliente com viagens mas nenhuma em andamento ve o cenario 2 de
+# estado vazio na Inicio ("No trip in progress"), com o link secundario
+# "See my trips" trocando para a aba Viagens (goBranch, sem empilhar rota).
+# App roda no emulador em locale en-US por padrao - strings em ingles.
+- launchApp:
+    clearState: true
+- clearKeychain
+- tapOn: "Email"
+- eraseText
+- inputText: "elisa.pinto@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- assertVisible: "No trip in progress"
+- assertVisible: "Your upcoming trips are in the Trips tab."
+- assertVisible: "Create route"
+- assertVisible: "See my trips"
+- takeScreenshot: home_empty_no_trip_in_progress
+- tapOn: "See my trips"
+# O card da viagem expoe titulo+rota+datas como um unico Semantics label
+# ("accessibilityText" combinado com \n) - o matcher de texto do Maestro nao
+# encontra substring dentro dele (mesma limitacao documentada no README para
+# a bottom nav). "My Travels" confirma a troca de aba; a screenshot é a
+# evidencia visual de que a viagem certa aparece.
+- assertVisible: "My Travels"
+- takeScreenshot: travels_tab_after_see_my_trips_link

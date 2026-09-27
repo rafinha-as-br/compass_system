@@ -9,6 +9,8 @@ class EmptyStateView extends StatelessWidget {
   final String message;
   final String? ctaLabel;
   final VoidCallback? onCtaPressed;
+  final String? secondaryCtaLabel;
+  final VoidCallback? onSecondaryCtaPressed;
 
   const EmptyStateView({
     super.key,
@@ -17,6 +19,8 @@ class EmptyStateView extends StatelessWidget {
     required this.message,
     this.ctaLabel,
     this.onCtaPressed,
+    this.secondaryCtaLabel,
+    this.onSecondaryCtaPressed,
   });
 
   @override
@@ -49,6 +53,8 @@ class EmptyStateView extends StatelessWidget {
               const SizedBox(height: 24),
               AppButton(onPressed: onCtaPressed, child: Text(ctaLabel)),
             ],
+            if (secondaryCtaLabel != null)
+              TextButton(onPressed: onSecondaryCtaPressed, child: Text(secondaryCtaLabel!)),
           ],
         ),
       ),

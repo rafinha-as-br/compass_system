@@ -32,4 +32,33 @@ void main() {
     await tester.tap(find.text('Create Route'));
     expect(tapped, isTrue);
   });
+
+  testWidgets('renders and calls the secondary CTA alongside the primary one', (tester) async {
+    var primaryTapped = false;
+    var secondaryTapped = false;
+    await tester.pumpWidget(_wrap(EmptyStateView(
+      icon: Icons.map_outlined,
+      title: 'No trips yet',
+      message: 'Create a route to get started.',
+      ctaLabel: 'Create Route',
+      onCtaPressed: () => primaryTapped = true,
+      secondaryCtaLabel: 'See my trips',
+      onSecondaryCtaPressed: () => secondaryTapped = true,
+    )));
+
+    expect(find.text('See my trips'), findsOneWidget);
+    await tester.tap(find.text('See my trips'));
+    expect(secondaryTapped, isTrue);
+    expect(primaryTapped, isFalse);
+  });
+
+  testWidgets('renders no secondary CTA when none is given', (tester) async {
+    await tester.pumpWidget(_wrap(const EmptyStateView(
+      icon: Icons.map_outlined,
+      title: 'No trips yet',
+      message: 'Create a route to get started.',
+    )));
+
+    expect(find.byType(TextButton), findsNothing);
+  });
 }
