@@ -801,4 +801,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get travelStatusTravelFinished => 'Completed';
+
+  @override
+  String get placesAutocompleteNoResults => 'No places found';
+
+  @override
+  String get placesAutocompleteUnavailable =>
+      'Search unavailable — free text accepted';
 }

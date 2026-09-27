@@ -1765,6 +1765,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Session expired. Please sign in again.'**
   String get sessionExpiredMessage;
+
+  /// No description provided for @placesAutocompleteNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No places found'**
+  String get placesAutocompleteNoResults;
+
+  /// No description provided for @placesAutocompleteUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Search unavailable — free text accepted'**
+  String get placesAutocompleteUnavailable;
 }
 
 class _AppLocalizationsDelegate

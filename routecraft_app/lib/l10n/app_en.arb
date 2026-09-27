@@ -388,5 +388,8 @@
   "travelStatusRouteCreated": "Awaiting agent",
   "travelStatusItineraryCreated": "Itinerary published",
   "travelStatusTravelStarted": "In progress",
-  "travelStatusTravelFinished": "Completed"
+  "travelStatusTravelFinished": "Completed",
+
+  "placesAutocompleteNoResults": "No places found",
+  "placesAutocompleteUnavailable": "Search unavailable — free text accepted"
 }

@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'api_endpoints.dart';
 import 'api_exception.dart';
@@ -8,12 +9,15 @@ class HttpApiClient {
   static HttpApiClient? _instance;
   late final http.Client _client;
 
-  HttpApiClient._() : _client = http.Client();
+  HttpApiClient._({http.Client? client}) : _client = client ?? http.Client();
 
   static HttpApiClient get instance {
     _instance ??= HttpApiClient._();
     return _instance!;
   }
+
+  @visibleForTesting
+  factory HttpApiClient.forTesting(http.Client client) => HttpApiClient._(client: client);
 
   Future<Map<String, dynamic>> get(String token, String path) async {
     final uri = Uri.parse('${ApiEndpoints.baseUrl}$path');

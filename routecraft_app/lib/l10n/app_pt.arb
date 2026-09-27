@@ -242,5 +242,8 @@
   "travelStatusRouteCreated": "Aguardando agente",
   "travelStatusItineraryCreated": "Itinerário publicado",
   "travelStatusTravelStarted": "Em andamento",
-  "travelStatusTravelFinished": "Concluída"
+  "travelStatusTravelFinished": "Concluída",
+
+  "placesAutocompleteNoResults": "Nenhum lugar encontrado",
+  "placesAutocompleteUnavailable": "Busca indisponível — texto livre aceito"
 }
