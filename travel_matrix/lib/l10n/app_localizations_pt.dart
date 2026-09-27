@@ -628,10 +628,84 @@ class AppLocalizationsPt extends AppLocalizations {
   String get travelActionsMenuTooltip => 'Ações da viagem';
 
   @override
+  String get overviewViewTab => 'Visão Geral';
+
+  @override
   String get routeViewTab => 'Ver Rota';
 
   @override
   String get itineraryViewTab => 'Ver Roteiro';
+
+  @override
+  String get overviewRouteLabel => 'ROTA';
+
+  @override
+  String get overviewDurationLabel => 'Duração';
+
+  @override
+  String overviewDurationInDays(int count) {
+    return '$count dias';
+  }
+
+  @override
+  String get travelStatusNotReadyLabel => 'Não pronta';
+
+  @override
+  String get travelStatusReadyLabel => 'Pronta';
+
+  @override
+  String get travelStatusInProgressLabel => 'Em andamento';
+
+  @override
+  String get travelStatusCompletedLabel => 'Concluída';
+
+  @override
+  String get travelStatusNotReadySupportLine =>
+      'Rota criada, itinerário pendente';
+
+  @override
+  String get travelStatusReadySupportLine => 'Itinerário criado';
+
+  @override
+  String get travelStatusInProgressSupportLine => 'Viagem em curso';
+
+  @override
+  String get travelStatusCompletedSupportLine => 'Viagem finalizada';
+
+  @override
+  String get overviewParticipantsLabel => 'PARTICIPANTES';
+
+  @override
+  String get overviewParticipantsCaption => 'pessoas na viagem';
+
+  @override
+  String overviewParticipantsMore(int count) {
+    return 'e mais $count';
+  }
+
+  @override
+  String get overviewViewParticipantsAction => 'Ver participantes →';
+
+  @override
+  String get overviewItineraryLabel => 'ITINERÁRIO';
+
+  @override
+  String overviewItineraryStepsSummary(int count, String agentName) {
+    return '$count etapas · por $agentName';
+  }
+
+  @override
+  String get overviewViewItineraryAction => 'Ver itinerário completo';
+
+  @override
+  String get overviewNoItineraryTitle => 'Nenhum itinerário criado ainda';
+
+  @override
+  String get overviewNoItinerarySupport =>
+      'Crie o itinerário para deixar a viagem pronta para o cliente.';
+
+  @override
+  String get overviewCreateItineraryAction => 'Criar itinerário';
 
   @override
   String travelersCount(int count) {

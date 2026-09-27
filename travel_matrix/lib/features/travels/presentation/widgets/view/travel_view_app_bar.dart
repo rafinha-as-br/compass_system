@@ -7,7 +7,6 @@ import 'package:travel_matrix/features/travels/presentation/controllers/travels_
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
-import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 
 /// This appBar is used in the Travel_View_page, responsible for showing:
@@ -28,7 +27,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
     final mutedColor = theme.colorScheme.onSurface.withValues(alpha: 0.6);
-    final statusColor = _getTravelStatusColor(theme);
+    final statusColor = travel.status.color(theme);
     final dateFormat = DateFormat.yMMMd(l10n.localeName);
 
     return Container(
@@ -260,6 +259,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                 indicatorSize: TabBarIndicatorSize.tab,
                 unselectedLabelColor: mutedColor,
                 tabs: [
+                  Tab(icon: const Icon(Icons.dashboard_outlined), text: l10n.overviewViewTab),
                   Tab(icon: const Icon(Icons.map), text: l10n.routeViewTab),
                   Tab(icon: const Icon(Icons.view_timeline), text: l10n.itineraryViewTab),
                 ],
@@ -278,22 +278,4 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
   // widget into a body-level header instead of a fixed-height `appBar:`.
   @override
   Size get preferredSize => const Size.fromHeight(220);
-
-  /// Base color for the status chip — always applied at 12% alpha for the
-  /// background, matching the pattern already used by the other status
-  /// chips in the app (e.g. dashboard's travel status chip), instead of the
-  /// solid *Container tokens (undefined in [ColorScheme], so they silently
-  /// fell back to the full-strength color).
-  Color _getTravelStatusColor(ThemeData theme) {
-    switch (travel.status) {
-      case TravelStatusViewModel.notReady:
-        return theme.semanticColors.warning;
-      case TravelStatusViewModel.ready:
-        return theme.semanticColors.success;
-      case TravelStatusViewModel.inProgress:
-        return theme.colorScheme.primary;
-      case TravelStatusViewModel.completed:
-        return theme.colorScheme.secondary;
-    }
-  }
 }
