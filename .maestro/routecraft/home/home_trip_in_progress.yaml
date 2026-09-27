@@ -1,0 +1,25 @@
+appId: com.example.routecraft_app
+---
+# CPS-128: cliente com viagem em andamento ve so o TravelCard dela na
+# Inicio, sob o rotulo de secao "In progress" - sem as secoes antigas
+# "Upcoming"/"Completed" (removidas pela _TravelSectionsList).
+# App roda no emulador em locale en-US por padrao - strings em ingles.
+- launchApp:
+    clearState: true
+- clearKeychain
+- tapOn: "Email"
+- eraseText
+- inputText: "carla.rocha@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+# O card da viagem expoe titulo+rota+datas como um unico Semantics label
+# ("accessibilityText" combinado com \n) - o matcher de texto do Maestro nao
+# encontra substring dentro dele (mesma limitacao documentada no README para
+# a bottom nav). "In progress" (secao + chip) confirma a tela certa; a
+# screenshot é a evidencia visual do card correto.
+- assertVisible: "In progress"
+- assertNotVisible: "Upcoming"
+- assertNotVisible: "Completed"
+- takeScreenshot: home_trip_in_progress
