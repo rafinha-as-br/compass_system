@@ -83,7 +83,7 @@ void main() {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           home: DefaultTabController(
-            length: 3,
+            length: 4,
             child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
           ),
         ),
@@ -133,7 +133,7 @@ void main() {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             home: DefaultTabController(
-              length: 3,
+              length: 4,
               child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
             ),
           ),
@@ -170,7 +170,7 @@ void main() {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             home: DefaultTabController(
-              length: 3,
+              length: 4,
               child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
             ),
           ),
@@ -215,7 +215,7 @@ void main() {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           home: DefaultTabController(
-            length: 3,
+            length: 4,
             child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
           ),
         ),

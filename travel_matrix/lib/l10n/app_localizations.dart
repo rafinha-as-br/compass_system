@@ -1262,6 +1262,12 @@ abstract class AppLocalizations {
   /// **'Travel actions'**
   String get travelActionsMenuTooltip;
 
+  /// No description provided for @overviewViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overviewViewTab;
+
   /// No description provided for @routeViewTab.
   ///
   /// In en, this message translates to:
@@ -1351,6 +1357,132 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{age} years old'**
   String participantAgeYears(String age);
+
+  /// No description provided for @overviewRouteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ROUTE'**
+  String get overviewRouteLabel;
+
+  /// No description provided for @overviewDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get overviewDurationLabel;
+
+  /// No description provided for @overviewDurationInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days'**
+  String overviewDurationInDays(int count);
+
+  /// No description provided for @travelStatusNotReadyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Ready'**
+  String get travelStatusNotReadyLabel;
+
+  /// No description provided for @travelStatusReadyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get travelStatusReadyLabel;
+
+  /// No description provided for @travelStatusInProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get travelStatusInProgressLabel;
+
+  /// No description provided for @travelStatusCompletedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get travelStatusCompletedLabel;
+
+  /// No description provided for @travelStatusNotReadySupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Route created, itinerary pending'**
+  String get travelStatusNotReadySupportLine;
+
+  /// No description provided for @travelStatusReadySupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary created'**
+  String get travelStatusReadySupportLine;
+
+  /// No description provided for @travelStatusInProgressSupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel underway'**
+  String get travelStatusInProgressSupportLine;
+
+  /// No description provided for @travelStatusCompletedSupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel finished'**
+  String get travelStatusCompletedSupportLine;
+
+  /// No description provided for @overviewParticipantsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PARTICIPANTS'**
+  String get overviewParticipantsLabel;
+
+  /// No description provided for @overviewParticipantsCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'people on this trip'**
+  String get overviewParticipantsCaption;
+
+  /// No description provided for @overviewParticipantsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'and {count} more'**
+  String overviewParticipantsMore(int count);
+
+  /// No description provided for @overviewViewParticipantsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View participants →'**
+  String get overviewViewParticipantsAction;
+
+  /// No description provided for @overviewItineraryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ITINERARY'**
+  String get overviewItineraryLabel;
+
+  /// No description provided for @overviewItineraryStepsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} steps · by {agentName}'**
+  String overviewItineraryStepsSummary(int count, String agentName);
+
+  /// No description provided for @overviewViewItineraryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View full itinerary'**
+  String get overviewViewItineraryAction;
+
+  /// No description provided for @overviewNoItineraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No itinerary created yet'**
+  String get overviewNoItineraryTitle;
+
+  /// No description provided for @overviewNoItinerarySupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the itinerary to get this travel ready for the client.'**
+  String get overviewNoItinerarySupport;
+
+  /// No description provided for @overviewCreateItineraryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create itinerary'**
+  String get overviewCreateItineraryAction;
 
   /// No description provided for @travelersCount.
   ///
