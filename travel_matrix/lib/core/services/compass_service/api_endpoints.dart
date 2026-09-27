@@ -37,4 +37,7 @@ abstract final class ApiEndpoints {
 
   // Route
   static String travelRoute(String travelId) => '/travels/$travelId/route';
+
+  // Participants
+  static String travelParticipants(String travelId) => '/travels/$travelId/participants';
 }
