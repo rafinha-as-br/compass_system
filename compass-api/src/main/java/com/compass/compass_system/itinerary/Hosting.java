@@ -1,6 +1,8 @@
 package com.compass.compass_system.itinerary;
 
+import com.compass.compass_system.geo.Coordinate;
 import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 
 @Entity
@@ -11,6 +13,9 @@ public class Hosting extends ItineraryStep {
     private String address;
     private String checkIn;
     private String checkOut;
+
+    @Embedded
+    private Coordinate coordinate;
 
     public Hosting() {
         setType("hosting");
@@ -27,4 +32,7 @@ public class Hosting extends ItineraryStep {
 
     public String getCheckOut() { return checkOut; }
     public void setCheckOut(String checkOut) { this.checkOut = checkOut; }
+
+    public Coordinate getCoordinate() { return coordinate; }
+    public void setCoordinate(Coordinate coordinate) { this.coordinate = coordinate; }
 }
