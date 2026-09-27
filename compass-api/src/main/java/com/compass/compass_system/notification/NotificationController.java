@@ -72,14 +72,4 @@ public class NotificationController {
         notificationRepository.saveAll(unread);
         return ResponseEntity.noContent().build();
     }
-
-    private record Recipient(NotificationRecipientType type, Long id) {
-        static Recipient fromToken(JwtUtil jwtUtil, String authHeader) {
-            String token = authHeader.replace("Bearer ", "");
-            NotificationRecipientType type = "AGENTE".equals(jwtUtil.getUserTypeFromToken(token))
-                    ? NotificationRecipientType.AGENT
-                    : NotificationRecipientType.CLIENT;
-            return new Recipient(type, jwtUtil.getUserIdFromToken(token));
-        }
-    }
 }

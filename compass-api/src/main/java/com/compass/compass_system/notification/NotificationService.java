@@ -11,11 +11,13 @@ public class NotificationService {
 
     // A missing recipientId (a travel created before Travel.clientId/agentId
     // existed) isn't an error — there's simply nowhere to deliver it, so
-    // this skips silently rather than failing the caller's transaction.
-    public void notify(NotificationRecipientType recipientType, Long recipientId,
-                        NotificationType type, String travelId, String message) {
+    // this skips silently rather than failing the caller. Returns the saved
+    // Notification (or null when skipped) so NotificationConsumer knows
+    // whether there's anything left to push.
+    public Notification notify(NotificationRecipientType recipientType, Long recipientId,
+                                NotificationType type, String travelId, String message) {
         if (recipientId == null) {
-            return;
+            return null;
         }
 
         Notification notification = new Notification();
@@ -24,6 +26,6 @@ public class NotificationService {
         notification.setType(type);
         notification.setTravelId(travelId);
         notification.setMessage(message);
-        notificationRepository.save(notification);
+        return notificationRepository.save(notification);
     }
 }

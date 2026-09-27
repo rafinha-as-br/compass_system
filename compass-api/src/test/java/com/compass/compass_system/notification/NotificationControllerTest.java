@@ -61,6 +61,18 @@ class NotificationControllerTest {
         return "Bearer " + jwtUtil.generateToken("other-agent@matrix.com", "AGENTE", OTHER_AGENT_ID);
     }
 
+    // Notification creation is async since CPS-146 (Travel*Controller only
+    // publishes an event; NotificationConsumer, driven by a real RabbitMQ,
+    // is what actually persists it) — polls instead of asserting right after
+    // the PUT that triggered it.
+    private void awaitNotificationCount(long expectedCount) throws InterruptedException {
+        long deadline = System.currentTimeMillis() + 5000;
+        while (System.currentTimeMillis() < deadline) {
+            if (notificationRepository.count() >= expectedCount) return;
+            Thread.sleep(50);
+        }
+    }
+
     @BeforeEach
     void setUp() {
         notificationRepository.deleteAll();
@@ -113,6 +125,8 @@ class NotificationControllerTest {
                         .content(objectMapper.writeValueAsString(sampleItinerary())))
                 .andExpect(status().isOk());
 
+        awaitNotificationCount(1);
+
         mockMvc.perform(get("/notifications").header("Authorization", clientAuthHeader()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", org.hamcrest.Matchers.hasSize(1)))
@@ -133,11 +147,20 @@ class NotificationControllerTest {
                         .content(objectMapper.writeValueAsString(sampleItinerary())))
                 .andExpect(status().isOk());
 
+        // Waiting for the first event to be fully delivered before firing the
+        // second is what actually keeps `createdAt` ordering deterministic —
+        // the very first AMQP publish lazily opens the connection/channel,
+        // which can otherwise delay it past a second publish that reuses an
+        // already-open one.
+        awaitNotificationCount(1);
+
         mockMvc.perform(put("/travels/" + travelId + "/itinerary")
                         .header("Authorization", agentAuthHeader())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleItinerary())))
                 .andExpect(status().isOk());
+
+        awaitNotificationCount(2);
 
         mockMvc.perform(get("/notifications").header("Authorization", clientAuthHeader()))
                 .andExpect(status().isOk())
@@ -153,6 +176,8 @@ class NotificationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleRoutePlan("Lisbon"))))
                 .andExpect(status().isOk());
+
+        awaitNotificationCount(1);
 
         mockMvc.perform(get("/notifications").header("Authorization", agentAuthHeader()))
                 .andExpect(status().isOk())
@@ -170,6 +195,8 @@ class NotificationControllerTest {
                         .content(objectMapper.writeValueAsString(sampleRoutePlan("Porto"))))
                 .andExpect(status().isOk());
 
+        awaitNotificationCount(2);
+
         mockMvc.perform(get("/notifications").header("Authorization", agentAuthHeader()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.content", org.hamcrest.Matchers.hasSize(2)))
@@ -183,6 +210,8 @@ class NotificationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleItinerary())))
                 .andExpect(status().isOk());
+
+        awaitNotificationCount(1);
 
         mockMvc.perform(get("/notifications/unread-count").header("Authorization", clientAuthHeader()))
                 .andExpect(status().isOk())
@@ -211,6 +240,7 @@ class NotificationControllerTest {
                         .content(objectMapper.writeValueAsString(sampleItinerary())))
                 .andExpect(status().isOk());
 
+        awaitNotificationCount(1);
         String notificationId = notificationRepository.findAll().get(0).getId();
 
         // This notification belongs to the CLIENT recipient, not the agent.
@@ -230,6 +260,8 @@ class NotificationControllerTest {
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleItinerary())))
                 .andExpect(status().isOk());
+
+        awaitNotificationCount(2);
 
         mockMvc.perform(put("/notifications/read-all").header("Authorization", clientAuthHeader()))
                 .andExpect(status().isNoContent());
@@ -253,6 +285,10 @@ class NotificationControllerTest {
                         .content(objectMapper.writeValueAsString(sampleItinerary())))
                 .andExpect(status().isOk());
 
+        // No positive condition to poll for here (we're confirming an
+        // absence) — give the async pipeline a generous window to have
+        // processed the event, then assert nothing was created.
+        Thread.sleep(1000);
         org.junit.jupiter.api.Assertions.assertEquals(0, notificationRepository.count());
     }
 }
