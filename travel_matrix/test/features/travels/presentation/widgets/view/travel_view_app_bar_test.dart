@@ -10,6 +10,7 @@ import 'package:travel_matrix/features/travels/domain/entities/itinerary_step.da
 import 'package:travel_matrix/features/travels/domain/entities/person.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/crud_participants.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
@@ -21,6 +22,8 @@ import 'package:travel_matrix/shared/theme/app_theme.dart';
 class _MockCrudTravelUseCases extends Mock implements CrudTravelUseCases {}
 
 class _MockCrudRoute extends Mock implements CrudRoute {}
+
+class _MockCrudParticipants extends Mock implements CrudParticipants {}
 
 Travel _buildNotReadyTravel({
   String travelName = 'Travel',
@@ -79,10 +82,12 @@ Widget _wrap(TravelsController controller, TravelViewModel travel, {Locale? loca
 void main() {
   late _MockCrudTravelUseCases travelUseCases;
   late _MockCrudRoute routeUseCases;
+  late _MockCrudParticipants participantsUseCases;
 
   setUp(() {
     travelUseCases = _MockCrudTravelUseCases();
     routeUseCases = _MockCrudRoute();
+    participantsUseCases = _MockCrudParticipants();
     when(() => travelUseCases.readAll()).thenAnswer((_) async => const Result.success([]));
   });
 
@@ -93,7 +98,7 @@ void main() {
     addTearDown(tester.view.resetDevicePixelRatio);
 
     when(() => travelUseCases.markAsReady(any())).thenAnswer((_) async => Result.failure('boom'));
-    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
     final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
 
     await tester.pumpWidget(
@@ -109,7 +114,7 @@ void main() {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           home: DefaultTabController(
-            length: 2,
+            length: 4,
             child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
           ),
         ),
@@ -139,7 +144,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
       final travel = TravelViewModel.fromDomain(
         _buildNotReadyTravel(
           travelName: 'A very long travel name that would never fit next to three action buttons',
@@ -159,7 +164,7 @@ void main() {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             home: DefaultTabController(
-              length: 2,
+              length: 4,
               child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
             ),
           ),
@@ -180,7 +185,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
       final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
 
       await tester.pumpWidget(
@@ -196,7 +201,7 @@ void main() {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             home: DefaultTabController(
-              length: 2,
+              length: 4,
               child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
             ),
           ),
@@ -224,7 +229,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
     final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
 
     await tester.pumpWidget(
@@ -241,7 +246,7 @@ void main() {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           home: DefaultTabController(
-            length: 2,
+            length: 4,
             child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
           ),
         ),

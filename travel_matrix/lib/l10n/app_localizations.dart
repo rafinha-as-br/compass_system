@@ -1310,6 +1310,12 @@ abstract class AppLocalizations {
   /// **'ITINERARY'**
   String get itinerarySummarySectionTitle;
 
+  /// No description provided for @overviewViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overviewViewTab;
+
   /// No description provided for @routeViewTab.
   ///
   /// In en, this message translates to:
@@ -1321,6 +1327,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Itinerary View'**
   String get itineraryViewTab;
+
+  /// No description provided for @participantsViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get participantsViewTab;
+
+  /// No description provided for @addParticipantButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add participant'**
+  String get addParticipantButton;
+
+  /// No description provided for @addParticipantDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add participant'**
+  String get addParticipantDialogTitle;
+
+  /// No description provided for @participantNameFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get participantNameFieldLabel;
+
+  /// No description provided for @participantAgeFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get participantAgeFieldLabel;
+
+  /// No description provided for @noParticipantsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No participants yet'**
+  String get noParticipantsTitle;
+
+  /// No description provided for @noParticipantsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the people traveling to keep this list up to date.'**
+  String get noParticipantsMessage;
+
+  /// No description provided for @removeParticipantTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove participant'**
+  String get removeParticipantTooltip;
+
+  /// No description provided for @removeParticipantConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove participant?'**
+  String get removeParticipantConfirmTitle;
+
+  /// No description provided for @removeParticipantConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from this travel?'**
+  String removeParticipantConfirmMessage(String name);
+
+  /// No description provided for @retryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryButton;
+
+  /// No description provided for @failedToUpdateParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update participants. Please try again.'**
+  String get failedToUpdateParticipants;
+
+  /// No description provided for @participantAgeYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years old'**
+  String participantAgeYears(String age);
+
+  /// No description provided for @overviewRouteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ROUTE'**
+  String get overviewRouteLabel;
+
+  /// No description provided for @overviewDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get overviewDurationLabel;
+
+  /// No description provided for @overviewDurationInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days'**
+  String overviewDurationInDays(int count);
+
+  /// No description provided for @travelStatusNotReadyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Ready'**
+  String get travelStatusNotReadyLabel;
+
+  /// No description provided for @travelStatusReadyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get travelStatusReadyLabel;
+
+  /// No description provided for @travelStatusInProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get travelStatusInProgressLabel;
+
+  /// No description provided for @travelStatusCompletedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get travelStatusCompletedLabel;
+
+  /// No description provided for @travelStatusNotReadySupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Route created, itinerary pending'**
+  String get travelStatusNotReadySupportLine;
+
+  /// No description provided for @travelStatusReadySupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary created'**
+  String get travelStatusReadySupportLine;
+
+  /// No description provided for @travelStatusInProgressSupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel underway'**
+  String get travelStatusInProgressSupportLine;
+
+  /// No description provided for @travelStatusCompletedSupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel finished'**
+  String get travelStatusCompletedSupportLine;
+
+  /// No description provided for @overviewParticipantsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PARTICIPANTS'**
+  String get overviewParticipantsLabel;
+
+  /// No description provided for @overviewParticipantsCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'people on this trip'**
+  String get overviewParticipantsCaption;
+
+  /// No description provided for @overviewParticipantsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'and {count} more'**
+  String overviewParticipantsMore(int count);
+
+  /// No description provided for @overviewViewParticipantsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View participants →'**
+  String get overviewViewParticipantsAction;
+
+  /// No description provided for @overviewItineraryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ITINERARY'**
+  String get overviewItineraryLabel;
+
+  /// No description provided for @overviewItineraryStepsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} steps · by {agentName}'**
+  String overviewItineraryStepsSummary(int count, String agentName);
+
+  /// No description provided for @overviewViewItineraryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View full itinerary'**
+  String get overviewViewItineraryAction;
+
+  /// No description provided for @overviewNoItineraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No itinerary created yet'**
+  String get overviewNoItineraryTitle;
+
+  /// No description provided for @overviewNoItinerarySupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the itinerary to get this travel ready for the client.'**
+  String get overviewNoItinerarySupport;
+
+  /// No description provided for @overviewCreateItineraryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create itinerary'**
+  String get overviewCreateItineraryAction;
 
   /// No description provided for @travelersCount.
   ///
