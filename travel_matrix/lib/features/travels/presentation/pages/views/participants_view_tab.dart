@@ -122,6 +122,7 @@ class ParticipantsViewTab extends StatelessWidget {
                     ),
                   ),
                   ElevatedButton.icon(
+                    key: const Key('participants_add_button'),
                     onPressed: isSubmitting ? null : () => _addParticipant(context),
                     icon: const Icon(Icons.person_add_alt),
                     label: Text(l10n.addParticipantButton),
@@ -184,6 +185,7 @@ class _EmptyState extends StatelessWidget {
             ),
             const SizedBox(height: 24),
             ElevatedButton.icon(
+              key: const Key('participants_empty_add_button'),
               onPressed: onAdd,
               icon: const Icon(Icons.person_add_alt),
               label: Text(l10n.addParticipantButton),
@@ -333,6 +335,7 @@ class _AddParticipantDialogState extends State<_AddParticipantDialog> {
           child: Text(l10n.cancelButton),
         ),
         ElevatedButton(
+          key: const Key('participants_add_dialog_submit'),
           onPressed: name.isEmpty
               ? null
               : () => Navigator.of(context).pop(

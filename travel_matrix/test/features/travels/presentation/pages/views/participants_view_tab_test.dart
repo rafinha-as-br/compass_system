@@ -110,14 +110,14 @@ void main() {
 
     await pump(tester, _travel(), onTravelUpdated: (t) => updatedTravel = t);
 
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Add participant').first);
+    await tester.tap(find.byKey(const Key('participants_add_button')));
     await tester.pumpAndSettle();
 
     await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Bruno Costa');
     await tester.enterText(find.widgetWithText(TextField, 'Age'), '28');
     await tester.pumpAndSettle();
 
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Add participant').last);
+    await tester.tap(find.byKey(const Key('participants_add_dialog_submit')));
     await tester.pumpAndSettle();
 
     verify(() => participantsUseCases.updateParticipants('t1', any())).called(1);
@@ -129,10 +129,10 @@ void main() {
   testWidgets('the "Add participant" submit button stays disabled until a name is entered', (tester) async {
     await pump(tester, _travel());
 
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Add participant').first);
+    await tester.tap(find.byKey(const Key('participants_add_button')));
     await tester.pumpAndSettle();
 
-    final submitButton = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Add participant').last);
+    final submitButton = tester.widget<ElevatedButton>(find.byKey(const Key('participants_add_dialog_submit')));
     expect(submitButton.onPressed, isNull);
   });
 
@@ -177,11 +177,11 @@ void main() {
 
     await pump(tester, _travel());
 
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Add participant').first);
+    await tester.tap(find.byKey(const Key('participants_add_button')));
     await tester.pumpAndSettle();
     await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Bruno Costa');
     await tester.pumpAndSettle(); // rebuild the dialog so the submit button becomes enabled
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Add participant').last);
+    await tester.tap(find.byKey(const Key('participants_add_dialog_submit')));
     // Not pumpAndSettle from here: a SnackBar has its own auto-dismiss
     // timer, and settling would pump straight through its whole visible
     // duration, leaving nothing to find. Zero-duration pumps drain the
@@ -207,11 +207,11 @@ void main() {
 
     await pump(tester, _travel(), onTravelUpdated: (t) => updatedTravel = t);
 
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Add participant').first);
+    await tester.tap(find.byKey(const Key('participants_add_button')));
     await tester.pumpAndSettle();
     await tester.enterText(find.widgetWithText(TextField, 'Name'), 'Bruno Costa');
     await tester.pumpAndSettle();
-    await tester.tap(find.widgetWithText(ElevatedButton, 'Add participant').last);
+    await tester.tap(find.byKey(const Key('participants_add_dialog_submit')));
     await tester.pump();
     await tester.pump();
     await tester.pump(const Duration(milliseconds: 100));
