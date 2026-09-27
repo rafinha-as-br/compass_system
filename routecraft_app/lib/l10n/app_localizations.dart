@@ -905,20 +905,14 @@ abstract class AppLocalizations {
   /// No description provided for @notificationItineraryPublished.
   ///
   /// In en, this message translates to:
-  /// **'Your itinerary for {travelName} was published'**
-  String notificationItineraryPublished(String travelName);
+  /// **'Your itinerary was published'**
+  String get notificationItineraryPublished;
 
   /// No description provided for @notificationItineraryChanged.
   ///
   /// In en, this message translates to:
-  /// **'The itinerary for {travelName} was changed'**
-  String notificationItineraryChanged(String travelName);
-
-  /// No description provided for @notificationRouteReceived.
-  ///
-  /// In en, this message translates to:
-  /// **'Route for {travelName} received'**
-  String notificationRouteReceived(String travelName);
+  /// **'Your itinerary was updated'**
+  String get notificationItineraryChanged;
 
   /// No description provided for @notificationViewTripLink.
   ///

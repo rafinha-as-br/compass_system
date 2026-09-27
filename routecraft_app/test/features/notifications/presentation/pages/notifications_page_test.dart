@@ -28,6 +28,14 @@ void main() {
     expect(find.text('No notifications yet.'), findsOneWidget);
   });
 
+  testWidgets('shows the network-error state with a retry action', (tester) async {
+    await tester.pumpWidget(_wrap(NotificationsPage(
+      controller: NotificationsController.withState(const NotificationsState(isLoading: false, isError: true)),
+    )));
+
+    expect(find.byIcon(Icons.error_outline), findsOneWidget);
+  });
+
   testWidgets('renders unread and read notifications, with "mark all read" enabled only when needed', (tester) async {
     final controller = NotificationsController.withState(NotificationsState(
       isLoading: false,
@@ -35,15 +43,13 @@ void main() {
         TravelNotification(
           id: 'n1',
           travelId: 't1',
-          travelName: 'Litoral Norte',
           type: TravelNotificationType.itineraryPublished,
           createdAt: DateTime.now(),
         ),
         TravelNotification(
           id: 'n2',
           travelId: 't2',
-          travelName: 'Serra Gaúcha',
-          type: TravelNotificationType.routeReceived,
+          type: TravelNotificationType.itineraryChanged,
           createdAt: DateTime.now(),
           read: true,
         ),
@@ -52,8 +58,8 @@ void main() {
 
     await tester.pumpWidget(_wrap(NotificationsPage(controller: controller)));
 
-    expect(find.textContaining('Litoral Norte'), findsOneWidget);
-    expect(find.textContaining('Serra Gaúcha'), findsOneWidget);
+    expect(find.text('Your itinerary was published'), findsOneWidget);
+    expect(find.text('Your itinerary was updated'), findsOneWidget);
 
     final markAllRead = tester.widget<TextButton>(find.widgetWithText(TextButton, 'mark all read'));
     expect(markAllRead.onPressed, isNotNull);
@@ -74,7 +80,6 @@ void main() {
         TravelNotification(
           id: 'n1',
           travelId: 't1',
-          travelName: 'Litoral Norte',
           type: TravelNotificationType.itineraryPublished,
           createdAt: DateTime.now(),
           read: true,
@@ -93,18 +98,11 @@ void main() {
     final controller = NotificationsController.withState(NotificationsState(
       isLoading: false,
       notifications: [
-        TravelNotification(
-          id: 'n1',
-          travelId: 't1',
-          travelName: 'Litoral Norte',
-          type: TravelNotificationType.itineraryPublished,
-          createdAt: now,
-        ),
+        TravelNotification(id: 'n1', travelId: 't1', type: TravelNotificationType.itineraryPublished, createdAt: now),
         TravelNotification(
           id: 'n2',
           travelId: 't2',
-          travelName: 'Serra Gaúcha',
-          type: TravelNotificationType.routeReceived,
+          type: TravelNotificationType.itineraryChanged,
           createdAt: now.subtract(const Duration(minutes: 5)),
         ),
       ],
@@ -113,5 +111,25 @@ void main() {
     await tester.pumpWidget(_wrap(NotificationsPage(controller: controller)));
 
     expect(find.text('TODAY'), findsOneWidget);
+  });
+
+  testWidgets('shows a loading indicator at the bottom while fetching the next page', (tester) async {
+    final controller = NotificationsController.withState(NotificationsState(
+      isLoading: false,
+      isLoadingMore: true,
+      hasMore: true,
+      notifications: [
+        TravelNotification(
+          id: 'n1',
+          travelId: 't1',
+          type: TravelNotificationType.itineraryPublished,
+          createdAt: DateTime.now(),
+        ),
+      ],
+    ));
+
+    await tester.pumpWidget(_wrap(NotificationsPage(controller: controller)));
+
+    expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
 }

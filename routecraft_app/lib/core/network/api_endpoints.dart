@@ -25,4 +25,9 @@ abstract final class ApiEndpoints {
   static const String currentUser = '/users/me';
   static String userById(String id) => '/users/$id';
   static String userResetPassword(String id) => '/users/$id/reset-password';
+
+  // Notifications
+  static String notifications(int page, int size) => '/notifications?page=$page&size=$size';
+  static const String notificationsUnreadCount = '/notifications/unread-count';
+  static const String notificationsReadAll = '/notifications/read-all';
 }
