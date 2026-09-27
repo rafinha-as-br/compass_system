@@ -49,12 +49,15 @@ abstract final class RoutePlanApiFields {
   static const String startLocation = 'startLocation';
   static const String destination = 'destination';
   static const String interestPoints = 'interestPoints';
+  static const String startLocationCoordinate = 'startLocationCoordinate';
+  static const String destinationCoordinate = 'destinationCoordinate';
 }
 
 abstract final class InterestPointApiFields {
   static const String id = CommonApiFields.id;
   static const String name = CommonApiFields.name;
   static const String description = CommonApiFields.description;
+  static const String coordinate = 'coordinate';
 }
 
 abstract final class ItineraryApiFields {

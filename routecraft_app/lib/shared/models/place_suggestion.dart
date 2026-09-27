@@ -5,6 +5,18 @@ class PlaceCoordinate {
 
   const PlaceCoordinate(this.latitude, this.longitude);
 
+  /// Reads the nested `{latitude, longitude}` object the backend embeds on
+  /// persisted entities (`Route`, `InterestPoint`, …) — a different JSON
+  /// shape than [PlaceSuggestion.fromJson]'s flat autocomplete response.
+  factory PlaceCoordinate.fromJson(Map<String, dynamic> json) {
+    return PlaceCoordinate((json['latitude'] as num).toDouble(), (json['longitude'] as num).toDouble());
+  }
+
+  static PlaceCoordinate? tryFromJson(Object? json) =>
+      json is Map<String, dynamic> ? PlaceCoordinate.fromJson(json) : null;
+
+  Map<String, dynamic> toJson() => {'latitude': latitude, 'longitude': longitude};
+
   @override
   bool operator ==(Object other) =>
       other is PlaceCoordinate &&
