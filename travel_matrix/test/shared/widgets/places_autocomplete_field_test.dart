@@ -159,4 +159,23 @@ void main() {
 
     expect(called, isFalse);
   });
+
+  testWidgets('error notice does not overflow in a narrow column (e.g. a two-field form row)', (tester) async {
+    await tester.pumpWidget(_wrap(SizedBox(
+      width: 150,
+      child: PlacesAutocompleteField(
+        labelText: 'Origem',
+        debounceDuration: _debounce,
+        fetchSuggestions: (query) async => throw Exception('Nominatim indisponível'),
+        onChanged: (_) {},
+      ),
+    )));
+
+    await tester.tap(find.byType(TextField));
+    await tester.enterText(find.byType(TextField), 'flor');
+    await tester.pump(_debounce);
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+  });
 }

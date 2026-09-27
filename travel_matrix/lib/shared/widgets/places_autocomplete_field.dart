@@ -275,11 +275,16 @@ class _PlacesAutocompleteFieldState extends State<PlacesAutocompleteField> {
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(Icons.warning_amber_rounded, size: 13, color: warningColor),
           const SizedBox(width: 4),
-          Text(l10n.placesAutocompleteUnavailable, style: TextStyle(fontSize: 11.5, color: warningColor)),
+          // Flexible, not a bare Text: this field can sit in a narrow column
+          // (e.g. two side-by-side fields in a form row) — without it, a
+          // long message overflows instead of wrapping.
+          Flexible(
+            child: Text(l10n.placesAutocompleteUnavailable, style: TextStyle(fontSize: 11.5, color: warningColor)),
+          ),
         ],
       ),
     );
