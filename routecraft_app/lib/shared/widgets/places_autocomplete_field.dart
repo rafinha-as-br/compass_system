@@ -273,11 +273,16 @@ class _PlacesAutocompleteFieldState extends State<PlacesAutocompleteField> {
     return Padding(
       padding: const EdgeInsets.only(top: 4),
       child: Row(
-        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Icon(Icons.warning_amber_rounded, size: 13, color: TravelAppColors.warning),
           const SizedBox(width: 4),
-          Text(l10n.placesAutocompleteUnavailable, style: const TextStyle(fontSize: 11.5, color: TravelAppColors.warning)),
+          // Flexible, not a bare Text: this field can sit in a narrow column
+          // (e.g. two side-by-side fields in a form row) — without it, a
+          // long message overflows instead of wrapping.
+          Flexible(
+            child: Text(l10n.placesAutocompleteUnavailable, style: const TextStyle(fontSize: 11.5, color: TravelAppColors.warning)),
+          ),
         ],
       ),
     );
