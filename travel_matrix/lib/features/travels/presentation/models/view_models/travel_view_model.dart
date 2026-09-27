@@ -1,8 +1,12 @@
 
 
+import 'package:flutter/material.dart';
+import 'package:uuid/uuid.dart';
 import 'package:travel_matrix/features/travels/domain/entities/person.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_event_view_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 import '../../../domain/entities/travel.dart';
 import 'itinerary_view_model.dart';
@@ -49,6 +53,58 @@ enum TravelStatusViewModel {
 
       case TravelStatusViewModel.completed:
         return TravelStatus.travelFinished;
+    }
+  }
+}
+
+/// Shared status→color/label/support-line presentation for
+/// [TravelStatusViewModel] — reused by the app bar chip and by the
+/// Overview tab's status card so the two mappings never drift apart.
+extension TravelStatusPresentation on TravelStatusViewModel {
+  /// Base color for the status — always applied at 12% alpha for chip/icon
+  /// backgrounds, matching the pattern already used across the app (the
+  /// solid *Container [ColorScheme] tokens are undefined here, so they
+  /// silently fall back to the full-strength color).
+  Color color(ThemeData theme) {
+    switch (this) {
+      case TravelStatusViewModel.notReady:
+        return theme.semanticColors.warning;
+      case TravelStatusViewModel.ready:
+        return theme.semanticColors.success;
+      case TravelStatusViewModel.inProgress:
+        return theme.colorScheme.primary;
+      case TravelStatusViewModel.completed:
+        return theme.colorScheme.secondary;
+    }
+  }
+
+  /// Localized label for the Overview tab's status card — distinct from
+  /// [TravelViewModel.statusString], which is not localized and keeps
+  /// powering the existing app bar chip unchanged.
+  String label(AppLocalizations l10n) {
+    switch (this) {
+      case TravelStatusViewModel.notReady:
+        return l10n.travelStatusNotReadyLabel;
+      case TravelStatusViewModel.ready:
+        return l10n.travelStatusReadyLabel;
+      case TravelStatusViewModel.inProgress:
+        return l10n.travelStatusInProgressLabel;
+      case TravelStatusViewModel.completed:
+        return l10n.travelStatusCompletedLabel;
+    }
+  }
+
+  /// Localized support line for the Overview tab's status card.
+  String supportLine(AppLocalizations l10n) {
+    switch (this) {
+      case TravelStatusViewModel.notReady:
+        return l10n.travelStatusNotReadySupportLine;
+      case TravelStatusViewModel.ready:
+        return l10n.travelStatusReadySupportLine;
+      case TravelStatusViewModel.inProgress:
+        return l10n.travelStatusInProgressSupportLine;
+      case TravelStatusViewModel.completed:
+        return l10n.travelStatusCompletedSupportLine;
     }
   }
 }
@@ -130,6 +186,26 @@ class TravelViewModel{
     }
   }
 
+  /// Returns a copy with the given fields replaced — used after a
+  /// sub-resource mutation (e.g. participants) that only returns that
+  /// piece back from the API, not the whole [Travel].
+  TravelViewModel copyWith({
+    List<PersonViewModel>? participants,
+  }) {
+    return TravelViewModel(
+      backEndId: backEndId,
+      localId: localId,
+      clientName: clientName,
+      travelTitle: travelTitle,
+      status: status,
+      route: route,
+      participants: participants ?? this.participants,
+      events: events,
+      itinerary: itinerary,
+      observations: observations,
+    );
+  }
+
 }
 
 /// Person view model class, used to represent a [Person] on the UI
@@ -181,7 +257,10 @@ class PersonViewModel{
     ){
     return PersonViewModel(
       backEndId: null,
-      localId: name,
+      // Uuid, not `name` — matches RoutePlanViewModel/InterestPointViewModel's
+      // own `fromLocal` convention. Two participants can share the same
+      // name, and [id] is used to tell list items apart (e.g. on removal).
+      localId: const Uuid().v4(),
       name: name,
       age: age,
       sex: sex,

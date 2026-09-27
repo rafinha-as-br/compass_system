@@ -247,8 +247,69 @@
   "needsItineraryFirstTooltip": "You need to create an itinerary first",
   "markAsReadyTooltip": "Mark travel as ready",
   "travelActionsMenuTooltip": "Travel actions",
+  "overviewViewTab": "Overview",
   "routeViewTab": "Route View",
   "itineraryViewTab": "Itinerary View",
+  "participantsViewTab": "Participants",
+  "addParticipantButton": "Add participant",
+  "addParticipantDialogTitle": "Add participant",
+  "participantNameFieldLabel": "Name",
+  "participantAgeFieldLabel": "Age",
+  "noParticipantsTitle": "No participants yet",
+  "noParticipantsMessage": "Add the people traveling to keep this list up to date.",
+  "removeParticipantTooltip": "Remove participant",
+  "removeParticipantConfirmTitle": "Remove participant?",
+  "removeParticipantConfirmMessage": "Remove {name} from this travel?",
+  "@removeParticipantConfirmMessage": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "retryButton": "Try again",
+  "failedToUpdateParticipants": "Could not update participants. Please try again.",
+  "participantAgeYears": "{age} years old",
+  "@participantAgeYears": {
+    "placeholders": {
+      "age": { "type": "String" }
+    }
+  },
+  "overviewRouteLabel": "ROUTE",
+  "overviewDurationLabel": "Duration",
+  "overviewDurationInDays": "{count} days",
+  "@overviewDurationInDays": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "travelStatusNotReadyLabel": "Not Ready",
+  "travelStatusReadyLabel": "Ready",
+  "travelStatusInProgressLabel": "In Progress",
+  "travelStatusCompletedLabel": "Completed",
+  "travelStatusNotReadySupportLine": "Route created, itinerary pending",
+  "travelStatusReadySupportLine": "Itinerary created",
+  "travelStatusInProgressSupportLine": "Travel underway",
+  "travelStatusCompletedSupportLine": "Travel finished",
+  "overviewParticipantsLabel": "PARTICIPANTS",
+  "overviewParticipantsCaption": "people on this trip",
+  "overviewParticipantsMore": "and {count} more",
+  "@overviewParticipantsMore": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "overviewViewParticipantsAction": "View participants →",
+  "overviewItineraryLabel": "ITINERARY",
+  "overviewItineraryStepsSummary": "{count} steps · by {agentName}",
+  "@overviewItineraryStepsSummary": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "agentName": { "type": "String" }
+    }
+  },
+  "overviewViewItineraryAction": "View full itinerary",
+  "overviewNoItineraryTitle": "No itinerary created yet",
+  "overviewNoItinerarySupport": "Create the itinerary to get this travel ready for the client.",
+  "overviewCreateItineraryAction": "Create itinerary",
   "travelersCount": "{count} Travelers",
   "@travelersCount": {
     "placeholders": {
