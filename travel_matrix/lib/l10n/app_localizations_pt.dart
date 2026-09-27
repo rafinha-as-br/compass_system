@@ -602,30 +602,54 @@ class AppLocalizationsPt extends AppLocalizations {
   String get createTravelButton => 'CRIAR VIAGEM';
 
   @override
-  String get markAsReadyButton => 'Marcar como Pronta';
+  String get editMenuLabel => 'Editar';
 
   @override
-  String get markAsReadyConfirm =>
-      'Tem certeza que deseja marcar esta viagem como pronta?';
+  String get prepareTravelButton => 'Preparar viagem';
 
   @override
   String get confirmButton => 'Confirmar';
 
   @override
-  String get markAsReadySuccess => 'Viagem marcada como pronta com sucesso';
+  String get prepareTravelSuccess => 'Viagem preparada com sucesso';
 
   @override
-  String get markAsReadyFailure => 'Falha ao marcar viagem como pronta';
+  String get prepareTravelFailure => 'Falha ao preparar a viagem';
 
   @override
   String get needsItineraryFirstTooltip =>
       'Você precisa criar um roteiro primeiro';
 
   @override
-  String get markAsReadyTooltip => 'Marcar viagem como pronta';
+  String get prepareTravelTooltip => 'Preparar viagem';
 
   @override
   String get travelActionsMenuTooltip => 'Ações da viagem';
+
+  @override
+  String get prepareTravelDialogTitle => 'Preparar viagem?';
+
+  @override
+  String get prepareTravelDialogSubtitle =>
+      'Revise o resumo antes de marcar a primeira versão do itinerário como pronta.';
+
+  @override
+  String get prepareTravelSummaryTravelLabel => 'Viagem';
+
+  @override
+  String get prepareTravelSummaryStatusLabel => 'Status atual';
+
+  @override
+  String get prepareTravelSummaryParticipantsLabel => 'Participantes';
+
+  @override
+  String get prepareTravelSummaryStartDateLabel => 'Data de início';
+
+  @override
+  String get prepareTravelSummaryEndDateLabel => 'Data de fim';
+
+  @override
+  String get itinerarySummarySectionTitle => 'ITINERÁRIO';
 
   @override
   String get routeViewTab => 'Ver Rota';

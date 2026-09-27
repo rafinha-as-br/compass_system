@@ -1214,17 +1214,17 @@ abstract class AppLocalizations {
   /// **'CREATE TRAVEL'**
   String get createTravelButton;
 
-  /// No description provided for @markAsReadyButton.
+  /// No description provided for @editMenuLabel.
   ///
   /// In en, this message translates to:
-  /// **'Mark as Ready'**
-  String get markAsReadyButton;
+  /// **'Edit'**
+  String get editMenuLabel;
 
-  /// No description provided for @markAsReadyConfirm.
+  /// No description provided for @prepareTravelButton.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to mark this travel as ready?'**
-  String get markAsReadyConfirm;
+  /// **'Prepare travel'**
+  String get prepareTravelButton;
 
   /// No description provided for @confirmButton.
   ///
@@ -1232,17 +1232,17 @@ abstract class AppLocalizations {
   /// **'Confirm'**
   String get confirmButton;
 
-  /// No description provided for @markAsReadySuccess.
+  /// No description provided for @prepareTravelSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Travel marked as ready successfully'**
-  String get markAsReadySuccess;
+  /// **'Travel prepared successfully'**
+  String get prepareTravelSuccess;
 
-  /// No description provided for @markAsReadyFailure.
+  /// No description provided for @prepareTravelFailure.
   ///
   /// In en, this message translates to:
-  /// **'Failed to mark travel as ready'**
-  String get markAsReadyFailure;
+  /// **'Failed to prepare travel'**
+  String get prepareTravelFailure;
 
   /// No description provided for @needsItineraryFirstTooltip.
   ///
@@ -1250,17 +1250,65 @@ abstract class AppLocalizations {
   /// **'You need to create an itinerary first'**
   String get needsItineraryFirstTooltip;
 
-  /// No description provided for @markAsReadyTooltip.
+  /// No description provided for @prepareTravelTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Mark travel as ready'**
-  String get markAsReadyTooltip;
+  /// **'Prepare travel'**
+  String get prepareTravelTooltip;
 
   /// No description provided for @travelActionsMenuTooltip.
   ///
   /// In en, this message translates to:
   /// **'Travel actions'**
   String get travelActionsMenuTooltip;
+
+  /// No description provided for @prepareTravelDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare travel?'**
+  String get prepareTravelDialogTitle;
+
+  /// No description provided for @prepareTravelDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the summary before marking the first itinerary version as ready.'**
+  String get prepareTravelDialogSubtitle;
+
+  /// No description provided for @prepareTravelSummaryTravelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get prepareTravelSummaryTravelLabel;
+
+  /// No description provided for @prepareTravelSummaryStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current status'**
+  String get prepareTravelSummaryStatusLabel;
+
+  /// No description provided for @prepareTravelSummaryParticipantsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get prepareTravelSummaryParticipantsLabel;
+
+  /// No description provided for @prepareTravelSummaryStartDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get prepareTravelSummaryStartDateLabel;
+
+  /// No description provided for @prepareTravelSummaryEndDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'End date'**
+  String get prepareTravelSummaryEndDateLabel;
+
+  /// No description provided for @itinerarySummarySectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ITINERARY'**
+  String get itinerarySummarySectionTitle;
 
   /// No description provided for @routeViewTab.
   ///
