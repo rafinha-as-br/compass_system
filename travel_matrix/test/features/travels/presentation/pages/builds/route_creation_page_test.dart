@@ -7,8 +7,10 @@ import 'package:provider/provider.dart';
 import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
+import 'package:travel_matrix/features/travels/domain/repository/participants_repository.dart';
 import 'package:travel_matrix/features/travels/domain/repository/route_repository.dart';
 import 'package:travel_matrix/features/travels/domain/repository/travel_repository.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/crud_participants.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
@@ -19,6 +21,8 @@ import 'package:travel_matrix/l10n/app_localizations.dart';
 class _MockRouteRepository extends Mock implements RouteRepository {}
 
 class _MockTravelRepository extends Mock implements TravelRepository {}
+
+class _MockParticipantsRepository extends Mock implements ParticipantsRepository {}
 
 void main() {
   setUpAll(() {
@@ -94,6 +98,7 @@ void main() {
           create: (_) => TravelsController(
             travelUseCases: CrudTravelUseCases(travelRepository),
             routeUseCases: CrudRoute(routeRepository),
+            participantsUseCases: CrudParticipants(_MockParticipantsRepository()),
           ),
           child: MaterialApp.router(
             routerConfig: router,

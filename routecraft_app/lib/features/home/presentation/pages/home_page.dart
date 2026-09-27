@@ -36,6 +36,7 @@ class _HomeView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final state = context.watch<HomeController>().state;
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       body: state.isLoading
@@ -48,7 +49,16 @@ class _HomeView extends StatelessWidget {
                       if (state.isOffline) OfflineBanner(syncedAt: state.syncedAt!),
                       _HomeHeader(clientName: state.clientName),
                       Expanded(
-                        child: state.isEmpty ? const _EmptyHome() : _TravelSectionsList(state: state),
+                        child: state.inProgress.isNotEmpty
+                            // Sorted ascending by start date (HomeController._group) — the one
+                            // that started first wins if more than one is in progress at once.
+                            ? _TravelSection(
+                                title: l10n.homeSectionInProgress,
+                                travels: [state.inProgress.first],
+                              )
+                            : state.isEmpty
+                                ? const _EmptyHome()
+                                : const _NoTripInProgress(),
                       ),
                     ],
                   ),
@@ -128,29 +138,9 @@ String _initials(String fullName) {
   return (parts.first.substring(0, 1) + parts.last.substring(0, 1)).toUpperCase();
 }
 
-class _TravelSectionsList extends StatelessWidget {
-  const _TravelSectionsList({required this.state});
-
-  final HomeState state;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = AppLocalizations.of(context)!;
-
-    return ListView(
-      padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
-      children: [
-        if (state.inProgress.isNotEmpty)
-          _TravelSection(title: l10n.homeSectionInProgress, travels: state.inProgress),
-        if (state.upcoming.isNotEmpty)
-          _TravelSection(title: l10n.homeSectionUpcoming, travels: state.upcoming),
-        if (state.completed.isNotEmpty)
-          _TravelSection(title: l10n.homeSectionCompleted, travels: state.completed),
-      ],
-    );
-  }
-}
-
+/// Shows the single in-progress travel, under a section label — the only
+/// case where the Início still lists a travel; Próximas/Concluídas moved to
+/// the Viagens tab (CPS-131).
 class _TravelSection extends StatelessWidget {
   const _TravelSection({required this.title, required this.travels});
 
@@ -162,7 +152,7 @@ class _TravelSection extends StatelessWidget {
     final theme = Theme.of(context);
 
     return Padding(
-      padding: const EdgeInsets.only(bottom: 24),
+      padding: const EdgeInsets.fromLTRB(16, 8, 16, 96),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -258,6 +248,7 @@ class _HomeError extends StatelessWidget {
   }
 }
 
+/// Cenário 1 — cliente nunca criou nenhuma viagem.
 class _EmptyHome extends StatelessWidget {
   const _EmptyHome();
 
@@ -267,10 +258,31 @@ class _EmptyHome extends StatelessWidget {
 
     return EmptyStateView(
       icon: Icons.auto_awesome_outlined,
-      title: l10n.noTravelsYet,
-      message: l10n.homeEmptyMessage,
-      ctaLabel: l10n.homeEmptyCta,
+      title: l10n.homeNoRoutesTitle,
+      message: l10n.homeNoRoutesMessage,
+      ctaLabel: l10n.homeCreateRouteCta,
       onCtaPressed: () => _pushAndRefresh(context, AppRoutes.homeCreateRoute),
+    );
+  }
+}
+
+/// Cenário 2 — cliente tem viagens, mas nenhuma em andamento; o link
+/// secundário troca de branch (não empilha rota) para a aba Viagens (índice 1).
+class _NoTripInProgress extends StatelessWidget {
+  const _NoTripInProgress();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return EmptyStateView(
+      icon: Icons.auto_awesome_outlined,
+      title: l10n.homeNoTripInProgressTitle,
+      message: l10n.homeNoTripInProgressMessage,
+      ctaLabel: l10n.homeCreateRouteCta,
+      onCtaPressed: () => _pushAndRefresh(context, AppRoutes.homeCreateRoute),
+      secondaryCtaLabel: l10n.homeSeeMyTripsLink,
+      onSecondaryCtaPressed: () => StatefulNavigationShell.of(context).goBranch(1),
     );
   }
 }

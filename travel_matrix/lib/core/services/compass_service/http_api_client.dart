@@ -39,10 +39,15 @@ class HttpApiClient {
     return _handleResponse(response);
   }
 
+  /// [body] is usually a `Map` (a single resource), but some endpoints
+  /// replace a whole list (e.g. participants) and take a raw JSON array —
+  /// `jsonEncode` handles both. [_handleResponse] wraps a non-`Map` decoded
+  /// response as `{'data': decoded}`, so an array response comes back the
+  /// same way.
   Future<Map<String, dynamic>> put(
     String token,
     String path,
-    Map<String, dynamic> body,
+    Object body,
   ) async {
     final uri = Uri.parse('${ApiEndpoints.baseUrl}$path');
     final response = await _client.put(
