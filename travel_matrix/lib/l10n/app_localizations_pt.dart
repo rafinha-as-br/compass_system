@@ -304,9 +304,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminDarkMode => 'Modo Escuro Administrativo';
 
   @override
-  String get logOutOfMatrix => 'Sair do Matrix';
-
-  @override
   String get languageLabel => 'Idioma';
 
   @override
@@ -378,13 +375,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get newPassword => 'Nova Senha';
 
   @override
-  String get digitalConcierge => 'O CONCIERGE DIGITAL';
+  String get compassSystemBrand => 'Compass System';
 
   @override
   String get dashboardNav => 'Dashboard';
 
   @override
   String get bookingNav => 'Reservas';
+
+  @override
+  String get myAccountNav => 'Minha Conta';
 
   @override
   String get settingsNav => 'Configurações';

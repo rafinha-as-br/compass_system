@@ -656,12 +656,6 @@ abstract class AppLocalizations {
   /// **'Admin Dark Mode'**
   String get adminDarkMode;
 
-  /// No description provided for @logOutOfMatrix.
-  ///
-  /// In en, this message translates to:
-  /// **'Log Out of Matrix'**
-  String get logOutOfMatrix;
-
   /// No description provided for @languageLabel.
   ///
   /// In en, this message translates to:
@@ -794,11 +788,11 @@ abstract class AppLocalizations {
   /// **'New Password'**
   String get newPassword;
 
-  /// No description provided for @digitalConcierge.
+  /// No description provided for @compassSystemBrand.
   ///
   /// In en, this message translates to:
-  /// **'THE DIGITAL CONCIERGE'**
-  String get digitalConcierge;
+  /// **'Compass System'**
+  String get compassSystemBrand;
 
   /// No description provided for @dashboardNav.
   ///
@@ -811,6 +805,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Booking'**
   String get bookingNav;
+
+  /// No description provided for @myAccountNav.
+  ///
+  /// In en, this message translates to:
+  /// **'My Account'**
+  String get myAccountNav;
 
   /// No description provided for @settingsNav.
   ///

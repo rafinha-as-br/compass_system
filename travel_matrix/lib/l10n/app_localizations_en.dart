@@ -303,9 +303,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminDarkMode => 'Admin Dark Mode';
 
   @override
-  String get logOutOfMatrix => 'Log Out of Matrix';
-
-  @override
   String get languageLabel => 'Language';
 
   @override
@@ -377,13 +374,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newPassword => 'New Password';
 
   @override
-  String get digitalConcierge => 'THE DIGITAL CONCIERGE';
+  String get compassSystemBrand => 'Compass System';
 
   @override
   String get dashboardNav => 'Dashboard';
 
   @override
   String get bookingNav => 'Booking';
+
+  @override
+  String get myAccountNav => 'My Account';
 
   @override
   String get settingsNav => 'Settings';
