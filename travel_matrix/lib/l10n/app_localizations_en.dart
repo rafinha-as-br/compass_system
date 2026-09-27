@@ -596,30 +596,54 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createTravelButton => 'CREATE TRAVEL';
 
   @override
-  String get markAsReadyButton => 'Mark as Ready';
+  String get editMenuLabel => 'Edit';
 
   @override
-  String get markAsReadyConfirm =>
-      'Are you sure you want to mark this travel as ready?';
+  String get prepareTravelButton => 'Prepare travel';
 
   @override
   String get confirmButton => 'Confirm';
 
   @override
-  String get markAsReadySuccess => 'Travel marked as ready successfully';
+  String get prepareTravelSuccess => 'Travel prepared successfully';
 
   @override
-  String get markAsReadyFailure => 'Failed to mark travel as ready';
+  String get prepareTravelFailure => 'Failed to prepare travel';
 
   @override
   String get needsItineraryFirstTooltip =>
       'You need to create an itinerary first';
 
   @override
-  String get markAsReadyTooltip => 'Mark travel as ready';
+  String get prepareTravelTooltip => 'Prepare travel';
 
   @override
   String get travelActionsMenuTooltip => 'Travel actions';
+
+  @override
+  String get prepareTravelDialogTitle => 'Prepare travel?';
+
+  @override
+  String get prepareTravelDialogSubtitle =>
+      'Review the summary before marking the first itinerary version as ready.';
+
+  @override
+  String get prepareTravelSummaryTravelLabel => 'Travel';
+
+  @override
+  String get prepareTravelSummaryStatusLabel => 'Current status';
+
+  @override
+  String get prepareTravelSummaryParticipantsLabel => 'Participants';
+
+  @override
+  String get prepareTravelSummaryStartDateLabel => 'Start date';
+
+  @override
+  String get prepareTravelSummaryEndDateLabel => 'End date';
+
+  @override
+  String get itinerarySummarySectionTitle => 'ITINERARY';
 
   @override
   String get routeViewTab => 'Route View';
