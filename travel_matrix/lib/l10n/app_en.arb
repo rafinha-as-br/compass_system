@@ -247,8 +247,46 @@
   "needsItineraryFirstTooltip": "You need to create an itinerary first",
   "markAsReadyTooltip": "Mark travel as ready",
   "travelActionsMenuTooltip": "Travel actions",
+  "overviewViewTab": "Overview",
   "routeViewTab": "Route View",
   "itineraryViewTab": "Itinerary View",
+  "overviewRouteLabel": "ROUTE",
+  "overviewDurationLabel": "Duration",
+  "overviewDurationInDays": "{count} days",
+  "@overviewDurationInDays": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "travelStatusNotReadyLabel": "Not Ready",
+  "travelStatusReadyLabel": "Ready",
+  "travelStatusInProgressLabel": "In Progress",
+  "travelStatusCompletedLabel": "Completed",
+  "travelStatusNotReadySupportLine": "Route created, itinerary pending",
+  "travelStatusReadySupportLine": "Itinerary created",
+  "travelStatusInProgressSupportLine": "Travel underway",
+  "travelStatusCompletedSupportLine": "Travel finished",
+  "overviewParticipantsLabel": "PARTICIPANTS",
+  "overviewParticipantsCaption": "people on this trip",
+  "overviewParticipantsMore": "and {count} more",
+  "@overviewParticipantsMore": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "overviewViewParticipantsAction": "View participants →",
+  "overviewItineraryLabel": "ITINERARY",
+  "overviewItineraryStepsSummary": "{count} steps · by {agentName}",
+  "@overviewItineraryStepsSummary": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "agentName": { "type": "String" }
+    }
+  },
+  "overviewViewItineraryAction": "View full itinerary",
+  "overviewNoItineraryTitle": "No itinerary created yet",
+  "overviewNoItinerarySupport": "Create the itinerary to get this travel ready for the client.",
+  "overviewCreateItineraryAction": "Create itinerary",
   "travelersCount": "{count} Travelers",
   "@travelersCount": {
     "placeholders": {
