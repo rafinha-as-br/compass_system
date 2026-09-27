@@ -10,6 +10,8 @@ import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
+import 'package:travel_matrix/features/travels/domain/repository/participants_repository.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/crud_participants.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
@@ -19,6 +21,8 @@ import 'package:travel_matrix/l10n/app_localizations.dart';
 class _MockCrudTravelUseCases extends Mock implements CrudTravelUseCases {}
 
 class _MockCrudRoute extends Mock implements CrudRoute {}
+
+class _MockParticipantsRepository extends Mock implements ParticipantsRepository {}
 
 void main() {
   late _MockCrudTravelUseCases travelUseCases;
@@ -36,7 +40,11 @@ void main() {
   });
 
   Widget wrap(AuthController auth, {Locale? locale}) {
-    final travelsController = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+    final travelsController = TravelsController(
+      travelUseCases: travelUseCases,
+      routeUseCases: routeUseCases,
+      participantsUseCases: CrudParticipants(_MockParticipantsRepository()),
+    );
     final router = GoRouter(
       initialLocation: '/create',
       routes: [
