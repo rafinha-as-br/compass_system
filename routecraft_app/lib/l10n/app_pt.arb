@@ -152,6 +152,7 @@
   "notificationItineraryChanged": "Seu roteiro foi atualizado",
   "notificationViewTripLink": "Ver viagem",
   "notificationOpenTripError": "Não foi possível abrir esta viagem.",
+  "pushNotificationTitle": "Compass",
 
   "editRouteTitle": "Editar minha rota",
   "editRouteSaveButton": "SALVAR",

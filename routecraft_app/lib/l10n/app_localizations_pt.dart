@@ -482,6 +482,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notificationOpenTripError => 'Não foi possível abrir esta viagem.';
 
   @override
+  String get pushNotificationTitle => 'Compass';
+
+  @override
   String get editRouteTitle => 'Editar minha rota';
 
   @override

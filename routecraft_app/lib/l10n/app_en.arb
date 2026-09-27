@@ -214,6 +214,7 @@
   "notificationItineraryChanged": "Your itinerary was updated",
   "notificationViewTripLink": "View trip",
   "notificationOpenTripError": "Could not open this trip.",
+  "pushNotificationTitle": "Compass",
 
   "editRouteTitle": "Edit my route",
   "editRouteSaveButton": "SAVE",

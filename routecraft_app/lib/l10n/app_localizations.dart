@@ -926,6 +926,12 @@ abstract class AppLocalizations {
   /// **'Could not open this trip.'**
   String get notificationOpenTripError;
 
+  /// No description provided for @pushNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass'**
+  String get pushNotificationTitle;
+
   /// No description provided for @editRouteTitle.
   ///
   /// In en, this message translates to:

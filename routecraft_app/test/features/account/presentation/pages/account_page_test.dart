@@ -103,6 +103,7 @@ void main() {
     final authController = AuthController(
       checkAuthenticated: () async => true,
       clearToken: () async => loggedOut = true,
+      unregisterFromPush: () async {},
     );
 
     tester.view.physicalSize = const Size(1080, 2400);
