@@ -72,7 +72,7 @@ Widget _wrap(TravelsController controller, TravelViewModel travel, {Locale? loca
       ],
       supportedLocales: AppLocalizations.supportedLocales,
       home: DefaultTabController(
-        length: 2,
+        length: 4,
         child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
       ),
     ),
@@ -261,7 +261,7 @@ void main() {
   testWidgets('"Editar" groups Route/Itinerary in a flyout, with a divider before "Preparar viagem"', (
     tester,
   ) async {
-    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
     final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
@@ -286,7 +286,7 @@ void main() {
   testWidgets('"Preparar viagem" is disabled with the needs-itinerary tooltip when there is no itinerary', (
     tester,
   ) async {
-    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
     final travel = TravelViewModel.fromDomain(_buildNotReadyTravel(hasItinerary: false));
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
@@ -310,7 +310,7 @@ void main() {
   testWidgets('the "Preparar viagem" dialog summarizes participants, dates and the first/last step', (
     tester,
   ) async {
-    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
     when(() => travelUseCases.markAsReady(any())).thenAnswer((_) async => Result.success(_buildNotReadyTravel()));
     final travel = TravelViewModel.fromDomain(
       _buildNotReadyTravel(
@@ -346,7 +346,7 @@ void main() {
         GoRoute(
           path: '/travels/1',
           builder: (context, state) =>
-              DefaultTabController(length: 2, child: Scaffold(appBar: TravelViewAppBar(travel: travel))),
+              DefaultTabController(length: 4, child: Scaffold(appBar: TravelViewAppBar(travel: travel))),
         ),
         GoRoute(path: '/travels', builder: (context, state) => const SizedBox()),
       ],

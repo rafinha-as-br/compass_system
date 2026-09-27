@@ -7,6 +7,7 @@ import 'package:travel_matrix/features/travels/presentation/controllers/travels_
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 
 /// This appBar is used in the Travel_View_page, responsible for showing:
