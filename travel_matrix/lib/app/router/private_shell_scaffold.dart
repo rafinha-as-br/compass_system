@@ -94,14 +94,24 @@ class PrivateShellScaffold extends StatelessWidget {
                         isSelected: currentIndex == 2,
                         onTap: () => navigationShell.goBranch(2),
                       ),
+                      const SizedBox(height: 8),
+                      // Empresa: visível para OWNER e MEMBER (a diferença de
+                      // papel fica dentro da tela). Posição proposta no
+                      // handoff da CPS-163 — entre Users e o divisor.
+                      _NavItem(
+                        icon: Icons.business_outlined,
+                        label: l10n.companyNav,
+                        isSelected: currentIndex == 3,
+                        onTap: () => navigationShell.goBranch(3),
+                      ),
                       const SizedBox(height: 24),
                       const Divider(),
                       const SizedBox(height: 24),
                       _NavItem(
                         icon: Icons.settings,
                         label: l10n.settingsNav,
-                        isSelected: currentIndex == 3,
-                        onTap: () => navigationShell.goBranch(3),
+                        isSelected: currentIndex == 4,
+                        onTap: () => navigationShell.goBranch(4),
                       ),
                     ],
                   ),

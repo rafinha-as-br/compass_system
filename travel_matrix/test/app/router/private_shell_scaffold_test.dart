@@ -29,6 +29,7 @@ void main() {
             StatefulShellBranch(routes: [GoRoute(path: '/b', builder: (_, __) => const SizedBox())]),
             StatefulShellBranch(routes: [GoRoute(path: '/c', builder: (_, __) => const SizedBox())]),
             StatefulShellBranch(routes: [GoRoute(path: '/d', builder: (_, __) => const SizedBox())]),
+            StatefulShellBranch(routes: [GoRoute(path: '/e', builder: (_, __) => const SizedBox())]),
           ],
         ),
       ],

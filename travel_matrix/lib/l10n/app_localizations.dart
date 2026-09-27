@@ -1765,6 +1765,306 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Session expired. Please sign in again.'**
   String get sessionExpiredMessage;
+
+  /// No description provided for @companyNav.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get companyNav;
+
+  /// No description provided for @companyBreadcrumbRoot.
+  ///
+  /// In en, this message translates to:
+  /// **'Home'**
+  String get companyBreadcrumbRoot;
+
+  /// No description provided for @companyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get companyTitle;
+
+  /// No description provided for @failedToLoadCompany.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load your company right now. Please try again later.'**
+  String get failedToLoadCompany;
+
+  /// No description provided for @retryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryButton;
+
+  /// No description provided for @agentsCountLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Agents ({count})'**
+  String agentsCountLabel(int count);
+
+  /// No description provided for @inviteAgentButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Agent'**
+  String get inviteAgentButton;
+
+  /// No description provided for @agentNameColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'NAME'**
+  String get agentNameColumn;
+
+  /// No description provided for @generatedLoginColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'GENERATED LOGIN'**
+  String get generatedLoginColumn;
+
+  /// No description provided for @roleColumn.
+  ///
+  /// In en, this message translates to:
+  /// **'ROLE'**
+  String get roleColumn;
+
+  /// No description provided for @youSuffix.
+  ///
+  /// In en, this message translates to:
+  /// **' (you)'**
+  String get youSuffix;
+
+  /// No description provided for @planBadgeLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'{plan} plan'**
+  String planBadgeLabel(String plan);
+
+  /// No description provided for @noAgentsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'No agents found.'**
+  String get noAgentsMessage;
+
+  /// No description provided for @memberSinceLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'IN THE COMPANY SINCE'**
+  String get memberSinceLabel;
+
+  /// No description provided for @promoteToOwnerButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote to OWNER'**
+  String get promoteToOwnerButton;
+
+  /// No description provided for @demoteToMemberButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Demote to MEMBER'**
+  String get demoteToMemberButton;
+
+  /// No description provided for @removeFromCompanyButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove from company'**
+  String get removeFromCompanyButton;
+
+  /// No description provided for @closeButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get closeButton;
+
+  /// No description provided for @soleOwnerNotice.
+  ///
+  /// In en, this message translates to:
+  /// **'You are the only OWNER of the company — promote another agent first.'**
+  String get soleOwnerNotice;
+
+  /// No description provided for @removeAgentDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name}?'**
+  String removeAgentDialogTitle(String name);
+
+  /// No description provided for @removeAgentDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'The agent loses access immediately. The packages and itineraries they created stay with the company — nothing is deleted.'**
+  String get removeAgentDialogBody;
+
+  /// No description provided for @removeConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove'**
+  String get removeConfirmButton;
+
+  /// No description provided for @blockedActionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Action blocked'**
+  String get blockedActionTitle;
+
+  /// No description provided for @blockedActionBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You are the only OWNER of {company}. Promote another agent first.'**
+  String blockedActionBody(String company);
+
+  /// No description provided for @understoodButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get understoodButton;
+
+  /// No description provided for @promoteDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote {name} to OWNER?'**
+  String promoteDialogTitle(String name);
+
+  /// No description provided for @promoteDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They will be able to invite, remove and change the role of any agent — including yours.'**
+  String get promoteDialogBody;
+
+  /// No description provided for @promoteConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Promote'**
+  String get promoteConfirmButton;
+
+  /// No description provided for @demoteDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Demote {name} to MEMBER?'**
+  String demoteDialogTitle(String name);
+
+  /// No description provided for @demoteDialogBody.
+  ///
+  /// In en, this message translates to:
+  /// **'They will no longer be able to invite, remove or change the role of agents.'**
+  String get demoteDialogBody;
+
+  /// No description provided for @demoteConfirmButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Demote'**
+  String get demoteConfirmButton;
+
+  /// No description provided for @agentRemovedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} was removed from the company.'**
+  String agentRemovedSnack(String name);
+
+  /// No description provided for @roleChangedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'{name} is now {role}.'**
+  String roleChangedSnack(String name, String role);
+
+  /// No description provided for @inviteAgentTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Agent'**
+  String get inviteAgentTitle;
+
+  /// No description provided for @inviteHelpText.
+  ///
+  /// In en, this message translates to:
+  /// **'The login and the temporary password are generated by the system. You only enter the name.'**
+  String get inviteHelpText;
+
+  /// No description provided for @agentNameFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent name'**
+  String get agentNameFieldLabel;
+
+  /// No description provided for @agentNameRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent name is required'**
+  String get agentNameRequiredValidation;
+
+  /// No description provided for @loginPreviewLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Login that will be generated'**
+  String get loginPreviewLabel;
+
+  /// No description provided for @readOnlyTag.
+  ///
+  /// In en, this message translates to:
+  /// **'read-only'**
+  String get readOnlyTag;
+
+  /// No description provided for @loginPreviewHelper.
+  ///
+  /// In en, this message translates to:
+  /// **'updates on every keystroke · accents removed, spaces → \".\" · numeric suffix when the local-part already exists in the company'**
+  String get loginPreviewHelper;
+
+  /// No description provided for @roleFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Role'**
+  String get roleFieldLabel;
+
+  /// No description provided for @roleFixedNote.
+  ///
+  /// In en, this message translates to:
+  /// **'fixed on invite; promotion is done later on the Panel'**
+  String get roleFixedNote;
+
+  /// No description provided for @inviteSubmitButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Invite Agent'**
+  String get inviteSubmitButton;
+
+  /// No description provided for @agentCreatedTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Agent created'**
+  String get agentCreatedTitle;
+
+  /// No description provided for @agentCreatedBody.
+  ///
+  /// In en, this message translates to:
+  /// **'No e-mail is sent at this stage. Copy and hand the credentials to the agent now — the temporary password will not be shown again.'**
+  String get agentCreatedBody;
+
+  /// No description provided for @loginLabelCaps.
+  ///
+  /// In en, this message translates to:
+  /// **'LOGIN'**
+  String get loginLabelCaps;
+
+  /// No description provided for @temporaryPasswordLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'TEMPORARY PASSWORD'**
+  String get temporaryPasswordLabel;
+
+  /// No description provided for @copyCredentialsButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Copy credentials'**
+  String get copyCredentialsButton;
+
+  /// No description provided for @credentialsCopiedSnack.
+  ///
+  /// In en, this message translates to:
+  /// **'Credentials copied.'**
+  String get credentialsCopiedSnack;
+
+  /// No description provided for @backToPanelButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Back to Panel'**
+  String get backToPanelButton;
 }
 
 class _AppLocalizationsDelegate

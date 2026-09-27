@@ -897,4 +897,179 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get sessionExpiredMessage => 'Sessão expirada. Faça login novamente.';
+
+  @override
+  String get companyNav => 'Empresa';
+
+  @override
+  String get companyBreadcrumbRoot => 'Início';
+
+  @override
+  String get companyTitle => 'Empresa';
+
+  @override
+  String get failedToLoadCompany =>
+      'Não foi possível carregar sua empresa agora. Tente novamente mais tarde.';
+
+  @override
+  String get retryButton => 'Tentar novamente';
+
+  @override
+  String agentsCountLabel(int count) {
+    return 'Agentes ($count)';
+  }
+
+  @override
+  String get inviteAgentButton => 'Convidar Agente';
+
+  @override
+  String get agentNameColumn => 'NOME';
+
+  @override
+  String get generatedLoginColumn => 'LOGIN GERADO';
+
+  @override
+  String get roleColumn => 'PAPEL';
+
+  @override
+  String get youSuffix => ' (você)';
+
+  @override
+  String planBadgeLabel(String plan) {
+    return 'Plano $plan';
+  }
+
+  @override
+  String get noAgentsMessage => 'Nenhum agente encontrado.';
+
+  @override
+  String get memberSinceLabel => 'NA EMPRESA DESDE';
+
+  @override
+  String get promoteToOwnerButton => 'Promover a OWNER';
+
+  @override
+  String get demoteToMemberButton => 'Rebaixar a MEMBER';
+
+  @override
+  String get removeFromCompanyButton => 'Remover da empresa';
+
+  @override
+  String get closeButton => 'Fechar';
+
+  @override
+  String get soleOwnerNotice =>
+      'Você é o único OWNER da empresa — promova outro agente antes.';
+
+  @override
+  String removeAgentDialogTitle(String name) {
+    return 'Remover $name?';
+  }
+
+  @override
+  String get removeAgentDialogBody =>
+      'O agente perde acesso imediatamente. Os pacotes e itinerários que ele criou permanecem com a empresa — nada é excluído.';
+
+  @override
+  String get removeConfirmButton => 'Remover';
+
+  @override
+  String get blockedActionTitle => 'Ação bloqueada';
+
+  @override
+  String blockedActionBody(String company) {
+    return 'Você é o único OWNER da $company. Promova outro agente antes.';
+  }
+
+  @override
+  String get understoodButton => 'Entendi';
+
+  @override
+  String promoteDialogTitle(String name) {
+    return 'Promover $name a OWNER?';
+  }
+
+  @override
+  String get promoteDialogBody =>
+      'Ela passa a convidar, remover e alterar o papel de qualquer agente — inclusive o seu.';
+
+  @override
+  String get promoteConfirmButton => 'Promover';
+
+  @override
+  String demoteDialogTitle(String name) {
+    return 'Rebaixar $name a MEMBER?';
+  }
+
+  @override
+  String get demoteDialogBody =>
+      'Ela deixa de convidar, remover e alterar o papel de agentes.';
+
+  @override
+  String get demoteConfirmButton => 'Rebaixar';
+
+  @override
+  String agentRemovedSnack(String name) {
+    return '$name foi removido da empresa.';
+  }
+
+  @override
+  String roleChangedSnack(String name, String role) {
+    return '$name agora é $role.';
+  }
+
+  @override
+  String get inviteAgentTitle => 'Convidar Agente';
+
+  @override
+  String get inviteHelpText =>
+      'O login e a senha temporária são gerados pelo sistema. Você só informa o nome.';
+
+  @override
+  String get agentNameFieldLabel => 'Nome do agente';
+
+  @override
+  String get agentNameRequiredValidation => 'O nome do agente é obrigatório';
+
+  @override
+  String get loginPreviewLabel => 'Login que será gerado';
+
+  @override
+  String get readOnlyTag => 'somente leitura';
+
+  @override
+  String get loginPreviewHelper =>
+      'atualiza a cada tecla · acentos removidos, espaços → \".\" · sufixo numérico quando o local-part já existe na empresa';
+
+  @override
+  String get roleFieldLabel => 'Papel';
+
+  @override
+  String get roleFixedNote =>
+      'fixo no convite; promoção é feita depois no Painel';
+
+  @override
+  String get inviteSubmitButton => 'Convidar Agente';
+
+  @override
+  String get agentCreatedTitle => 'Agente criado';
+
+  @override
+  String get agentCreatedBody =>
+      'Não há envio de e-mail nesta fase. Copie e entregue as credenciais ao agente agora — a senha temporária não será exibida de novo.';
+
+  @override
+  String get loginLabelCaps => 'LOGIN';
+
+  @override
+  String get temporaryPasswordLabel => 'SENHA TEMPORÁRIA';
+
+  @override
+  String get copyCredentialsButton => 'Copiar credenciais';
+
+  @override
+  String get credentialsCopiedSnack => 'Credenciais copiadas.';
+
+  @override
+  String get backToPanelButton => 'Voltar ao Painel';
 }

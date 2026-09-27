@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:travel_matrix/features/account/presentation/view_models/agent_profile_view_model.dart';
-import 'package:travel_matrix/features/account/presentation/widgets/card_shell.dart';
+import 'package:travel_matrix/shared/widgets/card_shell.dart';
 
 class ProfileHeaderCard extends StatelessWidget {
   final AgentProfileViewModel profile;

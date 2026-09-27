@@ -7,6 +7,7 @@ abstract class AppRoutes {
   static const dashboard = '/dashboard';
   static const travels = '/travels';
   static const users = '/users';
+  static const company = '/company';
   static const account = '/account';
 
   /// Travels Sub-Routes
@@ -19,4 +20,7 @@ abstract class AppRoutes {
   static const userView = ':id';
   static const userEdit = 'edit';
   static const userTravelCreate = 'create-travel';
+
+  /// Company Sub-Routes
+  static const companyInvite = 'invite';
 }
