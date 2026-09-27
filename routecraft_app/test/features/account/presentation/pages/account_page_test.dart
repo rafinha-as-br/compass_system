@@ -10,7 +10,8 @@ import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/account/presentation/controllers/account_controller.dart';
 import 'package:routecraft_app/features/account/presentation/pages/account_page.dart';
 import 'package:routecraft_app/features/notifications/domain/entities/travel_notification.dart';
-import 'package:routecraft_app/features/notifications/domain/repositories/notification_storage.dart';
+import 'package:routecraft_app/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:routecraft_app/features/notifications/domain/usecases/notification_usecases.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/domain/repositories/travel_repository.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
@@ -27,20 +28,18 @@ class _FakeTravelRepository implements TravelRepository {
   Future<Result<Travel>> createTravel(Travel travel) async => throw UnimplementedError();
 }
 
-class _FakeNotificationStorage implements NotificationStorage {
-  List<TravelNotification> notifications = const [];
+class _FakeNotificationRepository implements NotificationRepository {
+  int unreadCount = 0;
 
   @override
-  Future<List<TravelNotification>> loadNotifications() async => notifications;
+  Future<Result<int>> getUnreadCount() async => Result.success(unreadCount);
 
   @override
-  Future<void> saveNotifications(List<TravelNotification> notifications) async {}
+  Future<Result<(List<TravelNotification>, bool)>> getNotifications({required int page, required int size}) async =>
+      throw UnimplementedError();
 
   @override
-  Future<Map<String, TravelSnapshot>> loadSnapshots() async => const {};
-
-  @override
-  Future<void> saveSnapshots(Map<String, TravelSnapshot> snapshots) async {}
+  Future<Result<void>> markAllAsRead() async => throw UnimplementedError();
 }
 
 Widget _wrap(AccountController controller, {AuthController? authController}) {
@@ -179,21 +178,12 @@ void main() {
   });
 
   testWidgets('clears the unread badge after returning from notifications', (tester) async {
-    final notificationStorage = _FakeNotificationStorage()
-      ..notifications = [
-        TravelNotification(
-          id: 'n1',
-          travelId: 't1',
-          travelName: 'Litoral Norte',
-          type: TravelNotificationType.itineraryPublished,
-          createdAt: DateTime(2026, 1, 1),
-        ),
-      ];
+    final notificationRepository = _FakeNotificationRepository()..unreadCount = 1;
     final controller = AccountController(
       travelUseCases: TravelUseCases(_FakeTravelRepository()),
       getClientName: () async => 'Rafaela Souza',
       getClientEmail: () async => 'rafaela@email.com',
-      notificationStorage: notificationStorage,
+      notificationUseCases: NotificationUseCases(notificationRepository),
     );
     final router = GoRouter(
       initialLocation: AppRoutes.account,
@@ -237,16 +227,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('1'), findsOneWidget);
 
-    notificationStorage.notifications = [
-      TravelNotification(
-        id: 'n1',
-        travelId: 't1',
-        travelName: 'Litoral Norte',
-        type: TravelNotificationType.itineraryPublished,
-        createdAt: DateTime(2026, 1, 1),
-        read: true,
-      ),
-    ];
+    notificationRepository.unreadCount = 0;
     await tester.tap(find.text('Notifications'));
     await tester.pumpAndSettle();
 

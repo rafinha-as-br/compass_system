@@ -470,19 +470,10 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notificationsEmptyMessage => 'Nenhum aviso ainda.';
 
   @override
-  String notificationItineraryPublished(String travelName) {
-    return 'Seu roteiro de $travelName foi publicado';
-  }
+  String get notificationItineraryPublished => 'Seu roteiro foi publicado';
 
   @override
-  String notificationItineraryChanged(String travelName) {
-    return 'O roteiro de $travelName foi alterado';
-  }
-
-  @override
-  String notificationRouteReceived(String travelName) {
-    return 'Rota de $travelName recebida';
-  }
+  String get notificationItineraryChanged => 'Seu roteiro foi atualizado';
 
   @override
   String get notificationViewTripLink => 'Ver viagem';
