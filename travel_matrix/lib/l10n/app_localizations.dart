@@ -1274,6 +1274,84 @@ abstract class AppLocalizations {
   /// **'Itinerary View'**
   String get itineraryViewTab;
 
+  /// No description provided for @participantsViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get participantsViewTab;
+
+  /// No description provided for @addParticipantButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add participant'**
+  String get addParticipantButton;
+
+  /// No description provided for @addParticipantDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add participant'**
+  String get addParticipantDialogTitle;
+
+  /// No description provided for @participantNameFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get participantNameFieldLabel;
+
+  /// No description provided for @participantAgeFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get participantAgeFieldLabel;
+
+  /// No description provided for @noParticipantsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No participants yet'**
+  String get noParticipantsTitle;
+
+  /// No description provided for @noParticipantsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the people traveling to keep this list up to date.'**
+  String get noParticipantsMessage;
+
+  /// No description provided for @removeParticipantTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove participant'**
+  String get removeParticipantTooltip;
+
+  /// No description provided for @removeParticipantConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove participant?'**
+  String get removeParticipantConfirmTitle;
+
+  /// No description provided for @removeParticipantConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from this travel?'**
+  String removeParticipantConfirmMessage(String name);
+
+  /// No description provided for @retryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryButton;
+
+  /// No description provided for @failedToUpdateParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update participants. Please try again.'**
+  String get failedToUpdateParticipants;
+
+  /// No description provided for @participantAgeYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years old'**
+  String participantAgeYears(String age);
+
   /// No description provided for @travelersCount.
   ///
   /// In en, this message translates to:

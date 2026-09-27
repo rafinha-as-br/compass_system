@@ -10,20 +10,25 @@ import 'package:travel_matrix/features/travels/presentation/widgets/view/travel_
 ///
 /// Layout: Scaffold with an AppBar and a Body with Tabs.
 class TravelViewPage extends StatelessWidget {
-  const TravelViewPage({super.key, required this.travel});
+  const TravelViewPage({super.key, required this.travel, this.onTravelUpdated});
 
   final TravelViewModel travel;
+
+  /// Called after a sub-resource mutation (e.g. participants) so the owner
+  /// ([TravelViewWrapper]) can rebuild this page with the fresh data.
+  final ValueChanged<TravelViewModel>? onTravelUpdated;
 
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-        length: 2,
+        length: 3,
         child: Scaffold(
           appBar: TravelViewAppBar(
             travel: travel,
           ),
           body: TravelViewBody(
-              travel: travel
+              travel: travel,
+              onTravelUpdated: onTravelUpdated,
           ),
         )
     );

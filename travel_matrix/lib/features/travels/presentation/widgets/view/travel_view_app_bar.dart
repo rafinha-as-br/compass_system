@@ -262,6 +262,7 @@ class TravelViewAppBar extends StatelessWidget implements PreferredSizeWidget {
                 tabs: [
                   Tab(icon: const Icon(Icons.map), text: l10n.routeViewTab),
                   Tab(icon: const Icon(Icons.view_timeline), text: l10n.itineraryViewTab),
+                  Tab(icon: const Icon(Icons.people_outline), text: l10n.participantsViewTab),
                 ],
               ),
             ],

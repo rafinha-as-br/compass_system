@@ -628,6 +628,51 @@ class AppLocalizationsEn extends AppLocalizations {
   String get itineraryViewTab => 'Itinerary View';
 
   @override
+  String get participantsViewTab => 'Participants';
+
+  @override
+  String get addParticipantButton => 'Add participant';
+
+  @override
+  String get addParticipantDialogTitle => 'Add participant';
+
+  @override
+  String get participantNameFieldLabel => 'Name';
+
+  @override
+  String get participantAgeFieldLabel => 'Age';
+
+  @override
+  String get noParticipantsTitle => 'No participants yet';
+
+  @override
+  String get noParticipantsMessage =>
+      'Add the people traveling to keep this list up to date.';
+
+  @override
+  String get removeParticipantTooltip => 'Remove participant';
+
+  @override
+  String get removeParticipantConfirmTitle => 'Remove participant?';
+
+  @override
+  String removeParticipantConfirmMessage(String name) {
+    return 'Remove $name from this travel?';
+  }
+
+  @override
+  String get retryButton => 'Try again';
+
+  @override
+  String get failedToUpdateParticipants =>
+      'Could not update participants. Please try again.';
+
+  @override
+  String participantAgeYears(String age) {
+    return '$age years old';
+  }
+
+  @override
   String travelersCount(int count) {
     return '$count Travelers';
   }

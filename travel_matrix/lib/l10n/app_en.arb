@@ -249,6 +249,29 @@
   "travelActionsMenuTooltip": "Travel actions",
   "routeViewTab": "Route View",
   "itineraryViewTab": "Itinerary View",
+  "participantsViewTab": "Participants",
+  "addParticipantButton": "Add participant",
+  "addParticipantDialogTitle": "Add participant",
+  "participantNameFieldLabel": "Name",
+  "participantAgeFieldLabel": "Age",
+  "noParticipantsTitle": "No participants yet",
+  "noParticipantsMessage": "Add the people traveling to keep this list up to date.",
+  "removeParticipantTooltip": "Remove participant",
+  "removeParticipantConfirmTitle": "Remove participant?",
+  "removeParticipantConfirmMessage": "Remove {name} from this travel?",
+  "@removeParticipantConfirmMessage": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "retryButton": "Try again",
+  "failedToUpdateParticipants": "Could not update participants. Please try again.",
+  "participantAgeYears": "{age} years old",
+  "@participantAgeYears": {
+    "placeholders": {
+      "age": { "type": "String" }
+    }
+  },
   "travelersCount": "{count} Travelers",
   "@travelersCount": {
     "placeholders": {

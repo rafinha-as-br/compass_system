@@ -634,6 +634,51 @@ class AppLocalizationsPt extends AppLocalizations {
   String get itineraryViewTab => 'Ver Roteiro';
 
   @override
+  String get participantsViewTab => 'Participantes';
+
+  @override
+  String get addParticipantButton => 'Adicionar participante';
+
+  @override
+  String get addParticipantDialogTitle => 'Adicionar participante';
+
+  @override
+  String get participantNameFieldLabel => 'Nome';
+
+  @override
+  String get participantAgeFieldLabel => 'Idade';
+
+  @override
+  String get noParticipantsTitle => 'Nenhum participante ainda';
+
+  @override
+  String get noParticipantsMessage =>
+      'Adicione as pessoas que vão viajar para manter esta lista atualizada.';
+
+  @override
+  String get removeParticipantTooltip => 'Remover participante';
+
+  @override
+  String get removeParticipantConfirmTitle => 'Remover participante?';
+
+  @override
+  String removeParticipantConfirmMessage(String name) {
+    return 'Remover $name desta viagem?';
+  }
+
+  @override
+  String get retryButton => 'Tentar de novo';
+
+  @override
+  String get failedToUpdateParticipants =>
+      'Não foi possível atualizar os participantes. Tente novamente.';
+
+  @override
+  String participantAgeYears(String age) {
+    return '$age anos';
+  }
+
+  @override
   String travelersCount(int count) {
     return '$count Viajantes';
   }
