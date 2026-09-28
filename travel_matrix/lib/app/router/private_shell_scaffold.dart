@@ -152,6 +152,10 @@ class _NavItem extends StatelessWidget {
 /// nativo do Material): fecha sozinho ao selecionar um item, ao clicar fora
 /// ou com Esc, e sobe automaticamente quando não cabe abaixo do gatilho
 /// (CPS-112) — nenhuma dessas regras precisou ser escrita à mão.
+/// `consumeOutsideTap: true` (CPS-112, correção pós-QA): sem isso, o tap que
+/// fecha o menu também vaza para o resto da árvore, e repetir abrir/fechar
+/// no mesmo local acumula listeners de "outside tap" que passam a bloquear
+/// o fechamento por clique fora em pontos específicos da tela.
 class _AccountFooter extends StatelessWidget {
   const _AccountFooter({
     required this.userName,
@@ -174,6 +178,7 @@ class _AccountFooter extends StatelessWidget {
         border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
       ),
       child: MenuAnchor(
+        consumeOutsideTap: true,
         style: MenuStyle(
           backgroundColor: WidgetStatePropertyAll(theme.colorScheme.surface),
           elevation: const WidgetStatePropertyAll(8),
