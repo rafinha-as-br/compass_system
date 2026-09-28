@@ -146,4 +146,32 @@ void main() {
 
     expect(find.text('My Account'), findsNothing);
   });
+
+  testWidgets('tapping outside still closes the popup after several reopen cycles (CPS-112 QA regression)', (
+    tester,
+  ) async {
+    final auth = AuthController();
+    auth.debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    await _pumpShell(tester, auth);
+
+    for (var i = 0; i < 5; i++) {
+      await tester.tap(find.text('Carlos Agent'));
+      await tester.pumpAndSettle();
+      expect(find.text('My Account'), findsOneWidget, reason: 'popup should open on cycle $i');
+
+      await tester.sendKeyEvent(LogicalKeyboardKey.escape);
+      await tester.pumpAndSettle();
+      expect(find.text('My Account'), findsNothing, reason: 'popup should close via Esc on cycle $i');
+    }
+
+    await tester.tap(find.text('Carlos Agent'));
+    await tester.pumpAndSettle();
+    expect(find.text('My Account'), findsOneWidget);
+
+    await tester.tapAt(const Offset(600, 300));
+    await tester.pumpAndSettle();
+
+    expect(find.text('My Account'), findsNothing);
+  });
 }

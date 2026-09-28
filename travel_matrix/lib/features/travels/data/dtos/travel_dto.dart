@@ -20,6 +20,10 @@ class TravelDTO {
   /// Travel status
   final String travelStatus;
 
+  /// Whether the agent has explicitly confirmed "Preparar viagem" — see
+  /// [Travel.prepared].
+  final bool prepared;
+
   /// Route plan back end id for the travel
   final RoutePlanDTO routePlan;
 
@@ -43,6 +47,7 @@ class TravelDTO {
     required this.travelStatus,
     required this.routePlan,
     required this.participants,
+    this.prepared = false,
     this.eventsLog,
     this.itinerary,
     this.observations,
@@ -58,6 +63,7 @@ class TravelDTO {
       travelName: json[TravelApiFields.travelName]?.toString() ?? '',
       travelStatus:
           json[TravelApiFields.travelStatus]?.toString() ?? 'route_created',
+      prepared: json[TravelApiFields.prepared] as bool? ?? false,
       routePlan: RoutePlanDTO.fromJson(routePlan ?? const <String, dynamic>{}),
       participants:
           (json[TravelApiFields.participants] as List<dynamic>?)
@@ -84,6 +90,7 @@ class TravelDTO {
       TravelApiFields.client: clientName,
       TravelApiFields.travelName: travelName,
       TravelApiFields.travelStatus: travelStatus,
+      TravelApiFields.prepared: prepared,
       TravelApiFields.routePlan: routePlan.toJson(),
       TravelApiFields.itinerary: itinerary?.toJson(),
       TravelApiFields.participants: participants
@@ -104,6 +111,7 @@ class TravelDTO {
       routePlan: routePlan.toDomain(),
       participantsList: participants.map((x) => x.toDomain()).toList(),
       travelStatus: TravelStatus.fromApiValue(travelStatus),
+      prepared: prepared,
       eventsLog: eventsLog?.map((x) => x.toDomain()).toList(),
       itinerary: itinerary?.toDomain(),
       observations: observations,
@@ -117,6 +125,7 @@ class TravelDTO {
       clientName: travel.clientName,
       travelName: travel.travelName,
       travelStatus: travel.travelStatus.toApiValue(),
+      prepared: travel.prepared,
       routePlan: RoutePlanDTO.fromDomain(routePlan: travel.routePlan),
       participants: travel.participantsList
           .map((x) => PersonDTO.fromDomain(person: x))
