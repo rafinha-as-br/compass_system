@@ -30,13 +30,16 @@ Travel _buildNotReadyTravel({
   bool hasItinerary = true,
   List<ItineraryStep> itinerarySteps = const [],
   List<Person> participants = const [],
+  TravelStatus travelStatus = TravelStatus.routeCreated,
+  bool prepared = false,
 }) {
   return Travel(
     domainId: '1',
     backEndId: '1',
     clientName: 'Client',
     travelName: travelName,
-    travelStatus: TravelStatus.routeCreated,
+    travelStatus: travelStatus,
+    prepared: prepared,
     participantsList: participants,
     routePlan: RoutePlan(
       domainId: 'route-1',
@@ -385,4 +388,45 @@ void main() {
 
     verify(() => travelUseCases.markAsReady('1')).called(1);
   });
+
+  testWidgets(
+    '"Preparar viagem" stays available once the itinerary auto-advances travelStatus but prepared is still false (CPS-TC-74)',
+    (tester) async {
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+      final travel = TravelViewModel.fromDomain(
+        _buildNotReadyTravel(travelStatus: TravelStatus.itineraryCreated),
+      );
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+      await tester.pumpWidget(_wrap(controller, travel));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+
+      final menuItem = tester.widget<MenuItemButton>(
+        find.ancestor(of: find.text(l10n.prepareTravelButton), matching: find.byType(MenuItemButton)),
+      );
+      expect(menuItem.onPressed, isNotNull);
+    },
+  );
+
+  testWidgets(
+    '"Preparar viagem" disappears once prepared is true, even with itinerary_created travelStatus',
+    (tester) async {
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+      final travel = TravelViewModel.fromDomain(
+        _buildNotReadyTravel(travelStatus: TravelStatus.itineraryCreated, prepared: true),
+      );
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+      await tester.pumpWidget(_wrap(controller, travel));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+
+      expect(find.text(l10n.prepareTravelButton), findsNothing);
+    },
+  );
 }

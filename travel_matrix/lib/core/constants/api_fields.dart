@@ -45,6 +45,8 @@ static const String participants = 'participants';
 static const String events = 'events';
 
 static const String observations = 'observations';
+
+static const String prepared = 'prepared';
 }
 
 /// ===========================================================
