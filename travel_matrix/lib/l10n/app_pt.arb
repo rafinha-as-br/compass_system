@@ -352,5 +352,8 @@
   "sessionExpiredMessage": "Sessão expirada. Faça login novamente.",
 
   "placesAutocompleteNoResults": "Nenhum lugar encontrado",
-  "placesAutocompleteUnavailable": "Busca indisponível — texto livre aceito"
+  "placesAutocompleteUnavailable": "Busca indisponível — texto livre aceito",
+
+  "pickupLocationLabel": "Local de retirada",
+  "pickupLocationRequiredValidation": "Local de retirada é obrigatório"
 }

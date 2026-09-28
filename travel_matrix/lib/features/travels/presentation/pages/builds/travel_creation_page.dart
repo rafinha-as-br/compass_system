@@ -1,23 +1,34 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
+import 'package:travel_matrix/core/constants/api_fields.dart';
+import 'package:travel_matrix/core/services/places_suggestions_service.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
+import 'package:travel_matrix/shared/widgets/form_error_message.dart';
+import 'package:travel_matrix/shared/widgets/places_autocomplete_field.dart';
 
 /// Simple helper class for interest point data before API submission.
 class _InterestPointItem {
   final String id;
   final String name;
   final String description;
+  final PlaceCoordinate? coordinate;
   _InterestPointItem({
     required this.id,
     required this.name,
     required this.description,
+    this.coordinate,
   });
-  Map<String, dynamic> toMap() => {'name': name, 'description': description};
+  Map<String, dynamic> toMap() => {
+        'name': name,
+        'description': description,
+        InterestPointApiFields.coordinate: coordinate?.toJson(),
+      };
 }
 
 /// Page for creating a new [Travel] for a specific, already-known client.
@@ -35,10 +46,14 @@ class TravelCreationPage extends StatefulWidget {
     super.key,
     required this.clientId,
     required this.clientName,
+    this.fetchSuggestions = fetchPlaceSuggestions,
   });
 
   final String clientId;
   final String clientName;
+
+  /// Overridable in tests — defaults to the real network-backed lookup.
+  final Future<List<PlaceSuggestion>> Function(String query) fetchSuggestions;
 
   @override
   State<TravelCreationPage> createState() => _TravelCreationPageState();
@@ -47,44 +62,58 @@ class TravelCreationPage extends StatefulWidget {
 class _TravelCreationPageState extends State<TravelCreationPage> {
   final _formKey = GlobalKey<FormState>();
   final _travelNameCtrl = TextEditingController();
-  final _startLocationCtrl = TextEditingController();
-  final _destinationCtrl = TextEditingController();
+  String _startLocation = '';
+  PlaceCoordinate? _startLocationCoordinate;
+  String _destination = '';
+  PlaceCoordinate? _destinationCoordinate;
   DateTime _startDate = DateTime.now().add(const Duration(days: 7));
   DateTime _endDate = DateTime.now().add(const Duration(days: 14));
   bool _isSubmitting = false;
+  // The autocomplete fields validate for "required" themselves via
+  // AppTextField/CustomFormField's Form-based `validator`, but
+  // PlacesAutocompleteField isn't a FormField — tracked separately so the
+  // location step can still show a "required" message on submit attempt.
+  bool _locationsTouched = false;
 
   // Interest points
   final List<_InterestPointItem> _interestPoints = [];
-  final _poiNameCtrl = TextEditingController();
+  String _poiName = '';
+  PlaceCoordinate? _poiCoordinate;
   final _poiDescCtrl = TextEditingController();
+  // Forces PlacesAutocompleteField to remount (fresh, empty internal state)
+  // after each interest point is added — the widget has no external
+  // controller to clear.
+  int _poiFieldResetKey = 0;
 
   @override
   void dispose() {
     _travelNameCtrl.dispose();
-    _startLocationCtrl.dispose();
-    _destinationCtrl.dispose();
-    _poiNameCtrl.dispose();
     _poiDescCtrl.dispose();
     super.dispose();
   }
 
   void _addInterestPoint() {
-    if (_poiNameCtrl.text.isEmpty) return;
+    if (_poiName.isEmpty) return;
     setState(() {
       _interestPoints.add(
         _InterestPointItem(
           id: 'poi_${DateTime.now().millisecondsSinceEpoch}',
-          name: _poiNameCtrl.text,
+          name: _poiName,
           description: _poiDescCtrl.text,
+          coordinate: _poiCoordinate,
         ),
       );
-      _poiNameCtrl.clear();
+      _poiName = '';
+      _poiCoordinate = null;
+      _poiFieldResetKey++;
       _poiDescCtrl.clear();
     });
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    setState(() => _locationsTouched = true);
+    final locationsValid = _startLocation.trim().isNotEmpty && _destination.trim().isNotEmpty;
+    if (!_formKey.currentState!.validate() || !locationsValid) return;
 
     final agentId = context.read<AuthController>().userId;
     if (agentId == null) {
@@ -107,9 +136,11 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
       'routePlan': {
         'startDate': _startDate.toIso8601String(),
         'finishDate': _endDate.toIso8601String(),
-        'startLocation': _startLocationCtrl.text,
-        'destination': _destinationCtrl.text,
+        'startLocation': _startLocation,
+        'destination': _destination,
         'interestPoints': _interestPoints.map((p) => p.toMap()).toList(),
+        RoutePlanApiFields.startLocationCoordinate: _startLocationCoordinate?.toJson(),
+        RoutePlanApiFields.destinationCoordinate: _destinationCoordinate?.toJson(),
       },
     });
 
@@ -182,28 +213,41 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                   ),
                   const SizedBox(height: 16),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: TextFormField(
-                          controller: _startLocationCtrl,
-                          decoration: InputDecoration(
-                            labelText: l10n.startLocationLabel,
-                            border: const OutlineInputBorder(),
-                          ),
-                          validator: (v) =>
-                              v!.isEmpty ? l10n.requiredField : null,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PlacesAutocompleteField(
+                              labelText: l10n.startLocationLabel,
+                              fetchSuggestions: widget.fetchSuggestions,
+                              onChanged: (result) => setState(() {
+                                _startLocation = result.text;
+                                _startLocationCoordinate = result.coordinate;
+                              }),
+                            ),
+                            if (_locationsTouched && _startLocation.trim().isEmpty)
+                              FormErrorMessage(message: l10n.requiredField),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: TextFormField(
-                          controller: _destinationCtrl,
-                          decoration: InputDecoration(
-                            labelText: l10n.destinationLabel,
-                            border: const OutlineInputBorder(),
-                          ),
-                          validator: (v) =>
-                              v!.isEmpty ? l10n.requiredField : null,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PlacesAutocompleteField(
+                              labelText: l10n.destinationLabel,
+                              fetchSuggestions: widget.fetchSuggestions,
+                              onChanged: (result) => setState(() {
+                                _destination = result.text;
+                                _destinationCoordinate = result.coordinate;
+                              }),
+                            ),
+                            if (_locationsTouched && _destination.trim().isEmpty)
+                              FormErrorMessage(message: l10n.requiredField),
+                          ],
                         ),
                       ),
                     ],
@@ -270,14 +314,17 @@ class _TravelCreationPageState extends State<TravelCreationPage> {
                   ),
                   const SizedBox(height: 8),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: TextField(
-                          controller: _poiNameCtrl,
-                          decoration: InputDecoration(
-                            labelText: l10n.pointNameLabel,
-                            border: const OutlineInputBorder(),
-                          ),
+                        child: PlacesAutocompleteField(
+                          key: ValueKey(_poiFieldResetKey),
+                          labelText: l10n.pointNameLabel,
+                          fetchSuggestions: widget.fetchSuggestions,
+                          onChanged: (result) => setState(() {
+                            _poiName = result.text;
+                            _poiCoordinate = result.coordinate;
+                          }),
                         ),
                       ),
                       const SizedBox(width: 8),

@@ -1,5 +1,6 @@
 
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 import 'package:uuid/uuid.dart';
 
 /// Route view model class, used to represent a [RoutePlan] on the UI
@@ -12,6 +13,8 @@ class RoutePlanViewModel{
   final String start;
   final String destination;
   final List<InterestPointViewModel> interests;
+  final PlaceCoordinate? startCoordinate;
+  final PlaceCoordinate? destinationCoordinate;
 
   RoutePlanViewModel._({
     required this.backEndId,
@@ -20,7 +23,9 @@ class RoutePlanViewModel{
     required this.endDate,
     required this.start,
     required this.destination,
-    required this.interests
+    required this.interests,
+    this.startCoordinate,
+    this.destinationCoordinate,
   });
 
   /// factory constructor for domain model
@@ -34,7 +39,9 @@ class RoutePlanViewModel{
       endDate: routePlan.endDate,
       start: routePlan.startLocation,
       destination: routePlan.destination,
-      interests: routePlan.interestsList.map((x) => InterestPointViewModel.fromDomain(x)).toList()
+      interests: routePlan.interestsList.map((x) => InterestPointViewModel.fromDomain(x)).toList(),
+      startCoordinate: routePlan.startLocationCoordinate,
+      destinationCoordinate: routePlan.destinationCoordinate,
     );
   }
 
@@ -73,7 +80,9 @@ class RoutePlanViewModel{
         endDate: endDate,
         startLocation: start,
         destination: destination,
-        interestsList: interests.map((x) => x.toDomain()).toList()
+        interestsList: interests.map((x) => x.toDomain()).toList(),
+        startLocationCoordinate: startCoordinate,
+        destinationCoordinate: destinationCoordinate,
     );
   }
 
@@ -86,12 +95,14 @@ class InterestPointViewModel{
   final String localId;
   final String name;
   final String description;
+  final PlaceCoordinate? coordinate;
 
   InterestPointViewModel({
     required this.backEndId,
     required this.localId,
     required this.name,
-    required this.description
+    required this.description,
+    this.coordinate,
   });
 
   /// factory constructor for domain model
@@ -100,7 +111,8 @@ class InterestPointViewModel{
       backEndId: interestPoint.backEndId,
       localId: interestPoint.domainId,
       name: interestPoint.name,
-      description: interestPoint.description
+      description: interestPoint.description,
+      coordinate: interestPoint.coordinate,
     );
   }
 
@@ -123,7 +135,8 @@ class InterestPointViewModel{
       domainId: localId,
       backEndId: backEndId,
       name: name,
-      description: description
+      description: description,
+      coordinate: coordinate,
     );
   }
 

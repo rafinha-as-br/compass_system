@@ -5,6 +5,28 @@ class PlaceCoordinate {
 
   const PlaceCoordinate(this.latitude, this.longitude);
 
+  /// Reads the nested `{latitude, longitude}` object the backend embeds on
+  /// persisted entities (`Route`, `InterestPoint`, `Hosting`, transports,
+  /// …) — a different JSON shape than [PlaceSuggestion.fromJson]'s flat
+  /// autocomplete response.
+  factory PlaceCoordinate.fromJson(Map<String, dynamic> json) {
+    return PlaceCoordinate((json['latitude'] as num).toDouble(), (json['longitude'] as num).toDouble());
+  }
+
+  /// Degrades to null instead of throwing on a malformed/partial coordinate
+  /// (e.g. a stub `{latitude: null, longitude: null}`) — a bad coordinate
+  /// shouldn't fail the whole entity's parse.
+  static PlaceCoordinate? tryFromJson(Object? json) {
+    if (json is! Map<String, dynamic>) return null;
+    try {
+      return PlaceCoordinate.fromJson(json);
+    } catch (_) {
+      return null;
+    }
+  }
+
+  Map<String, dynamic> toJson() => {'latitude': latitude, 'longitude': longitude};
+
   @override
   bool operator ==(Object other) =>
       other is PlaceCoordinate &&

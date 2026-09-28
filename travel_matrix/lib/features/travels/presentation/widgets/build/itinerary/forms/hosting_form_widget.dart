@@ -1,6 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/core/services/places_suggestions_service.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/itinerary_steps_view_models.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
+import 'package:travel_matrix/shared/widgets/form_error_message.dart';
+import 'package:travel_matrix/shared/widgets/places_autocomplete_field.dart';
 import 'package:travel_matrix/shared/widgets/text_fields.dart';
 import 'field_state.dart';
 
@@ -10,11 +14,15 @@ class HostingFormWidget extends StatefulWidget {
     required this.hosting,
     required this.onChanged,
     required this.onDelete,
+    this.fetchSuggestions = fetchPlaceSuggestions,
   });
 
   final HostingStepViewModel hosting;
   final ValueChanged<HostingStepViewModel> onChanged;
   final VoidCallback onDelete;
+
+  /// Overridable in tests — defaults to the real network-backed lookup.
+  final Future<List<PlaceSuggestion>> Function(String query) fetchSuggestions;
 
   @override
   State<HostingFormWidget> createState() => _HostingFormWidgetState();
@@ -22,7 +30,6 @@ class HostingFormWidget extends StatefulWidget {
 
 class _HostingFormWidgetState extends State<HostingFormWidget> {
   late final TextEditingController _nameCtrl;
-  late final TextEditingController _addressCtrl;
   late final TextEditingController _checkInCtrl;
   late final TextEditingController _checkOutCtrl;
 
@@ -32,7 +39,6 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
   void initState() {
     super.initState();
     _nameCtrl = TextEditingController(text: widget.hosting.placeName);
-    _addressCtrl = TextEditingController(text: widget.hosting.address);
     _checkInCtrl = TextEditingController(
       text: _formatDate(widget.hosting.checkIn),
     );
@@ -45,6 +51,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
       address: FieldState(value: widget.hosting.address),
       checkIn: widget.hosting.checkIn,
       checkOut: widget.hosting.checkOut,
+      addressCoordinate: widget.hosting.coordinate,
     );
   }
 
@@ -53,7 +60,6 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.hosting.localId != widget.hosting.localId) {
       _nameCtrl.text = widget.hosting.placeName;
-      _addressCtrl.text = widget.hosting.address;
       _checkInCtrl.text = _formatDate(widget.hosting.checkIn);
       _checkOutCtrl.text = _formatDate(widget.hosting.checkOut);
 
@@ -62,6 +68,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
         address: FieldState(value: widget.hosting.address),
         checkIn: widget.hosting.checkIn,
         checkOut: widget.hosting.checkOut,
+        addressCoordinate: widget.hosting.coordinate,
       );
       setState(() {});
     }
@@ -70,7 +77,6 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
   @override
   void dispose() {
     _nameCtrl.dispose();
-    _addressCtrl.dispose();
     _checkInCtrl.dispose();
     _checkOutCtrl.dispose();
     super.dispose();
@@ -98,10 +104,14 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
     _emitIfValid();
   }
 
-  void _onAddressChanged(String value) {
-    final validatedField = _validateRequiredField(context, value);
+  void _onAddressChanged(PlaceAutocompleteResult result) {
+    final validatedField = _validateRequiredField(context, result.text);
     setState(() {
-      _formState = _formState.copyWith(address: validatedField);
+      _formState = _formState.copyWith(
+        address: validatedField,
+        addressCoordinate: result.coordinate,
+        clearAddressCoordinate: result.coordinate == null,
+      );
     });
     _emitIfValid();
   }
@@ -139,6 +149,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
         address: _formState.address.value,
         checkIn: _formState.checkIn,
         checkOut: _formState.checkOut,
+        coordinate: _formState.addressCoordinate,
       ),
     );
   }
@@ -166,15 +177,16 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
             onChanged: _onNameChanged,
           ),
           const SizedBox(height: 12),
-          CustomFormField.text(
-            label: l10n.addressLabel,
-            enabled: true,
-            controller: _addressCtrl,
-            errorText: _formState.address.isTouched
-                ? _formState.address.error
-                : null,
+          PlacesAutocompleteField(
+            key: ValueKey(widget.hosting.localId),
+            labelText: l10n.addressLabel,
+            initialText: widget.hosting.address,
+            initialCoordinate: widget.hosting.coordinate,
+            fetchSuggestions: widget.fetchSuggestions,
             onChanged: _onAddressChanged,
           ),
+          if (_formState.address.isTouched && _formState.address.error != null)
+            FormErrorMessage(message: _formState.address.error!),
           const SizedBox(height: 12),
           Row(
             children: [
@@ -214,6 +226,7 @@ class HostingFormState {
   final FieldState<String> address;
   final DateTime checkIn;
   final DateTime checkOut;
+  final PlaceCoordinate? addressCoordinate;
 
   bool get isValid => placeName.isValid && address.isValid;
 
@@ -222,6 +235,7 @@ class HostingFormState {
     required this.address,
     required this.checkIn,
     required this.checkOut,
+    this.addressCoordinate,
   });
 
   HostingFormState copyWith({
@@ -229,12 +243,15 @@ class HostingFormState {
     FieldState<String>? address,
     DateTime? checkIn,
     DateTime? checkOut,
+    PlaceCoordinate? addressCoordinate,
+    bool clearAddressCoordinate = false,
   }) {
     return HostingFormState(
       placeName: placeName ?? this.placeName,
       address: address ?? this.address,
       checkIn: checkIn ?? this.checkIn,
       checkOut: checkOut ?? this.checkOut,
+      addressCoordinate: clearAddressCoordinate ? null : (addressCoordinate ?? this.addressCoordinate),
     );
   }
 }

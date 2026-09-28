@@ -1047,4 +1047,11 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get placesAutocompleteUnavailable =>
       'Busca indisponível — texto livre aceito';
+
+  @override
+  String get pickupLocationLabel => 'Local de retirada';
+
+  @override
+  String get pickupLocationRequiredValidation =>
+      'Local de retirada é obrigatório';
 }
