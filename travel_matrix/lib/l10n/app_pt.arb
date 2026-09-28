@@ -349,5 +349,11 @@
   "checkInAfterCheckOutError": "O check-in não pode ser depois do check-out",
   "checkOutBeforeCheckInError": "O check-out não pode ser antes do check-in",
   "deleteStepTooltip": "Excluir etapa",
-  "sessionExpiredMessage": "Sessão expirada. Faça login novamente."
+  "sessionExpiredMessage": "Sessão expirada. Faça login novamente.",
+
+  "placesAutocompleteNoResults": "Nenhum lugar encontrado",
+  "placesAutocompleteUnavailable": "Busca indisponível — texto livre aceito",
+
+  "pickupLocationLabel": "Local de retirada",
+  "pickupLocationRequiredValidation": "Local de retirada é obrigatório"
 }

@@ -1,7 +1,11 @@
 
 import 'package:flutter/material.dart';
+import 'package:travel_matrix/core/services/places_suggestions_service.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
+import 'package:travel_matrix/shared/widgets/form_error_message.dart';
+import 'package:travel_matrix/shared/widgets/places_autocomplete_field.dart';
 import '../../../../../../../../shared/widgets/text_fields.dart';
 import '../field_state.dart';
 import 'package:intl/intl.dart';
@@ -12,12 +16,16 @@ class BusForm extends StatefulWidget {
     super.key,
     required this.busViewModel,
     required this.onChanged,
+    this.fetchSuggestions = fetchPlaceSuggestions,
   });
 
   final BusViewModel busViewModel;
 
   /// Called ONLY when form is valid
   final ValueChanged<BusViewModel> onChanged;
+
+  /// Overridable in tests — defaults to the real network-backed lookup.
+  final Future<List<PlaceSuggestion>> Function(String query) fetchSuggestions;
 
   @override
   State<BusForm> createState() => _BusFormState();
@@ -29,7 +37,6 @@ class _BusFormState extends State<BusForm> {
   late final TextEditingController _travelCompanyCtrl;
   late final TextEditingController _departureGateCtrl;
   late final TextEditingController _departureDateTimeCtrl;
-  late final TextEditingController _busStationNameCtrl;
   late final TextEditingController _descriptionCtrl;
   late final TextEditingController _detailsCtrl;
 
@@ -53,10 +60,6 @@ class _BusFormState extends State<BusForm> {
 
     _departureDateTimeCtrl = TextEditingController(
       text: _formatDate(widget.busViewModel.departureDateTime),
-    );
-
-    _busStationNameCtrl = TextEditingController(
-      text: widget.busViewModel.busStationName,
     );
 
     _descriptionCtrl = TextEditingController(
@@ -95,6 +98,8 @@ class _BusFormState extends State<BusForm> {
       details: FieldState(
         value: widget.busViewModel.details,
       ),
+
+      busStationCoordinate: widget.busViewModel.busStationCoordinate,
     );
   }
 
@@ -104,7 +109,6 @@ class _BusFormState extends State<BusForm> {
     _travelCompanyCtrl.dispose();
     _departureGateCtrl.dispose();
     _departureDateTimeCtrl.dispose();
-    _busStationNameCtrl.dispose();
     _descriptionCtrl.dispose();
     _detailsCtrl.dispose();
 
@@ -171,12 +175,19 @@ class _BusFormState extends State<BusForm> {
           const SizedBox(height: 12),
 
           /// Bus station
-          CustomFormField.text(
-            label: l10n.busStationLabel,
-            enabled: true,
-            controller: _busStationNameCtrl,
-            errorText: _showError(_formState.busStationName),
-            onChanged: _onBusStationNameChanged,
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PlacesAutocompleteField(
+                labelText: l10n.busStationLabel,
+                initialText: widget.busViewModel.busStationName,
+                initialCoordinate: widget.busViewModel.busStationCoordinate,
+                fetchSuggestions: widget.fetchSuggestions,
+                onChanged: _onBusStationNameChanged,
+              ),
+              if (_showError(_formState.busStationName) != null)
+                FormErrorMessage(message: _showError(_formState.busStationName)!),
+            ],
           ),
 
           const SizedBox(height: 12),
@@ -242,15 +253,24 @@ class _BusFormState extends State<BusForm> {
     );
   }
 
-  void _onBusStationNameChanged(String value) {
-    _updateStringField(
-      value: value,
-      currentField: _formState.busStationName,
-      updater: (field) => _formState = _formState.copyWith(
-        busStationName: field,
-      ),
-      errorMessage: AppLocalizations.of(context)!.busStationRequiredValidation,
-    );
+  void _onBusStationNameChanged(PlaceAutocompleteResult result) {
+    final error = result.text.trim().isEmpty
+        ? AppLocalizations.of(context)!.busStationRequiredValidation
+        : null;
+
+    setState(() {
+      _formState = _formState.copyWith(
+        busStationName: _formState.busStationName.copyWith(
+          value: result.text,
+          error: error,
+          isTouched: true,
+        ),
+        busStationCoordinate: result.coordinate,
+        clearBusStationCoordinate: result.coordinate == null,
+      );
+    });
+
+    _emitIfValid();
   }
 
   void _onDescriptionChanged(String value) {
@@ -354,6 +374,7 @@ class _BusFormState extends State<BusForm> {
       busStationName: _formState.busStationName.value,
       description: _formState.description.value,
       details: _formState.details.value,
+      busStationCoordinate: _formState.busStationCoordinate,
     ) as BusViewModel;
 
     widget.onChanged(updatedViewModel);
@@ -386,6 +407,8 @@ class BusFormState {
   /// Optional field
   final FieldState<String?> details;
 
+  final PlaceCoordinate? busStationCoordinate;
+
   bool get isValid =>
       travelNumber.isValid &&
           travelCompany.isValid &&
@@ -403,6 +426,7 @@ class BusFormState {
     required this.busStationName,
     required this.description,
     required this.details,
+    this.busStationCoordinate,
   });
 
   BusFormState copyWith({
@@ -413,6 +437,8 @@ class BusFormState {
     FieldState<String>? busStationName,
     FieldState<String>? description,
     FieldState<String?>? details,
+    PlaceCoordinate? busStationCoordinate,
+    bool clearBusStationCoordinate = false,
   }) {
     return BusFormState(
       travelNumber: travelNumber ?? this.travelNumber,
@@ -422,6 +448,7 @@ class BusFormState {
       busStationName: busStationName ?? this.busStationName,
       description: description ?? this.description,
       details: details ?? this.details,
+      busStationCoordinate: clearBusStationCoordinate ? null : (busStationCoordinate ?? this.busStationCoordinate),
     );
   }
 }

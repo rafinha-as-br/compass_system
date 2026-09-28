@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import 'package:travel_matrix/core/services/places_suggestions_service.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/field_state.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
+import 'package:travel_matrix/shared/widgets/form_error_message.dart';
+import 'package:travel_matrix/shared/widgets/places_autocomplete_field.dart';
 
 import '../../../../../../../../shared/widgets/text_fields.dart';
 
@@ -12,6 +16,7 @@ class RentalCarForm extends StatefulWidget {
     super.key,
     required this.rentalCar,
     required this.onChanged,
+    this.fetchSuggestions = fetchPlaceSuggestions,
   });
 
   /// The entity to edit
@@ -19,6 +24,9 @@ class RentalCarForm extends StatefulWidget {
 
   /// Callback triggered only when the form is valid
   final void Function(RentalCarViewModel rentalCar) onChanged;
+
+  /// Overridable in tests — defaults to the real network-backed lookup.
+  final Future<List<PlaceSuggestion>> Function(String query) fetchSuggestions;
 
   @override
   State<RentalCarForm> createState() => _RentalCarFormState();
@@ -76,6 +84,10 @@ class _RentalCarFormState extends State<RentalCarForm> {
       checkOutDate: FieldState(
         value: widget.rentalCar.checkOutDate,
       ),
+      pickupLocation: FieldState(
+        value: widget.rentalCar.pickupLocation,
+      ),
+      pickupLocationCoordinate: widget.rentalCar.pickupLocationCoordinate,
     );
   }
 
@@ -145,6 +157,23 @@ class _RentalCarFormState extends State<RentalCarForm> {
               _formState.companyName,
             ),
             onChanged: _onCompanyNameChanged,
+          ),
+
+          const SizedBox(height: 12),
+
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PlacesAutocompleteField(
+                labelText: l10n.pickupLocationLabel,
+                initialText: widget.rentalCar.pickupLocation,
+                initialCoordinate: widget.rentalCar.pickupLocationCoordinate,
+                fetchSuggestions: widget.fetchSuggestions,
+                onChanged: _onPickupLocationChanged,
+              ),
+              if (_showError(_formState.pickupLocation) != null)
+                FormErrorMessage(message: _showError(_formState.pickupLocation)!),
+            ],
           ),
 
           const SizedBox(height: 12),
@@ -248,6 +277,26 @@ class _RentalCarFormState extends State<RentalCarForm> {
     _emitIfValid();
   }
 
+  void _onPickupLocationChanged(PlaceAutocompleteResult result) {
+    final error = result.text.trim().isEmpty
+        ? AppLocalizations.of(context)!.pickupLocationRequiredValidation
+        : null;
+
+    setState(() {
+      _formState = _formState.copyWith(
+        pickupLocation: _formState.pickupLocation.copyWith(
+          value: result.text,
+          error: error,
+          isTouched: true,
+        ),
+        pickupLocationCoordinate: result.coordinate,
+        clearPickupLocationCoordinate: result.coordinate == null,
+      );
+    });
+
+    _emitIfValid();
+  }
+
   Future<void> _selectCheckInDate() async {
     final date = await showDatePicker(
       context: context,
@@ -330,6 +379,8 @@ class _RentalCarFormState extends State<RentalCarForm> {
         companyName: _formState.companyName.value,
         checkInDate: _formState.checkInDate.value,
         checkOutDate: _formState.checkOutDate.value,
+        pickupLocation: _formState.pickupLocation.value,
+        pickupLocationCoordinate: _formState.pickupLocationCoordinate,
       ) as RentalCarViewModel,
     );
   }
@@ -342,6 +393,8 @@ class RentalCarFormState {
   final FieldState<String> companyName;
   final FieldState<DateTime> checkInDate;
   final FieldState<DateTime> checkOutDate;
+  final FieldState<String> pickupLocation;
+  final PlaceCoordinate? pickupLocationCoordinate;
 
   const RentalCarFormState({
     required this.vehicleModelName,
@@ -349,6 +402,8 @@ class RentalCarFormState {
     required this.companyName,
     required this.checkInDate,
     required this.checkOutDate,
+    required this.pickupLocation,
+    this.pickupLocationCoordinate,
   });
 
   bool get isValid {
@@ -356,7 +411,8 @@ class RentalCarFormState {
         vehicleLicensePlate.isValid &&
         companyName.isValid &&
         checkInDate.isValid &&
-        checkOutDate.isValid;
+        checkOutDate.isValid &&
+        pickupLocation.isValid;
   }
 
   RentalCarFormState copyWith({
@@ -365,6 +421,9 @@ class RentalCarFormState {
     FieldState<String>? companyName,
     FieldState<DateTime>? checkInDate,
     FieldState<DateTime>? checkOutDate,
+    FieldState<String>? pickupLocation,
+    PlaceCoordinate? pickupLocationCoordinate,
+    bool clearPickupLocationCoordinate = false,
   }) {
     return RentalCarFormState(
       vehicleModelName:
@@ -381,6 +440,13 @@ class RentalCarFormState {
 
       checkOutDate:
       checkOutDate ?? this.checkOutDate,
+
+      pickupLocation:
+      pickupLocation ?? this.pickupLocation,
+
+      pickupLocationCoordinate: clearPickupLocationCoordinate
+          ? null
+          : (pickupLocationCoordinate ?? this.pickupLocationCoordinate),
     );
   }
 }

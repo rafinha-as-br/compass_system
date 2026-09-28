@@ -1,5 +1,6 @@
 package com.compass.compass_system.travel;
 
+import com.compass.compass_system.geo.Coordinate;
 import jakarta.persistence.*;
 
 @Entity
@@ -10,6 +11,9 @@ public class InterestPoint {
 
     private String name;
     private String description;
+
+    @Embedded
+    private Coordinate coordinate;
 
     @PrePersist
     private void ensureId() {
@@ -26,4 +30,7 @@ public class InterestPoint {
 
     public String getDescription() { return description; }
     public void setDescription(String description) { this.description = description; }
+
+    public Coordinate getCoordinate() { return coordinate; }
+    public void setCoordinate(Coordinate coordinate) { this.coordinate = coordinate; }
 }

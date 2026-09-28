@@ -1040,4 +1040,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get sessionExpiredMessage => 'Sessão expirada. Faça login novamente.';
+
+  @override
+  String get placesAutocompleteNoResults => 'Nenhum lugar encontrado';
+
+  @override
+  String get placesAutocompleteUnavailable =>
+      'Busca indisponível — texto livre aceito';
+
+  @override
+  String get pickupLocationLabel => 'Local de retirada';
+
+  @override
+  String get pickupLocationRequiredValidation =>
+      'Local de retirada é obrigatório';
 }
