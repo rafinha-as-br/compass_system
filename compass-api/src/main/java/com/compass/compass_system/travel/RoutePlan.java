@@ -1,5 +1,6 @@
 package com.compass.compass_system.travel;
 
+import com.compass.compass_system.geo.Coordinate;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -14,6 +15,16 @@ public class RoutePlan {
     private String finishDate;
     private String startLocation;
     private String destination;
+
+    @Embedded
+    @AttributeOverride(name = "latitude", column = @Column(name = "start_location_latitude"))
+    @AttributeOverride(name = "longitude", column = @Column(name = "start_location_longitude"))
+    private Coordinate startLocationCoordinate;
+
+    @Embedded
+    @AttributeOverride(name = "latitude", column = @Column(name = "destination_latitude"))
+    @AttributeOverride(name = "longitude", column = @Column(name = "destination_longitude"))
+    private Coordinate destinationCoordinate;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "route_plan_id")
@@ -40,6 +51,12 @@ public class RoutePlan {
 
     public String getDestination() { return destination; }
     public void setDestination(String destination) { this.destination = destination; }
+
+    public Coordinate getStartLocationCoordinate() { return startLocationCoordinate; }
+    public void setStartLocationCoordinate(Coordinate startLocationCoordinate) { this.startLocationCoordinate = startLocationCoordinate; }
+
+    public Coordinate getDestinationCoordinate() { return destinationCoordinate; }
+    public void setDestinationCoordinate(Coordinate destinationCoordinate) { this.destinationCoordinate = destinationCoordinate; }
 
     public List<InterestPoint> getInterestPoints() { return interestPoints; }
     public void setInterestPoints(List<InterestPoint> interestPoints) { this.interestPoints = interestPoints; }
