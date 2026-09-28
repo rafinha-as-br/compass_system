@@ -1027,4 +1027,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sessionExpiredMessage => 'Session expired. Please sign in again.';
+
+  @override
+  String get placesAutocompleteNoResults => 'No places found';
+
+  @override
+  String get placesAutocompleteUnavailable =>
+      'Search unavailable — free text accepted';
 }
