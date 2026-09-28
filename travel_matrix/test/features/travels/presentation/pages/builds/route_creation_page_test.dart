@@ -17,6 +17,9 @@ import 'package:travel_matrix/features/travels/presentation/controllers/travels_
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/builds/route_creation_page.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
+
+Future<List<PlaceSuggestion>> _noSuggestions(String query) async => const [];
 
 class _MockRouteRepository extends Mock implements RouteRepository {}
 
@@ -88,7 +91,10 @@ void main() {
           ),
           GoRoute(
             path: '/travels/:id/route',
-            builder: (context, state) => RouteCreationPage(travel: travel),
+            builder: (context, state) => RouteCreationPage(
+              travel: travel,
+              fetchSuggestions: _noSuggestions,
+            ),
           ),
         ],
       );
@@ -119,6 +125,96 @@ void main() {
 
       expect(router.state.uri.toString(), '/travels/travel-1');
       expect(capturedExtra, {'refresh': true});
+    },
+  );
+
+  testWidgets(
+    'picking a suggested destination sends its coordinate in the update payload',
+    (tester) async {
+      final routeRepository = _MockRouteRepository();
+      final travelRepository = _MockTravelRepository();
+
+      when(() => travelRepository.getAllTravels())
+          .thenAnswer((_) async => const Result.success([]));
+      when(() => routeRepository.updateRoute(any(), any())).thenAnswer(
+        (invocation) async =>
+            Result.success(invocation.positionalArguments[1] as RoutePlan),
+      );
+
+      final travel = TravelViewModel.fromDomain(
+        Travel(
+          domainId: 'travel-1',
+          backEndId: 'travel-1',
+          clientName: 'Maria Silva',
+          travelName: 'Lisbon 2025',
+          travelStatus: TravelStatus.routeCreated,
+          participantsList: const [],
+          routePlan: RoutePlan(
+            domainId: 'route-1',
+            backEndId: 'route-1',
+            startDate: DateTime(2025, 8, 1),
+            endDate: DateTime(2025, 8, 10),
+            startLocation: 'Sao Paulo',
+            destination: 'Lisbon',
+            interestsList: const [],
+          ),
+        ),
+      );
+
+      final router = GoRouter(
+        initialLocation: '/travels/travel-1/route',
+        routes: [
+          GoRoute(
+            path: '/travels/:id',
+            builder: (context, state) => const Scaffold(body: Text('detail')),
+          ),
+          GoRoute(
+            path: '/travels/:id/route',
+            builder: (context, state) => RouteCreationPage(
+              travel: travel,
+              fetchSuggestions: (query) async => const [
+                PlaceSuggestion(text: 'Lisboa, Portugal', coordinate: PlaceCoordinate(38.7223, -9.1393)),
+              ],
+            ),
+          ),
+        ],
+      );
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider<TravelsController>(
+          create: (_) => TravelsController(
+            travelUseCases: CrudTravelUseCases(travelRepository),
+            routeUseCases: CrudRoute(routeRepository),
+            participantsUseCases: CrudParticipants(_MockParticipantsRepository()),
+          ),
+          child: MaterialApp.router(
+            routerConfig: router,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+
+      final destinationField = find.widgetWithText(TextField, 'Destination');
+      await tester.enterText(destinationField, 'Lisb');
+      await tester.pump(const Duration(milliseconds: 400));
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Lisboa'));
+      await tester.pump();
+
+      await tester.tap(find.byType(ElevatedButton).last);
+      await tester.pumpAndSettle();
+
+      final captured = verify(() => routeRepository.updateRoute(any(), captureAny())).captured;
+      final updatedRoute = captured.single as RoutePlan;
+      expect(updatedRoute.destination, 'Lisboa, Portugal');
+      expect(updatedRoute.destinationCoordinate, const PlaceCoordinate(38.7223, -9.1393));
     },
   );
 }

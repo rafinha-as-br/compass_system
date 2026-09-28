@@ -7,7 +7,9 @@ import 'package:travel_matrix/features/travels/data/repository_impl/travel_repos
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_participants.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
+import 'package:travel_matrix/core/constants/api_fields.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 
 import '../models/view_models/travel_view_model.dart';
 
@@ -126,6 +128,7 @@ class TravelsController extends ChangeNotifier {
               backEndId: isTemporaryId ? null : rawId,
               name: map['name']?.toString() ?? '',
               description: map['description']?.toString() ?? '',
+              coordinate: PlaceCoordinate.tryFromJson(map[InterestPointApiFields.coordinate]),
             );
           })
           .toList();
@@ -138,6 +141,8 @@ class TravelsController extends ChangeNotifier {
         startLocation: routeData['startLocation']?.toString() ?? '',
         destination: routeData['destination']?.toString() ?? '',
         interestsList: interestPoints,
+        startLocationCoordinate: PlaceCoordinate.tryFromJson(routeData[RoutePlanApiFields.startLocationCoordinate]),
+        destinationCoordinate: PlaceCoordinate.tryFromJson(routeData[RoutePlanApiFields.destinationCoordinate]),
       );
 
       final result = await _routeUseCases.updateRoute(travelId, routePlan);

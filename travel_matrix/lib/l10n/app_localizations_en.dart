@@ -1034,4 +1034,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get placesAutocompleteUnavailable =>
       'Search unavailable — free text accepted';
+
+  @override
+  String get pickupLocationLabel => 'Pickup location';
+
+  @override
+  String get pickupLocationRequiredValidation => 'Pickup location is required';
 }

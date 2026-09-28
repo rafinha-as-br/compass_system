@@ -2,10 +2,17 @@ import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/timeline_analyzer.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/timeline_problem_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../domain/entities/itinerary_step.dart';
 
+
+/// Sentinel distinguishing "coordinate not passed to copyWith" (keep the
+/// current value) from "explicitly passed null" (clear it) — a plain `??`
+/// fallback can't tell the two apart, and would silently resurrect a stale
+/// coordinate after the user types free text over a picked suggestion.
+const _unset = Object();
 
 /// Enum to determine the position of a step in the itinerary.
 enum StepPosition{
@@ -177,6 +184,7 @@ abstract class ItineraryStepViewModel{
     required String address,
     required DateTime checkIn,
     required DateTime checkOut,
+    PlaceCoordinate? coordinate,
   }) {
     return HostingStepViewModel._(
         backEndId: null,
@@ -189,6 +197,7 @@ abstract class ItineraryStepViewModel{
         address: address,
         checkIn: checkIn,
         checkOut: checkOut,
+        coordinate: coordinate,
         problems: null,
         icon: Icons.hotel);
   }
@@ -208,6 +217,7 @@ abstract class ItineraryStepViewModel{
         address: hosting.address,
         checkIn: hosting.checkIn,
         checkOut: hosting.checkOut,
+        coordinate: hosting.coordinate,
         problems: null,
         position: position,
         icon: Icons.hotel);
@@ -437,6 +447,7 @@ class HostingStepViewModel extends ItineraryStepViewModel{
   final String address;
   final DateTime checkIn;
   final DateTime checkOut;
+  final PlaceCoordinate? coordinate;
 
   HostingStepViewModel._({
     required super.backEndId,
@@ -451,6 +462,7 @@ class HostingStepViewModel extends ItineraryStepViewModel{
     required this.checkOut,
     required super.problems,
     required super.icon,
+    this.coordinate,
   }): super._();
 
   String get checkInString => checkIn.toString();
@@ -469,6 +481,7 @@ class HostingStepViewModel extends ItineraryStepViewModel{
       address: address,
       checkIn: checkIn,
       checkOut: checkOut,
+      coordinate: coordinate,
     );
   }
 
@@ -486,6 +499,7 @@ class HostingStepViewModel extends ItineraryStepViewModel{
     DateTime? checkOut,
     List<TimelineProblemViewModel>? problems,
     IconData? icon,
+    Object? coordinate = _unset,
   }) {
     return HostingStepViewModel._(
       backEndId: backEndId ?? _backEndId,
@@ -500,6 +514,7 @@ class HostingStepViewModel extends ItineraryStepViewModel{
       checkOut: checkOut ?? this.checkOut,
       problems: (problems ?? this.problems)?.toList(),
       icon: icon ?? this.icon,
+      coordinate: identical(coordinate, _unset) ? this.coordinate : coordinate as PlaceCoordinate?,
     );
   }
 

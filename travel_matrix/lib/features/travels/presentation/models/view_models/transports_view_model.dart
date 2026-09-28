@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/timeline_analyzer.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../domain/entities/transport.dart';
@@ -63,7 +64,9 @@ abstract class TransportViewModel{
     required String vehicleLicensePlate,
     required String companyName,
     required DateTime checkInDate,
-    required DateTime checkOutDate
+    required DateTime checkOutDate,
+    String pickupLocation = '',
+    PlaceCoordinate? pickupLocationCoordinate,
   }){
     return RentalCarViewModel._(
         backEndId: null,
@@ -73,6 +76,8 @@ abstract class TransportViewModel{
         companyName: companyName,
         checkInDate: checkInDate,
         checkOutDate: checkOutDate,
+        pickupLocation: pickupLocation,
+        pickupLocationCoordinate: pickupLocationCoordinate,
         icon: Icons.car_rental
     );
   }
@@ -87,6 +92,8 @@ abstract class TransportViewModel{
         companyName: rentalCar.companyName,
         checkInDate: rentalCar.checkInDate,
         checkOutDate: rentalCar.checkOutDate,
+        pickupLocation: rentalCar.pickupLocation,
+        pickupLocationCoordinate: rentalCar.pickupLocationCoordinate,
         icon: Icons.car_rental
     );
   }
@@ -100,6 +107,7 @@ abstract class TransportViewModel{
     required String busStationName,
     required String description,
     required String? details,
+    PlaceCoordinate? busStationCoordinate,
   }){
     return BusViewModel._(
         backEndId: null,
@@ -111,6 +119,7 @@ abstract class TransportViewModel{
         busStationName: busStationName,
         description: description,
         details: details,
+        busStationCoordinate: busStationCoordinate,
         icon: Icons.directions_bus
     );
   }
@@ -127,6 +136,7 @@ abstract class TransportViewModel{
         busStationName: bus.busStationName,
         description: bus.description,
         details: bus.details,
+        busStationCoordinate: bus.busStationCoordinate,
         icon: Icons.directions_bus
     );
   }
@@ -138,7 +148,9 @@ abstract class TransportViewModel{
     required DateTime flightDate,
     required String departureGate,
     required String departureAirport,
-    required String arrivalAirport
+    required String arrivalAirport,
+    PlaceCoordinate? departureAirportCoordinate,
+    PlaceCoordinate? arrivalAirportCoordinate,
   }){
     return AirplaneViewModel._(
         backEndId: null,
@@ -149,6 +161,8 @@ abstract class TransportViewModel{
         departureGate: departureGate,
         departureAirport: departureAirport,
         arrivalAirport: arrivalAirport,
+        departureAirportCoordinate: departureAirportCoordinate,
+        arrivalAirportCoordinate: arrivalAirportCoordinate,
         icon: Icons.flight
     );
   }
@@ -164,6 +178,8 @@ abstract class TransportViewModel{
       departureGate: airplane.departureGate,
       departureAirport: airplane.departureAirport,
       arrivalAirport: airplane.arrivalAirport,
+      departureAirportCoordinate: airplane.departureAirportCoordinate,
+      arrivalAirportCoordinate: airplane.arrivalAirportCoordinate,
       icon: Icons.flight
     );
   }
@@ -219,6 +235,8 @@ class RentalCarViewModel extends TransportViewModel{
   final String companyName;
   final DateTime checkInDate;
   final DateTime checkOutDate;
+  final String pickupLocation;
+  final PlaceCoordinate? pickupLocationCoordinate;
 
   RentalCarViewModel._({
     required super.backEndId,
@@ -228,7 +246,9 @@ class RentalCarViewModel extends TransportViewModel{
     required this.companyName,
     required this.checkInDate,
     required this.checkOutDate,
-    required super.icon
+    required super.icon,
+    this.pickupLocation = '',
+    this.pickupLocationCoordinate,
   }): super._();
 
   String get checkInString => checkInDate.toString();
@@ -245,6 +265,8 @@ class RentalCarViewModel extends TransportViewModel{
       companyName: companyName,
       checkInDate: checkInDate,
       checkOutDate: checkOutDate,
+      pickupLocation: pickupLocation,
+      pickupLocationCoordinate: pickupLocationCoordinate,
     );
   }
 
@@ -269,6 +291,7 @@ class BusViewModel extends TransportViewModel{
   final String departureGate;
   final DateTime departureDateTime;
   final String busStationName;
+  final PlaceCoordinate? busStationCoordinate;
   final String description;
   final String? details;
 
@@ -283,6 +306,7 @@ class BusViewModel extends TransportViewModel{
     required this.description,
     required super.icon,
     this.details,
+    this.busStationCoordinate,
   }): super._();
 
   String get departureDateTimeString => departureDateTime.toString();
@@ -299,6 +323,7 @@ class BusViewModel extends TransportViewModel{
       busStationName: busStationName,
       description: description,
       details: details,
+      busStationCoordinate: busStationCoordinate,
     );
   }
 
@@ -324,7 +349,9 @@ class AirplaneViewModel extends TransportViewModel{
   final DateTime flightDate;
   final String departureGate;
   final String departureAirport;
+  final PlaceCoordinate? departureAirportCoordinate;
   final String arrivalAirport;
+  final PlaceCoordinate? arrivalAirportCoordinate;
 
   AirplaneViewModel._({
     required super.backEndId,
@@ -336,6 +363,8 @@ class AirplaneViewModel extends TransportViewModel{
     required this.departureGate,
     required this.departureAirport,
     required this.arrivalAirport,
+    this.departureAirportCoordinate,
+    this.arrivalAirportCoordinate,
   }): super._();
 
   String get flightDateString => flightDate.toString();
@@ -351,6 +380,8 @@ class AirplaneViewModel extends TransportViewModel{
       departureGate: departureGate,
       departureAirport: departureAirport,
       arrivalAirport: arrivalAirport,
+      departureAirportCoordinate: departureAirportCoordinate,
+      arrivalAirportCoordinate: arrivalAirportCoordinate,
     );
   }
 

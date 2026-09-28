@@ -1,6 +1,7 @@
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:uuid/uuid.dart';
 import 'package:travel_matrix/core/constants/api_fields.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 
 /// Data transfer object for [RoutePlan], having the same structure as the API.
 class RoutePlanDTO {
@@ -22,6 +23,9 @@ class RoutePlanDTO {
   /// List of interests for the route
   final List<InterestPointDTO> interestsList;
 
+  final PlaceCoordinate? startLocationCoordinate;
+  final PlaceCoordinate? destinationCoordinate;
+
   RoutePlanDTO({
     required this.id,
     required this.startDate,
@@ -29,6 +33,8 @@ class RoutePlanDTO {
     required this.startLocation,
     required this.destination,
     required this.interestsList,
+    this.startLocationCoordinate,
+    this.destinationCoordinate,
   });
 
   /// to json method
@@ -42,6 +48,8 @@ class RoutePlanDTO {
       RoutePlanApiFields.interestPoints: interestsList
           .map((x) => x.toJson())
           .toList(),
+      RoutePlanApiFields.startLocationCoordinate: startLocationCoordinate?.toJson(),
+      RoutePlanApiFields.destinationCoordinate: destinationCoordinate?.toJson(),
     };
   }
 
@@ -63,6 +71,8 @@ class RoutePlanDTO {
           (x) => InterestPointDTO.fromJson(x as Map<String, dynamic>),
         ),
       ),
+      startLocationCoordinate: PlaceCoordinate.tryFromJson(json[RoutePlanApiFields.startLocationCoordinate]),
+      destinationCoordinate: PlaceCoordinate.tryFromJson(json[RoutePlanApiFields.destinationCoordinate]),
     );
   }
 
@@ -76,6 +86,8 @@ class RoutePlanDTO {
       startLocation: startLocation,
       destination: destination,
       interestsList: interestsList.map((x) => x.toDomain()).toList(),
+      startLocationCoordinate: startLocationCoordinate,
+      destinationCoordinate: destinationCoordinate,
     );
   }
 
@@ -90,6 +102,8 @@ class RoutePlanDTO {
       interestsList: routePlan.interestsList
           .map((x) => InterestPointDTO.fromDomain(interestPoint: x))
           .toList(),
+      startLocationCoordinate: routePlan.startLocationCoordinate,
+      destinationCoordinate: routePlan.destinationCoordinate,
     );
   }
 }
@@ -105,10 +119,13 @@ class InterestPointDTO {
   /// Description of the place for the interest point
   final String description;
 
+  final PlaceCoordinate? coordinate;
+
   InterestPointDTO({
     required this.id,
     required this.name,
     required this.description,
+    this.coordinate,
   });
 
   /// To json method
@@ -117,6 +134,7 @@ class InterestPointDTO {
       CommonApiFields.id: id,
       InterestPointApiFields.name: name,
       InterestPointApiFields.description: description,
+      InterestPointApiFields.coordinate: coordinate?.toJson(),
     };
   }
 
@@ -126,6 +144,7 @@ class InterestPointDTO {
       id: json[CommonApiFields.id]?.toString(),
       name: json[InterestPointApiFields.name]?.toString() ?? '',
       description: json[InterestPointApiFields.description]?.toString() ?? '',
+      coordinate: PlaceCoordinate.tryFromJson(json[InterestPointApiFields.coordinate]),
     );
   }
 
@@ -136,6 +155,7 @@ class InterestPointDTO {
       backEndId: id,
       name: name,
       description: description,
+      coordinate: coordinate,
     );
   }
 
@@ -145,6 +165,7 @@ class InterestPointDTO {
       id: interestPoint.backEndId,
       name: interestPoint.name,
       description: interestPoint.description,
+      coordinate: interestPoint.coordinate,
     );
   }
 }

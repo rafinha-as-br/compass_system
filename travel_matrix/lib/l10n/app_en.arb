@@ -418,5 +418,8 @@
   "sessionExpiredMessage": "Session expired. Please sign in again.",
 
   "placesAutocompleteNoResults": "No places found",
-  "placesAutocompleteUnavailable": "Search unavailable — free text accepted"
+  "placesAutocompleteUnavailable": "Search unavailable — free text accepted",
+
+  "pickupLocationLabel": "Pickup location",
+  "pickupLocationRequiredValidation": "Pickup location is required"
 }

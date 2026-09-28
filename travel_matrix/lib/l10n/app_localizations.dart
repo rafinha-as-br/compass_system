@@ -2035,6 +2035,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search unavailable — free text accepted'**
   String get placesAutocompleteUnavailable;
+
+  /// No description provided for @pickupLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup location'**
+  String get pickupLocationLabel;
+
+  /// No description provided for @pickupLocationRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup location is required'**
+  String get pickupLocationRequiredValidation;
 }
 
 class _AppLocalizationsDelegate

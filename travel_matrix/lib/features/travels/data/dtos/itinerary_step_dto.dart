@@ -3,6 +3,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/itinerary_step.dart';
 import 'package:travel_matrix/core/constants/api_fields.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 
 /// Data transfer object for [ItineraryStep], having the same structure as the API.
 abstract class ItineraryStepDTO {
@@ -237,6 +238,7 @@ class HostingDTO extends ItineraryStepDTO {
   final String address;
   final DateTime checkIn;
   final DateTime checkOut;
+  final PlaceCoordinate? coordinate;
 
   HostingDTO({
     required super.id,
@@ -248,6 +250,7 @@ class HostingDTO extends ItineraryStepDTO {
     required this.address,
     required this.checkIn,
     required this.checkOut,
+    this.coordinate,
   });
 
   factory HostingDTO.fromJson(Map<String, dynamic> json) {
@@ -271,6 +274,7 @@ class HostingDTO extends ItineraryStepDTO {
         json[ItineraryStepApiFields.checkOut],
         fallback: startDate,
       ),
+      coordinate: PlaceCoordinate.tryFromJson(json[ItineraryStepApiFields.coordinate]),
     );
   }
 
@@ -287,6 +291,7 @@ class HostingDTO extends ItineraryStepDTO {
       ItineraryStepApiFields.address: address,
       ItineraryStepApiFields.checkIn: checkIn.toIso8601String(),
       ItineraryStepApiFields.checkOut: checkOut.toIso8601String(),
+      ItineraryStepApiFields.coordinate: coordinate?.toJson(),
     };
   }
 
@@ -303,6 +308,7 @@ class HostingDTO extends ItineraryStepDTO {
       address: address,
       checkIn: checkIn,
       checkOut: checkOut,
+      coordinate: coordinate,
     );
   }
 
@@ -318,6 +324,7 @@ class HostingDTO extends ItineraryStepDTO {
       address: hosting.address,
       checkIn: hosting.checkIn,
       checkOut: hosting.checkOut,
+      coordinate: hosting.coordinate,
     );
   }
 }
