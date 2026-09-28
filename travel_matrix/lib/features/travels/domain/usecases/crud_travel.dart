@@ -32,16 +32,25 @@ class CrudTravelUseCases {
     return await repository.deleteTravel(id);
   }
 
-  /// Marks a travel as ready (moves it from [TravelStatus.routeCreated] to
-  /// [TravelStatus.itineraryCreated]) by fetching the current travel and
-  /// resubmitting it with the updated status.
+  /// Confirms "Preparar viagem" by fetching the current travel and
+  /// resubmitting it with [Travel.prepared] set to true. Does not touch
+  /// [Travel.travelStatus] — that already advances to
+  /// [TravelStatus.itineraryCreated] on its own, as soon as an itinerary
+  /// exists (CPS-166).
   Future<Result<Travel>> markAsReady(String id) async {
     final travelResult = await repository.getTravel(id);
     if (!travelResult.isSuccess || travelResult.data == null) {
       return Result.failure(travelResult.error ?? 'Travel not found.');
     }
 
-    travelResult.data!.travelStatus = TravelStatus.itineraryCreated;
-    return await repository.updateTravel(travelResult.data!);
+    final travel = travelResult.data!;
+    // This use case owns the invariant, not just the app bar's disabled
+    // button — an itinerary must exist before the trip can be prepared.
+    if (travel.travelStatus != TravelStatus.itineraryCreated) {
+      return Result.failure('Travel needs an itinerary before it can be prepared.');
+    }
+
+    travel.prepared = true;
+    return await repository.updateTravel(travel);
   }
 }

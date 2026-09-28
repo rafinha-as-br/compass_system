@@ -22,6 +22,7 @@ RoutePlan _route() => RoutePlan(
 
 Travel _travel({
   TravelStatus status = TravelStatus.routeCreated,
+  bool prepared = false,
   List<Person> participants = const [],
   Itinerary? itinerary,
 }) {
@@ -31,6 +32,7 @@ Travel _travel({
     clientName: 'Maria Silva',
     travelName: 'Lisbon 2026',
     travelStatus: status,
+    prepared: prepared,
     participantsList: participants,
     routePlan: _route(),
     itinerary: itinerary,
@@ -77,15 +79,19 @@ void main() {
   testWidgets('maps each TravelStatus to its localized label and support line', (tester) async {
     await tester.pumpWidget(Container());
 
-    for (final entry in {
-      TravelStatus.routeCreated: ('Not Ready', 'Route created, itinerary pending'),
-      TravelStatus.itineraryCreated: ('Ready', 'Itinerary created'),
-      TravelStatus.travelStarted: ('In Progress', 'Travel underway'),
-      TravelStatus.travelFinished: ('Completed', 'Travel finished'),
-    }.entries) {
-      await _pump(tester, _travel(status: entry.key));
-      expect(find.text(entry.value.$1), findsOneWidget);
-      expect(find.text(entry.value.$2), findsOneWidget);
+    // itineraryCreated only displays as "Ready" once prepared is also true
+    // (CPS-166) — travelStatus alone stopped being enough the moment it
+    // started auto-advancing as soon as an itinerary exists.
+    for (final entry in [
+      (TravelStatus.routeCreated, false, 'Not Ready', 'Route created, itinerary pending'),
+      (TravelStatus.itineraryCreated, false, 'Not Ready', 'Route created, itinerary pending'),
+      (TravelStatus.itineraryCreated, true, 'Ready', 'Itinerary created'),
+      (TravelStatus.travelStarted, false, 'In Progress', 'Travel underway'),
+      (TravelStatus.travelFinished, false, 'Completed', 'Travel finished'),
+    ]) {
+      await _pump(tester, _travel(status: entry.$1, prepared: entry.$2));
+      expect(find.text(entry.$3), findsOneWidget);
+      expect(find.text(entry.$4), findsOneWidget);
     }
   });
 

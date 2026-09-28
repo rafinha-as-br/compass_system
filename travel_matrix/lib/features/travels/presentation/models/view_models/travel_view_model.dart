@@ -117,7 +117,10 @@ class TravelViewModel{
   final String localId;
   final String clientName;
   final String travelTitle;
-  final TravelStatusViewModel status;
+  /// Raw domain status — advances to [TravelStatus.itineraryCreated]
+  /// automatically as soon as an itinerary exists (backend behavior,
+  /// unchanged), independent of [prepared]. Use [status] for display.
+  final TravelStatus travelStatus;
   final RoutePlanViewModel route;
   final ItineraryViewModel? itinerary;
   final List<PersonViewModel> participants;
@@ -125,19 +128,34 @@ class TravelViewModel{
   /// Free-text note from the client to the agent — read-only, but still
   /// carried through so [toDomain] never drops it on a full-object update.
   final String? observations;
+  /// Whether the agent has explicitly confirmed "Preparar viagem" — see
+  /// [Travel.prepared]. Carried through so [toDomain] never drops it.
+  final bool prepared;
 
+  /// Display status: [travelStatus] alone stops being enough to mean
+  /// "ready" once itinerary creation started auto-advancing it — the trip
+  /// only shows as Ready once the agent explicitly confirms "Preparar
+  /// viagem" (CPS-166). Computed from [travelStatus]/[prepared] instead of
+  /// stored, so it can never drift out of sync with either.
+  TravelStatusViewModel get status {
+    final domainStatus = TravelStatusViewModel.fromDomain(travelStatus);
+    return domainStatus == TravelStatusViewModel.ready && !prepared
+        ? TravelStatusViewModel.notReady
+        : domainStatus;
+  }
 
   TravelViewModel({
     required this.backEndId,
     required this.localId,
     required this.clientName,
     required this.travelTitle,
-    required this.status,
+    required this.travelStatus,
     required this.route,
     required this.participants,
     required this.events,
     this.itinerary,
     this.observations,
+    this.prepared = false,
   });
 
   /// Factory constructor from domain model
@@ -147,13 +165,13 @@ class TravelViewModel{
       localId: travel.domainId,
       clientName: travel.clientName,
       travelTitle: travel.travelName,
-      status: TravelStatusViewModel.fromDomain(travel.travelStatus),
+      travelStatus: travel.travelStatus,
       route: RoutePlanViewModel.fromDomain(travel.routePlan),
       participants: travel.participantsList.map((x) => PersonViewModel.fromDomain(x)).toList(),
       events: travel.eventsLog?.map((x) => TravelEventViewModel.fromDomain(x)).toList(),
       itinerary: travel.itinerary == null ? null : ItineraryViewModel.fromDomain(travel.itinerary!),
       observations: travel.observations,
-
+      prepared: travel.prepared,
     );
   }
 
@@ -166,7 +184,8 @@ class TravelViewModel{
       travelName: travelTitle,
       routePlan: route.toDomain(),
       participantsList: participants.map((x) => x.toDomain()).toList(),
-      travelStatus: status.toDomain(),
+      travelStatus: travelStatus,
+      prepared: prepared,
       itinerary: itinerary?.toDomain(),
       eventsLog: events?.map((x) => x.toDomain()).toList(),
       observations: observations,
@@ -197,12 +216,13 @@ class TravelViewModel{
       localId: localId,
       clientName: clientName,
       travelTitle: travelTitle,
-      status: status,
+      travelStatus: travelStatus,
       route: route,
       participants: participants ?? this.participants,
       events: events,
       itinerary: itinerary,
       observations: observations,
+      prepared: prepared,
     );
   }
 
