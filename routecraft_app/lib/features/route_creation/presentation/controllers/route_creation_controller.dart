@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:routecraft_app/core/entities/result.dart';
+import 'package:routecraft_app/core/network/clients/places_api_client.dart';
+import 'package:routecraft_app/core/network/http_api_client.dart';
 import 'package:routecraft_app/core/services/auth_service.dart';
 import 'package:routecraft_app/features/travels/data/repositories/travel_repository_impl.dart';
 import 'package:routecraft_app/features/travels/domain/entities/person.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
+import 'package:routecraft_app/shared/models/place_suggestion.dart';
 
 /// Number of guided data-entry steps (name, dates, locations, interests,
 /// participants) before the review screen —
@@ -55,15 +58,22 @@ class RouteCreationController extends ChangeNotifier {
 
   final TravelUseCases? _travelUseCasesOverride;
   final Future<String?> Function()? _getClientNameOverride;
+  final PlacesApiClient? _placesApiClientOverride;
+  final Future<String?> Function()? _getTokenOverride;
 
-  /// [travelUseCases]/[getClientName] are injectable for tests, without
-  /// depending on the real network/singleton wiring (`AuthService.instance`
-  /// is only touched when no override is given).
+  /// [travelUseCases]/[getClientName]/[placesApiClient]/[getToken] are
+  /// injectable for tests, without depending on the real network/singleton
+  /// wiring (`AuthService.instance`/`HttpApiClient.instance` are only
+  /// touched when no override is given).
   RouteCreationController({
     TravelUseCases? travelUseCases,
     Future<String?> Function()? getClientName,
+    PlacesApiClient? placesApiClient,
+    Future<String?> Function()? getToken,
   })  : _travelUseCasesOverride = travelUseCases,
-        _getClientNameOverride = getClientName {
+        _getClientNameOverride = getClientName,
+        _placesApiClientOverride = placesApiClient,
+        _getTokenOverride = getToken {
     tripNameController.addListener(notifyListeners);
     startLocationController.addListener(notifyListeners);
     destinationController.addListener(notifyListeners);
@@ -77,12 +87,25 @@ class RouteCreationController extends ChangeNotifier {
   @visibleForTesting
   RouteCreationController.withState(this._state)
       : _travelUseCasesOverride = null,
-        _getClientNameOverride = null;
+        _getClientNameOverride = null,
+        _placesApiClientOverride = null,
+        _getTokenOverride = null;
 
   TravelUseCases get _travelUseCases => _travelUseCasesOverride ?? TravelUseCases(TravelRepositoryImpl());
 
   Future<String?> _getClientName() =>
       (_getClientNameOverride ?? AuthService.instance.getClientName)();
+
+  PlacesApiClient get _placesApiClient => _placesApiClientOverride ?? PlacesApiClient(HttpApiClient.instance);
+
+  Future<String?> _getToken() => (_getTokenOverride ?? AuthService.instance.getToken)();
+
+  /// Passed as `fetchSuggestions` to [PlacesAutocompleteField] — resolves
+  /// the auth token itself so the view never has to know about it.
+  Future<List<PlaceSuggestion>> fetchPlaceSuggestions(String query) async {
+    final token = await _getToken();
+    return _placesApiClient.autocomplete(token ?? '', query);
+  }
 
   // Step 1 — name.
   final tripNameController = TextEditingController();
@@ -131,18 +154,35 @@ class RouteCreationController extends ChangeNotifier {
   // Step 3 — locations.
   final startLocationController = TextEditingController();
   final destinationController = TextEditingController();
+  PlaceCoordinate? startLocationCoordinate;
+  PlaceCoordinate? destinationCoordinate;
   bool get isLocationsValid =>
       startLocationController.text.trim().isNotEmpty && destinationController.text.trim().isNotEmpty;
+
+  /// [PlacesAutocompleteField] owns its own text field internally — this
+  /// mirrors its reported value into [startLocationController] so the rest
+  /// of the controller (validity, submit, review step) keeps reading from
+  /// the same field it always has.
+  void setStartLocation(PlaceAutocompleteResult result) {
+    startLocationController.text = result.text;
+    startLocationCoordinate = result.coordinate;
+  }
+
+  void setDestination(PlaceAutocompleteResult result) {
+    destinationController.text = result.text;
+    destinationCoordinate = result.coordinate;
+  }
 
   // Step 4 — interests (optional: always valid to continue).
   final List<InterestPoint> interestPoints = [];
 
-  void addInterestPoint(String name, String description) {
+  void addInterestPoint(String name, String description, {PlaceCoordinate? coordinate}) {
     interestPoints.add(InterestPoint(
       domainId: const Uuid().v4(),
       backEndId: null,
       name: name,
       description: description,
+      coordinate: coordinate,
     ));
     notifyListeners();
   }
@@ -252,6 +292,8 @@ class RouteCreationController extends ChangeNotifier {
       startLocation: startLocationController.text.trim(),
       destination: destinationController.text.trim(),
       interestsList: interestPoints,
+      startLocationCoordinate: startLocationCoordinate,
+      destinationCoordinate: destinationCoordinate,
     );
 
     final observations = observationsController.text.trim();

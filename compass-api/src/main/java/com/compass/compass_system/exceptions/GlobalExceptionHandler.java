@@ -1,6 +1,7 @@
 package com.compass.compass_system.exceptions;
 
 import com.compass.compass_system.dto.ErrorResponse;
+import com.compass.compass_system.places.PlaceProviderUnavailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
@@ -69,6 +70,21 @@ public class GlobalExceptionHandler {
                 ex.getMessage()
         );
         return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(error);
+    }
+
+    /**
+     * Trata indisponibilidade de provedor externo (ex.: Nominatim fora do
+     * ar) com um status distinto de "sem resultados", para o app saber
+     * degradar para texto livre em vez de travar o formulário.
+     */
+    @ExceptionHandler(PlaceProviderUnavailableException.class)
+    public ResponseEntity<ErrorResponse> handlePlaceProviderUnavailable(PlaceProviderUnavailableException ex) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
+                "Serviço de geocodificação indisponível",
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
     }
 
     /**

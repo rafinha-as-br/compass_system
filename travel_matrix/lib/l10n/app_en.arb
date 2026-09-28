@@ -415,5 +415,11 @@
   "checkInAfterCheckOutError": "Check in cannot be after check out",
   "checkOutBeforeCheckInError": "Check out cannot be before check in",
   "deleteStepTooltip": "Delete step",
-  "sessionExpiredMessage": "Session expired. Please sign in again."
+  "sessionExpiredMessage": "Session expired. Please sign in again.",
+
+  "placesAutocompleteNoResults": "No places found",
+  "placesAutocompleteUnavailable": "Search unavailable — free text accepted",
+
+  "pickupLocationLabel": "Pickup location",
+  "pickupLocationRequiredValidation": "Pickup location is required"
 }
