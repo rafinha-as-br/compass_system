@@ -3,7 +3,6 @@ import 'package:provider/provider.dart';
 
 import 'package:travel_matrix/features/account/presentation/controllers/account_controller.dart';
 import 'package:travel_matrix/features/account/presentation/view_models/agent_profile_view_model.dart';
-import 'package:travel_matrix/features/account/presentation/widgets/logout_button.dart';
 import 'package:travel_matrix/features/account/presentation/widgets/preferences_card.dart';
 import 'package:travel_matrix/features/account/presentation/widgets/profile_details_card.dart';
 import 'package:travel_matrix/features/account/presentation/widgets/profile_header_card.dart';
@@ -79,8 +78,6 @@ class _AccountContent extends StatelessWidget {
                 ProfileDetailsCard(profile: profile, l10n: l10n),
                 const SizedBox(height: 20),
                 PreferencesCard(l10n: l10n),
-                const SizedBox(height: 24),
-                LogoutButton(l10n: l10n),
               ],
             ),
           ),

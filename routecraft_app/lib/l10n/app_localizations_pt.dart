@@ -118,17 +118,31 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeSectionInProgress => 'Em andamento';
 
   @override
-  String get homeSectionUpcoming => 'Próximas';
-
-  @override
-  String get homeSectionCompleted => 'Concluídas';
-
-  @override
   String get homeEmptyMessage =>
       'Descreva a viagem que você quer fazer e seu agente monta o roteiro.';
 
   @override
   String get homeEmptyCta => 'Criar minha primeira rota';
+
+  @override
+  String get homeNoRoutesTitle => 'Nenhuma rota ainda';
+
+  @override
+  String get homeNoRoutesMessage =>
+      'Crie sua primeira rota para começar a viajar.';
+
+  @override
+  String get homeNoTripInProgressTitle => 'Nenhuma viagem em andamento';
+
+  @override
+  String get homeNoTripInProgressMessage =>
+      'Suas próximas viagens estão na aba Viagens.';
+
+  @override
+  String get homeCreateRouteCta => 'Criar rota';
+
+  @override
+  String get homeSeeMyTripsLink => 'Ver minhas viagens';
 
   @override
   String get networkErrorTitle => 'Não foi possível carregar';
@@ -802,4 +816,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get travelStatusTravelFinished => 'Concluída';
+
+  @override
+  String get placesAutocompleteNoResults => 'Nenhum lugar encontrado';
+
+  @override
+  String get placesAutocompleteUnavailable =>
+      'Busca indisponível — texto livre aceito';
 }

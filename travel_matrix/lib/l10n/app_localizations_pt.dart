@@ -304,9 +304,6 @@ class AppLocalizationsPt extends AppLocalizations {
   String get adminDarkMode => 'Modo Escuro Administrativo';
 
   @override
-  String get logOutOfMatrix => 'Sair do Matrix';
-
-  @override
   String get languageLabel => 'Idioma';
 
   @override
@@ -378,13 +375,16 @@ class AppLocalizationsPt extends AppLocalizations {
   String get newPassword => 'Nova Senha';
 
   @override
-  String get digitalConcierge => 'O CONCIERGE DIGITAL';
+  String get compassSystemBrand => 'Compass System';
 
   @override
   String get dashboardNav => 'Dashboard';
 
   @override
   String get bookingNav => 'Reservas';
+
+  @override
+  String get myAccountNav => 'Minha Conta';
 
   @override
   String get settingsNav => 'Configurações';
@@ -602,36 +602,179 @@ class AppLocalizationsPt extends AppLocalizations {
   String get createTravelButton => 'CRIAR VIAGEM';
 
   @override
-  String get markAsReadyButton => 'Marcar como Pronta';
+  String get editMenuLabel => 'Editar';
 
   @override
-  String get markAsReadyConfirm =>
-      'Tem certeza que deseja marcar esta viagem como pronta?';
+  String get prepareTravelButton => 'Preparar viagem';
 
   @override
   String get confirmButton => 'Confirmar';
 
   @override
-  String get markAsReadySuccess => 'Viagem marcada como pronta com sucesso';
+  String get prepareTravelSuccess => 'Viagem preparada com sucesso';
 
   @override
-  String get markAsReadyFailure => 'Falha ao marcar viagem como pronta';
+  String get prepareTravelFailure => 'Falha ao preparar a viagem';
 
   @override
   String get needsItineraryFirstTooltip =>
       'Você precisa criar um roteiro primeiro';
 
   @override
-  String get markAsReadyTooltip => 'Marcar viagem como pronta';
+  String get prepareTravelTooltip => 'Preparar viagem';
 
   @override
   String get travelActionsMenuTooltip => 'Ações da viagem';
+
+  @override
+  String get prepareTravelDialogTitle => 'Preparar viagem?';
+
+  @override
+  String get prepareTravelDialogSubtitle =>
+      'Revise o resumo antes de marcar a primeira versão do itinerário como pronta.';
+
+  @override
+  String get prepareTravelSummaryTravelLabel => 'Viagem';
+
+  @override
+  String get prepareTravelSummaryStatusLabel => 'Status atual';
+
+  @override
+  String get prepareTravelSummaryParticipantsLabel => 'Participantes';
+
+  @override
+  String get prepareTravelSummaryStartDateLabel => 'Data de início';
+
+  @override
+  String get prepareTravelSummaryEndDateLabel => 'Data de fim';
+
+  @override
+  String get itinerarySummarySectionTitle => 'ITINERÁRIO';
+
+  @override
+  String get overviewViewTab => 'Visão Geral';
 
   @override
   String get routeViewTab => 'Ver Rota';
 
   @override
   String get itineraryViewTab => 'Ver Roteiro';
+
+  @override
+  String get participantsViewTab => 'Participantes';
+
+  @override
+  String get addParticipantButton => 'Adicionar participante';
+
+  @override
+  String get addParticipantDialogTitle => 'Adicionar participante';
+
+  @override
+  String get participantNameFieldLabel => 'Nome';
+
+  @override
+  String get participantAgeFieldLabel => 'Idade';
+
+  @override
+  String get noParticipantsTitle => 'Nenhum participante ainda';
+
+  @override
+  String get noParticipantsMessage =>
+      'Adicione as pessoas que vão viajar para manter esta lista atualizada.';
+
+  @override
+  String get removeParticipantTooltip => 'Remover participante';
+
+  @override
+  String get removeParticipantConfirmTitle => 'Remover participante?';
+
+  @override
+  String removeParticipantConfirmMessage(String name) {
+    return 'Remover $name desta viagem?';
+  }
+
+  @override
+  String get retryButton => 'Tentar de novo';
+
+  @override
+  String get failedToUpdateParticipants =>
+      'Não foi possível atualizar os participantes. Tente novamente.';
+
+  @override
+  String participantAgeYears(String age) {
+    return '$age anos';
+  }
+
+  @override
+  String get overviewRouteLabel => 'ROTA';
+
+  @override
+  String get overviewDurationLabel => 'Duração';
+
+  @override
+  String overviewDurationInDays(int count) {
+    return '$count dias';
+  }
+
+  @override
+  String get travelStatusNotReadyLabel => 'Não pronta';
+
+  @override
+  String get travelStatusReadyLabel => 'Pronta';
+
+  @override
+  String get travelStatusInProgressLabel => 'Em andamento';
+
+  @override
+  String get travelStatusCompletedLabel => 'Concluída';
+
+  @override
+  String get travelStatusNotReadySupportLine =>
+      'Rota criada, itinerário pendente';
+
+  @override
+  String get travelStatusReadySupportLine => 'Itinerário criado';
+
+  @override
+  String get travelStatusInProgressSupportLine => 'Viagem em curso';
+
+  @override
+  String get travelStatusCompletedSupportLine => 'Viagem finalizada';
+
+  @override
+  String get overviewParticipantsLabel => 'PARTICIPANTES';
+
+  @override
+  String get overviewParticipantsCaption => 'pessoas na viagem';
+
+  @override
+  String overviewParticipantsMore(int count) {
+    return 'e mais $count';
+  }
+
+  @override
+  String get overviewViewParticipantsAction => 'Ver participantes →';
+
+  @override
+  String get overviewItineraryLabel => 'ITINERÁRIO';
+
+  @override
+  String overviewItineraryStepsSummary(int count, String agentName) {
+    return '$count etapas · por $agentName';
+  }
+
+  @override
+  String get overviewViewItineraryAction => 'Ver itinerário completo';
+
+  @override
+  String get overviewNoItineraryTitle => 'Nenhum itinerário criado ainda';
+
+  @override
+  String get overviewNoItinerarySupport =>
+      'Crie o itinerário para deixar a viagem pronta para o cliente.';
+
+  @override
+  String get overviewCreateItineraryAction => 'Criar itinerário';
 
   @override
   String travelersCount(int count) {
@@ -897,4 +1040,18 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get sessionExpiredMessage => 'Sessão expirada. Faça login novamente.';
+
+  @override
+  String get placesAutocompleteNoResults => 'Nenhum lugar encontrado';
+
+  @override
+  String get placesAutocompleteUnavailable =>
+      'Busca indisponível — texto livre aceito';
+
+  @override
+  String get pickupLocationLabel => 'Local de retirada';
+
+  @override
+  String get pickupLocationRequiredValidation =>
+      'Local de retirada é obrigatório';
 }

@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .requestMatchers("/travels/**").authenticated()
                 .requestMatchers("/dashboard/**").authenticated()
                 .requestMatchers("/notifications/**").authenticated()
+                .requestMatchers("/places/**").authenticated()
                 // Todas as outras rotas do /api/** precisam de autenticação
                 .requestMatchers("/api/**").authenticated()
                 // Qualquer outra rota é liberada

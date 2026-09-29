@@ -55,6 +55,11 @@ class Travel {
   final String travelName;
   /// Travel status
   TravelStatus travelStatus;
+  /// Whether the agent has explicitly confirmed "Preparar viagem". Distinct
+  /// from [travelStatus]: [TravelStatus.itineraryCreated] advances
+  /// automatically as soon as an itinerary exists, while [prepared] only
+  /// flips via that explicit confirmation (CPS-166).
+  bool prepared;
   /// Route plan for the travel
   final RoutePlan routePlan;
   /// Itinerary for the travel
@@ -78,6 +83,7 @@ class Travel {
     required this.routePlan,
     required this.participantsList,
     required this.travelStatus,
+    this.prepared = false,
     this.itinerary,
     this.eventsLog,
     this.observations,

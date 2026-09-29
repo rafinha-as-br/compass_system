@@ -1,6 +1,10 @@
 package com.compass.compass_system.transport;
 
+import com.compass.compass_system.geo.Coordinate;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 
 @Entity
@@ -13,6 +17,16 @@ public class Airplane extends Transport {
     private String departureGate;
     private String departureAirport;
     private String arrivalAirport;
+
+    @Embedded
+    @AttributeOverride(name = "latitude", column = @Column(name = "departure_airport_latitude"))
+    @AttributeOverride(name = "longitude", column = @Column(name = "departure_airport_longitude"))
+    private Coordinate departureAirportCoordinate;
+
+    @Embedded
+    @AttributeOverride(name = "latitude", column = @Column(name = "arrival_airport_latitude"))
+    @AttributeOverride(name = "longitude", column = @Column(name = "arrival_airport_longitude"))
+    private Coordinate arrivalAirportCoordinate;
 
     public Airplane() {
         setType("airplane");
@@ -35,4 +49,10 @@ public class Airplane extends Transport {
 
     public String getArrivalAirport() { return arrivalAirport; }
     public void setArrivalAirport(String arrivalAirport) { this.arrivalAirport = arrivalAirport; }
+
+    public Coordinate getDepartureAirportCoordinate() { return departureAirportCoordinate; }
+    public void setDepartureAirportCoordinate(Coordinate departureAirportCoordinate) { this.departureAirportCoordinate = departureAirportCoordinate; }
+
+    public Coordinate getArrivalAirportCoordinate() { return arrivalAirportCoordinate; }
+    public void setArrivalAirportCoordinate(Coordinate arrivalAirportCoordinate) { this.arrivalAirportCoordinate = arrivalAirportCoordinate; }
 }
