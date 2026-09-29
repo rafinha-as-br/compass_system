@@ -2047,6 +2047,66 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Pickup location is required'**
   String get pickupLocationRequiredValidation;
+
+  /// No description provided for @notificationsBellTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsBellTooltip;
+
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsMarkAllRead.
+  ///
+  /// In en, this message translates to:
+  /// **'Mark all as read'**
+  String get notificationsMarkAllRead;
+
+  /// No description provided for @notificationsEmptyTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No notifications yet'**
+  String get notificationsEmptyTitle;
+
+  /// No description provided for @notificationsEmptyMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'When a client creates or edits a route, the alert shows up here.'**
+  String get notificationsEmptyMessage;
+
+  /// No description provided for @failedToLoadNotifications.
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to load your notifications right now. Please try again later.'**
+  String get failedToLoadNotifications;
+
+  /// No description provided for @notificationsToday.
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get notificationsToday;
+
+  /// No description provided for @notificationsYesterday.
+  ///
+  /// In en, this message translates to:
+  /// **'Yesterday'**
+  String get notificationsYesterday;
+
+  /// No description provided for @notificationRouteCreated.
+  ///
+  /// In en, this message translates to:
+  /// **'A client created a route for one of your travels.'**
+  String get notificationRouteCreated;
+
+  /// No description provided for @notificationRouteEdited.
+  ///
+  /// In en, this message translates to:
+  /// **'A client edited the route of one of your travels.'**
+  String get notificationRouteEdited;
 }
 
 class _AppLocalizationsDelegate

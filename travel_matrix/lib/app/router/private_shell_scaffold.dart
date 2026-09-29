@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
+import 'package:travel_matrix/app/global_controllers/notifications_badge_controller.dart';
+import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 
@@ -36,12 +38,20 @@ class PrivateShellScaffold extends StatelessWidget {
                       bottom: BorderSide(color: theme.colorScheme.outlineVariant),
                     ),
                   ),
-                  child: Text(
-                    l10n.compassSystemBrand,
-                    style: theme.textTheme.titleMedium?.copyWith(
-                      color: theme.colorScheme.onSurface,
-                      fontWeight: FontWeight.bold,
-                    ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          l10n.compassSystemBrand,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.titleMedium?.copyWith(
+                            color: theme.colorScheme.onSurface,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                      ),
+                      const _NotificationsBellButton(),
+                    ],
                   ),
                 ),
                 Expanded(
@@ -281,5 +291,41 @@ class _AccountFooter extends StatelessWidget {
     if (parts.isEmpty || parts.first.isEmpty) return '?';
     if (parts.length == 1) return parts.first[0].toUpperCase();
     return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+  }
+}
+
+/// Sidebar header's notification entry point (CPS-149) — a bell with an
+/// unread-count badge, approved by Rafinha over a 4th nav item or a second
+/// purpose on the account footer (see the CPS-149 design package README).
+class _NotificationsBellButton extends StatelessWidget {
+  const _NotificationsBellButton();
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final unreadCount = context.watch<NotificationsBadgeController>().unreadCount;
+    final l10n = AppLocalizations.of(context)!;
+
+    // `IconButton` already provides the required 48x48 tap target
+    // (flutter-development-standards §13) around the design's compact 32x32
+    // visual, plus the tooltip's own Semantics — `Badge.count` follows
+    // colorScheme.error/onError instead of a hardcoded color, so it holds up
+    // under a custom or dark theme too.
+    return Badge.count(
+      count: unreadCount,
+      isLabelVisible: unreadCount > 0,
+      child: IconButton(
+        tooltip: l10n.notificationsBellTooltip,
+        onPressed: () => context.push(AppRoutes.notifications),
+        icon: const Icon(Icons.notifications_outlined, size: 18),
+        style: IconButton.styleFrom(
+          minimumSize: const Size(32, 32),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(8),
+            side: BorderSide(color: theme.colorScheme.outlineVariant),
+          ),
+        ),
+      ),
+    );
   }
 }
