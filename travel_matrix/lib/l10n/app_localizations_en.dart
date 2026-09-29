@@ -1040,4 +1040,38 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get pickupLocationRequiredValidation => 'Pickup location is required';
+
+  @override
+  String get notificationsBellTooltip => 'Notifications';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsMarkAllRead => 'Mark all as read';
+
+  @override
+  String get notificationsEmptyTitle => 'No notifications yet';
+
+  @override
+  String get notificationsEmptyMessage =>
+      'When a client creates or edits a route, the alert shows up here.';
+
+  @override
+  String get failedToLoadNotifications =>
+      'Unable to load your notifications right now. Please try again later.';
+
+  @override
+  String get notificationsToday => 'Today';
+
+  @override
+  String get notificationsYesterday => 'Yesterday';
+
+  @override
+  String get notificationRouteCreated =>
+      'A client created a route for one of your travels.';
+
+  @override
+  String get notificationRouteEdited =>
+      'A client edited the route of one of your travels.';
 }

@@ -355,5 +355,16 @@
   "placesAutocompleteUnavailable": "Busca indisponível — texto livre aceito",
 
   "pickupLocationLabel": "Local de retirada",
-  "pickupLocationRequiredValidation": "Local de retirada é obrigatório"
+  "pickupLocationRequiredValidation": "Local de retirada é obrigatório",
+
+  "notificationsBellTooltip": "Notificações",
+  "notificationsTitle": "Notificações",
+  "notificationsMarkAllRead": "Marcar todas como lidas",
+  "notificationsEmptyTitle": "Nenhuma notificação por aqui",
+  "notificationsEmptyMessage": "Quando um cliente criar ou editar uma rota, o aviso aparece aqui.",
+  "failedToLoadNotifications": "Não foi possível carregar suas notificações agora. Tente novamente mais tarde.",
+  "notificationsToday": "Hoje",
+  "notificationsYesterday": "Ontem",
+  "notificationRouteCreated": "Um cliente criou uma rota para uma de suas viagens.",
+  "notificationRouteEdited": "Um cliente editou a rota de uma de suas viagens."
 }

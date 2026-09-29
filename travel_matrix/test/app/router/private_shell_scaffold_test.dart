@@ -3,14 +3,23 @@ import 'package:flutter/services.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
+import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
+import 'package:travel_matrix/app/global_controllers/notifications_badge_controller.dart';
 import 'package:travel_matrix/app/router/private_shell_scaffold.dart';
+import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/features/notifications/domain/usecases/notification_usecases.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 
+class _MockNotificationUseCases extends Mock implements NotificationUseCases {}
+
 Future<GoRouter> _pumpShell(WidgetTester tester, AuthController auth) async {
+  final notificationUseCases = _MockNotificationUseCases();
+  when(() => notificationUseCases.getUnreadCount()).thenAnswer((_) async => const Result.success(0));
+
   final router = GoRouter(
     initialLocation: '/a',
     routes: [
@@ -27,8 +36,11 @@ Future<GoRouter> _pumpShell(WidgetTester tester, AuthController auth) async {
   );
 
   await tester.pumpWidget(
-    ChangeNotifierProvider<AuthController>.value(
-      value: auth,
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider<AuthController>.value(value: auth),
+        ChangeNotifierProvider(create: (_) => NotificationsBadgeController(useCases: notificationUseCases)),
+      ],
       child: MaterialApp.router(
         routerConfig: router,
         localizationsDelegates: const [

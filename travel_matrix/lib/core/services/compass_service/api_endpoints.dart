@@ -43,4 +43,15 @@ abstract final class ApiEndpoints {
 
   // Places (CPS-152/CPS-154)
   static String placesAutocomplete(String query) => '/places/autocomplete?query=${Uri.encodeQueryComponent(query)}';
+
+  // Notifications (CPS-149)
+  static String notifications({required int page, required int size}) => '/notifications?page=$page&size=$size';
+  static const String notificationsUnreadCount = '/notifications/unread-count';
+  static const String notificationsReadAll = '/notifications/read-all';
+  static String notificationRead(String id) => '/notifications/$id/read';
+
+  // Push targets (CPS-149)
+  static const String pushTargets = '/push-targets';
+  static const String pushTargetsVapidPublicKey = '/push-targets/vapid-public-key';
+  static String pushTarget(String id) => '/push-targets/$id';
 }
