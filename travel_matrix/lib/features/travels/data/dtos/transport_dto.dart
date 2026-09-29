@@ -2,6 +2,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../domain/entities/transport.dart';
 import 'package:travel_matrix/core/constants/api_fields.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 
 /// Data transfer object for [Transport], having the same structure as the API.
 abstract class TransportDTO {
@@ -116,6 +117,9 @@ class RentalCarDTO extends TransportDTO {
   /// Check out date to return the car
   final DateTime checkOutDate;
 
+  final String pickupLocation;
+  final PlaceCoordinate? pickupLocationCoordinate;
+
   RentalCarDTO._({
     required super.id,
     required this.vehicleModelName,
@@ -123,6 +127,8 @@ class RentalCarDTO extends TransportDTO {
     required this.companyName,
     required this.checkInDate,
     required this.checkOutDate,
+    this.pickupLocation = '',
+    this.pickupLocationCoordinate,
   }) : super._();
 
   /// from Json factory constructor
@@ -136,6 +142,8 @@ class RentalCarDTO extends TransportDTO {
       companyName: json[TransportApiFields.companyName]?.toString() ?? '',
       checkInDate: _parseDate(json[TransportApiFields.checkInDate]),
       checkOutDate: _parseDate(json[TransportApiFields.checkOutDate]),
+      pickupLocation: json[TransportApiFields.pickupLocation]?.toString() ?? '',
+      pickupLocationCoordinate: PlaceCoordinate.tryFromJson(json[TransportApiFields.pickupLocationCoordinate]),
     );
   }
 
@@ -149,6 +157,8 @@ class RentalCarDTO extends TransportDTO {
       TransportApiFields.companyName: companyName,
       TransportApiFields.checkInDate: checkInDate.toIso8601String(),
       TransportApiFields.checkOutDate: checkOutDate.toIso8601String(),
+      TransportApiFields.pickupLocation: pickupLocation,
+      TransportApiFields.pickupLocationCoordinate: pickupLocationCoordinate?.toJson(),
     };
   }
 
@@ -162,6 +172,8 @@ class RentalCarDTO extends TransportDTO {
       companyName: companyName,
       checkInDate: checkInDate,
       checkOutDate: checkOutDate,
+      pickupLocation: pickupLocation,
+      pickupLocationCoordinate: pickupLocationCoordinate,
     );
   }
 
@@ -174,6 +186,8 @@ class RentalCarDTO extends TransportDTO {
       companyName: rentalCar.companyName,
       checkInDate: rentalCar.checkInDate,
       checkOutDate: rentalCar.checkOutDate,
+      pickupLocation: rentalCar.pickupLocation,
+      pickupLocationCoordinate: rentalCar.pickupLocationCoordinate,
     );
   }
 }
@@ -196,6 +210,7 @@ class BusDTO extends TransportDTO {
 
   /// Bus station name to get on the bus
   final String busStationName;
+  final PlaceCoordinate? busStationCoordinate;
 
   /// Description of the bus travel
   final String description;
@@ -212,6 +227,7 @@ class BusDTO extends TransportDTO {
     required this.busStationName,
     required this.description,
     required this.details,
+    this.busStationCoordinate,
   }) : super._();
 
   /// from Json factory constructor
@@ -225,6 +241,7 @@ class BusDTO extends TransportDTO {
       busStationName: json[TransportApiFields.busStationName]?.toString() ?? '',
       description: json[TransportApiFields.description]?.toString() ?? '',
       details: json[TransportApiFields.details]?.toString(),
+      busStationCoordinate: PlaceCoordinate.tryFromJson(json[TransportApiFields.busStationCoordinate]),
     );
   }
 
@@ -240,6 +257,7 @@ class BusDTO extends TransportDTO {
       TransportApiFields.busStationName: busStationName,
       TransportApiFields.description: description,
       TransportApiFields.details: details,
+      TransportApiFields.busStationCoordinate: busStationCoordinate?.toJson(),
     };
   }
 
@@ -255,6 +273,7 @@ class BusDTO extends TransportDTO {
       busStationName: busStationName,
       description: description,
       details: details,
+      busStationCoordinate: busStationCoordinate,
     );
   }
 
@@ -269,6 +288,7 @@ class BusDTO extends TransportDTO {
       busStationName: bus.busStationName,
       description: bus.description,
       details: bus.details,
+      busStationCoordinate: bus.busStationCoordinate,
     );
   }
 }
@@ -291,9 +311,11 @@ class AirplaneDTO extends TransportDTO {
 
   /// Departure airport
   final String departureAirport;
+  final PlaceCoordinate? departureAirportCoordinate;
 
   /// Arrival airport
   final String arrivalAirport;
+  final PlaceCoordinate? arrivalAirportCoordinate;
 
   AirplaneDTO({
     required super.id,
@@ -303,6 +325,8 @@ class AirplaneDTO extends TransportDTO {
     required this.departureGate,
     required this.departureAirport,
     required this.arrivalAirport,
+    this.departureAirportCoordinate,
+    this.arrivalAirportCoordinate,
   }) : super._();
 
   factory AirplaneDTO.fromJson(Map<String, dynamic> json) {
@@ -315,6 +339,8 @@ class AirplaneDTO extends TransportDTO {
       departureAirport:
           json[TransportApiFields.departureAirport]?.toString() ?? '',
       arrivalAirport: json[TransportApiFields.arrivalAirport]?.toString() ?? '',
+      departureAirportCoordinate: PlaceCoordinate.tryFromJson(json[TransportApiFields.departureAirportCoordinate]),
+      arrivalAirportCoordinate: PlaceCoordinate.tryFromJson(json[TransportApiFields.arrivalAirportCoordinate]),
     );
   }
 
@@ -329,6 +355,8 @@ class AirplaneDTO extends TransportDTO {
       TransportApiFields.departureGate: departureGate,
       TransportApiFields.departureAirport: departureAirport,
       TransportApiFields.arrivalAirport: arrivalAirport,
+      TransportApiFields.departureAirportCoordinate: departureAirportCoordinate?.toJson(),
+      TransportApiFields.arrivalAirportCoordinate: arrivalAirportCoordinate?.toJson(),
     };
   }
 
@@ -343,6 +371,8 @@ class AirplaneDTO extends TransportDTO {
       departureGate: departureGate,
       departureAirport: departureAirport,
       arrivalAirport: arrivalAirport,
+      departureAirportCoordinate: departureAirportCoordinate,
+      arrivalAirportCoordinate: arrivalAirportCoordinate,
     );
   }
 
@@ -356,6 +386,8 @@ class AirplaneDTO extends TransportDTO {
       departureGate: airplane.departureGate,
       departureAirport: airplane.departureAirport,
       arrivalAirport: airplane.arrivalAirport,
+      departureAirportCoordinate: airplane.departureAirportCoordinate,
+      arrivalAirportCoordinate: airplane.arrivalAirportCoordinate,
     );
   }
 }

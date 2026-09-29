@@ -27,17 +27,26 @@ class _TravelViewWrapperState extends State<TravelViewWrapper> {
   late final TravelsController _controller;
   late final bool _ownsController;
 
+  /// The travel currently shown, kept in sync after a sub-resource mutation
+  /// (e.g. participants) so the whole subtree rebuilds with the fresh data
+  /// instead of requiring a page reload/navigation.
+  TravelViewModel? _travel;
+
   @override
   void initState() {
     super.initState();
     _ownsController = widget.initialController == null;
     _controller = widget.initialController ?? TravelsController();
-    
+
     if (widget.initialTravel != null) {
       _travelFuture = Future.value(widget.initialTravel);
     } else {
       _travelFuture = _fetchTravelById(widget.travelId);
     }
+  }
+
+  void _onTravelUpdated(TravelViewModel updated) {
+    setState(() => _travel = updated);
   }
 
   @override
@@ -70,7 +79,8 @@ class _TravelViewWrapperState extends State<TravelViewWrapper> {
             );
           }
           
-          if (snapshot.hasError || !snapshot.hasData || snapshot.data == null) {
+          final travel = _travel ?? snapshot.data;
+          if (snapshot.hasError || travel == null) {
             return Scaffold(
               appBar: AppBar(title: const Text('Travel Not Found')),
               body: const Center(
@@ -78,8 +88,8 @@ class _TravelViewWrapperState extends State<TravelViewWrapper> {
               ),
             );
           }
-          
-          return TravelViewPage(travel: snapshot.data!);
+
+          return TravelViewPage(travel: travel, onTravelUpdated: _onTravelUpdated);
         },
       ),
     );

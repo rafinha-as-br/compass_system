@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:routecraft_app/core/entities/result.dart';
+import 'package:routecraft_app/core/network/clients/places_api_client.dart';
+import 'package:routecraft_app/core/network/http_api_client.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
 import 'package:routecraft_app/features/route_creation/presentation/pages/route_creation_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
@@ -9,6 +13,13 @@ import 'package:routecraft_app/features/travels/domain/repositories/travel_repos
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
+
+// PlacesAutocompleteField never hits the network in these tests — it always
+// resolves with no suggestions, so the locations step behaves as plain free
+// text (the walk-through never selects a suggestion).
+final _noSuggestionsPlacesApiClient = PlacesApiClient(
+  HttpApiClient.forTesting(MockClient((_) async => http.Response('[]', 200))),
+);
 
 class _FakeTravelRepository implements TravelRepository {
   Result<Travel>? nextCreateResult;
@@ -71,6 +82,8 @@ void main() {
     final controller = RouteCreationController(
       travelUseCases: TravelUseCases(_FakeTravelRepository()),
       getClientName: () async => 'Maria Silva',
+      placesApiClient: _noSuggestionsPlacesApiClient,
+      getToken: () async => 'test-token',
     );
 
     await tester.pumpWidget(_wrap(controller));
@@ -90,9 +103,10 @@ void main() {
     await tester.tap(find.text('NEXT'));
     await tester.pumpAndSettle();
 
-    // Step 3 — locations.
+    // Step 3 — locations (PlacesAutocompleteField renders a plain TextField,
+    // not a TextFormField).
     expect(find.text('STEP 3 OF 5'), findsOneWidget);
-    final locationFields = find.byType(TextFormField);
+    final locationFields = find.byType(TextField);
     await tester.enterText(locationFields.at(0), 'São Paulo');
     await tester.enterText(locationFields.at(1), 'Paraty');
     await tester.pump();

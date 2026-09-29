@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/features/travels/domain/entities/itinerary.dart';
+import 'package:travel_matrix/features/travels/domain/entities/itinerary_step.dart';
+import 'package:travel_matrix/features/travels/domain/entities/person.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/crud_participants.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
@@ -19,14 +23,24 @@ class _MockCrudTravelUseCases extends Mock implements CrudTravelUseCases {}
 
 class _MockCrudRoute extends Mock implements CrudRoute {}
 
-Travel _buildNotReadyTravel({String travelName = 'Travel'}) {
+class _MockCrudParticipants extends Mock implements CrudParticipants {}
+
+Travel _buildNotReadyTravel({
+  String travelName = 'Travel',
+  bool hasItinerary = true,
+  List<ItineraryStep> itinerarySteps = const [],
+  List<Person> participants = const [],
+  TravelStatus travelStatus = TravelStatus.routeCreated,
+  bool prepared = false,
+}) {
   return Travel(
     domainId: '1',
     backEndId: '1',
     clientName: 'Client',
     travelName: travelName,
-    travelStatus: TravelStatus.routeCreated,
-    participantsList: const [],
+    travelStatus: travelStatus,
+    prepared: prepared,
+    participantsList: participants,
     routePlan: RoutePlan(
       domainId: 'route-1',
       backEndId: 'route-1',
@@ -36,11 +50,34 @@ Travel _buildNotReadyTravel({String travelName = 'Travel'}) {
       destination: 'Paris',
       interestsList: const [],
     ),
-    itinerary: Itinerary(
-      domainId: 'itinerary-1',
-      backEndId: 'itinerary-1',
-      agentName: 'Agent',
-      itinerarySteps: const [],
+    itinerary: hasItinerary
+        ? Itinerary(
+            domainId: 'itinerary-1',
+            backEndId: 'itinerary-1',
+            agentName: 'Agent',
+            itinerarySteps: itinerarySteps,
+          )
+        : null,
+  );
+}
+
+Widget _wrap(TravelsController controller, TravelViewModel travel, {Locale? locale}) {
+  return ChangeNotifierProvider.value(
+    value: controller,
+    child: MaterialApp(
+      theme: AppTheme.lightTheme,
+      locale: locale,
+      localizationsDelegates: const [
+        AppLocalizations.delegate,
+        GlobalMaterialLocalizations.delegate,
+        GlobalWidgetsLocalizations.delegate,
+        GlobalCupertinoLocalizations.delegate,
+      ],
+      supportedLocales: AppLocalizations.supportedLocales,
+      home: DefaultTabController(
+        length: 4,
+        child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
+      ),
     ),
   );
 }
@@ -48,21 +85,23 @@ Travel _buildNotReadyTravel({String travelName = 'Travel'}) {
 void main() {
   late _MockCrudTravelUseCases travelUseCases;
   late _MockCrudRoute routeUseCases;
+  late _MockCrudParticipants participantsUseCases;
 
   setUp(() {
     travelUseCases = _MockCrudTravelUseCases();
     routeUseCases = _MockCrudRoute();
+    participantsUseCases = _MockCrudParticipants();
     when(() => travelUseCases.readAll()).thenAnswer((_) async => const Result.success([]));
   });
 
-  testWidgets('failing to mark a travel as ready shows the error snackbar with the theme error color', (tester) async {
+  testWidgets('failing to prepare a travel shows the error snackbar with the theme error color', (tester) async {
     tester.view.physicalSize = const Size(1400, 900);
     tester.view.devicePixelRatio = 1.0;
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
     when(() => travelUseCases.markAsReady(any())).thenAnswer((_) async => Result.failure('boom'));
-    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
     final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
 
     await tester.pumpWidget(
@@ -78,7 +117,7 @@ void main() {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           home: DefaultTabController(
-            length: 2,
+            length: 4,
             child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
           ),
         ),
@@ -90,10 +129,10 @@ void main() {
     await tester.pumpAndSettle();
 
     final l10n = await AppLocalizations.delegate.load(const Locale('en'));
-    await tester.tap(find.text(l10n.markAsReadyButton));
+    await tester.tap(find.text(l10n.prepareTravelButton));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text(l10n.confirmButton));
+    await tester.tap(find.text(l10n.prepareTravelButton));
     await tester.pumpAndSettle();
 
     final snackBar = tester.widget<SnackBar>(find.byType(SnackBar));
@@ -108,7 +147,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
       final travel = TravelViewModel.fromDomain(
         _buildNotReadyTravel(
           travelName: 'A very long travel name that would never fit next to three action buttons',
@@ -128,7 +167,7 @@ void main() {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             home: DefaultTabController(
-              length: 2,
+              length: 4,
               child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
             ),
           ),
@@ -149,7 +188,7 @@ void main() {
       addTearDown(tester.view.resetPhysicalSize);
       addTearDown(tester.view.resetDevicePixelRatio);
 
-      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
       final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
 
       await tester.pumpWidget(
@@ -165,7 +204,7 @@ void main() {
             ],
             supportedLocales: AppLocalizations.supportedLocales,
             home: DefaultTabController(
-              length: 2,
+              length: 4,
               child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
             ),
           ),
@@ -193,7 +232,7 @@ void main() {
     addTearDown(tester.view.resetPhysicalSize);
     addTearDown(tester.view.resetDevicePixelRatio);
 
-    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
     final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
 
     await tester.pumpWidget(
@@ -210,7 +249,7 @@ void main() {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           home: DefaultTabController(
-            length: 2,
+            length: 4,
             child: Scaffold(appBar: TravelViewAppBar(travel: travel)),
           ),
         ),
@@ -221,4 +260,173 @@ void main() {
     expect(find.textContaining('jan.'), findsOneWidget);
     expect(find.textContaining('Jan '), findsNothing);
   });
+
+  testWidgets('"Editar" groups Route/Itinerary in a flyout, with a divider before "Preparar viagem"', (
+    tester,
+  ) async {
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+    final travel = TravelViewModel.fromDomain(_buildNotReadyTravel());
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+    await tester.pumpWidget(_wrap(controller, travel));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.editMenuLabel), findsOneWidget);
+    expect(find.text(l10n.editRouteTitle), findsNothing);
+
+    await tester.tap(find.text(l10n.editMenuLabel));
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.editRouteTitle), findsOneWidget);
+    expect(find.text(l10n.editItineraryTitle), findsOneWidget);
+    expect(find.byType(Divider), findsOneWidget);
+    expect(find.text(l10n.prepareTravelButton), findsOneWidget);
+  });
+
+  testWidgets('"Preparar viagem" is disabled with the needs-itinerary tooltip when there is no itinerary', (
+    tester,
+  ) async {
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+    final travel = TravelViewModel.fromDomain(_buildNotReadyTravel(hasItinerary: false));
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+    await tester.pumpWidget(_wrap(controller, travel));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+
+    final menuItem = tester.widget<MenuItemButton>(
+      find.ancestor(of: find.text(l10n.prepareTravelButton), matching: find.byType(MenuItemButton)),
+    );
+    expect(menuItem.onPressed, isNull);
+
+    final tooltip = tester.widget<Tooltip>(
+      find.ancestor(of: find.byType(MenuItemButton), matching: find.byType(Tooltip)).first,
+    );
+    expect(tooltip.message, l10n.needsItineraryFirstTooltip);
+  });
+
+  testWidgets('the "Preparar viagem" dialog summarizes participants, dates and the first/last step', (
+    tester,
+  ) async {
+    final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+    when(() => travelUseCases.markAsReady(any())).thenAnswer((_) async => Result.success(_buildNotReadyTravel()));
+    final travel = TravelViewModel.fromDomain(
+      _buildNotReadyTravel(
+        participants: [Person(domainId: 'p1', backendId: 'p1', name: 'Ana', age: '30', sex: 'F')],
+        itinerarySteps: [
+          ItineraryStep.newStop(
+            domainId: 's1',
+            backEndId: 's1',
+            title: 'Chegada em Paris',
+            startDate: DateTime(2026, 1, 1),
+            finishDate: DateTime(2026, 1, 2),
+            name: 'Paris',
+            description: '',
+            experiences: const [],
+          ),
+          ItineraryStep.newStop(
+            domainId: 's2',
+            backEndId: 's2',
+            title: 'Retorno',
+            startDate: DateTime(2026, 1, 9),
+            finishDate: DateTime(2026, 1, 10),
+            name: 'SP',
+            description: '',
+            experiences: const [],
+          ),
+        ],
+      ),
+    );
+    final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+    final router = GoRouter(
+      initialLocation: '/travels/1',
+      routes: [
+        GoRoute(
+          path: '/travels/1',
+          builder: (context, state) =>
+              DefaultTabController(length: 4, child: Scaffold(appBar: TravelViewAppBar(travel: travel))),
+        ),
+        GoRoute(path: '/travels', builder: (context, state) => const SizedBox()),
+      ],
+    );
+
+    await tester.pumpWidget(
+      ChangeNotifierProvider.value(
+        value: controller,
+        child: MaterialApp.router(
+          theme: AppTheme.lightTheme,
+          routerConfig: router,
+          localizationsDelegates: const [
+            AppLocalizations.delegate,
+            GlobalMaterialLocalizations.delegate,
+            GlobalWidgetsLocalizations.delegate,
+            GlobalCupertinoLocalizations.delegate,
+          ],
+          supportedLocales: AppLocalizations.supportedLocales,
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text(l10n.prepareTravelButton));
+    await tester.pumpAndSettle();
+
+    expect(find.text(l10n.prepareTravelDialogTitle), findsOneWidget);
+    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Chegada em Paris'), findsOneWidget);
+    expect(find.text('Retorno'), findsOneWidget);
+
+    await tester.tap(find.text(l10n.prepareTravelButton).last);
+    await tester.pumpAndSettle();
+
+    verify(() => travelUseCases.markAsReady('1')).called(1);
+  });
+
+  testWidgets(
+    '"Preparar viagem" stays available once the itinerary auto-advances travelStatus but prepared is still false (CPS-TC-74)',
+    (tester) async {
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+      final travel = TravelViewModel.fromDomain(
+        _buildNotReadyTravel(travelStatus: TravelStatus.itineraryCreated),
+      );
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+      await tester.pumpWidget(_wrap(controller, travel));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+
+      final menuItem = tester.widget<MenuItemButton>(
+        find.ancestor(of: find.text(l10n.prepareTravelButton), matching: find.byType(MenuItemButton)),
+      );
+      expect(menuItem.onPressed, isNotNull);
+    },
+  );
+
+  testWidgets(
+    '"Preparar viagem" disappears once prepared is true, even with itinerary_created travelStatus',
+    (tester) async {
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+      final travel = TravelViewModel.fromDomain(
+        _buildNotReadyTravel(travelStatus: TravelStatus.itineraryCreated, prepared: true),
+      );
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+      await tester.pumpWidget(_wrap(controller, travel));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+
+      expect(find.text(l10n.prepareTravelButton), findsNothing);
+    },
+  );
 }

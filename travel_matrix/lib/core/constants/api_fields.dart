@@ -45,6 +45,8 @@ static const String participants = 'participants';
 static const String events = 'events';
 
 static const String observations = 'observations';
+
+static const String prepared = 'prepared';
 }
 
 /// ===========================================================
@@ -92,6 +94,10 @@ static const String startLocation = 'startLocation';
 static const String destination = 'destination';
 
 static const String interestPoints = 'interestPoints';
+
+static const String startLocationCoordinate = 'startLocationCoordinate';
+
+static const String destinationCoordinate = 'destinationCoordinate';
 }
 
 /// ===========================================================
@@ -103,6 +109,8 @@ static const String name = CommonApiFields.name;
 
 static const String description =
 CommonApiFields.description;
+
+static const String coordinate = 'coordinate';
 }
 
 /// ===========================================================
@@ -148,6 +156,8 @@ CommonApiFields.description;
 static const String experiences = 'experiences';
 
 static const String address = 'address';
+
+static const String coordinate = 'coordinate';
 
 static const String checkIn = 'checkIn';
 
@@ -196,6 +206,14 @@ static const String checkInDate = 'checkInDate';
 
 static const String checkOutDate = 'checkOutDate';
 
+// Modelo original não tinha nenhum campo de local de retirada — CPS-153/156
+// adicionaram este campo para ter onde anexar a coordenada (decidido com
+// Rafinha durante a execução de CPS-153; RentalCar, ao contrário de
+// Airplane e Bus, não guardava texto livre de local nenhum antes disso).
+static const String pickupLocation = 'pickupLocation';
+
+static const String pickupLocationCoordinate = 'pickupLocationCoordinate';
+
 /// Bus
 static const String travelNumber = 'travelNumber';
 
@@ -208,6 +226,8 @@ static const String departureDateTime =
 
 static const String busStationName =
 'busStationName';
+
+static const String busStationCoordinate = 'busStationCoordinate';
 
 static const String description =
 CommonApiFields.description;
@@ -223,8 +243,12 @@ static const String flightDate = 'flightDate';
 static const String departureAirport =
 'departureAirport';
 
+static const String departureAirportCoordinate = 'departureAirportCoordinate';
+
 static const String arrivalAirport =
 'arrivalAirport';
+
+static const String arrivalAirportCoordinate = 'arrivalAirportCoordinate';
 }
 
 /// ===========================================================

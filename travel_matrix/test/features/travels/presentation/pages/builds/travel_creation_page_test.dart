@@ -10,15 +10,22 @@ import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
+import 'package:travel_matrix/features/travels/domain/repository/participants_repository.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/crud_participants.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/builds/travel_creation_page.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
+
+Future<List<PlaceSuggestion>> _noSuggestions(String query) async => const [];
 
 class _MockCrudTravelUseCases extends Mock implements CrudTravelUseCases {}
 
 class _MockCrudRoute extends Mock implements CrudRoute {}
+
+class _MockParticipantsRepository extends Mock implements ParticipantsRepository {}
 
 void main() {
   late _MockCrudTravelUseCases travelUseCases;
@@ -35,15 +42,26 @@ void main() {
     when(() => travelUseCases.readAll()).thenAnswer((_) async => Result.success(<Travel>[]));
   });
 
-  Widget wrap(AuthController auth, {Locale? locale}) {
-    final travelsController = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases);
+  Widget wrap(
+    AuthController auth, {
+    Locale? locale,
+    Future<List<PlaceSuggestion>> Function(String query) fetchSuggestions = _noSuggestions,
+  }) {
+    final travelsController = TravelsController(
+      travelUseCases: travelUseCases,
+      routeUseCases: routeUseCases,
+      participantsUseCases: CrudParticipants(_MockParticipantsRepository()),
+    );
     final router = GoRouter(
       initialLocation: '/create',
       routes: [
         GoRoute(
           path: '/create',
-          builder: (context, state) =>
-              const TravelCreationPage(clientId: 'client-1', clientName: 'Maria Silva'),
+          builder: (context, state) => TravelCreationPage(
+            clientId: 'client-1',
+            clientName: 'Maria Silva',
+            fetchSuggestions: fetchSuggestions,
+          ),
         ),
         GoRoute(path: '/travels', builder: (context, state) => const SizedBox()),
       ],
@@ -79,8 +97,8 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.widgetWithText(TextFormField, 'Travel Name'), 'Lisbon 2025');
-    await tester.enterText(find.widgetWithText(TextFormField, 'Start Location'), 'Sao Paulo');
-    await tester.enterText(find.widgetWithText(TextFormField, 'Destination'), 'Lisbon');
+    await tester.enterText(find.widgetWithText(TextField, 'Start Location'), 'Sao Paulo');
+    await tester.enterText(find.widgetWithText(TextField, 'Destination'), 'Lisbon');
 
     await tester.ensureVisible(find.text('CREATE TRAVEL'));
     await tester.tap(find.text('CREATE TRAVEL'));
@@ -90,6 +108,41 @@ void main() {
     final request = captured.single as Map<String, dynamic>;
     expect(request['agentId'], 'agent-9');
     expect(request['clientId'], 'client-1');
+  });
+
+  testWidgets('picking a suggested start location sends its coordinate in the routePlan payload', (tester) async {
+    when(() => travelUseCases.createFromRequest(any()))
+        .thenAnswer((_) async => Result.success(_fakeTravel()));
+
+    final auth = AuthController();
+    auth.debugSetUserData({'id': 'agent-9', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    await tester.pumpWidget(wrap(
+      auth,
+      fetchSuggestions: (query) async => const [
+        PlaceSuggestion(text: 'São Paulo, SP, Brasil', coordinate: PlaceCoordinate(-23.5505, -46.6333)),
+      ],
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.widgetWithText(TextFormField, 'Travel Name'), 'Lisbon 2025');
+    final startLocationField = find.widgetWithText(TextField, 'Start Location');
+    await tester.enterText(startLocationField, 'Sao');
+    await tester.pump(const Duration(milliseconds: 400));
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('São Paulo'));
+    await tester.pump();
+    await tester.enterText(find.widgetWithText(TextField, 'Destination'), 'Lisbon');
+
+    await tester.ensureVisible(find.text('CREATE TRAVEL'));
+    await tester.tap(find.text('CREATE TRAVEL'));
+    await tester.pumpAndSettle();
+
+    final captured = verify(() => travelUseCases.createFromRequest(captureAny())).captured;
+    final request = captured.single as Map<String, dynamic>;
+    final routePlan = request['routePlan'] as Map<String, dynamic>;
+    expect(routePlan['startLocation'], 'São Paulo, SP, Brasil');
+    expect(routePlan['startLocationCoordinate'], {'latitude': -23.5505, 'longitude': -46.6333});
   });
 
   testWidgets('shows the client name locked, with no dropdown to pick a different client', (
@@ -118,8 +171,8 @@ void main() {
     await tester.pumpAndSettle();
 
     await tester.enterText(find.widgetWithText(TextFormField, 'Travel Name'), 'Lisbon 2025');
-    await tester.enterText(find.widgetWithText(TextFormField, 'Start Location'), 'Sao Paulo');
-    await tester.enterText(find.widgetWithText(TextFormField, 'Destination'), 'Lisbon');
+    await tester.enterText(find.widgetWithText(TextField, 'Start Location'), 'Sao Paulo');
+    await tester.enterText(find.widgetWithText(TextField, 'Destination'), 'Lisbon');
 
     await tester.ensureVisible(find.text('CREATE TRAVEL'));
     await tester.tap(find.text('CREATE TRAVEL'));

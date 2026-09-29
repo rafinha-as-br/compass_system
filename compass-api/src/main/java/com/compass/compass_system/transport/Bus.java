@@ -1,6 +1,10 @@
 package com.compass.compass_system.transport;
 
+import com.compass.compass_system.geo.Coordinate;
+import jakarta.persistence.AttributeOverride;
+import jakarta.persistence.Column;
 import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
 
 @Entity
@@ -14,6 +18,11 @@ public class Bus extends Transport {
     private String busStationName;
     private String description;
     private String details;
+
+    @Embedded
+    @AttributeOverride(name = "latitude", column = @Column(name = "bus_station_latitude"))
+    @AttributeOverride(name = "longitude", column = @Column(name = "bus_station_longitude"))
+    private Coordinate busStationCoordinate;
 
     public Bus() {
         setType("bus");
@@ -39,4 +48,7 @@ public class Bus extends Transport {
 
     public String getDetails() { return details; }
     public void setDetails(String details) { this.details = details; }
+
+    public Coordinate getBusStationCoordinate() { return busStationCoordinate; }
+    public void setBusStationCoordinate(Coordinate busStationCoordinate) { this.busStationCoordinate = busStationCoordinate; }
 }

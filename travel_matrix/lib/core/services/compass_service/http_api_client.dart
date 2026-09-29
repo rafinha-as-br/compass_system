@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'package:flutter/foundation.dart';
 import 'package:http/http.dart' as http;
 import 'api_endpoints.dart';
 import 'api_exception.dart';
@@ -8,12 +9,15 @@ class HttpApiClient {
   static HttpApiClient? _instance;
   late final http.Client _client;
 
-  HttpApiClient._() : _client = http.Client();
+  HttpApiClient._({http.Client? client}) : _client = client ?? http.Client();
 
   static HttpApiClient get instance {
     _instance ??= HttpApiClient._();
     return _instance!;
   }
+
+  @visibleForTesting
+  factory HttpApiClient.forTesting(http.Client client) => HttpApiClient._(client: client);
 
   Future<Map<String, dynamic>> get(String token, String path) async {
     final uri = Uri.parse('${ApiEndpoints.baseUrl}$path');
@@ -35,10 +39,15 @@ class HttpApiClient {
     return _handleResponse(response);
   }
 
+  /// [body] is usually a `Map` (a single resource), but some endpoints
+  /// replace a whole list (e.g. participants) and take a raw JSON array —
+  /// `jsonEncode` handles both. [_handleResponse] wraps a non-`Map` decoded
+  /// response as `{'data': decoded}`, so an array response comes back the
+  /// same way.
   Future<Map<String, dynamic>> put(
     String token,
     String path,
-    Map<String, dynamic> body,
+    Object body,
   ) async {
     final uri = Uri.parse('${ApiEndpoints.baseUrl}$path');
     final response = await _client.put(

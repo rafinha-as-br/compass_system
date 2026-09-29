@@ -656,12 +656,6 @@ abstract class AppLocalizations {
   /// **'Admin Dark Mode'**
   String get adminDarkMode;
 
-  /// No description provided for @logOutOfMatrix.
-  ///
-  /// In en, this message translates to:
-  /// **'Log Out of Matrix'**
-  String get logOutOfMatrix;
-
   /// No description provided for @languageLabel.
   ///
   /// In en, this message translates to:
@@ -794,11 +788,11 @@ abstract class AppLocalizations {
   /// **'New Password'**
   String get newPassword;
 
-  /// No description provided for @digitalConcierge.
+  /// No description provided for @compassSystemBrand.
   ///
   /// In en, this message translates to:
-  /// **'THE DIGITAL CONCIERGE'**
-  String get digitalConcierge;
+  /// **'Compass System'**
+  String get compassSystemBrand;
 
   /// No description provided for @dashboardNav.
   ///
@@ -811,6 +805,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Booking'**
   String get bookingNav;
+
+  /// No description provided for @myAccountNav.
+  ///
+  /// In en, this message translates to:
+  /// **'My Account'**
+  String get myAccountNav;
 
   /// No description provided for @settingsNav.
   ///
@@ -1214,17 +1214,17 @@ abstract class AppLocalizations {
   /// **'CREATE TRAVEL'**
   String get createTravelButton;
 
-  /// No description provided for @markAsReadyButton.
+  /// No description provided for @editMenuLabel.
   ///
   /// In en, this message translates to:
-  /// **'Mark as Ready'**
-  String get markAsReadyButton;
+  /// **'Edit'**
+  String get editMenuLabel;
 
-  /// No description provided for @markAsReadyConfirm.
+  /// No description provided for @prepareTravelButton.
   ///
   /// In en, this message translates to:
-  /// **'Are you sure you want to mark this travel as ready?'**
-  String get markAsReadyConfirm;
+  /// **'Prepare travel'**
+  String get prepareTravelButton;
 
   /// No description provided for @confirmButton.
   ///
@@ -1232,17 +1232,17 @@ abstract class AppLocalizations {
   /// **'Confirm'**
   String get confirmButton;
 
-  /// No description provided for @markAsReadySuccess.
+  /// No description provided for @prepareTravelSuccess.
   ///
   /// In en, this message translates to:
-  /// **'Travel marked as ready successfully'**
-  String get markAsReadySuccess;
+  /// **'Travel prepared successfully'**
+  String get prepareTravelSuccess;
 
-  /// No description provided for @markAsReadyFailure.
+  /// No description provided for @prepareTravelFailure.
   ///
   /// In en, this message translates to:
-  /// **'Failed to mark travel as ready'**
-  String get markAsReadyFailure;
+  /// **'Failed to prepare travel'**
+  String get prepareTravelFailure;
 
   /// No description provided for @needsItineraryFirstTooltip.
   ///
@@ -1250,17 +1250,71 @@ abstract class AppLocalizations {
   /// **'You need to create an itinerary first'**
   String get needsItineraryFirstTooltip;
 
-  /// No description provided for @markAsReadyTooltip.
+  /// No description provided for @prepareTravelTooltip.
   ///
   /// In en, this message translates to:
-  /// **'Mark travel as ready'**
-  String get markAsReadyTooltip;
+  /// **'Prepare travel'**
+  String get prepareTravelTooltip;
 
   /// No description provided for @travelActionsMenuTooltip.
   ///
   /// In en, this message translates to:
   /// **'Travel actions'**
   String get travelActionsMenuTooltip;
+
+  /// No description provided for @prepareTravelDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Prepare travel?'**
+  String get prepareTravelDialogTitle;
+
+  /// No description provided for @prepareTravelDialogSubtitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Review the summary before marking the first itinerary version as ready.'**
+  String get prepareTravelDialogSubtitle;
+
+  /// No description provided for @prepareTravelSummaryTravelLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel'**
+  String get prepareTravelSummaryTravelLabel;
+
+  /// No description provided for @prepareTravelSummaryStatusLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Current status'**
+  String get prepareTravelSummaryStatusLabel;
+
+  /// No description provided for @prepareTravelSummaryParticipantsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get prepareTravelSummaryParticipantsLabel;
+
+  /// No description provided for @prepareTravelSummaryStartDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Start date'**
+  String get prepareTravelSummaryStartDateLabel;
+
+  /// No description provided for @prepareTravelSummaryEndDateLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'End date'**
+  String get prepareTravelSummaryEndDateLabel;
+
+  /// No description provided for @itinerarySummarySectionTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'ITINERARY'**
+  String get itinerarySummarySectionTitle;
+
+  /// No description provided for @overviewViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Overview'**
+  String get overviewViewTab;
 
   /// No description provided for @routeViewTab.
   ///
@@ -1273,6 +1327,210 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Itinerary View'**
   String get itineraryViewTab;
+
+  /// No description provided for @participantsViewTab.
+  ///
+  /// In en, this message translates to:
+  /// **'Participants'**
+  String get participantsViewTab;
+
+  /// No description provided for @addParticipantButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Add participant'**
+  String get addParticipantButton;
+
+  /// No description provided for @addParticipantDialogTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Add participant'**
+  String get addParticipantDialogTitle;
+
+  /// No description provided for @participantNameFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Name'**
+  String get participantNameFieldLabel;
+
+  /// No description provided for @participantAgeFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Age'**
+  String get participantAgeFieldLabel;
+
+  /// No description provided for @noParticipantsTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No participants yet'**
+  String get noParticipantsTitle;
+
+  /// No description provided for @noParticipantsMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Add the people traveling to keep this list up to date.'**
+  String get noParticipantsMessage;
+
+  /// No description provided for @removeParticipantTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove participant'**
+  String get removeParticipantTooltip;
+
+  /// No description provided for @removeParticipantConfirmTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove participant?'**
+  String get removeParticipantConfirmTitle;
+
+  /// No description provided for @removeParticipantConfirmMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Remove {name} from this travel?'**
+  String removeParticipantConfirmMessage(String name);
+
+  /// No description provided for @retryButton.
+  ///
+  /// In en, this message translates to:
+  /// **'Try again'**
+  String get retryButton;
+
+  /// No description provided for @failedToUpdateParticipants.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not update participants. Please try again.'**
+  String get failedToUpdateParticipants;
+
+  /// No description provided for @participantAgeYears.
+  ///
+  /// In en, this message translates to:
+  /// **'{age} years old'**
+  String participantAgeYears(String age);
+
+  /// No description provided for @overviewRouteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ROUTE'**
+  String get overviewRouteLabel;
+
+  /// No description provided for @overviewDurationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Duration'**
+  String get overviewDurationLabel;
+
+  /// No description provided for @overviewDurationInDays.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} days'**
+  String overviewDurationInDays(int count);
+
+  /// No description provided for @travelStatusNotReadyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Not Ready'**
+  String get travelStatusNotReadyLabel;
+
+  /// No description provided for @travelStatusReadyLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Ready'**
+  String get travelStatusReadyLabel;
+
+  /// No description provided for @travelStatusInProgressLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'In Progress'**
+  String get travelStatusInProgressLabel;
+
+  /// No description provided for @travelStatusCompletedLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Completed'**
+  String get travelStatusCompletedLabel;
+
+  /// No description provided for @travelStatusNotReadySupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Route created, itinerary pending'**
+  String get travelStatusNotReadySupportLine;
+
+  /// No description provided for @travelStatusReadySupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Itinerary created'**
+  String get travelStatusReadySupportLine;
+
+  /// No description provided for @travelStatusInProgressSupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel underway'**
+  String get travelStatusInProgressSupportLine;
+
+  /// No description provided for @travelStatusCompletedSupportLine.
+  ///
+  /// In en, this message translates to:
+  /// **'Travel finished'**
+  String get travelStatusCompletedSupportLine;
+
+  /// No description provided for @overviewParticipantsLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'PARTICIPANTS'**
+  String get overviewParticipantsLabel;
+
+  /// No description provided for @overviewParticipantsCaption.
+  ///
+  /// In en, this message translates to:
+  /// **'people on this trip'**
+  String get overviewParticipantsCaption;
+
+  /// No description provided for @overviewParticipantsMore.
+  ///
+  /// In en, this message translates to:
+  /// **'and {count} more'**
+  String overviewParticipantsMore(int count);
+
+  /// No description provided for @overviewViewParticipantsAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View participants →'**
+  String get overviewViewParticipantsAction;
+
+  /// No description provided for @overviewItineraryLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'ITINERARY'**
+  String get overviewItineraryLabel;
+
+  /// No description provided for @overviewItineraryStepsSummary.
+  ///
+  /// In en, this message translates to:
+  /// **'{count} steps · by {agentName}'**
+  String overviewItineraryStepsSummary(int count, String agentName);
+
+  /// No description provided for @overviewViewItineraryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'View full itinerary'**
+  String get overviewViewItineraryAction;
+
+  /// No description provided for @overviewNoItineraryTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No itinerary created yet'**
+  String get overviewNoItineraryTitle;
+
+  /// No description provided for @overviewNoItinerarySupport.
+  ///
+  /// In en, this message translates to:
+  /// **'Create the itinerary to get this travel ready for the client.'**
+  String get overviewNoItinerarySupport;
+
+  /// No description provided for @overviewCreateItineraryAction.
+  ///
+  /// In en, this message translates to:
+  /// **'Create itinerary'**
+  String get overviewCreateItineraryAction;
 
   /// No description provided for @travelersCount.
   ///
@@ -1765,6 +2023,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Session expired. Please sign in again.'**
   String get sessionExpiredMessage;
+
+  /// No description provided for @placesAutocompleteNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No places found'**
+  String get placesAutocompleteNoResults;
+
+  /// No description provided for @placesAutocompleteUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Search unavailable — free text accepted'**
+  String get placesAutocompleteUnavailable;
+
+  /// No description provided for @pickupLocationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup location'**
+  String get pickupLocationLabel;
+
+  /// No description provided for @pickupLocationRequiredValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Pickup location is required'**
+  String get pickupLocationRequiredValidation;
 }
 
 class _AppLocalizationsDelegate
