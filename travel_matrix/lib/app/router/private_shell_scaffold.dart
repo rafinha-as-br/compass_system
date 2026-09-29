@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 class PrivateShellScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -27,52 +28,25 @@ class PrivateShellScaffold extends StatelessWidget {
             color: theme.colorScheme.surface,
             child: Column(
               children: [
-                Padding(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 24,
-                    vertical: 32,
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(20),
+                  decoration: BoxDecoration(
+                    border: Border(
+                      bottom: BorderSide(color: theme.colorScheme.outlineVariant),
+                    ),
                   ),
-                  child: Row(
-                    children: [
-                      Container(
-                        decoration: BoxDecoration(
-                          color: theme.colorScheme.primary,
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        padding: const EdgeInsets.all(8),
-                        child: Image.asset(
-                          'assets/images/logo_small.png',
-                          width: 50,
-                        ),
-                      ),
-                      const SizedBox(width: 12),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(
-                              l10n.appTitle,
-                              style: theme.textTheme.titleMedium?.copyWith(
-                                color: theme.colorScheme.onSurface,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            Text(
-                              l10n.digitalConcierge,
-                              style: theme.textTheme.labelSmall?.copyWith(
-                                color: theme.colorScheme.onSurface
-                                    .withValues(alpha: 0.6),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  child: Text(
+                    l10n.compassSystemBrand,
+                    style: theme.textTheme.titleMedium?.copyWith(
+                      color: theme.colorScheme.onSurface,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 Expanded(
                   child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                     children: [
                       _NavItem(
                         icon: Icons.dashboard,
@@ -80,93 +54,27 @@ class PrivateShellScaffold extends StatelessWidget {
                         isSelected: currentIndex == 0,
                         onTap: () => navigationShell.goBranch(0),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       _NavItem(
                         icon: Icons.calendar_month,
                         label: l10n.bookingNav,
                         isSelected: currentIndex == 1,
                         onTap: () => navigationShell.goBranch(1),
                       ),
-                      const SizedBox(height: 8),
+                      const SizedBox(height: 4),
                       _NavItem(
                         icon: Icons.people,
                         label: l10n.usersTitle,
                         isSelected: currentIndex == 2,
                         onTap: () => navigationShell.goBranch(2),
                       ),
-                      const SizedBox(height: 24),
-                      const Divider(),
-                      const SizedBox(height: 24),
-                      _NavItem(
-                        icon: Icons.settings,
-                        label: l10n.settingsNav,
-                        isSelected: currentIndex == 3,
-                        onTap: () => navigationShell.goBranch(3),
-                      ),
                     ],
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: Column(
-                    children: [
-                      _SimpleLink(
-                        icon: Icons.help_outline,
-                        label: l10n.supportNav,
-                        onTap: () {},
-                      ),
-                      const SizedBox(height: 16),
-                      _SimpleLink(
-                        icon: Icons.logout,
-                        label: l10n.logoutNav,
-                        onTap: () => context.read<AuthController>().logout(),
-                      ),
-                      const SizedBox(height: 24),
-                      const Divider(),
-                      const SizedBox(height: 24),
-                      Row(
-                        children: [
-                          CircleAvatar(
-                            radius: 20,
-                            backgroundColor:
-                                theme.colorScheme.primary.withValues(alpha: 0.12),
-                            child: Text(
-                              _initials(userName),
-                              style: TextStyle(
-                                color: theme.colorScheme.primary,
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ),
-                          const SizedBox(width: 12),
-                          Expanded(
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Text(
-                                  userName,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.bodyMedium?.copyWith(
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
-                                Text(
-                                  userEmail.isEmpty
-                                      ? l10n.travelAgentRole
-                                      : userEmail,
-                                  overflow: TextOverflow.ellipsis,
-                                  style: theme.textTheme.bodySmall?.copyWith(
-                                    color: theme.colorScheme.onSurface
-                                        .withValues(alpha: 0.6),
-                                  ),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      ),
-                    ],
-                  ),
+                _AccountFooter(
+                  userName: userName,
+                  userEmail: userEmail,
+                  onGoToAccount: () => navigationShell.goBranch(3),
                 ),
               ],
             ),
@@ -176,13 +84,6 @@ class PrivateShellScaffold extends StatelessWidget {
         ],
       ),
     );
-  }
-
-  String _initials(String value) {
-    final parts = value.trim().split(RegExp(r'\s+'));
-    if (parts.isEmpty || parts.first.isEmpty) return '?';
-    if (parts.length == 1) return parts.first[0].toUpperCase();
-    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 }
 
@@ -247,34 +148,138 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-class _SimpleLink extends StatelessWidget {
-  final IconData icon;
-  final String label;
-  final VoidCallback onTap;
-
-  const _SimpleLink({
-    required this.icon,
-    required this.label,
-    required this.onTap,
+/// Rodapé da sidebar — a linha de conta é o gatilho de um `MenuAnchor` (menu
+/// nativo do Material): fecha sozinho ao selecionar um item, ao clicar fora
+/// ou com Esc, e sobe automaticamente quando não cabe abaixo do gatilho
+/// (CPS-112) — nenhuma dessas regras precisou ser escrita à mão.
+/// `consumeOutsideTap: true` (CPS-112, correção pós-QA): sem isso, o tap que
+/// fecha o menu também vaza para o resto da árvore, e repetir abrir/fechar
+/// no mesmo local acumula listeners de "outside tap" que passam a bloquear
+/// o fechamento por clique fora em pontos específicos da tela.
+class _AccountFooter extends StatelessWidget {
+  const _AccountFooter({
+    required this.userName,
+    required this.userEmail,
+    required this.onGoToAccount,
   });
+
+  final String userName;
+  final String userEmail;
+  final VoidCallback onGoToAccount;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final color = theme.colorScheme.onSurface.withValues(alpha: 0.64);
+    final l10n = AppLocalizations.of(context)!;
 
-    return InkWell(
-      onTap: onTap,
-      child: Row(
-        children: [
-          Icon(icon, color: color, size: 20),
-          const SizedBox(width: 16),
-          Text(
-            label,
-            style: TextStyle(color: color, fontWeight: FontWeight.w500),
+    return Container(
+      padding: const EdgeInsets.all(12),
+      decoration: BoxDecoration(
+        border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
+      ),
+      child: MenuAnchor(
+        consumeOutsideTap: true,
+        style: MenuStyle(
+          backgroundColor: WidgetStatePropertyAll(theme.colorScheme.surface),
+          elevation: const WidgetStatePropertyAll(8),
+          shape: WidgetStatePropertyAll(
+            RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(12),
+              side: BorderSide(color: theme.colorScheme.outlineVariant),
+            ),
+          ),
+          minimumSize: const WidgetStatePropertyAll(Size(226, 0)),
+          maximumSize: const WidgetStatePropertyAll(Size(226, double.infinity)),
+          padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
+        ),
+        menuChildren: [
+          MenuItemButton(
+            autofocus: true,
+            leadingIcon: Icon(Icons.person_outline, color: theme.colorScheme.onSurface),
+            onPressed: onGoToAccount,
+            child: Text(l10n.myAccountNav),
+          ),
+          MenuItemButton(
+            leadingIcon: Icon(Icons.settings_outlined, color: theme.colorScheme.onSurface),
+            onPressed: onGoToAccount,
+            child: Text(l10n.settingsNav),
+          ),
+          Divider(height: 1, color: theme.colorScheme.outlineVariant),
+          MenuItemButton(
+            leadingIcon: Icon(Icons.help_outline, color: theme.colorScheme.onSurface),
+            onPressed: () {},
+            child: Text(l10n.supportNav),
+          ),
+          MenuItemButton(
+            leadingIcon: Icon(Icons.logout, color: theme.colorScheme.error),
+            style: MenuItemButton.styleFrom(foregroundColor: theme.colorScheme.error),
+            onPressed: () => context.read<AuthController>().logout(),
+            child: Text(l10n.logoutNav),
           ),
         ],
+        builder: (context, controller, child) {
+          return InkWell(
+            onTap: () => controller.isOpen ? controller.close() : controller.open(),
+            borderRadius: BorderRadius.circular(8),
+            hoverColor: theme.colorScheme.primary.withValues(alpha: 0.04),
+            highlightColor: theme.colorScheme.primary.withValues(alpha: 0.09),
+            splashColor: Colors.transparent,
+            child: Padding(
+              padding: const EdgeInsets.all(8),
+              child: Row(
+                children: [
+                  CircleAvatar(
+                    radius: 14,
+                    backgroundColor: TravelAppColors.primaryLight,
+                    child: Text(
+                      _initials(userName),
+                      style: const TextStyle(
+                        color: TravelAppColors.textOnPrimary,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 11,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(width: 12),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          userName,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
+                        ),
+                        Text(
+                          userEmail.isEmpty ? l10n.travelAgentRole : userEmail,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.bodySmall?.copyWith(
+                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  Icon(
+                    controller.isOpen ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+                    size: 16,
+                    color: controller.isOpen
+                        ? theme.colorScheme.primary
+                        : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+                  ),
+                ],
+              ),
+            ),
+          );
+        },
       ),
     );
+  }
+
+  String _initials(String value) {
+    final parts = value.trim().split(RegExp(r'\s+'));
+    if (parts.isEmpty || parts.first.isEmpty) return '?';
+    if (parts.length == 1) return parts.first[0].toUpperCase();
+    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
   }
 }

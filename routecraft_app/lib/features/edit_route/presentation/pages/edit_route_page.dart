@@ -6,10 +6,12 @@ import 'package:routecraft_app/features/travels/domain/entities/person.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
+import 'package:routecraft_app/shared/models/place_suggestion.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
 import 'package:routecraft_app/shared/widgets/app_text_field.dart';
 import 'package:routecraft_app/shared/widgets/date_field.dart';
+import 'package:routecraft_app/shared/widgets/places_autocomplete_field.dart';
 
 /// Lets the client edit the route of an existing trip — wireframe 1i.
 /// `PUT /travels/{id}/route` never touches the itinerary, so when one is
@@ -91,12 +93,24 @@ class _EditRouteView extends StatelessWidget {
               ],
               _ChangeMarkedField(
                 changed: controller.destinationChanged,
-                child: AppTextField(controller: controller.destinationController, labelText: l10n.destinationLabel),
+                child: PlacesAutocompleteField(
+                  labelText: l10n.destinationLabel,
+                  initialText: controller.destinationController.text,
+                  initialCoordinate: controller.destinationCoordinate,
+                  fetchSuggestions: controller.fetchPlaceSuggestions,
+                  onChanged: controller.setDestination,
+                ),
               ),
               const SizedBox(height: 16),
               _ChangeMarkedField(
                 changed: controller.startLocationChanged,
-                child: AppTextField(controller: controller.startLocationController, labelText: l10n.startLocationLabel),
+                child: PlacesAutocompleteField(
+                  labelText: l10n.startLocationLabel,
+                  initialText: controller.startLocationController.text,
+                  initialCoordinate: controller.startLocationCoordinate,
+                  fetchSuggestions: controller.fetchPlaceSuggestions,
+                  onChanged: controller.setStartLocation,
+                ),
               ),
               const SizedBox(height: 16),
               _ChangeMarkedField(
@@ -230,22 +244,29 @@ class _InterestsSection extends StatefulWidget {
 }
 
 class _InterestsSectionState extends State<_InterestsSection> {
-  final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
+  String _interestName = '';
+  PlaceCoordinate? _interestCoordinate;
+  // Forces PlacesAutocompleteField to remount (fresh, empty internal state)
+  // after each add — the widget has no external controller to clear.
+  int _fieldResetKey = 0;
 
   @override
   void dispose() {
-    _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
 
   void _addInterest(EditRouteController controller) {
-    final name = _nameController.text.trim();
+    final name = _interestName.trim();
     if (name.isEmpty) return;
-    controller.addInterestPoint(name, _descriptionController.text.trim());
-    _nameController.clear();
+    controller.addInterestPoint(name, _descriptionController.text.trim(), coordinate: _interestCoordinate);
     _descriptionController.clear();
+    setState(() {
+      _interestName = '';
+      _interestCoordinate = null;
+      _fieldResetKey++;
+    });
   }
 
   @override
@@ -270,7 +291,15 @@ class _InterestsSectionState extends State<_InterestsSection> {
             onUndo: () => controller.undoRemoval(point.domainId),
           ),
         if (controller.interestPoints.isNotEmpty) const SizedBox(height: 16),
-        AppTextField(controller: _nameController, labelText: l10n.routeCreationInterestNameLabel),
+        PlacesAutocompleteField(
+          key: ValueKey(_fieldResetKey),
+          labelText: l10n.routeCreationInterestNameLabel,
+          fetchSuggestions: controller.fetchPlaceSuggestions,
+          onChanged: (result) => setState(() {
+            _interestName = result.text;
+            _interestCoordinate = result.coordinate;
+          }),
+        ),
         const SizedBox(height: 16),
         AppTextField(controller: _descriptionController, labelText: l10n.routeCreationInterestDescriptionLabel),
         const SizedBox(height: 8),

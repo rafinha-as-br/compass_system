@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
+import 'package:travel_matrix/core/entities/result.dart';
+import 'package:travel_matrix/features/travels/data/repository_impl/participants_repository_impl.dart';
 import 'package:travel_matrix/features/travels/data/repository_impl/route_repository_impl.dart';
 import 'package:travel_matrix/features/travels/data/repository_impl/travel_repository_impl.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
+import 'package:travel_matrix/features/travels/domain/usecases/crud_participants.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
+import 'package:travel_matrix/core/constants/api_fields.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 
 import '../models/view_models/travel_view_model.dart';
 
@@ -43,6 +48,7 @@ class TravelsState {
 class TravelsController extends ChangeNotifier {
   final CrudTravelUseCases _travelUseCases;
   final CrudRoute _routeUseCases;
+  final CrudParticipants _participantsUseCases;
 
   TravelsState _state = const TravelsState();
   TravelsState get state => _state;
@@ -50,8 +56,10 @@ class TravelsController extends ChangeNotifier {
   TravelsController({
     CrudTravelUseCases? travelUseCases,
     CrudRoute? routeUseCases,
+    CrudParticipants? participantsUseCases,
   })  : _travelUseCases = travelUseCases ?? CrudTravelUseCases(TravelRepositoryImpl()),
-        _routeUseCases = routeUseCases ?? CrudRoute(RouteRepositoryImpl()) {
+        _routeUseCases = routeUseCases ?? CrudRoute(RouteRepositoryImpl()),
+        _participantsUseCases = participantsUseCases ?? CrudParticipants(ParticipantsRepositoryImpl()) {
     fetchTravels();
   }
 
@@ -120,6 +128,7 @@ class TravelsController extends ChangeNotifier {
               backEndId: isTemporaryId ? null : rawId,
               name: map['name']?.toString() ?? '',
               description: map['description']?.toString() ?? '',
+              coordinate: PlaceCoordinate.tryFromJson(map[InterestPointApiFields.coordinate]),
             );
           })
           .toList();
@@ -132,6 +141,8 @@ class TravelsController extends ChangeNotifier {
         startLocation: routeData['startLocation']?.toString() ?? '',
         destination: routeData['destination']?.toString() ?? '',
         interestsList: interestPoints,
+        startLocationCoordinate: PlaceCoordinate.tryFromJson(routeData[RoutePlanApiFields.startLocationCoordinate]),
+        destinationCoordinate: PlaceCoordinate.tryFromJson(routeData[RoutePlanApiFields.destinationCoordinate]),
       );
 
       final result = await _routeUseCases.updateRoute(travelId, routePlan);
@@ -156,5 +167,81 @@ class TravelsController extends ChangeNotifier {
     } catch (_) {
       return false;
     }
+  }
+
+  bool _isSubmittingParticipants = false;
+  bool get isSubmittingParticipants => _isSubmittingParticipants;
+
+  /// Id of the participant currently being removed, so only that list item
+  /// shows a spinner while the rest of the list stays interactive. Null
+  /// while adding (the whole "Adicionar" action is disabled instead) or
+  /// when nothing is in flight.
+  String? _removingParticipantId;
+  String? get removingParticipantId => _removingParticipantId;
+
+  /// Generic, localizable-by-the-caller error from the last participants
+  /// mutation — never the raw exception/backend text (see [Result.failure]
+  /// callers in [ParticipantsRepositoryImpl]).
+  String? get participantsErrorMessage => _participantsErrorMessage;
+  String? _participantsErrorMessage;
+
+  /// Appends [newParticipant] to [currentParticipants] and upserts the
+  /// whole list — the API has no isolated "add one" operation.
+  Future<List<PersonViewModel>?> addParticipant(
+    String travelId,
+    List<PersonViewModel> currentParticipants,
+    PersonViewModel newParticipant,
+  ) {
+    return _submitParticipants(travelId, [...currentParticipants, newParticipant]);
+  }
+
+  /// Removes the participant with [participantId] from [currentParticipants]
+  /// and upserts the whole list.
+  Future<List<PersonViewModel>?> removeParticipant(
+    String travelId,
+    List<PersonViewModel> currentParticipants,
+    String participantId,
+  ) {
+    return _submitParticipants(
+      travelId,
+      currentParticipants.where((p) => p.id != participantId).toList(),
+      removingId: participantId,
+    );
+  }
+
+  /// Upserts the participants list of [travelId] through the isolated
+  /// endpoint. On success, also refetches the travels list (consistent with
+  /// [updateRoute]/[markTravelAsReady]) so the dashboard reflects the new
+  /// count — the caller is responsible for updating its own already-open
+  /// [TravelViewModel] with the returned list, since this controller has no
+  /// notion of "the currently viewed travel".
+  Future<List<PersonViewModel>?> _submitParticipants(
+    String travelId,
+    List<PersonViewModel> participants, {
+    String? removingId,
+  }) async {
+    _isSubmittingParticipants = true;
+    _removingParticipantId = removingId;
+    _participantsErrorMessage = null;
+    notifyListeners();
+
+    final result = await _participantsUseCases.updateParticipants(
+      travelId,
+      participants.map((p) => p.toDomain()).toList(),
+    );
+
+    List<PersonViewModel>? updated;
+    if (result.isSuccess && result.data != null) {
+      updated = result.data!.map((p) => PersonViewModel.fromDomain(p)).toList();
+      await fetchTravels();
+    } else {
+      _participantsErrorMessage = result.error ?? 'Failed to update participants.';
+    }
+
+    _isSubmittingParticipants = false;
+    _removingParticipantId = null;
+    notifyListeners();
+
+    return updated;
   }
 }

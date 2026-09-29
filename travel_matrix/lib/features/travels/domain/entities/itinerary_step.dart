@@ -1,4 +1,5 @@
 import 'package:travel_matrix/features/travels/domain/entities/itinerary.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 import 'transport.dart';
 
 /// Represents one small detailed part of a [Itinerary].
@@ -87,6 +88,7 @@ abstract class ItineraryStep {
     required String address,
     required DateTime checkIn,
     required DateTime checkOut,
+    PlaceCoordinate? coordinate,
   }) {
     return Hosting._(
       domainId: domainId,
@@ -99,6 +101,7 @@ abstract class ItineraryStep {
       address: address,
       checkIn: checkIn,
       checkOut: checkOut,
+      coordinate: coordinate,
     );
   }
 
@@ -181,6 +184,9 @@ class Hosting extends ItineraryStep {
   final DateTime checkIn;
   /// Check out date of the hosting
   final DateTime checkOut;
+  /// Chosen via the places autocomplete (CPS-154) — null for hostings added
+  /// before CPS-144, or free text without a picked suggestion.
+  final PlaceCoordinate? coordinate;
 
   /// Private constructor
   Hosting._({
@@ -194,6 +200,7 @@ class Hosting extends ItineraryStep {
     required this.address,
     required this.checkIn,
     required this.checkOut,
+    this.coordinate,
     }): super._();
 }
 

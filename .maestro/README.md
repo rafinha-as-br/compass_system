@@ -31,11 +31,47 @@ permanente.
     │   │                                          roda sozinho, App precisa estar na tela
     │   │                                          "Enter your code")
     │   └── session_persists_on_restart.yaml    — sessão válida sobrevive a restart do app
+    ├── home/
+    │   ├── home_empty_no_routes.yaml            — cliente sem nenhuma viagem (cenário 1, CPS-128)
+    │   ├── home_empty_no_trip_in_progress.yaml  — cliente com viagens mas nenhuma em andamento
+    │   │                                           (cenário 2, CPS-128), inclui o link "See my
+    │   │                                           trips" trocando para a aba Viagens
+    │   └── home_trip_in_progress.yaml           — cliente com viagem em andamento mostra só o
+    │                                               TravelCard dela, sem Upcoming/Completed (CPS-128)
     └── regression/
         ├── create_route_smoke.yaml             — abre o wizard de criação de rota
         └── home_screens_smoke.yaml             — navega pelas 3 abas da bottom nav
                                                     (Início/Roteiro/Conta) sem crash
 ```
+
+## Atualização 2026-09-27 (QA da CPS-128 — Início mostra só a viagem em andamento)
+
+Os 3 flows novos em `home/` usam usuários de teste criados nesta rodada de QA
+(`diego.alves@teste.com`, `elisa.pinto@teste.com`, `carla.rocha@teste.com`,
+todos com senha `senha123`) em vez de `joao.teste@teste.com` — que continua
+com a senha divergente já documentada abaixo (`compass123`, não `senha123`),
+confirmado novamente nesta rodada (`login_success.yaml` ainda falha por esse
+motivo, não é regressão da CPS-128).
+
+**Gotcha confirmado nesta rodada: locale do emulador é en-US, não pt-BR.**
+Apesar do app ter chaves de l10n em `app_pt.arb`, o AVD `QA - Claude` roda em
+inglês por padrão — todas as strings visíveis (`Email`/`Password`/`LOGIN`,
+`No routes yet`, `In progress`, etc.) são as de `app_en.arb`. Os flows desta
+pasta usam texto em inglês por esse motivo; se o locale do AVD mudar, os
+flows precisam ser revisados.
+
+**Gotcha confirmado nesta rodada: TravelCard não é matchável por texto.**
+O card de viagem (usado tanto na Início quanto na aba Viagens) expõe
+título+rota+datas como um único `Semantics`/label combinado com `\n`
+(`"Viagem a X\nSao Paulo - SP → X\n1–5 Nov"`), não como nós de texto
+separados — o matcher de `assertVisible`/`tapOn` do Maestro não encontra
+substring dentro desse label combinado. É a mesma limitação já documentada
+abaixo para a bottom nav, agora confirmada também no card de viagem. Os
+flows desta pasta verificam o texto do estado (label da seção, mensagens de
+estado vazio) e usam `takeScreenshot` como evidência visual de qual viagem
+aparece, em vez de tentar casar o nome da viagem por texto. Se o
+`TravelCard` ganhar um identificador estável (`Key`/semântica separada por
+campo), os flows podem ser reforçados com uma asserção direta.
 
 ## Atualização 2026-09-06 (QA do épico CPS-83/84–97 — RouteCraft Redesign)
 

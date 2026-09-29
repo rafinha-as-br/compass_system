@@ -20,6 +20,22 @@ jobs:
     defaults:
       run:
         working-directory: compass-api
+    # RabbitMQ efêmero (CPS-146): o @RabbitListener do NotificationConsumer
+    # tenta conectar já na subida do contexto Spring - sem isso, todo teste
+    # com @SpringBootTest falharia ao iniciar, não só os novos desta feature.
+    services:
+      rabbitmq:
+        image: rabbitmq:3-management
+        env:
+          RABBITMQ_DEFAULT_USER: compass_user
+          RABBITMQ_DEFAULT_PASS: compass_password
+        ports:
+          - 5672:5672
+        options: >-
+          --health-cmd "rabbitmq-diagnostics -q ping"
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
     steps:
       - uses: actions/checkout@v4
 

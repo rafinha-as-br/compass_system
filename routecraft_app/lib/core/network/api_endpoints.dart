@@ -30,4 +30,7 @@ abstract final class ApiEndpoints {
   static String notifications(int page, int size) => '/notifications?page=$page&size=$size';
   static const String notificationsUnreadCount = '/notifications/unread-count';
   static const String notificationsReadAll = '/notifications/read-all';
+
+  // Places (CPS-152/CPS-154)
+  static String placesAutocomplete(String query) => '/places/autocomplete?query=${Uri.encodeQueryComponent(query)}';
 }

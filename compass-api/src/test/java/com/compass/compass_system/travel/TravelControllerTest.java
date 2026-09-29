@@ -202,6 +202,60 @@ class TravelControllerTest {
 
     @Test
     @Order(6)
+    void shouldSetPreparedTrueWithoutChangingTravelStatus() throws Exception {
+        // prepared defaults to false even after the itinerary auto-transitioned
+        // travelStatus to itinerary_created in shouldUpsertItinerary (CPS-166).
+        mockMvc.perform(get("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.prepared").value(false))
+                .andExpect(jsonPath("$.travelStatus").value("itinerary_created"));
+
+        MvcResult current = mockMvc.perform(get("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
+                .andReturn();
+        Travel travel = objectMapper.readValue(current.getResponse().getContentAsString(), Travel.class);
+        travel.setPrepared(true);
+
+        mockMvc.perform(put("/travels/" + createdTravelId)
+                .header("Authorization", authHeader())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(travel)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.prepared").value(true))
+                .andExpect(jsonPath("$.travelStatus").value("itinerary_created"));
+    }
+
+    @Test
+    @Order(7)
+    void shouldKeepPreparedTrueAfterEditingItinerary() throws Exception {
+        Itinerary itinerary = new Itinerary();
+        itinerary.setAgentName("Carlos Agent");
+
+        TravelSegment segment = new TravelSegment();
+        segment.setTitle("Updated flight to Lisbon");
+        segment.setStartDate("2025-08-02T10:00:00.000Z");
+        segment.setFinishDate("2025-08-02T22:00:00.000Z");
+        segment.setFinished(false);
+        segment.setStartPoint("GRU - Sao Paulo");
+        segment.setFinishPoint("LIS - Lisbon");
+        itinerary.setSteps(List.of(segment));
+
+        mockMvc.perform(put("/travels/" + createdTravelId + "/itinerary")
+                .header("Authorization", authHeader())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(itinerary)))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(get("/travels/" + createdTravelId)
+                .header("Authorization", authHeader()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.prepared").value(true))
+                .andExpect(jsonPath("$.travelStatus").value("itinerary_created"));
+    }
+
+    @Test
+    @Order(8)
     void shouldUpsertRoutePlan() throws Exception {
         RoutePlan routePlan = new RoutePlan();
         routePlan.setStartDate("2025-09-01T00:00:00.000Z");
@@ -228,11 +282,12 @@ class TravelControllerTest {
                 .header("Authorization", authHeader()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.routePlan.destination").value("Porto"))
-                .andExpect(jsonPath("$.travelStatus").value("itinerary_created"));
+                .andExpect(jsonPath("$.travelStatus").value("itinerary_created"))
+                .andExpect(jsonPath("$.prepared").value(true));
     }
 
     @Test
-    @Order(7)
+    @Order(9)
     void shouldUpsertParticipants() throws Exception {
         Person client = new Person();
         client.setName("Maria Silva");
@@ -260,11 +315,12 @@ class TravelControllerTest {
                 .andExpect(jsonPath("$.participants", hasSize(2)))
                 // The route/itinerary from previous steps stay untouched.
                 .andExpect(jsonPath("$.routePlan.destination").value("Porto"))
-                .andExpect(jsonPath("$.travelStatus").value("itinerary_created"));
+                .andExpect(jsonPath("$.travelStatus").value("itinerary_created"))
+                .andExpect(jsonPath("$.prepared").value(true));
     }
 
     @Test
-    @Order(8)
+    @Order(10)
     void shouldKeepObservationsUntouchedByIsolatedUpdates() throws Exception {
         // No endpoint edits observations after creation — this is the whole
         // point of the "not editable after creation" rule: it's just never
@@ -276,7 +332,46 @@ class TravelControllerTest {
     }
 
     @Test
-    @Order(9)
+    @Order(11)
+    void shouldRejectPreparedWithoutItinerary() throws Exception {
+        // The invariant (can't prepare a travel with no itinerary yet) is
+        // enforced server-side too, not just by the frontend's disabled
+        // button (CPS-166) — checked against a fresh travel, since
+        // createdTravelId already has an itinerary by this point.
+        Travel travel = new Travel();
+        travel.setClientName("Ana Souza");
+        travel.setTravelName("Rio 2025");
+        travel.setTravelStatus("route_created");
+
+        RoutePlan routePlan = new RoutePlan();
+        routePlan.setStartDate("2025-10-01T00:00:00.000Z");
+        routePlan.setFinishDate("2025-10-05T00:00:00.000Z");
+        routePlan.setStartLocation("Sao Paulo");
+        routePlan.setDestination("Rio de Janeiro");
+        travel.setRoutePlan(routePlan);
+
+        MvcResult created = mockMvc.perform(post("/travels")
+                .header("Authorization", authHeader())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(travel)))
+                .andExpect(status().isOk())
+                .andReturn();
+        Travel saved = objectMapper.readValue(created.getResponse().getContentAsString(), Travel.class);
+        saved.setPrepared(true);
+
+        mockMvc.perform(put("/travels/" + saved.getId())
+                .header("Authorization", authHeader())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(saved)))
+                .andExpect(status().isBadRequest());
+
+        mockMvc.perform(delete("/travels/" + saved.getId())
+                .header("Authorization", authHeader()))
+                .andExpect(status().isNoContent());
+    }
+
+    @Test
+    @Order(12)
     void shouldDeleteTravel() throws Exception {
         mockMvc.perform(delete("/travels/" + createdTravelId)
                 .header("Authorization", authHeader()))
