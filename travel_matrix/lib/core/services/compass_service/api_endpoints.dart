@@ -37,4 +37,10 @@ abstract final class ApiEndpoints {
 
   // Route
   static String travelRoute(String travelId) => '/travels/$travelId/route';
+
+  // Participants
+  static String travelParticipants(String travelId) => '/travels/$travelId/participants';
+
+  // Places (CPS-152/CPS-154)
+  static String placesAutocomplete(String query) => '/places/autocomplete?query=${Uri.encodeQueryComponent(query)}';
 }

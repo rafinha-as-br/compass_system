@@ -1,5 +1,6 @@
 
 import 'package:travel_matrix/features/travels/domain/entities/itinerary_step.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 
 /// Represents a way of commuting in a [TravelSegment]
 abstract class Transport {
@@ -39,6 +40,8 @@ abstract class Transport {
     required String companyName,
     required DateTime checkInDate,
     required DateTime checkOutDate,
+    String pickupLocation = '',
+    PlaceCoordinate? pickupLocationCoordinate,
   }) {
     return RentalCar._(
       domainId: domainId,
@@ -48,6 +51,8 @@ abstract class Transport {
       companyName: companyName,
       checkInDate: checkInDate,
       checkOutDate: checkOutDate,
+      pickupLocation: pickupLocation,
+      pickupLocationCoordinate: pickupLocationCoordinate,
     );
   }
 
@@ -64,6 +69,7 @@ abstract class Transport {
     required String busStationName,
     required String description,
     required String? details,
+    PlaceCoordinate? busStationCoordinate,
   }) {
     return Bus(
       domainId: domainId,
@@ -75,6 +81,7 @@ abstract class Transport {
       busStationName: busStationName,
       description: description,
       details: details,
+      busStationCoordinate: busStationCoordinate,
     );
   }
 
@@ -90,6 +97,8 @@ abstract class Transport {
     required String departureGate,
     required String departureAirport,
     required String arrivalAirport,
+    PlaceCoordinate? departureAirportCoordinate,
+    PlaceCoordinate? arrivalAirportCoordinate,
   }) {
     return Airplane(
       domainId: domainId,
@@ -100,6 +109,8 @@ abstract class Transport {
       departureGate: departureGate,
       departureAirport: departureAirport,
       arrivalAirport: arrivalAirport,
+      departureAirportCoordinate: departureAirportCoordinate,
+      arrivalAirportCoordinate: arrivalAirportCoordinate,
     );
   }
 
@@ -129,6 +140,11 @@ class RentalCar extends Transport {
   final DateTime checkInDate;
   /// Check out date to return the car
   final DateTime checkOutDate;
+  /// Where the car is picked up. The original model had no location field
+  /// at all here — added by CPS-153/CPS-156 to have somewhere to attach a
+  /// coordinate (decided with Rafinha during CPS-153's execution).
+  final String pickupLocation;
+  final PlaceCoordinate? pickupLocationCoordinate;
 
   /// private constructor
   RentalCar._({
@@ -139,6 +155,8 @@ class RentalCar extends Transport {
     required this.companyName,
     required this.checkInDate,
     required this.checkOutDate,
+    this.pickupLocation = '',
+    this.pickupLocationCoordinate,
   }): super._();
 }
 
@@ -154,6 +172,7 @@ class Bus extends Transport {
   final DateTime departureDateTime;
   /// Bus station name to get on the bus
   final String busStationName;
+  final PlaceCoordinate? busStationCoordinate;
   /// Description of the bus travel
   final String description;
   /// Extra details if necessary
@@ -169,6 +188,7 @@ class Bus extends Transport {
     required this.busStationName,
     required this.description,
     required this.details,
+    this.busStationCoordinate,
   }): super._();
 }
 
@@ -184,8 +204,10 @@ class Airplane extends Transport {
   final String departureGate;
   /// Departure airport
   final String departureAirport;
+  final PlaceCoordinate? departureAirportCoordinate;
   /// Arrival airport
   final String arrivalAirport;
+  final PlaceCoordinate? arrivalAirportCoordinate;
 
   Airplane({
     required super.domainId,
@@ -196,5 +218,7 @@ class Airplane extends Transport {
     required this.departureGate,
     required this.departureAirport,
     required this.arrivalAirport,
+    this.departureAirportCoordinate,
+    this.arrivalAirportCoordinate,
   }): super._();
 }

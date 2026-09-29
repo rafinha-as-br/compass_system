@@ -46,6 +46,40 @@ Widget _wrap(HomeController controller, {Locale? locale}) {
   );
 }
 
+/// Wraps HomePage in a real two-branch shell (Início/Viagens) — needed to
+/// exercise the "Ver minhas viagens" link, which switches branch via
+/// `StatefulNavigationShell.of(context)` and has no ancestor shell under
+/// plain `_wrap`.
+Widget _wrapWithShell(HomeController controller) {
+  final router = GoRouter(
+    initialLocation: AppRoutes.home,
+    routes: [
+      StatefulShellRoute.indexedStack(
+        builder: (context, state, navigationShell) => navigationShell,
+        branches: [
+          StatefulShellBranch(routes: [
+            GoRoute(path: AppRoutes.home, builder: (context, state) => HomePage(controller: controller)),
+          ]),
+          StatefulShellBranch(routes: [
+            GoRoute(path: AppRoutes.travels, builder: (context, state) => const Text('Viagens stand-in')),
+          ]),
+        ],
+      ),
+    ],
+  );
+
+  return MaterialApp.router(
+    routerConfig: router,
+    localizationsDelegates: const [
+      AppLocalizations.delegate,
+      GlobalMaterialLocalizations.delegate,
+      GlobalWidgetsLocalizations.delegate,
+      GlobalCupertinoLocalizations.delegate,
+    ],
+    supportedLocales: AppLocalizations.supportedLocales,
+  );
+}
+
 Travel _travel(String name, TravelStatus status, {DateTime? startDate}) => Travel(
       domainId: name,
       backEndId: name,
@@ -114,15 +148,38 @@ void main() {
     expect(find.text('Litoral Norte'), findsOneWidget);
   });
 
-  testWidgets('shows the empty state with no floating action button when there are no travels', (tester) async {
+  testWidgets('shows the "no routes yet" empty state when the client never created a travel', (tester) async {
     await tester.pumpWidget(_wrap(
       HomeController.withState(const HomeState(isLoading: false, clientName: 'Rafaela Souza')),
     ));
     await tester.pump();
 
-    expect(find.text('No travels yet.'), findsOneWidget);
-    expect(find.text('Create my first route'), findsOneWidget);
+    expect(find.text('No routes yet'), findsOneWidget);
+    expect(find.text('Create your first route to start traveling.'), findsOneWidget);
+    expect(find.text('Create route'), findsOneWidget);
+    expect(find.text('See my trips'), findsNothing);
     expect(find.byType(FloatingActionButton), findsNothing);
+  });
+
+  testWidgets('shows the "no trip in progress" empty state with a link to Viagens when the client has travels '
+      'but none in progress', (tester) async {
+    final state = HomeState(
+      isLoading: false,
+      clientName: 'Rafaela Souza',
+      upcoming: [_travel('Serra Gaúcha', TravelStatus.routeCreated)],
+    );
+
+    await tester.pumpWidget(_wrapWithShell(HomeController.withState(state)));
+    await tester.pump();
+
+    expect(find.text('No trip in progress'), findsOneWidget);
+    expect(find.text('Your upcoming trips are in the Trips tab.'), findsOneWidget);
+    expect(find.text('Create route'), findsOneWidget);
+
+    await tester.tap(find.text('See my trips'));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Viagens stand-in'), findsOneWidget);
   });
 
   testWidgets('renders the greeting with the first name and avatar initials', (tester) async {
@@ -141,7 +198,7 @@ void main() {
       clientName: 'Rafaela Souza',
       isOffline: true,
       syncedAt: DateTime(2026, 10, 13),
-      upcoming: [_travel('Serra Gaúcha', TravelStatus.routeCreated)],
+      inProgress: [_travel('Serra Gaúcha', TravelStatus.travelStarted)],
     );
 
     await tester.pumpWidget(_wrap(HomeController.withState(state)));
@@ -152,46 +209,59 @@ void main() {
     expect(find.text('Serra Gaúcha'), findsOneWidget);
   });
 
-  testWidgets('groups travels into sections, in urgency order, without empty sections', (tester) async {
+  testWidgets('shows only the in-progress travel — Próximas/Concluídas moved to the Viagens tab (CPS-131)',
+      (tester) async {
     final state = HomeState(
       isLoading: false,
       clientName: 'Rafaela Souza',
       inProgress: [_travel('Litoral Norte', TravelStatus.travelStarted)],
       upcoming: [_travel('Serra Gaúcha', TravelStatus.routeCreated)],
-      completed: const [],
+      completed: [_travel('Chapada Diamantina', TravelStatus.travelFinished)],
     );
 
     await tester.pumpWidget(_wrap(HomeController.withState(state)));
     await tester.pump();
 
     expect(find.text('IN PROGRESS'), findsOneWidget);
-    expect(find.text('UPCOMING'), findsOneWidget);
+    expect(find.text('UPCOMING'), findsNothing);
     expect(find.text('COMPLETED'), findsNothing);
-
-    final inProgressY = tester.getTopLeft(find.text('IN PROGRESS')).dy;
-    final upcomingY = tester.getTopLeft(find.text('UPCOMING')).dy;
-    expect(inProgressY, lessThan(upcomingY));
-
     expect(find.text('Litoral Norte'), findsOneWidget);
-    expect(find.text('Serra Gaúcha'), findsOneWidget);
-    expect(find.text('São Paulo → Paraty'), findsNWidgets(2));
-    expect(find.text('12–19 Oct'), findsNWidgets(2));
+    expect(find.text('Serra Gaúcha'), findsNothing);
+    expect(find.text('Chapada Diamantina'), findsNothing);
     // The FAB moved to the Viagens tab (CPS-127) — Início no longer has one.
     expect(find.byType(FloatingActionButton), findsNothing);
+  });
+
+  testWidgets('with more than one trip in progress, shows the one that started first', (tester) async {
+    final repository = _FakeTravelRepository()
+      ..nextResult = Result.success([
+        _travel('Serra Gaúcha', TravelStatus.travelStarted, startDate: DateTime(2026, 11, 1)),
+        _travel('Litoral Norte', TravelStatus.travelStarted, startDate: DateTime(2026, 10, 12)),
+      ]);
+    final controller = HomeController(
+      travelUseCases: TravelUseCases(repository),
+      getClientName: () async => 'Rafaela Souza',
+    );
+
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpAndSettle();
+
+    expect(find.text('Litoral Norte'), findsOneWidget);
+    expect(find.text('Serra Gaúcha'), findsNothing);
   });
 
   testWidgets('renders the greeting and route/period localized in Portuguese', (tester) async {
     final state = HomeState(
       isLoading: false,
       clientName: 'Rafaela Souza',
-      upcoming: [_travel('Serra Gaúcha', TravelStatus.routeCreated)],
+      inProgress: [_travel('Serra Gaúcha', TravelStatus.travelStarted)],
     );
 
     await tester.pumpWidget(_wrap(HomeController.withState(state), locale: const Locale('pt')));
     await tester.pump();
 
     expect(find.text('Olá, Rafaela'), findsOneWidget);
-    expect(find.text('PRÓXIMAS'), findsOneWidget);
+    expect(find.text('EM ANDAMENTO'), findsOneWidget);
     expect(find.text('São Paulo → Paraty'), findsOneWidget);
     expect(find.text('12–19 out'), findsOneWidget);
   });
@@ -234,12 +304,15 @@ void main() {
       supportedLocales: AppLocalizations.supportedLocales,
     ));
     await tester.pumpAndSettle();
-    expect(find.text('No travels yet.'), findsOneWidget);
+    expect(find.text('No routes yet'), findsOneWidget);
 
+    // routeCreated is not "in progress" — Início shows the cenário 2 empty
+    // state instead of the new travel's card (it lives in the Viagens tab).
     repository.nextResult = Result.success([_travel('Nova Rota', TravelStatus.routeCreated)]);
-    await tester.tap(find.text('Create my first route'));
+    await tester.tap(find.text('Create route'));
     await tester.pumpAndSettle();
 
-    expect(find.text('Nova Rota'), findsOneWidget);
+    expect(find.text('No trip in progress'), findsOneWidget);
+    expect(find.text('Nova Rota'), findsNothing);
   });
 }

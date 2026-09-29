@@ -303,9 +303,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminDarkMode => 'Admin Dark Mode';
 
   @override
-  String get logOutOfMatrix => 'Log Out of Matrix';
-
-  @override
   String get languageLabel => 'Language';
 
   @override
@@ -377,13 +374,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get newPassword => 'New Password';
 
   @override
-  String get digitalConcierge => 'THE DIGITAL CONCIERGE';
+  String get compassSystemBrand => 'Compass System';
 
   @override
   String get dashboardNav => 'Dashboard';
 
   @override
   String get bookingNav => 'Booking';
+
+  @override
+  String get myAccountNav => 'My Account';
 
   @override
   String get settingsNav => 'Settings';
@@ -596,36 +596,179 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createTravelButton => 'CREATE TRAVEL';
 
   @override
-  String get markAsReadyButton => 'Mark as Ready';
+  String get editMenuLabel => 'Edit';
 
   @override
-  String get markAsReadyConfirm =>
-      'Are you sure you want to mark this travel as ready?';
+  String get prepareTravelButton => 'Prepare travel';
 
   @override
   String get confirmButton => 'Confirm';
 
   @override
-  String get markAsReadySuccess => 'Travel marked as ready successfully';
+  String get prepareTravelSuccess => 'Travel prepared successfully';
 
   @override
-  String get markAsReadyFailure => 'Failed to mark travel as ready';
+  String get prepareTravelFailure => 'Failed to prepare travel';
 
   @override
   String get needsItineraryFirstTooltip =>
       'You need to create an itinerary first';
 
   @override
-  String get markAsReadyTooltip => 'Mark travel as ready';
+  String get prepareTravelTooltip => 'Prepare travel';
 
   @override
   String get travelActionsMenuTooltip => 'Travel actions';
+
+  @override
+  String get prepareTravelDialogTitle => 'Prepare travel?';
+
+  @override
+  String get prepareTravelDialogSubtitle =>
+      'Review the summary before marking the first itinerary version as ready.';
+
+  @override
+  String get prepareTravelSummaryTravelLabel => 'Travel';
+
+  @override
+  String get prepareTravelSummaryStatusLabel => 'Current status';
+
+  @override
+  String get prepareTravelSummaryParticipantsLabel => 'Participants';
+
+  @override
+  String get prepareTravelSummaryStartDateLabel => 'Start date';
+
+  @override
+  String get prepareTravelSummaryEndDateLabel => 'End date';
+
+  @override
+  String get itinerarySummarySectionTitle => 'ITINERARY';
+
+  @override
+  String get overviewViewTab => 'Overview';
 
   @override
   String get routeViewTab => 'Route View';
 
   @override
   String get itineraryViewTab => 'Itinerary View';
+
+  @override
+  String get participantsViewTab => 'Participants';
+
+  @override
+  String get addParticipantButton => 'Add participant';
+
+  @override
+  String get addParticipantDialogTitle => 'Add participant';
+
+  @override
+  String get participantNameFieldLabel => 'Name';
+
+  @override
+  String get participantAgeFieldLabel => 'Age';
+
+  @override
+  String get noParticipantsTitle => 'No participants yet';
+
+  @override
+  String get noParticipantsMessage =>
+      'Add the people traveling to keep this list up to date.';
+
+  @override
+  String get removeParticipantTooltip => 'Remove participant';
+
+  @override
+  String get removeParticipantConfirmTitle => 'Remove participant?';
+
+  @override
+  String removeParticipantConfirmMessage(String name) {
+    return 'Remove $name from this travel?';
+  }
+
+  @override
+  String get retryButton => 'Try again';
+
+  @override
+  String get failedToUpdateParticipants =>
+      'Could not update participants. Please try again.';
+
+  @override
+  String participantAgeYears(String age) {
+    return '$age years old';
+  }
+
+  @override
+  String get overviewRouteLabel => 'ROUTE';
+
+  @override
+  String get overviewDurationLabel => 'Duration';
+
+  @override
+  String overviewDurationInDays(int count) {
+    return '$count days';
+  }
+
+  @override
+  String get travelStatusNotReadyLabel => 'Not Ready';
+
+  @override
+  String get travelStatusReadyLabel => 'Ready';
+
+  @override
+  String get travelStatusInProgressLabel => 'In Progress';
+
+  @override
+  String get travelStatusCompletedLabel => 'Completed';
+
+  @override
+  String get travelStatusNotReadySupportLine =>
+      'Route created, itinerary pending';
+
+  @override
+  String get travelStatusReadySupportLine => 'Itinerary created';
+
+  @override
+  String get travelStatusInProgressSupportLine => 'Travel underway';
+
+  @override
+  String get travelStatusCompletedSupportLine => 'Travel finished';
+
+  @override
+  String get overviewParticipantsLabel => 'PARTICIPANTS';
+
+  @override
+  String get overviewParticipantsCaption => 'people on this trip';
+
+  @override
+  String overviewParticipantsMore(int count) {
+    return 'and $count more';
+  }
+
+  @override
+  String get overviewViewParticipantsAction => 'View participants →';
+
+  @override
+  String get overviewItineraryLabel => 'ITINERARY';
+
+  @override
+  String overviewItineraryStepsSummary(int count, String agentName) {
+    return '$count steps · by $agentName';
+  }
+
+  @override
+  String get overviewViewItineraryAction => 'View full itinerary';
+
+  @override
+  String get overviewNoItineraryTitle => 'No itinerary created yet';
+
+  @override
+  String get overviewNoItinerarySupport =>
+      'Create the itinerary to get this travel ready for the client.';
+
+  @override
+  String get overviewCreateItineraryAction => 'Create itinerary';
 
   @override
   String travelersCount(int count) {
@@ -884,4 +1027,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sessionExpiredMessage => 'Session expired. Please sign in again.';
+
+  @override
+  String get placesAutocompleteNoResults => 'No places found';
+
+  @override
+  String get placesAutocompleteUnavailable =>
+      'Search unavailable — free text accepted';
+
+  @override
+  String get pickupLocationLabel => 'Pickup location';
+
+  @override
+  String get pickupLocationRequiredValidation => 'Pickup location is required';
 }

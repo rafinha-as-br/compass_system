@@ -1,0 +1,20 @@
+appId: com.example.routecraft_app
+---
+# CPS-128: cliente sem nenhuma viagem ve o cenario 1 de estado vazio na Inicio
+# (EmptyStateView "No routes yet"), sem nenhuma secao "In progress".
+# App roda no emulador em locale en-US por padrao - strings em ingles.
+- launchApp:
+    clearState: true
+- clearKeychain
+- tapOn: "Email"
+- eraseText
+- inputText: "diego.alves@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- assertVisible: "No routes yet"
+- assertVisible: "Create your first route to start traveling."
+- assertVisible: "Create route"
+- assertNotVisible: "In progress"
+- takeScreenshot: home_empty_no_routes

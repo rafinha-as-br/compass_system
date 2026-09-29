@@ -43,10 +43,14 @@
     }
   },
   "homeSectionInProgress": "In progress",
-  "homeSectionUpcoming": "Upcoming",
-  "homeSectionCompleted": "Completed",
   "homeEmptyMessage": "Describe the trip you want to take and your agent will build the itinerary.",
   "homeEmptyCta": "Create my first route",
+  "homeNoRoutesTitle": "No routes yet",
+  "homeNoRoutesMessage": "Create your first route to start traveling.",
+  "homeNoTripInProgressTitle": "No trip in progress",
+  "homeNoTripInProgressMessage": "Your upcoming trips are in the Trips tab.",
+  "homeCreateRouteCta": "Create route",
+  "homeSeeMyTripsLink": "See my trips",
 
   "networkErrorTitle": "Couldn't load this",
   "networkErrorMessage": "Check your connection and try again.",
@@ -373,5 +377,8 @@
   "travelStatusRouteCreated": "Awaiting agent",
   "travelStatusItineraryCreated": "Itinerary published",
   "travelStatusTravelStarted": "In progress",
-  "travelStatusTravelFinished": "Completed"
+  "travelStatusTravelFinished": "Completed",
+
+  "placesAutocompleteNoResults": "No places found",
+  "placesAutocompleteUnavailable": "Search unavailable — free text accepted"
 }

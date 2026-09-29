@@ -49,6 +49,7 @@ public class SecurityConfig {
                 .requestMatchers("/dashboard/**").authenticated()
                 .requestMatchers("/notifications/**").authenticated()
                 .requestMatchers("/push-targets/**").authenticated()
+                .requestMatchers("/places/**").authenticated()
                 // Todas as outras rotas do /api/** precisam de autenticação
                 .requestMatchers("/api/**").authenticated()
                 // Qualquer outra rota é liberada

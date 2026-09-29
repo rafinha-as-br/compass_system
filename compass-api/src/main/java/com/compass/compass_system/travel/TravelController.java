@@ -66,6 +66,13 @@ public class TravelController {
             return ResponseEntity.notFound().build();
         }
 
+        // "Preparar viagem" can only be confirmed once an itinerary exists —
+        // enforced here too, not just by the frontend's disabled button, so
+        // no other caller can flip prepared prematurely (CPS-166).
+        if (incoming.isPrepared() && opt.get().getItinerary() == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         // Force the path-variable ID onto the entity so JPA knows this is an update.
         incoming.setId(id);
 

@@ -119,17 +119,31 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homeSectionInProgress => 'In progress';
 
   @override
-  String get homeSectionUpcoming => 'Upcoming';
-
-  @override
-  String get homeSectionCompleted => 'Completed';
-
-  @override
   String get homeEmptyMessage =>
       'Describe the trip you want to take and your agent will build the itinerary.';
 
   @override
   String get homeEmptyCta => 'Create my first route';
+
+  @override
+  String get homeNoRoutesTitle => 'No routes yet';
+
+  @override
+  String get homeNoRoutesMessage =>
+      'Create your first route to start traveling.';
+
+  @override
+  String get homeNoTripInProgressTitle => 'No trip in progress';
+
+  @override
+  String get homeNoTripInProgressMessage =>
+      'Your upcoming trips are in the Trips tab.';
+
+  @override
+  String get homeCreateRouteCta => 'Create route';
+
+  @override
+  String get homeSeeMyTripsLink => 'See my trips';
 
   @override
   String get networkErrorTitle => 'Couldn\'t load this';
@@ -795,4 +809,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get travelStatusTravelFinished => 'Completed';
+
+  @override
+  String get placesAutocompleteNoResults => 'No places found';
+
+  @override
+  String get placesAutocompleteUnavailable =>
+      'Search unavailable — free text accepted';
 }

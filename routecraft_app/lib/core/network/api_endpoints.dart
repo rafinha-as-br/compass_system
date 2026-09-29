@@ -34,4 +34,7 @@ abstract final class ApiEndpoints {
   // Push targets
   static const String pushTargets = '/push-targets';
   static String pushTarget(String id) => '/push-targets/$id';
+
+  // Places (CPS-152/CPS-154)
+  static String placesAutocomplete(String query) => '/places/autocomplete?query=${Uri.encodeQueryComponent(query)}';
 }

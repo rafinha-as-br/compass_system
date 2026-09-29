@@ -1,9 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
+import 'package:travel_matrix/core/services/places_suggestions_service.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/field_state.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
+import 'package:travel_matrix/shared/widgets/form_error_message.dart';
+import 'package:travel_matrix/shared/widgets/places_autocomplete_field.dart';
 
 import '../../../../../../../../shared/widgets/text_fields.dart';
 
@@ -13,12 +17,16 @@ class AirplaneForm extends StatefulWidget {
     super.key,
     required this.airplaneViewModel,
     required this.onChanged,
+    this.fetchSuggestions = fetchPlaceSuggestions,
   });
 
   final AirplaneViewModel airplaneViewModel;
 
   /// Called ONLY when form is valid
   final ValueChanged<AirplaneViewModel> onChanged;
+
+  /// Overridable in tests — defaults to the real network-backed lookup.
+  final Future<List<PlaceSuggestion>> Function(String query) fetchSuggestions;
 
   @override
   State<AirplaneForm> createState() => _AirplaneFormState();
@@ -30,8 +38,6 @@ class _AirplaneFormState extends State<AirplaneForm> {
   late final TextEditingController _flightCompanyCtrl;
   late final TextEditingController _flightDateCtrl;
   late final TextEditingController _departureGateCtrl;
-  late final TextEditingController _departureAirportCtrl;
-  late final TextEditingController _arrivalAirportCtrl;
 
   late AirplaneFormState _formState;
 
@@ -55,14 +61,6 @@ class _AirplaneFormState extends State<AirplaneForm> {
       text: widget.airplaneViewModel.departureGate,
     );
 
-    _departureAirportCtrl = TextEditingController(
-      text: widget.airplaneViewModel.departureAirport,
-    );
-
-    _arrivalAirportCtrl = TextEditingController(
-      text: widget.airplaneViewModel.arrivalAirport,
-    );
-
     _formState = AirplaneFormState(
       flightNumber: FieldState(
         value: widget.airplaneViewModel.flightNumber,
@@ -82,6 +80,8 @@ class _AirplaneFormState extends State<AirplaneForm> {
       arrivalAirport: FieldState(
         value: widget.airplaneViewModel.arrivalAirport,
       ),
+      departureAirportCoordinate: widget.airplaneViewModel.departureAirportCoordinate,
+      arrivalAirportCoordinate: widget.airplaneViewModel.arrivalAirportCoordinate,
     );
   }
 
@@ -91,8 +91,6 @@ class _AirplaneFormState extends State<AirplaneForm> {
     _flightCompanyCtrl.dispose();
     _flightDateCtrl.dispose();
     _departureGateCtrl.dispose();
-    _departureAirportCtrl.dispose();
-    _arrivalAirportCtrl.dispose();
 
     super.dispose();
   }
@@ -157,27 +155,42 @@ class _AirplaneFormState extends State<AirplaneForm> {
           const SizedBox(height: 12),
 
           Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
 
               Expanded(
-                child: CustomFormField.text(
-                  label: l10n.departureAirportLabel,
-                  enabled: true,
-                  controller: _departureAirportCtrl,
-                  errorText: _showError(_formState.departureAirport),
-                  onChanged: _onDepartureAirportChanged,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PlacesAutocompleteField(
+                      labelText: l10n.departureAirportLabel,
+                      initialText: widget.airplaneViewModel.departureAirport,
+                      initialCoordinate: widget.airplaneViewModel.departureAirportCoordinate,
+                      fetchSuggestions: widget.fetchSuggestions,
+                      onChanged: _onDepartureAirportChanged,
+                    ),
+                    if (_showError(_formState.departureAirport) != null)
+                      FormErrorMessage(message: _showError(_formState.departureAirport)!),
+                  ],
                 ),
               ),
 
               const SizedBox(width: 12),
 
               Expanded(
-                child: CustomFormField.text(
-                  label: l10n.arrivalAirportLabel,
-                  enabled: true,
-                  controller: _arrivalAirportCtrl,
-                  errorText: _showError(_formState.arrivalAirport),
-                  onChanged: _onArrivalAirportChanged,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    PlacesAutocompleteField(
+                      labelText: l10n.arrivalAirportLabel,
+                      initialText: widget.airplaneViewModel.arrivalAirport,
+                      initialCoordinate: widget.airplaneViewModel.arrivalAirportCoordinate,
+                      fetchSuggestions: widget.fetchSuggestions,
+                      onChanged: _onArrivalAirportChanged,
+                    ),
+                    if (_showError(_formState.arrivalAirport) != null)
+                      FormErrorMessage(message: _showError(_formState.arrivalAirport)!),
+                  ],
                 ),
               ),
             ],
@@ -245,36 +258,40 @@ class _AirplaneFormState extends State<AirplaneForm> {
     _emitIfValid();
   }
 
-  void _onDepartureAirportChanged(String value) {
-    final error = value.trim().isEmpty
+  void _onDepartureAirportChanged(PlaceAutocompleteResult result) {
+    final error = result.text.trim().isEmpty
         ? AppLocalizations.of(context)!.departureAirportRequiredValidation
         : null;
 
     setState(() {
       _formState = _formState.copyWith(
         departureAirport: _formState.departureAirport.copyWith(
-          value: value,
+          value: result.text,
           error: error,
           isTouched: true,
         ),
+        departureAirportCoordinate: result.coordinate,
+        clearDepartureAirportCoordinate: result.coordinate == null,
       );
     });
 
     _emitIfValid();
   }
 
-  void _onArrivalAirportChanged(String value) {
-    final error = value.trim().isEmpty
+  void _onArrivalAirportChanged(PlaceAutocompleteResult result) {
+    final error = result.text.trim().isEmpty
         ? AppLocalizations.of(context)!.arrivalAirportRequiredValidation
         : null;
 
     setState(() {
       _formState = _formState.copyWith(
         arrivalAirport: _formState.arrivalAirport.copyWith(
-          value: value,
+          value: result.text,
           error: error,
           isTouched: true,
         ),
+        arrivalAirportCoordinate: result.coordinate,
+        clearArrivalAirportCoordinate: result.coordinate == null,
       );
     });
 
@@ -330,6 +347,8 @@ class _AirplaneFormState extends State<AirplaneForm> {
       departureGate: _formState.departureGate.value,
       departureAirport: _formState.departureAirport.value,
       arrivalAirport: _formState.arrivalAirport.value,
+      departureAirportCoordinate: _formState.departureAirportCoordinate,
+      arrivalAirportCoordinate: _formState.arrivalAirportCoordinate,
     ) as AirplaneViewModel;
 
     widget.onChanged(updatedViewModel);
@@ -357,6 +376,8 @@ class AirplaneFormState {
   final FieldState<String> departureGate;
   final FieldState<String> departureAirport;
   final FieldState<String> arrivalAirport;
+  final PlaceCoordinate? departureAirportCoordinate;
+  final PlaceCoordinate? arrivalAirportCoordinate;
 
   bool get isValid =>
       flightNumber.isValid &&
@@ -373,6 +394,8 @@ class AirplaneFormState {
     required this.departureGate,
     required this.departureAirport,
     required this.arrivalAirport,
+    this.departureAirportCoordinate,
+    this.arrivalAirportCoordinate,
   });
 
   AirplaneFormState copyWith({
@@ -382,6 +405,10 @@ class AirplaneFormState {
     FieldState<String>? departureGate,
     FieldState<String>? departureAirport,
     FieldState<String>? arrivalAirport,
+    PlaceCoordinate? departureAirportCoordinate,
+    bool clearDepartureAirportCoordinate = false,
+    PlaceCoordinate? arrivalAirportCoordinate,
+    bool clearArrivalAirportCoordinate = false,
   }) {
     return AirplaneFormState(
       flightNumber: flightNumber ?? this.flightNumber,
@@ -390,6 +417,12 @@ class AirplaneFormState {
       departureGate: departureGate ?? this.departureGate,
       departureAirport: departureAirport ?? this.departureAirport,
       arrivalAirport: arrivalAirport ?? this.arrivalAirport,
+      departureAirportCoordinate: clearDepartureAirportCoordinate
+          ? null
+          : (departureAirportCoordinate ?? this.departureAirportCoordinate),
+      arrivalAirportCoordinate: clearArrivalAirportCoordinate
+          ? null
+          : (arrivalAirportCoordinate ?? this.arrivalAirportCoordinate),
     );
   }
 }
