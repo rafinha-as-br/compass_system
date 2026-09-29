@@ -39,6 +39,43 @@
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-data-jpa</artifactId>
 		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-amqp</artifactId>
+		</dependency>
+
+		<!-- Web Push (VAPID): assinatura da requisicao + criptografia AES128GCM
+		     do payload (RFC 8291) - protocolo demais para reimplementar a mao. -->
+		<dependency>
+			<groupId>nl.martijndwars</groupId>
+			<artifactId>web-push</artifactId>
+			<version>5.1.2</version>
+		</dependency>
+		<!-- web-push declara bcprov como compile mas nao aparece resolvido
+		     transitivamente (dependency:tree confirma ausencia) - adicionado
+		     explicitamente na linha mantida (jdk18on) em vez da jdk15on que
+		     a lib declara. -->
+		<dependency>
+			<groupId>org.bouncycastle</groupId>
+			<artifactId>bcprov-jdk18on</artifactId>
+			<version>1.86</version>
+		</dependency>
+		<!-- web-push traz httpcore so em runtime; WebPushDispatcher inspeciona o
+		     HttpResponse.getStatusLine() (destino expirado = 404/410), entao
+		     precisa dele em compile. -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpcore</artifactId>
+			<version>4.4.16</version>
+		</dependency>
+		<!-- PushService.send() declara "throws JoseException" (assinatura VAPID
+		     via JWT) - so em runtime por padrao, precisa estar em compile. -->
+		<dependency>
+			<groupId>org.bitbucket.b_c</groupId>
+			<artifactId>jose4j</artifactId>
+			<version>0.7.9</version>
+		</dependency>
 		<dependency>
 			<groupId>org.postgresql</groupId>
 			<artifactId>postgresql</artifactId>

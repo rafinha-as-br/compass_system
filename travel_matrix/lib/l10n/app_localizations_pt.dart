@@ -1054,4 +1054,38 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get pickupLocationRequiredValidation =>
       'Local de retirada é obrigatório';
+
+  @override
+  String get notificationsBellTooltip => 'Notificações';
+
+  @override
+  String get notificationsTitle => 'Notificações';
+
+  @override
+  String get notificationsMarkAllRead => 'Marcar todas como lidas';
+
+  @override
+  String get notificationsEmptyTitle => 'Nenhuma notificação por aqui';
+
+  @override
+  String get notificationsEmptyMessage =>
+      'Quando um cliente criar ou editar uma rota, o aviso aparece aqui.';
+
+  @override
+  String get failedToLoadNotifications =>
+      'Não foi possível carregar suas notificações agora. Tente novamente mais tarde.';
+
+  @override
+  String get notificationsToday => 'Hoje';
+
+  @override
+  String get notificationsYesterday => 'Ontem';
+
+  @override
+  String get notificationRouteCreated =>
+      'Um cliente criou uma rota para uma de suas viagens.';
+
+  @override
+  String get notificationRouteEdited =>
+      'Um cliente editou a rota de uma de suas viagens.';
 }

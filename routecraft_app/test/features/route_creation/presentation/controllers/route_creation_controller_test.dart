@@ -26,8 +26,13 @@ class _FakeTravelRepository implements TravelRepository {
 Future<RouteCreationController> _controllerAtReview({
   required TravelUseCases travelUseCases,
   required Future<String?> Function() getClientName,
+  Future<void> Function()? requestNotificationPermission,
 }) async {
-  final controller = RouteCreationController(travelUseCases: travelUseCases, getClientName: getClientName);
+  final controller = RouteCreationController(
+    travelUseCases: travelUseCases,
+    getClientName: getClientName,
+    requestNotificationPermission: requestNotificationPermission ?? () async {},
+  );
   await Future<void>.delayed(Duration.zero); // let the client auto-participant load
   controller.tripNameController.text = 'My Trip';
   controller.setStartDate(DateTime(2026, 1, 1));
@@ -261,6 +266,34 @@ void main() {
 
       expect(controller.state.hasNoSession, isTrue);
       expect(controller.state.submitErrorMessage, isNull);
+    });
+
+    test('requests notification permission on a successful submit', () async {
+      final repository = _FakeTravelRepository()..nextCreateResult = Result.success(_dummyTravel());
+      var requested = false;
+      final controller = await _controllerAtReview(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+        requestNotificationPermission: () async => requested = true,
+      );
+
+      await controller.submitRoute();
+
+      expect(requested, isTrue);
+    });
+
+    test('does not request notification permission when the submit fails', () async {
+      final repository = _FakeTravelRepository()..nextCreateResult = const Result.failure('Erro de rede');
+      var requested = false;
+      final controller = await _controllerAtReview(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+        requestNotificationPermission: () async => requested = true,
+      );
+
+      await controller.submitRoute();
+
+      expect(requested, isFalse);
     });
   });
 

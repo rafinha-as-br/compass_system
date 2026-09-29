@@ -1,8 +1,13 @@
 package com.compass.compass_system.travel;
 
 import com.compass.compass_system.itinerary.Itinerary;
+import com.compass.compass_system.notification.NotificationEvent;
+import com.compass.compass_system.notification.NotificationRecipientType;
+import com.compass.compass_system.notification.NotificationType;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -15,6 +20,9 @@ public class TravelController {
 
     @Autowired
     private TravelRepository travelRepository;
+
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     // ─── GET /travels ───────────────────────────────────────────────────────────
     // Returns all travels.
@@ -92,6 +100,9 @@ public class TravelController {
     // ─── PUT /travels/{travelId}/itinerary ─────────────────────────────────────
     // Upsert: creates or fully replaces the Itinerary on a Travel.
     // Transitions travelStatus to "itinerary_created" when creating for the first time.
+    // @Transactional so the notification is committed with the same change that
+    // originated it (CPS-145) — never one without the other.
+    @Transactional
     @PutMapping("/{travelId}/itinerary")
     public ResponseEntity<Itinerary> upsertItinerary(
             @PathVariable String travelId,
@@ -103,9 +114,10 @@ public class TravelController {
         }
 
         Travel travel = opt.get();
+        boolean firstPublish = travel.getItinerary() == null;
 
         // Transition status the first time an itinerary is set.
-        if (travel.getItinerary() == null) {
+        if (firstPublish) {
             travel.setTravelStatus("itinerary_created");
         }
 
@@ -113,11 +125,22 @@ public class TravelController {
         travel.setItinerary(incoming);
 
         Travel saved = travelRepository.save(travel);
+
+        eventPublisher.publishEvent(new NotificationEvent(
+                NotificationRecipientType.CLIENT,
+                saved.getClientId(),
+                firstPublish ? NotificationType.ITINERARY_PUBLISHED : NotificationType.ITINERARY_STEP_CHANGED,
+                saved.getId(),
+                firstPublish
+                        ? "O itinerário da sua viagem \"" + saved.getTravelName() + "\" foi publicado."
+                        : "O itinerário da sua viagem \"" + saved.getTravelName() + "\" foi atualizado."));
+
         return ResponseEntity.ok(saved.getItinerary());
     }
 
     // ─── PUT /travels/{travelId}/route ─────────────────────────────────────────
     // Upsert: creates or fully replaces the RoutePlan on a Travel.
+    @Transactional
     @PutMapping("/{travelId}/route")
     public ResponseEntity<RoutePlan> upsertRoutePlan(
             @PathVariable String travelId,
@@ -129,11 +152,22 @@ public class TravelController {
         }
 
         Travel travel = opt.get();
+        boolean firstRoute = travel.getRoutePlan() == null;
 
         // Fully replace the route plan (orphanRemoval handles deleting the old one).
         travel.setRoutePlan(incoming);
 
         Travel saved = travelRepository.save(travel);
+
+        eventPublisher.publishEvent(new NotificationEvent(
+                NotificationRecipientType.AGENT,
+                saved.getAgentId(),
+                firstRoute ? NotificationType.ROUTE_CREATED : NotificationType.ROUTE_EDITED,
+                saved.getId(),
+                firstRoute
+                        ? "O cliente criou uma rota para a viagem \"" + saved.getTravelName() + "\"."
+                        : "O cliente editou a rota da viagem \"" + saved.getTravelName() + "\"."));
+
         return ResponseEntity.ok(saved.getRoutePlan());
     }
 

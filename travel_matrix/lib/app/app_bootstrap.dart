@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
+import 'package:travel_matrix/app/global_controllers/notifications_badge_controller.dart';
 import 'package:travel_matrix/app/router/app_router.dart';
 import 'global_controllers/settings_controller.dart';
 import 'travel_matrix_app.dart';
@@ -42,6 +43,14 @@ class AppBootstrap extends StatelessWidget {
             ),
             ChangeNotifierProvider.value(
               value: authController,
+            ),
+            // Refreshes the unread count on login/boot-with-a-session and
+            // resets it on logout — session start/end is what decides this
+            // controller's value, not whichever widget happens to be on
+            // screen at that moment.
+            ChangeNotifierProxyProvider<AuthController, NotificationsBadgeController>(
+              create: (_) => NotificationsBadgeController(),
+              update: (_, auth, badge) => (badge ?? NotificationsBadgeController())..onAuthChanged(auth),
             ),
             Provider.value(
               value: appRouter,

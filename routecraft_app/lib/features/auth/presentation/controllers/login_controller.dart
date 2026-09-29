@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/core/network/http_api_client.dart';
 import 'package:routecraft_app/core/services/auth_service.dart';
+import 'package:routecraft_app/core/services/push_service.dart';
 import 'package:routecraft_app/features/auth/data/datasources/auth_remote_datasource.dart';
 import 'package:routecraft_app/features/auth/data/repositories/auth_repository_impl.dart';
 import 'package:routecraft_app/features/auth/domain/entities/auth_session.dart';
@@ -36,18 +39,21 @@ class LoginController extends ChangeNotifier {
   final Future<void> Function(String token)? _saveTokenOverride;
   final Future<void> Function(String name)? _saveClientNameOverride;
   final Future<void> Function(String email)? _saveClientEmailOverride;
+  final Future<void> Function()? _registerForPushOverride;
 
-  /// [saveToken]/[saveClientName]/[saveClientEmail] are injectable for
-  /// widget tests, without depending on the real network/singleton wiring.
-  /// `AuthService.instance` is only touched when an override isn't given, so
-  /// constructing this with just one override doesn't require
-  /// `AuthService` to already be initialized. In production, the call site
-  /// (`LoginController()`) is unaffected — the default wiring is used.
+  /// [saveToken]/[saveClientName]/[saveClientEmail]/[registerForPush] are
+  /// injectable for widget tests, without depending on the real
+  /// network/singleton wiring. `AuthService.instance`/`PushService.instance`
+  /// are only touched when an override isn't given, so constructing this
+  /// with just one override doesn't require those to already be initialized.
+  /// In production, the call site (`LoginController()`) is unaffected — the
+  /// default wiring is used.
   LoginController({
     LoginUseCase? loginUseCase,
     Future<void> Function(String token)? saveToken,
     Future<void> Function(String name)? saveClientName,
     Future<void> Function(String email)? saveClientEmail,
+    Future<void> Function()? registerForPush,
   })  : _loginUseCase = loginUseCase ??
             LoginUseCase(
               AuthRepositoryImpl(
@@ -56,7 +62,8 @@ class LoginController extends ChangeNotifier {
             ),
         _saveTokenOverride = saveToken,
         _saveClientNameOverride = saveClientName,
-        _saveClientEmailOverride = saveClientEmail;
+        _saveClientEmailOverride = saveClientEmail,
+        _registerForPushOverride = registerForPush;
 
   Future<void> _saveToken(String token) =>
       (_saveTokenOverride ?? AuthService.instance.saveToken)(token);
@@ -66,6 +73,9 @@ class LoginController extends ChangeNotifier {
 
   Future<void> _saveClientEmail(String email) =>
       (_saveClientEmailOverride ?? AuthService.instance.saveClientEmail)(email);
+
+  Future<void> _registerForPush() =>
+      (_registerForPushOverride ?? PushService.instance.registerForPush)();
 
   LoginState _state = const LoginState();
 
@@ -84,6 +94,9 @@ class LoginController extends ChangeNotifier {
         await _saveClientEmail(session.email);
         _state = _state.copyWith(isLoading: false);
         notifyListeners();
+        // Fire-and-forget: a slow/failed push registration never delays or
+        // fails the login itself (CPS-148).
+        unawaited(_registerForPush());
         return true;
       case Failure<AuthSession>(message: final message, isConnectivityError: final isConnectivityError):
         _state = _state.copyWith(

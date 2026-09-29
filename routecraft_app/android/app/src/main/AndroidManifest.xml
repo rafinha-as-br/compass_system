@@ -1,4 +1,9 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
+    <!-- Required on Android 13+ (API 33) to show any notification — the
+         local one RouteCraft renders for a background/terminated push
+         (CPS-148). Requested at runtime via permission_handler, not granted
+         automatically just by being declared here. -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
     <application
         android:label="routecraft_app"
         android:name="${applicationName}"

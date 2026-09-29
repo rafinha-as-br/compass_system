@@ -12,6 +12,32 @@ services:
     ports:
       - "5432:5432"
 
+  # Broker AMQP para os eventos de notificação (CPS-146) — desacopla a
+  # geração do evento (na transação HTTP) do disparo do push (best-effort,
+  # fora da transação). UI de management em http://localhost:15672.
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: compass_rabbitmq
+    environment:
+      RABBITMQ_DEFAULT_USER: compass_user
+      RABBITMQ_DEFAULT_PASS: compass_password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  # Relay self-hosted de UnifiedPush — o RouteCraft (Android) aponta seu
+  # distribuidor UnifiedPush para cá em vez de depender do ntfy.sh público
+  # ou de qualquer infra de push da Google/Firebase. O compass-api não fala
+  # com este serviço diretamente: cada PushTarget já chega com sua própria
+  # URL de endpoint (mintada pelo distribuidor no registro), então não é
+  # uma dependência de subida do backend — só precisa estar no ar para os
+  # dispositivos reais conseguirem se registrar e receber push.
+  ntfy:
+    image: binwiederhier/ntfy
+    container_name: compass_ntfy
+    command: serve
+    ports:
+      - "8082:80"
 
   backend:
     build: .
@@ -20,8 +46,11 @@ services:
       - "8081:8081"
     depends_on:
       - db
+      - rabbitmq
     environment:
-      
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/compass_db
       SPRING_DATASOURCE_USERNAME: compass_user
       SPRING_DATASOURCE_PASSWORD: compass_password
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_USERNAME: compass_user
+      SPRING_RABBITMQ_PASSWORD: compass_password

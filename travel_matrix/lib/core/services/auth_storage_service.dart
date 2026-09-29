@@ -36,4 +36,18 @@ class AuthStorageService {
     final token = await getToken();
     return token != null && token.isNotEmpty;
   }
+
+  /// This device's registered Web Push target id (CPS-149) — kept so logout
+  /// can unregister it from the backend before the auth token is cleared.
+  Future<void> saveWebPushTargetId(String id) async {
+    await _prefs.setString('web_push_target_id', id);
+  }
+
+  Future<String?> getWebPushTargetId() async {
+    return _prefs.getString('web_push_target_id');
+  }
+
+  Future<void> clearWebPushTargetId() async {
+    await _prefs.remove('web_push_target_id');
+  }
 }

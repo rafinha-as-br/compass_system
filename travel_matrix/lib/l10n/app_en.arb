@@ -421,5 +421,16 @@
   "placesAutocompleteUnavailable": "Search unavailable — free text accepted",
 
   "pickupLocationLabel": "Pickup location",
-  "pickupLocationRequiredValidation": "Pickup location is required"
+  "pickupLocationRequiredValidation": "Pickup location is required",
+
+  "notificationsBellTooltip": "Notifications",
+  "notificationsTitle": "Notifications",
+  "notificationsMarkAllRead": "Mark all as read",
+  "notificationsEmptyTitle": "No notifications yet",
+  "notificationsEmptyMessage": "When a client creates or edits a route, the alert shows up here.",
+  "failedToLoadNotifications": "Unable to load your notifications right now. Please try again later.",
+  "notificationsToday": "Today",
+  "notificationsYesterday": "Yesterday",
+  "notificationRouteCreated": "A client created a route for one of your travels.",
+  "notificationRouteEdited": "A client edited the route of one of your travels."
 }

@@ -6,9 +6,17 @@ import 'package:routecraft_app/app/router/private_shell.dart';
 import 'package:routecraft_app/app/router/public_shell.dart';
 
 class AppRouter {
+  /// Set on construction — the only way to reach the router from outside the
+  /// widget tree (e.g. a tapped push notification's callback, which runs
+  /// with no `BuildContext`). There's only ever one `AppRouter` for the
+  /// app's lifetime, built once in `AppBootstrap`.
+  static AppRouter? instance;
+
   final AuthController _authController;
 
-  AppRouter(this._authController);
+  AppRouter(this._authController) {
+    instance = this;
+  }
 
   late final GoRouter router = GoRouter(
     // _redirect already runs against the initial location before the first
