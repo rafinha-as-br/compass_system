@@ -1,0 +1,35 @@
+appId: com.example.travel_matrix
+---
+# Smoke test das abas "Overview" (CPS-158) e "Participants" (CPS-159) da tela de
+# viagem — navega até uma viagem existente (seed fixo "QA Trip CPS-89") e confirma
+# que as duas abas abrem, coletando screenshot de cada uma como evidência.
+#
+# GOTCHA (testabilidade, ver README desta pasta):
+# 1. A nav lateral (Dashboard/Booking/Users) e a lista "All Travels" não têm
+#    rótulo de texto/semântica no Android — navegados por coordenada percentual
+#    (point), último recurso documentado pela skill jira-qa-executor. Os
+#    percentuais dependem do layout atual do shell (ver CPS-167 — bug de shell
+#    não responsivo) e provavelmente precisam ser recalculados quando CPS-167
+#    for corrigido.
+# 2. As 4 abas da tela de viagem (Overview/Route View/Itinerary View/
+#    Participants) TÊM rótulo de acessibilidade, mas o Maestro faz match de
+#    regex contra a STRING INTEIRA do nó, não substring — e o rótulo real é
+#    multi-linha (ex.: "Participants\nTab 4 of 4"). Por isso o seletor usa
+#    `[\s\S]*` (equivalente a DOTALL) para casar o resto da string após o nome
+#    da aba, em vez do texto puro da aba.
+- runFlow: ../auth/login_qa_agent.yaml
+- tapOn:
+    point: "23%,19%" # nav lateral: "Booking"
+- tapOn:
+    point: "69%,50%" # primeira linha da lista: "QA Trip CPS-89" (seed fixo)
+# A tela de detalhe da viagem busca dados via API antes de renderizar as 4 abas
+# — sem esta espera, os rótulos das abas ainda não existem na árvore de
+# semântica no momento do tapOn (falha intermitente observada nesta rodada).
+- extendedWaitUntil:
+    visible: 'Overview[\s\S]*'
+    timeout: 8000
+- tapOn: 'Overview[\s\S]*'
+- takeScreenshot: overview_tab
+- tapOn: 'Participants[\s\S]*'
+- takeScreenshot: participants_tab
+- assertVisible: "Add participant"
