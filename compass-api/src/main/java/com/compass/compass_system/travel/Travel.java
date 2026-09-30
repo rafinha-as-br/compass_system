@@ -26,6 +26,10 @@ public class Travel {
     // out of the agent's control. prepared only ever flips via the explicit
     // "Preparar viagem" confirmation, so the frontend can tell "itinerary
     // exists" apart from "agent finalized the first version" (CPS-166).
+    // columnDefinition carries an explicit DEFAULT so Hibernate's ddl-auto=update
+    // ALTER TABLE succeeds against rows that already exist (a plain NOT NULL
+    // column without DEFAULT is rejected by Postgres on a non-empty table).
+    @Column(nullable = false, columnDefinition = "boolean default false")
     private boolean prepared = false;
 
     // Free-text note from the client to the agent, scoped to the whole trip
