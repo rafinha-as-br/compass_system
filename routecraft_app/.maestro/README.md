@@ -99,6 +99,22 @@ None currently open. **CPS-92**'s `Bus`/`Airplane` empty-"Gate" defect
 `free_time_and_step_detail.yaml` now asserts the tile stays hidden for the
 "Bus to Kyoto" fixture step.
 
+## Gotcha: "Android App Compatibility" (16 KB page size) system dialog
+
+Confirmed 2026-10-01, QA round for CPS-143 (CPS-145/146/147/148). The
+`QA_-_Claude` AVD is now on Android 17 (API level beyond this app's target),
+which surfaces an OS-level "Android App Compatibility" dialog on every fresh
+launch (`LOAD segment alignment check failed` for `libwebcrypto.so` /
+`libflutter.so`, not 16 KB aligned). It reappears after every
+`launchApp: clearState: true`, not just the first install — the
+"Don't Show Again" tap does not persist across a cleared app state on this
+AVD/Android version. `common/login_as_joao.yaml` now dismisses it with an
+`optional: true` tap right after `launchApp`, before touching "Email" — this
+step is required for every flow that starts from a fresh launch here. Not a
+product defect (OS compatibility banner, unrelated to app code); if the AVD
+is recreated on an older Android image this step becomes a no-op (optional,
+won't fail).
+
 ## Known testability gap
 
 `PlacesAutocompleteField` (CPS-154) — the Start Location / Destination

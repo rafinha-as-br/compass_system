@@ -4,6 +4,9 @@ appId: com.example.routecraft_app
 # Password is the compass-api default reset value ("compass123") — see .maestro/README.md.
 - launchApp:
     clearState: true
+- tapOn:
+    text: "Don't Show Again"
+    optional: true
 - tapOn: "Email"
 - eraseText: 50
 - inputText: "joao.teste@teste.com"
