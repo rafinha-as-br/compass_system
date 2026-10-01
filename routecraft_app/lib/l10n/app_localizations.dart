@@ -302,18 +302,6 @@ abstract class AppLocalizations {
   /// **'In progress'**
   String get homeSectionInProgress;
 
-  /// No description provided for @homeSectionUpcoming.
-  ///
-  /// In en, this message translates to:
-  /// **'Upcoming'**
-  String get homeSectionUpcoming;
-
-  /// No description provided for @homeSectionCompleted.
-  ///
-  /// In en, this message translates to:
-  /// **'Completed'**
-  String get homeSectionCompleted;
-
   /// No description provided for @homeEmptyMessage.
   ///
   /// In en, this message translates to:
@@ -325,6 +313,42 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Create my first route'**
   String get homeEmptyCta;
+
+  /// No description provided for @homeNoRoutesTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No routes yet'**
+  String get homeNoRoutesTitle;
+
+  /// No description provided for @homeNoRoutesMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Create your first route to start traveling.'**
+  String get homeNoRoutesMessage;
+
+  /// No description provided for @homeNoTripInProgressTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'No trip in progress'**
+  String get homeNoTripInProgressTitle;
+
+  /// No description provided for @homeNoTripInProgressMessage.
+  ///
+  /// In en, this message translates to:
+  /// **'Your upcoming trips are in the Trips tab.'**
+  String get homeNoTripInProgressMessage;
+
+  /// No description provided for @homeCreateRouteCta.
+  ///
+  /// In en, this message translates to:
+  /// **'Create route'**
+  String get homeCreateRouteCta;
+
+  /// No description provided for @homeSeeMyTripsLink.
+  ///
+  /// In en, this message translates to:
+  /// **'See my trips'**
+  String get homeSeeMyTripsLink;
 
   /// No description provided for @networkErrorTitle.
   ///
@@ -905,20 +929,14 @@ abstract class AppLocalizations {
   /// No description provided for @notificationItineraryPublished.
   ///
   /// In en, this message translates to:
-  /// **'Your itinerary for {travelName} was published'**
-  String notificationItineraryPublished(String travelName);
+  /// **'Your itinerary was published'**
+  String get notificationItineraryPublished;
 
   /// No description provided for @notificationItineraryChanged.
   ///
   /// In en, this message translates to:
-  /// **'The itinerary for {travelName} was changed'**
-  String notificationItineraryChanged(String travelName);
-
-  /// No description provided for @notificationRouteReceived.
-  ///
-  /// In en, this message translates to:
-  /// **'Route for {travelName} received'**
-  String notificationRouteReceived(String travelName);
+  /// **'Your itinerary was updated'**
+  String get notificationItineraryChanged;
 
   /// No description provided for @notificationViewTripLink.
   ///
@@ -931,6 +949,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open this trip.'**
   String get notificationOpenTripError;
+
+  /// No description provided for @pushNotificationTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Compass'**
+  String get pushNotificationTitle;
 
   /// No description provided for @editRouteTitle.
   ///
@@ -1435,6 +1459,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Completed'**
   String get travelStatusTravelFinished;
+
+  /// No description provided for @placesAutocompleteNoResults.
+  ///
+  /// In en, this message translates to:
+  /// **'No places found'**
+  String get placesAutocompleteNoResults;
+
+  /// No description provided for @placesAutocompleteUnavailable.
+  ///
+  /// In en, this message translates to:
+  /// **'Search unavailable — free text accepted'**
+  String get placesAutocompleteUnavailable;
 }
 
 class _AppLocalizationsDelegate

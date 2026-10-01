@@ -13,6 +13,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -41,4 +42,15 @@ android {
 
 flutter {
     source = "../.."
+}
+
+configurations.all {
+    // unifiedpush_android pulls the non-Android "tink" artifact transitively, which
+    // duplicates classes already provided by "tink-android" (used by flutter_secure_storage).
+    exclude(group = "com.google.crypto.tink", module = "tink")
+}
+
+dependencies {
+    // Required by flutter_local_notifications when core library desugaring is enabled.
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

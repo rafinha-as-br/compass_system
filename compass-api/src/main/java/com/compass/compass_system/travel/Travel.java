@@ -15,6 +15,23 @@ public class Travel {
     private String travelName;
     private String travelStatus;
 
+    // Set at creation from the payload Travel Matrix already sends
+    // (clientId/agentId); nullable so travels created before these fields
+    // existed simply can't resolve a notification recipient — no backfill.
+    private Long clientId;
+    private Long agentId;
+
+    // Distinct from travelStatus: "itinerary_created" advances automatically
+    // (PUT .../itinerary, the moment an itinerary first exists) and stays
+    // out of the agent's control. prepared only ever flips via the explicit
+    // "Preparar viagem" confirmation, so the frontend can tell "itinerary
+    // exists" apart from "agent finalized the first version" (CPS-166).
+    // columnDefinition carries an explicit DEFAULT so Hibernate's ddl-auto=update
+    // ALTER TABLE succeeds against rows that already exist (a plain NOT NULL
+    // column without DEFAULT is rejected by Postgres on a non-empty table).
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean prepared = false;
+
     // Free-text note from the client to the agent, scoped to the whole trip
     // (not a single interest point). Set once at creation; no endpoint below
     // ever updates it — the isolated route/itinerary/participants upserts
@@ -52,11 +69,20 @@ public class Travel {
     public String getClientName() { return clientName; }
     public void setClientName(String clientName) { this.clientName = clientName; }
 
+    public Long getClientId() { return clientId; }
+    public void setClientId(Long clientId) { this.clientId = clientId; }
+
+    public Long getAgentId() { return agentId; }
+    public void setAgentId(Long agentId) { this.agentId = agentId; }
+
     public String getTravelName() { return travelName; }
     public void setTravelName(String travelName) { this.travelName = travelName; }
 
     public String getTravelStatus() { return travelStatus; }
     public void setTravelStatus(String travelStatus) { this.travelStatus = travelStatus; }
+
+    public boolean isPrepared() { return prepared; }
+    public void setPrepared(boolean prepared) { this.prepared = prepared; }
 
     public String getObservations() { return observations; }
     public void setObservations(String observations) { this.observations = observations; }

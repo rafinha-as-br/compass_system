@@ -1,0 +1,36 @@
+appId: com.example.travel_matrix
+---
+# Fluxo de CRUD de participantes (CPS-159) — adiciona um participante de teste e
+# remove em seguida, deixando o estado da viagem como estava antes do flow.
+#
+# GOTCHA (testabilidade):
+# 1. O campo "Name" do modal "Add participant" não tem hint/rótulo exposto como
+#    semântica (mesmo padrão da tela de login) — preenchido por coordenada
+#    percentual.
+# 2. O botão de remover cada linha tem rótulo `"Remove participant"` (match
+#    exato, sem sufixo) e é tocado por texto normalmente.
+# 3. O ícone da aba "Participants" tem rótulo multi-linha
+#    (`"Participants\nTab 4 of 4"`) — o Maestro exige match de regex contra a
+#    STRING INTEIRA do nó, não substring, daí o sufixo `[\s\S]*` (equivalente a
+#    DOTALL) no seletor.
+- runFlow: ../auth/login_qa_agent.yaml
+- tapOn:
+    point: "23%,19%" # nav lateral: "Booking"
+- tapOn:
+    point: "69%,50%" # primeira linha da lista: "QA Trip CPS-89" (seed fixo)
+# A tela de detalhe da viagem busca dados via API antes de renderizar as 4 abas
+# — sem esta espera, "Participants" ainda não existe na árvore de semântica no
+# momento do tapOn (falha intermitente observada nesta rodada de QA).
+- extendedWaitUntil:
+    visible: 'Participants[\s\S]*'
+    timeout: 8000
+- tapOn: 'Participants[\s\S]*'
+- tapOn: "Add participant"
+- tapOn:
+    point: "50%,37%" # campo "Name" do modal (sem rótulo de semântica)
+- inputText: "Maestro Smoke Teste"
+- tapOn: "Add participant"
+- takeScreenshot: after_add_participant
+- tapOn: "Remove participant"
+- tapOn: "Delete"
+- takeScreenshot: after_remove_participant

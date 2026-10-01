@@ -25,4 +25,16 @@ abstract final class ApiEndpoints {
   static const String currentUser = '/users/me';
   static String userById(String id) => '/users/$id';
   static String userResetPassword(String id) => '/users/$id/reset-password';
+
+  // Notifications
+  static String notifications(int page, int size) => '/notifications?page=$page&size=$size';
+  static const String notificationsUnreadCount = '/notifications/unread-count';
+  static const String notificationsReadAll = '/notifications/read-all';
+
+  // Push targets
+  static const String pushTargets = '/push-targets';
+  static String pushTarget(String id) => '/push-targets/$id';
+
+  // Places (CPS-152/CPS-154)
+  static String placesAutocomplete(String query) => '/places/autocomplete?query=${Uri.encodeQueryComponent(query)}';
 }

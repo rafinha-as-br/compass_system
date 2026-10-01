@@ -1,7 +1,10 @@
+import 'dart:async';
+
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
+import 'package:travel_matrix/core/services/web_push_service.dart';
 
 /// Controller responsible for managing authentication state.
 class AuthController extends ChangeNotifier {
@@ -35,6 +38,7 @@ class AuthController extends ChangeNotifier {
     _token = await _storage.getToken();
     if (_token != null) {
       await loadUserData();
+      unawaited(WebPushService.instance.registerForPush());
     }
     _initialized = true;
     notifyListeners();
@@ -45,6 +49,7 @@ class AuthController extends ChangeNotifier {
     await _storage.saveToken(token);
     await loadUserData();
     notifyListeners();
+    unawaited(WebPushService.instance.registerForPush());
   }
 
   Future<void> loadUserData() async {
@@ -66,6 +71,9 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<void> logout() async {
+    // Before clearing the token — the unregister DELETE needs a still-valid
+    // Bearer token.
+    await WebPushService.instance.unregisterFromPush();
     _token = null;
     _userData = null;
     await _storage.clearToken();

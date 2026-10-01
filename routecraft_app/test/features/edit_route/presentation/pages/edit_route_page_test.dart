@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:http/http.dart' as http;
+import 'package:http/testing.dart';
 import 'package:routecraft_app/core/entities/result.dart';
+import 'package:routecraft_app/core/network/clients/places_api_client.dart';
+import 'package:routecraft_app/core/network/http_api_client.dart';
 import 'package:routecraft_app/features/edit_route/presentation/controllers/edit_route_controller.dart';
 import 'package:routecraft_app/features/edit_route/presentation/pages/edit_route_page.dart';
 import 'package:routecraft_app/features/travels/domain/entities/person.dart';
@@ -12,6 +16,12 @@ import 'package:routecraft_app/features/travels/domain/repositories/route_reposi
 import 'package:routecraft_app/features/travels/domain/usecases/participants_usecases.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/route_usecases.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
+
+// PlacesAutocompleteField never hits the network in these tests — it always
+// resolves with no suggestions, so location fields behave as plain free text.
+final _noSuggestionsPlacesApiClient = PlacesApiClient(
+  HttpApiClient.forTesting(MockClient((_) async => http.Response('[]', 200))),
+);
 
 class _FakeRouteRepository implements RouteRepository {
   Result<RoutePlan>? nextUpdateResult;
@@ -67,6 +77,8 @@ Widget _wrap(Travel travel, {RouteRepository? repository, ParticipantsRepository
         originalParticipants: travel.participantsList,
         routeUseCases: RouteUseCases(repository ?? _FakeRouteRepository()),
         participantsUseCases: ParticipantsUseCases(participantsRepository ?? _FakeParticipantsRepository()),
+        placesApiClient: _noSuggestionsPlacesApiClient,
+        getToken: () async => 'test-token',
       ),
     ),
   );
@@ -96,7 +108,7 @@ void main() {
   testWidgets('editing the destination enables submit and shows the pending-changes diff', (tester) async {
     await tester.pumpWidget(_wrap(_travel(TravelStatus.routeCreated)));
 
-    await tester.enterText(find.widgetWithText(TextFormField, 'Destination'), 'Ubatuba');
+    await tester.enterText(find.byType(TextField).first, 'Ubatuba');
     await tester.pump();
 
     expect(find.text('changed'), findsOneWidget);
@@ -126,7 +138,7 @@ void main() {
     final repository = _FakeRouteRepository()..nextUpdateResult = Result.success(_originalRoute());
     await tester.pumpWidget(_wrap(_travel(TravelStatus.routeCreated), repository: repository));
 
-    await tester.enterText(find.widgetWithText(TextFormField, 'Destination'), 'Ubatuba');
+    await tester.enterText(find.byType(TextField).first, 'Ubatuba');
     await tester.pump();
     await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send changes'));
     await tester.tap(find.widgetWithText(ElevatedButton, 'Send changes'));
@@ -169,6 +181,8 @@ void main() {
       originalParticipants: travelWithChild.participantsList,
       routeUseCases: RouteUseCases(_FakeRouteRepository()),
       participantsUseCases: ParticipantsUseCases(_FakeParticipantsRepository()),
+      placesApiClient: _noSuggestionsPlacesApiClient,
+      getToken: () async => 'test-token',
     );
 
     await tester.pumpWidget(MaterialApp(
@@ -199,7 +213,7 @@ void main() {
     final repository = _FakeRouteRepository()..nextUpdateResult = const Result.failure('Erro de rede');
     await tester.pumpWidget(_wrap(_travel(TravelStatus.routeCreated), repository: repository));
 
-    await tester.enterText(find.widgetWithText(TextFormField, 'Destination'), 'Ubatuba');
+    await tester.enterText(find.byType(TextField).first, 'Ubatuba');
     await tester.pump();
     await tester.ensureVisible(find.widgetWithText(ElevatedButton, 'Send changes'));
     await tester.tap(find.widgetWithText(ElevatedButton, 'Send changes'));

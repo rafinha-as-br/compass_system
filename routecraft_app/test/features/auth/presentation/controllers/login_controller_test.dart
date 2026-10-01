@@ -39,6 +39,7 @@ void main() {
         saveToken: (token) async => savedToken = token,
         saveClientName: (name) async => savedClientName = name,
         saveClientEmail: (email) async => savedClientEmail = email,
+        registerForPush: () async {},
       );
 
       final success = await controller.login('a@b.com', 'secret');
@@ -49,6 +50,24 @@ void main() {
       expect(savedClientEmail, 'a@b.com');
       expect(controller.state.isLoading, isFalse);
       expect(controller.state.errorMessage, isNull);
+    });
+
+    test('on success, registers for push', () async {
+      const session = AuthSession(token: 'jwt', email: 'a@b.com', name: 'Maria Silva');
+      final useCase = LoginUseCase(_StubAuthRepository(const Result.success(session)));
+      var registered = false;
+
+      final controller = LoginController(
+        loginUseCase: useCase,
+        saveToken: (token) async {},
+        saveClientName: (name) async {},
+        saveClientEmail: (email) async {},
+        registerForPush: () async => registered = true,
+      );
+
+      await controller.login('a@b.com', 'secret');
+
+      expect(registered, isTrue);
     });
 
     test('on failure, exposes the error message and does not save a token', () async {
@@ -96,6 +115,7 @@ void main() {
         saveToken: (token) async {},
         saveClientName: (name) async {},
         saveClientEmail: (email) async {},
+        registerForPush: () async {},
       );
 
       await controller.login('a@b.com', 'wrong');

@@ -1,0 +1,34 @@
+appId: com.example.routecraft_app
+---
+# CPS-155: autocomplete de lugares (Nominatim via CPS-152, widget CPS-154)
+# aplicado ao wizard de Criar Rota. Digita cidade parcial, aguarda sugestao
+# real vinda da API (sem mock), seleciona, e confirma que o texto
+# normalizado aparece nos dois campos antes de enviar.
+- runFlow: ../common/login_as_joao.yaml
+- waitForAnimationToEnd
+- tapOn: ".*Tab 2 of 3.*"
+- waitForAnimationToEnd
+- tapOn: "Create a Route"
+- tapOn: "Trip Name"
+- inputText: "QA CPS-155 Android"
+- tapOn: "NEXT"
+- tapOn: "1 week"
+- tapOn: "NEXT"
+- tapOn:
+    point: "643,810"
+- inputText: "Florianopolis"
+- extendedWaitUntil:
+    visible: ".*Florian.polis.*Santa Catarina.*"
+    timeout: 8000
+- tapOn: ".*Florian.polis.*Santa Catarina.*"
+- tapOn:
+    point: "643,1067"
+- inputText: "Curitiba"
+- extendedWaitUntil:
+    visible: ".*Curitiba.*Paran.*"
+    timeout: 8000
+- tapOn:
+    text: ".*Curitiba.*Paran.*"
+    index: 0
+- assertVisible: ".*Florian.polis.*Santa Catarina.*"
+- assertVisible: ".*Curitiba.*Paran.*"

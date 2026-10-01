@@ -43,10 +43,14 @@
     }
   },
   "homeSectionInProgress": "In progress",
-  "homeSectionUpcoming": "Upcoming",
-  "homeSectionCompleted": "Completed",
   "homeEmptyMessage": "Describe the trip you want to take and your agent will build the itinerary.",
   "homeEmptyCta": "Create my first route",
+  "homeNoRoutesTitle": "No routes yet",
+  "homeNoRoutesMessage": "Create your first route to start traveling.",
+  "homeNoTripInProgressTitle": "No trip in progress",
+  "homeNoTripInProgressMessage": "Your upcoming trips are in the Trips tab.",
+  "homeCreateRouteCta": "Create route",
+  "homeSeeMyTripsLink": "See my trips",
 
   "networkErrorTitle": "Couldn't load this",
   "networkErrorMessage": "Check your connection and try again.",
@@ -210,26 +214,11 @@
   "notificationsTitle": "Notifications",
   "notificationsMarkAllRead": "mark all read",
   "notificationsEmptyMessage": "No notifications yet.",
-  "notificationItineraryPublished": "Your itinerary for {travelName} was published",
-  "@notificationItineraryPublished": {
-    "placeholders": {
-      "travelName": { "type": "String" }
-    }
-  },
-  "notificationItineraryChanged": "The itinerary for {travelName} was changed",
-  "@notificationItineraryChanged": {
-    "placeholders": {
-      "travelName": { "type": "String" }
-    }
-  },
-  "notificationRouteReceived": "Route for {travelName} received",
-  "@notificationRouteReceived": {
-    "placeholders": {
-      "travelName": { "type": "String" }
-    }
-  },
+  "notificationItineraryPublished": "Your itinerary was published",
+  "notificationItineraryChanged": "Your itinerary was updated",
   "notificationViewTripLink": "View trip",
   "notificationOpenTripError": "Could not open this trip.",
+  "pushNotificationTitle": "Compass",
 
   "editRouteTitle": "Edit my route",
   "editRouteSaveButton": "SAVE",
@@ -388,5 +377,8 @@
   "travelStatusRouteCreated": "Awaiting agent",
   "travelStatusItineraryCreated": "Itinerary published",
   "travelStatusTravelStarted": "In progress",
-  "travelStatusTravelFinished": "Completed"
+  "travelStatusTravelFinished": "Completed",
+
+  "placesAutocompleteNoResults": "No places found",
+  "placesAutocompleteUnavailable": "Search unavailable — free text accepted"
 }

@@ -46,8 +46,8 @@ void main() {
   });
 
   group('markAsReady', () {
-    test('fetches the travel, sets status to itineraryCreated, and updates it', () async {
-      final travel = _buildTravel();
+    test('fetches the travel, sets prepared to true, and updates it without touching travelStatus', () async {
+      final travel = _buildTravel(status: TravelStatus.itineraryCreated);
       when(() => repository.getTravel('travel-1'))
           .thenAnswer((_) async => Result.success(travel));
       when(() => repository.updateTravel(any()))
@@ -56,8 +56,10 @@ void main() {
       final result = await useCases.markAsReady('travel-1');
 
       expect(result.isSuccess, isTrue);
+      expect(result.data!.prepared, isTrue);
       expect(result.data!.travelStatus, TravelStatus.itineraryCreated);
       final updatedArg = verify(() => repository.updateTravel(captureAny())).captured.single as Travel;
+      expect(updatedArg.prepared, isTrue);
       expect(updatedArg.travelStatus, TravelStatus.itineraryCreated);
     });
 
@@ -69,6 +71,17 @@ void main() {
 
       expect(result.isSuccess, isFalse);
       expect(result.error, 'Travel not found.');
+      verifyNever(() => repository.updateTravel(any()));
+    });
+
+    test('returns failure without calling update when there is no itinerary yet', () async {
+      final travel = _buildTravel(status: TravelStatus.routeCreated);
+      when(() => repository.getTravel('travel-1'))
+          .thenAnswer((_) async => Result.success(travel));
+
+      final result = await useCases.markAsReady('travel-1');
+
+      expect(result.isSuccess, isFalse);
       verifyNever(() => repository.updateTravel(any()));
     });
   });

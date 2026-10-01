@@ -118,17 +118,31 @@ class AppLocalizationsPt extends AppLocalizations {
   String get homeSectionInProgress => 'Em andamento';
 
   @override
-  String get homeSectionUpcoming => 'Próximas';
-
-  @override
-  String get homeSectionCompleted => 'Concluídas';
-
-  @override
   String get homeEmptyMessage =>
       'Descreva a viagem que você quer fazer e seu agente monta o roteiro.';
 
   @override
   String get homeEmptyCta => 'Criar minha primeira rota';
+
+  @override
+  String get homeNoRoutesTitle => 'Nenhuma rota ainda';
+
+  @override
+  String get homeNoRoutesMessage =>
+      'Crie sua primeira rota para começar a viajar.';
+
+  @override
+  String get homeNoTripInProgressTitle => 'Nenhuma viagem em andamento';
+
+  @override
+  String get homeNoTripInProgressMessage =>
+      'Suas próximas viagens estão na aba Viagens.';
+
+  @override
+  String get homeCreateRouteCta => 'Criar rota';
+
+  @override
+  String get homeSeeMyTripsLink => 'Ver minhas viagens';
 
   @override
   String get networkErrorTitle => 'Não foi possível carregar';
@@ -470,25 +484,19 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notificationsEmptyMessage => 'Nenhum aviso ainda.';
 
   @override
-  String notificationItineraryPublished(String travelName) {
-    return 'Seu roteiro de $travelName foi publicado';
-  }
+  String get notificationItineraryPublished => 'Seu roteiro foi publicado';
 
   @override
-  String notificationItineraryChanged(String travelName) {
-    return 'O roteiro de $travelName foi alterado';
-  }
-
-  @override
-  String notificationRouteReceived(String travelName) {
-    return 'Rota de $travelName recebida';
-  }
+  String get notificationItineraryChanged => 'Seu roteiro foi atualizado';
 
   @override
   String get notificationViewTripLink => 'Ver viagem';
 
   @override
   String get notificationOpenTripError => 'Não foi possível abrir esta viagem.';
+
+  @override
+  String get pushNotificationTitle => 'Compass';
 
   @override
   String get editRouteTitle => 'Editar minha rota';
@@ -802,4 +810,11 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get travelStatusTravelFinished => 'Concluída';
+
+  @override
+  String get placesAutocompleteNoResults => 'Nenhum lugar encontrado';
+
+  @override
+  String get placesAutocompleteUnavailable =>
+      'Busca indisponível — texto livre aceito';
 }

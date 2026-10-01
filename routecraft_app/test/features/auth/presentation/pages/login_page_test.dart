@@ -158,6 +158,7 @@ void main() {
       saveToken: (_) async {},
       saveClientName: (_) async {},
       saveClientEmail: (_) async {},
+      registerForPush: () async {},
     );
     final authController = AuthController(checkAuthenticated: () async => true);
 

@@ -18,8 +18,13 @@ skill) for the process these flows are part of.
 │   ├── free_time_and_step_detail.yaml   (CPS-91 / CPS-92)
 │   ├── offline_cache_seed_online.yaml   (CPS-98, phase 1/2 — run online first)
 │   └── offline_cache_cold_start.yaml    (CPS-98, phase 2/2 — run offline after)
-└── account/
-    └── account_page_and_notifications.yaml (CPS-95)
+├── account/
+│   └── account_page_and_notifications.yaml (CPS-95)
+└── places/
+    └── autocomplete_create_route.yaml (CPS-155) — busca real (sem mock)
+        contra o compass-api/Nominatim no passo de locais do wizard
+        "Create a Route": digita cidade parcial, seleciona a sugestão real,
+        confirma texto normalizado nos dois campos (origem e destino).
 ```
 
 `offline_cache_seed_online.yaml` / `offline_cache_cold_start.yaml` are a
@@ -93,3 +98,14 @@ None currently open. **CPS-92**'s `Bus`/`Airplane` empty-"Gate" defect
 (previously documented here) was fixed and reverified 2026-09-10 —
 `free_time_and_step_detail.yaml` now asserts the tile stays hidden for the
 "Bus to Kyoto" fixture step.
+
+## Known testability gap
+
+`PlacesAutocompleteField` (CPS-154) — the Start Location / Destination
+fields on the "Where are you headed?" step — cannot be reliably reached
+with `tapOn: "Start Location"` / `tapOn: "Destination"`: that only hits the
+floating label, not the actual input, and the field never gains focus.
+`autocomplete_create_route.yaml` works around this with fixed-point
+`tapOn: {point: "x,y"}` coordinates tied to this step's exact layout —
+brittle if the step's layout changes. A stable `Key`/semantics identifier
+on the input itself (not just the label) would fix this properly.

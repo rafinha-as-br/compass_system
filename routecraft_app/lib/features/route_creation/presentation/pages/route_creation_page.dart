@@ -4,10 +4,12 @@ import 'package:provider/provider.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
 import 'package:routecraft_app/features/travels/domain/entities/person.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
+import 'package:routecraft_app/shared/models/place_suggestion.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
 import 'package:routecraft_app/shared/widgets/app_text_field.dart';
 import 'package:routecraft_app/shared/widgets/date_field.dart';
+import 'package:routecraft_app/shared/widgets/places_autocomplete_field.dart';
 
 class RouteCreationPage extends StatelessWidget {
   const RouteCreationPage({super.key, this.controller});
@@ -254,9 +256,21 @@ class _LocationsStep extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          AppTextField(controller: controller.startLocationController, labelText: l10n.startLocationLabel),
+          PlacesAutocompleteField(
+            labelText: l10n.startLocationLabel,
+            initialText: controller.startLocationController.text,
+            initialCoordinate: controller.startLocationCoordinate,
+            fetchSuggestions: controller.fetchPlaceSuggestions,
+            onChanged: controller.setStartLocation,
+          ),
           const SizedBox(height: 16),
-          AppTextField(controller: controller.destinationController, labelText: l10n.destinationLabel),
+          PlacesAutocompleteField(
+            labelText: l10n.destinationLabel,
+            initialText: controller.destinationController.text,
+            initialCoordinate: controller.destinationCoordinate,
+            fetchSuggestions: controller.fetchPlaceSuggestions,
+            onChanged: controller.setDestination,
+          ),
         ],
       ),
     );
@@ -271,22 +285,29 @@ class _InterestsStep extends StatefulWidget {
 }
 
 class _InterestsStepState extends State<_InterestsStep> {
-  final _nameController = TextEditingController();
   final _descriptionController = TextEditingController();
+  String _interestName = '';
+  PlaceCoordinate? _interestCoordinate;
+  // Forces PlacesAutocompleteField to remount (fresh, empty internal state)
+  // after each add — the widget has no external controller to clear.
+  int _fieldResetKey = 0;
 
   @override
   void dispose() {
-    _nameController.dispose();
     _descriptionController.dispose();
     super.dispose();
   }
 
   void _addInterest(RouteCreationController controller) {
-    final name = _nameController.text.trim();
+    final name = _interestName.trim();
     if (name.isEmpty) return;
-    controller.addInterestPoint(name, _descriptionController.text.trim());
-    _nameController.clear();
+    controller.addInterestPoint(name, _descriptionController.text.trim(), coordinate: _interestCoordinate);
     _descriptionController.clear();
+    setState(() {
+      _interestName = '';
+      _interestCoordinate = null;
+      _fieldResetKey++;
+    });
   }
 
   @override
@@ -314,7 +335,15 @@ class _InterestsStepState extends State<_InterestsStep> {
             ),
             const SizedBox(height: 16),
           ],
-          AppTextField(controller: _nameController, labelText: l10n.routeCreationInterestNameLabel),
+          PlacesAutocompleteField(
+            key: ValueKey(_fieldResetKey),
+            labelText: l10n.routeCreationInterestNameLabel,
+            fetchSuggestions: controller.fetchPlaceSuggestions,
+            onChanged: (result) => setState(() {
+              _interestName = result.text;
+              _interestCoordinate = result.coordinate;
+            }),
+          ),
           const SizedBox(height: 16),
           AppTextField(controller: _descriptionController, labelText: l10n.routeCreationInterestDescriptionLabel),
           const SizedBox(height: 8),

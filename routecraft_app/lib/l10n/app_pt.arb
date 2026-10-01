@@ -38,10 +38,14 @@
   "accountSettingsNav": "Conta e Configurações",
   "homeGreeting": "Olá, {name}",
   "homeSectionInProgress": "Em andamento",
-  "homeSectionUpcoming": "Próximas",
-  "homeSectionCompleted": "Concluídas",
   "homeEmptyMessage": "Descreva a viagem que você quer fazer e seu agente monta o roteiro.",
   "homeEmptyCta": "Criar minha primeira rota",
+  "homeNoRoutesTitle": "Nenhuma rota ainda",
+  "homeNoRoutesMessage": "Crie sua primeira rota para começar a viajar.",
+  "homeNoTripInProgressTitle": "Nenhuma viagem em andamento",
+  "homeNoTripInProgressMessage": "Suas próximas viagens estão na aba Viagens.",
+  "homeCreateRouteCta": "Criar rota",
+  "homeSeeMyTripsLink": "Ver minhas viagens",
 
   "networkErrorTitle": "Não foi possível carregar",
   "networkErrorMessage": "Verifique sua conexão e tente novamente.",
@@ -148,11 +152,11 @@
   "notificationsTitle": "Avisos",
   "notificationsMarkAllRead": "marcar lidos",
   "notificationsEmptyMessage": "Nenhum aviso ainda.",
-  "notificationItineraryPublished": "Seu roteiro de {travelName} foi publicado",
-  "notificationItineraryChanged": "O roteiro de {travelName} foi alterado",
-  "notificationRouteReceived": "Rota de {travelName} recebida",
+  "notificationItineraryPublished": "Seu roteiro foi publicado",
+  "notificationItineraryChanged": "Seu roteiro foi atualizado",
   "notificationViewTripLink": "Ver viagem",
   "notificationOpenTripError": "Não foi possível abrir esta viagem.",
+  "pushNotificationTitle": "Compass",
 
   "editRouteTitle": "Editar minha rota",
   "editRouteSaveButton": "SALVAR",
@@ -242,5 +246,8 @@
   "travelStatusRouteCreated": "Aguardando agente",
   "travelStatusItineraryCreated": "Itinerário publicado",
   "travelStatusTravelStarted": "Em andamento",
-  "travelStatusTravelFinished": "Concluída"
+  "travelStatusTravelFinished": "Concluída",
+
+  "placesAutocompleteNoResults": "Nenhum lugar encontrado",
+  "placesAutocompleteUnavailable": "Busca indisponível — texto livre aceito"
 }

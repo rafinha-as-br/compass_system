@@ -3,11 +3,16 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 
+import 'package:travel_matrix/core/constants/api_fields.dart';
+import 'package:travel_matrix/core/services/places_suggestions_service.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/models/place_suggestion.dart';
 import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
+import 'package:travel_matrix/shared/widgets/form_error_message.dart';
+import 'package:travel_matrix/shared/widgets/places_autocomplete_field.dart';
 
 /// Page for editing the [RoutePlan] of an existing travel.
 ///
@@ -18,10 +23,17 @@ import 'package:travel_matrix/shared/widgets/back_icon_button.dart';
 ///
 /// Layout: Form with inputs for locations, dates, and dynamic interest points.
 class RouteCreationPage extends StatefulWidget {
-  const RouteCreationPage({super.key, required this.travel});
+  const RouteCreationPage({
+    super.key,
+    required this.travel,
+    this.fetchSuggestions = fetchPlaceSuggestions,
+  });
 
   /// The existing travel whose route is being edited.
   final TravelViewModel travel;
+
+  /// Overridable in tests — defaults to the real network-backed lookup.
+  final Future<List<PlaceSuggestion>> Function(String query) fetchSuggestions;
 
   @override
   State<RouteCreationPage> createState() => _RouteCreationPageState();
@@ -29,14 +41,21 @@ class RouteCreationPage extends StatefulWidget {
 
 class _RouteCreationPageState extends State<RouteCreationPage> {
   final _formKey = GlobalKey<FormState>();
-  late final TextEditingController _startLocationCtrl;
-  late final TextEditingController _destinationCtrl;
+  late String _startLocation;
+  late PlaceCoordinate? _startLocationCoordinate;
+  late String _destination;
+  late PlaceCoordinate? _destinationCoordinate;
   late DateTime _startDate;
   late DateTime _endDate;
   late List<InterestPointViewModel> _interestPoints;
+  // See PlacesAutocompleteField isn't a FormField: same manual-touch pattern
+  // as TravelCreationPage.
+  bool _locationsTouched = false;
 
-  final _poiNameCtrl = TextEditingController();
+  String _poiName = '';
+  PlaceCoordinate? _poiCoordinate;
   final _poiDescCtrl = TextEditingController();
+  int _poiFieldResetKey = 0;
 
   bool _isSubmitting = false;
 
@@ -44,8 +63,10 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
   void initState() {
     super.initState();
     final route = widget.travel.route;
-    _startLocationCtrl = TextEditingController(text: route.start);
-    _destinationCtrl = TextEditingController(text: route.destination);
+    _startLocation = route.start;
+    _startLocationCoordinate = route.startCoordinate;
+    _destination = route.destination;
+    _destinationCoordinate = route.destinationCoordinate;
     _startDate = route.startDate;
     _endDate = route.endDate;
     _interestPoints = List.from(route.interests);
@@ -53,29 +74,32 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
 
   @override
   void dispose() {
-    _startLocationCtrl.dispose();
-    _destinationCtrl.dispose();
-    _poiNameCtrl.dispose();
     _poiDescCtrl.dispose();
     super.dispose();
   }
 
   void _addInterestPoint() {
-    if (_poiNameCtrl.text.isEmpty) return;
+    if (_poiName.isEmpty) return;
     setState(() {
       _interestPoints.add(InterestPointViewModel(
         localId: 'poi_${DateTime.now().millisecondsSinceEpoch}',
         backEndId: null,
-        name: _poiNameCtrl.text,
+        name: _poiName,
         description: _poiDescCtrl.text,
+        coordinate: _poiCoordinate,
       ));
-      _poiNameCtrl.clear();
+      _poiName = '';
+      _poiCoordinate = null;
+      _poiFieldResetKey++;
       _poiDescCtrl.clear();
     });
   }
 
   Future<void> _submit() async {
-    if (!_formKey.currentState!.validate()) return;
+    setState(() => _locationsTouched = true);
+    final locationsValid = _startLocation.trim().isNotEmpty && _destination.trim().isNotEmpty;
+    if (!_formKey.currentState!.validate() || !locationsValid) return;
+
     setState(() => _isSubmitting = true);
 
     final controller = context.read<TravelsController>();
@@ -83,14 +107,17 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
     final success = await controller.updateRoute(widget.travel.localId, {
       'startDate': _startDate.toIso8601String(),
       'endDate': _endDate.toIso8601String(),
-      'startLocation': _startLocationCtrl.text,
-      'destination': _destinationCtrl.text,
+      'startLocation': _startLocation,
+      'destination': _destination,
+      RoutePlanApiFields.startLocationCoordinate: _startLocationCoordinate?.toJson(),
+      RoutePlanApiFields.destinationCoordinate: _destinationCoordinate?.toJson(),
       // Map back to API format (or domain format if the controller handles it)
       'interestsList': _interestPoints.map((p) {
         return {
           'id': p.backEndId ?? p.localId,
           'name': p.name,
           'description': p.description,
+          InterestPointApiFields.coordinate: p.coordinate?.toJson(),
         };
       }).toList(),
     });
@@ -143,28 +170,45 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
 
                   // ─── Locations ──────────────────────────────────────
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: TextFormField(
-                          controller: _startLocationCtrl,
-                          decoration: InputDecoration(
-                            labelText: l10n.startLocationLabel,
-                            border: const OutlineInputBorder(),
-                          ),
-                          validator: (v) =>
-                              v!.isEmpty ? l10n.requiredField : null,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PlacesAutocompleteField(
+                              labelText: l10n.startLocationLabel,
+                              fetchSuggestions: widget.fetchSuggestions,
+                              initialText: _startLocation,
+                              initialCoordinate: _startLocationCoordinate,
+                              onChanged: (result) => setState(() {
+                                _startLocation = result.text;
+                                _startLocationCoordinate = result.coordinate;
+                              }),
+                            ),
+                            if (_locationsTouched && _startLocation.trim().isEmpty)
+                              FormErrorMessage(message: l10n.requiredField),
+                          ],
                         ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
-                        child: TextFormField(
-                          controller: _destinationCtrl,
-                          decoration: InputDecoration(
-                            labelText: l10n.destinationLabel,
-                            border: const OutlineInputBorder(),
-                          ),
-                          validator: (v) =>
-                              v!.isEmpty ? l10n.requiredField : null,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            PlacesAutocompleteField(
+                              labelText: l10n.destinationLabel,
+                              fetchSuggestions: widget.fetchSuggestions,
+                              initialText: _destination,
+                              initialCoordinate: _destinationCoordinate,
+                              onChanged: (result) => setState(() {
+                                _destination = result.text;
+                                _destinationCoordinate = result.coordinate;
+                              }),
+                            ),
+                            if (_locationsTouched && _destination.trim().isEmpty)
+                              FormErrorMessage(message: l10n.requiredField),
+                          ],
                         ),
                       ),
                     ],
@@ -236,14 +280,17 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
                   ),
                   const SizedBox(height: 8),
                   Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Expanded(
-                        child: TextField(
-                          controller: _poiNameCtrl,
-                          decoration: InputDecoration(
-                            labelText: l10n.pointNameLabel,
-                            border: const OutlineInputBorder(),
-                          ),
+                        child: PlacesAutocompleteField(
+                          key: ValueKey(_poiFieldResetKey),
+                          labelText: l10n.pointNameLabel,
+                          fetchSuggestions: widget.fetchSuggestions,
+                          onChanged: (result) => setState(() {
+                            _poiName = result.text;
+                            _poiCoordinate = result.coordinate;
+                          }),
                         ),
                       ),
                       const SizedBox(width: 8),

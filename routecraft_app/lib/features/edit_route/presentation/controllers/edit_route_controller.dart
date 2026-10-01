@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:uuid/uuid.dart';
 import 'package:routecraft_app/core/entities/result.dart';
+import 'package:routecraft_app/core/network/clients/places_api_client.dart';
+import 'package:routecraft_app/core/network/http_api_client.dart';
+import 'package:routecraft_app/core/services/auth_service.dart';
 import 'package:routecraft_app/features/travels/data/repositories/participants_repository_impl.dart';
 import 'package:routecraft_app/features/travels/data/repositories/route_repository_impl.dart';
 import 'package:routecraft_app/features/travels/domain/entities/person.dart';
@@ -8,6 +11,7 @@ import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/participants_usecases.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/route_usecases.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
+import 'package:routecraft_app/shared/models/place_suggestion.dart';
 import 'package:routecraft_app/shared/utils/date_formatting.dart';
 
 class EditRouteState {
@@ -43,13 +47,19 @@ class EditRouteController extends ChangeNotifier {
     required List<Person> originalParticipants,
     RouteUseCases? routeUseCases,
     ParticipantsUseCases? participantsUseCases,
+    PlacesApiClient? placesApiClient,
+    Future<String?> Function()? getToken,
   })  : interestPoints = [...original.interestsList],
         startDate = original.startDate,
         endDate = original.endDate,
         participants = [...originalParticipants],
         _originalParticipants = originalParticipants,
         _routeUseCasesOverride = routeUseCases,
-        _participantsUseCasesOverride = participantsUseCases {
+        _participantsUseCasesOverride = participantsUseCases,
+        _placesApiClientOverride = placesApiClient,
+        _getTokenOverride = getToken,
+        startLocationCoordinate = original.startLocationCoordinate,
+        destinationCoordinate = original.destinationCoordinate {
     startLocationController = TextEditingController(text: original.startLocation)..addListener(notifyListeners);
     destinationController = TextEditingController(text: original.destination)..addListener(notifyListeners);
   }
@@ -70,6 +80,19 @@ class EditRouteController extends ChangeNotifier {
   ParticipantsUseCases get _participantsUseCases =>
       _participantsUseCasesOverride ?? ParticipantsUseCases(ParticipantsRepositoryImpl());
 
+  final PlacesApiClient? _placesApiClientOverride;
+  PlacesApiClient get _placesApiClient => _placesApiClientOverride ?? PlacesApiClient(HttpApiClient.instance);
+
+  final Future<String?> Function()? _getTokenOverride;
+  Future<String?> _getToken() => (_getTokenOverride ?? AuthService.instance.getToken)();
+
+  /// Passed as `fetchSuggestions` to [PlacesAutocompleteField] — resolves
+  /// the auth token itself so the view never has to know about it.
+  Future<List<PlaceSuggestion>> fetchPlaceSuggestions(String query) async {
+    final token = await _getToken();
+    return _placesApiClient.autocomplete(token ?? '', query);
+  }
+
   EditRouteState _state = const EditRouteState();
   EditRouteState get state => _state;
 
@@ -77,6 +100,20 @@ class EditRouteController extends ChangeNotifier {
   DateTime endDate;
   late final TextEditingController startLocationController;
   late final TextEditingController destinationController;
+  PlaceCoordinate? startLocationCoordinate;
+  PlaceCoordinate? destinationCoordinate;
+
+  /// See [RouteCreationController.setStartLocation] — same mirroring
+  /// reason: [PlacesAutocompleteField] owns its own text field internally.
+  void setStartLocation(PlaceAutocompleteResult result) {
+    startLocationController.text = result.text;
+    startLocationCoordinate = result.coordinate;
+  }
+
+  void setDestination(PlaceAutocompleteResult result) {
+    destinationController.text = result.text;
+    destinationCoordinate = result.coordinate;
+  }
 
   /// Every interest point currently on the form — original ones plus any
   /// added this session. A point marked in [_pendingRemovalIds] stays in
@@ -97,8 +134,14 @@ class EditRouteController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addInterestPoint(String name, String description) {
-    interestPoints.add(InterestPoint(domainId: const Uuid().v4(), backEndId: null, name: name, description: description));
+  void addInterestPoint(String name, String description, {PlaceCoordinate? coordinate}) {
+    interestPoints.add(InterestPoint(
+      domainId: const Uuid().v4(),
+      backEndId: null,
+      name: name,
+      description: description,
+      coordinate: coordinate,
+    ));
     notifyListeners();
   }
 
@@ -191,8 +234,15 @@ class EditRouteController extends ChangeNotifier {
 
   bool get startDateChanged => startDate != original.startDate;
   bool get endDateChanged => endDate != original.endDate;
-  bool get startLocationChanged => startLocationController.text.trim() != original.startLocation;
-  bool get destinationChanged => destinationController.text.trim() != original.destination;
+  // Compares coordinate too, not just text: re-picking a suggestion for a
+  // place whose display text happens to match the original would otherwise
+  // look unchanged and the refreshed coordinate would never reach submit().
+  bool get startLocationChanged =>
+      startLocationController.text.trim() != original.startLocation ||
+      startLocationCoordinate != original.startLocationCoordinate;
+  bool get destinationChanged =>
+      destinationController.text.trim() != original.destination ||
+      destinationCoordinate != original.destinationCoordinate;
 
   /// Points added this session and not since undone-by-removal — an added
   /// point that gets marked for removal again before submitting cancels out
@@ -240,6 +290,8 @@ class EditRouteController extends ChangeNotifier {
         startLocation: startLocationController.text.trim(),
         destination: destinationController.text.trim(),
         interestsList: _submittedInterestPoints,
+        startLocationCoordinate: startLocationCoordinate,
+        destinationCoordinate: destinationCoordinate,
       );
 
       final result = await _routeUseCases.updateRoute(travelId, updated);

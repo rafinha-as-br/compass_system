@@ -122,7 +122,6 @@
   "agentSettings": "Agent Settings",
   "systemPreferences": "System Preferences",
   "adminDarkMode": "Admin Dark Mode",
-  "logOutOfMatrix": "Log Out of Matrix",
   "languageLabel": "Language",
 
   "dashboardWelcome": "Welcome, {name}",
@@ -157,9 +156,10 @@
   "failedToLoadProfile": "Unable to load your profile right now. Please try again later.",
   "currentPassword": "Current Password",
   "newPassword": "New Password",
-  "digitalConcierge": "THE DIGITAL CONCIERGE",
+  "compassSystemBrand": "Compass System",
   "dashboardNav": "Dashboard",
   "bookingNav": "Booking",
+  "myAccountNav": "My Account",
   "settingsNav": "Settings",
   "supportNav": "Support",
   "logoutNav": "Logout",
@@ -239,16 +239,85 @@
   "editRouteTitle": "Edit Route",
   "updateRouteButton": "UPDATE ROUTE",
   "createTravelButton": "CREATE TRAVEL",
-  "markAsReadyButton": "Mark as Ready",
-  "markAsReadyConfirm": "Are you sure you want to mark this travel as ready?",
+  "editMenuLabel": "Edit",
+  "prepareTravelButton": "Prepare travel",
   "confirmButton": "Confirm",
-  "markAsReadySuccess": "Travel marked as ready successfully",
-  "markAsReadyFailure": "Failed to mark travel as ready",
+  "prepareTravelSuccess": "Travel prepared successfully",
+  "prepareTravelFailure": "Failed to prepare travel",
   "needsItineraryFirstTooltip": "You need to create an itinerary first",
-  "markAsReadyTooltip": "Mark travel as ready",
+  "prepareTravelTooltip": "Prepare travel",
   "travelActionsMenuTooltip": "Travel actions",
+  "prepareTravelDialogTitle": "Prepare travel?",
+  "prepareTravelDialogSubtitle": "Review the summary before marking the first itinerary version as ready.",
+  "prepareTravelSummaryTravelLabel": "Travel",
+  "prepareTravelSummaryStatusLabel": "Current status",
+  "prepareTravelSummaryParticipantsLabel": "Participants",
+  "prepareTravelSummaryStartDateLabel": "Start date",
+  "prepareTravelSummaryEndDateLabel": "End date",
+  "itinerarySummarySectionTitle": "ITINERARY",
+  "overviewViewTab": "Overview",
   "routeViewTab": "Route View",
   "itineraryViewTab": "Itinerary View",
+  "participantsViewTab": "Participants",
+  "addParticipantButton": "Add participant",
+  "addParticipantDialogTitle": "Add participant",
+  "participantNameFieldLabel": "Name",
+  "participantAgeFieldLabel": "Age",
+  "noParticipantsTitle": "No participants yet",
+  "noParticipantsMessage": "Add the people traveling to keep this list up to date.",
+  "removeParticipantTooltip": "Remove participant",
+  "removeParticipantConfirmTitle": "Remove participant?",
+  "removeParticipantConfirmMessage": "Remove {name} from this travel?",
+  "@removeParticipantConfirmMessage": {
+    "placeholders": {
+      "name": { "type": "String" }
+    }
+  },
+  "retryButton": "Try again",
+  "failedToUpdateParticipants": "Could not update participants. Please try again.",
+  "participantAgeYears": "{age} years old",
+  "@participantAgeYears": {
+    "placeholders": {
+      "age": { "type": "String" }
+    }
+  },
+  "overviewRouteLabel": "ROUTE",
+  "overviewDurationLabel": "Duration",
+  "overviewDurationInDays": "{count} days",
+  "@overviewDurationInDays": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "travelStatusNotReadyLabel": "Not Ready",
+  "travelStatusReadyLabel": "Ready",
+  "travelStatusInProgressLabel": "In Progress",
+  "travelStatusCompletedLabel": "Completed",
+  "travelStatusNotReadySupportLine": "Route created, itinerary pending",
+  "travelStatusReadySupportLine": "Itinerary created",
+  "travelStatusInProgressSupportLine": "Travel underway",
+  "travelStatusCompletedSupportLine": "Travel finished",
+  "overviewParticipantsLabel": "PARTICIPANTS",
+  "overviewParticipantsCaption": "people on this trip",
+  "overviewParticipantsMore": "and {count} more",
+  "@overviewParticipantsMore": {
+    "placeholders": {
+      "count": { "type": "int" }
+    }
+  },
+  "overviewViewParticipantsAction": "View participants →",
+  "overviewItineraryLabel": "ITINERARY",
+  "overviewItineraryStepsSummary": "{count} steps · by {agentName}",
+  "@overviewItineraryStepsSummary": {
+    "placeholders": {
+      "count": { "type": "int" },
+      "agentName": { "type": "String" }
+    }
+  },
+  "overviewViewItineraryAction": "View full itinerary",
+  "overviewNoItineraryTitle": "No itinerary created yet",
+  "overviewNoItinerarySupport": "Create the itinerary to get this travel ready for the client.",
+  "overviewCreateItineraryAction": "Create itinerary",
   "travelersCount": "{count} Travelers",
   "@travelersCount": {
     "placeholders": {
@@ -346,5 +415,22 @@
   "checkInAfterCheckOutError": "Check in cannot be after check out",
   "checkOutBeforeCheckInError": "Check out cannot be before check in",
   "deleteStepTooltip": "Delete step",
-  "sessionExpiredMessage": "Session expired. Please sign in again."
+  "sessionExpiredMessage": "Session expired. Please sign in again.",
+
+  "placesAutocompleteNoResults": "No places found",
+  "placesAutocompleteUnavailable": "Search unavailable — free text accepted",
+
+  "pickupLocationLabel": "Pickup location",
+  "pickupLocationRequiredValidation": "Pickup location is required",
+
+  "notificationsBellTooltip": "Notifications",
+  "notificationsTitle": "Notifications",
+  "notificationsMarkAllRead": "Mark all as read",
+  "notificationsEmptyTitle": "No notifications yet",
+  "notificationsEmptyMessage": "When a client creates or edits a route, the alert shows up here.",
+  "failedToLoadNotifications": "Unable to load your notifications right now. Please try again later.",
+  "notificationsToday": "Today",
+  "notificationsYesterday": "Yesterday",
+  "notificationRouteCreated": "A client created a route for one of your travels.",
+  "notificationRouteEdited": "A client edited the route of one of your travels."
 }

@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/core/services/auth_service.dart';
-import 'package:routecraft_app/features/notifications/data/repositories/secure_notification_storage.dart';
-import 'package:routecraft_app/features/notifications/domain/repositories/notification_storage.dart';
+import 'package:routecraft_app/features/notifications/data/repositories/notification_repository_impl.dart';
+import 'package:routecraft_app/features/notifications/domain/usecases/notification_usecases.dart';
 import 'package:routecraft_app/features/travels/data/repositories/travel_repository_impl.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
@@ -35,9 +35,9 @@ class AccountController extends ChangeNotifier {
   final TravelUseCases? _travelUseCasesOverride;
   final Future<String?> Function()? _getClientNameOverride;
   final Future<String?> Function()? _getClientEmailOverride;
-  final NotificationStorage? _notificationStorageOverride;
+  final NotificationUseCases? _notificationUseCasesOverride;
 
-  /// [travelUseCases]/[getClientName]/[getClientEmail]/[notificationStorage]
+  /// [travelUseCases]/[getClientName]/[getClientEmail]/[notificationUseCases]
   /// are injectable for tests, without depending on the real
   /// network/storage/singleton wiring (`AuthService.instance` is only
   /// touched when no override is given).
@@ -45,11 +45,11 @@ class AccountController extends ChangeNotifier {
     TravelUseCases? travelUseCases,
     Future<String?> Function()? getClientName,
     Future<String?> Function()? getClientEmail,
-    NotificationStorage? notificationStorage,
+    NotificationUseCases? notificationUseCases,
   })  : _travelUseCasesOverride = travelUseCases,
         _getClientNameOverride = getClientName,
         _getClientEmailOverride = getClientEmail,
-        _notificationStorageOverride = notificationStorage {
+        _notificationUseCasesOverride = notificationUseCases {
     _fetchData();
   }
 
@@ -60,10 +60,11 @@ class AccountController extends ChangeNotifier {
       : _travelUseCasesOverride = null,
         _getClientNameOverride = null,
         _getClientEmailOverride = null,
-        _notificationStorageOverride = null;
+        _notificationUseCasesOverride = null;
 
   TravelUseCases get _travelUseCases => _travelUseCasesOverride ?? TravelUseCases(TravelRepositoryImpl());
-  NotificationStorage get _notificationStorage => _notificationStorageOverride ?? SecureNotificationStorage();
+  NotificationUseCases get _notificationUseCases =>
+      _notificationUseCasesOverride ?? NotificationUseCases(NotificationRepositoryImpl());
 
   Future<String?> _getClientName() =>
       (_getClientNameOverride ?? AuthService.instance.getClientName)();
@@ -119,13 +120,16 @@ class AccountController extends ChangeNotifier {
     return null;
   }
 
-  /// Isolated in its own try/catch so a notification-storage failure only
+  /// Isolated in its own try/catch so a notification-count failure only
   /// zeroes the unread badge instead of degrading the whole account view
   /// (name/email/agent) the way the outer catch in [_fetchData] would.
   Future<int> _unreadNotificationsCount() async {
     try {
-      final notifications = await _notificationStorage.loadNotifications();
-      return notifications.where((n) => !n.read).length;
+      final result = await _notificationUseCases.getUnreadCount();
+      return switch (result) {
+        Success<int>(data: final count) => count,
+        Failure<int>() => 0,
+      };
     } catch (error) {
       debugPrint('AccountController: failed to load notifications: $error');
       return 0;
