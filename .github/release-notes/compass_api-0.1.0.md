@@ -12,5 +12,7 @@ Rotas e as etapas de um itinerário — hospedagem, voo, ônibus, carro alugado 
 
 Corrigida uma falha que impedia a aplicação de uma atualização de banco em instalações que já tinham viagens cadastradas, ao definir o status inicial de um itinerário recém-criado.
 
+Criar um roteiro novo agora também notifica o agente responsável — antes, só editar um roteiro já existente disparava o aviso.
+
 ---
 Issues: CPS-145, CPS-146, CPS-152, CPS-153, CPS-166
