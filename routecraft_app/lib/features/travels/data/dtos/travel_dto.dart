@@ -8,6 +8,8 @@ import 'route_dto.dart';
 class TravelDTO {
   final String? id;
   final String clientName;
+  final String? clientId;
+  final String? agentId;
   final String travelName;
   final String travelStatus;
   final RoutePlanDTO routePlan;
@@ -22,6 +24,8 @@ class TravelDTO {
     required this.travelStatus,
     required this.routePlan,
     required this.participants,
+    this.clientId,
+    this.agentId,
     this.itinerary,
     this.observations,
   });
@@ -31,6 +35,8 @@ class TravelDTO {
     return TravelDTO(
       id: json[TravelApiFields.id]?.toString(),
       clientName: json[TravelApiFields.clientName]?.toString() ?? '',
+      clientId: json[TravelApiFields.clientId]?.toString(),
+      agentId: json[TravelApiFields.agentId]?.toString(),
       travelName: json[TravelApiFields.travelName]?.toString() ?? '',
       travelStatus: json[TravelApiFields.travelStatus]?.toString() ?? 'route_created',
       routePlan: RoutePlanDTO.fromJson(
@@ -48,6 +54,8 @@ class TravelDTO {
     return {
       TravelApiFields.id: id,
       TravelApiFields.clientName: clientName,
+      TravelApiFields.clientId: clientId,
+      TravelApiFields.agentId: agentId,
       TravelApiFields.travelName: travelName,
       TravelApiFields.travelStatus: travelStatus,
       TravelApiFields.routePlan: routePlan.toJson(),
@@ -62,6 +70,8 @@ class TravelDTO {
       domainId: const Uuid().v4(),
       backEndId: id,
       clientName: clientName,
+      clientId: clientId,
+      agentId: agentId,
       travelName: travelName,
       travelStatus: TravelStatus.fromApiValue(travelStatus),
       routePlan: routePlan.toDomain(),
@@ -75,6 +85,8 @@ class TravelDTO {
     return TravelDTO(
       id: travel.backEndId,
       clientName: travel.clientName,
+      clientId: travel.clientId,
+      agentId: travel.agentId,
       travelName: travel.travelName,
       travelStatus: travel.travelStatus.toApiValue(),
       routePlan: RoutePlanDTO.fromDomain(travel.routePlan),

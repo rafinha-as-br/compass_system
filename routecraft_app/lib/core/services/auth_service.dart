@@ -42,6 +42,17 @@ class AuthService {
     return await _storage.read(key: 'client_name');
   }
 
+  /// The authenticated client's own id — read straight from the stored
+  /// token's `userId` claim (same claim `JwtUtil.generateToken` embeds on
+  /// the backend), no extra storage key or network call needed.
+  Future<String?> getClientId() async {
+    final token = await getToken();
+    if (token == null) return null;
+
+    final claims = _decodeClaims(token);
+    return claims?['userId']?.toString();
+  }
+
   /// Persists the authenticated client's email — shown on the Account
   /// screen. Unlike [saveClientName], nothing else keys data off this.
   Future<void> saveClientEmail(String email) async {
