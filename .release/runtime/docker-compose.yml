@@ -7,6 +7,8 @@ services:
       POSTGRES_USER: compass_user
       POSTGRES_PASSWORD: compass_password
       POSTGRES_DB: compass_db
+    ports:
+      - "5432:5432"
     volumes:
       - compass_pgdata:/var/lib/postgresql/data
     healthcheck:
