@@ -20,6 +20,7 @@ direto no aparelho a partir da Release do componente.
 | --- | --- |
 | Travel Matrix | http://localhost:8082 |
 | API | http://localhost:8081 |
+| RabbitMQ (management) | http://localhost:15672 |
 
 ## De onde vem cada parte
 
@@ -45,5 +46,5 @@ Para zerar o banco de verdade: `docker compose down -v`
 | --- | --- |
 | "Falhou. O Docker Desktop está aberto?" | Abra o Docker Desktop, espere ficar verde, rode de novo. |
 | API não responde em 3 min | `docker compose logs backend` |
-| Porta 8081/8082 em uso | Feche o que estiver usando, ou edite as portas no `docker-compose.yml`. |
+| Porta 8081/8082/5672/15672/8083 em uso | Feche o que estiver usando, ou edite as portas no `docker-compose.yml`. |
 | Tela branca no navegador | Ctrl+Shift+R (o service worker do Flutter às vezes cacheia build antigo). |

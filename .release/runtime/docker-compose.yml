@@ -17,6 +17,26 @@ services:
       timeout: 3s
       retries: 30
 
+  # Broker AMQP para os eventos de notificação (CPS-146) — sem ele, o backend
+  # ainda sobe e persiste normalmente, mas NotificationEventRelay nunca
+  # consegue publicar o evento (falha silenciosa, só logada) e a fila de
+  # notificação do mobile/web fica sempre vazia.
+  rabbitmq:
+    image: rabbitmq:3-management
+    environment:
+      RABBITMQ_DEFAULT_USER: compass_user
+      RABBITMQ_DEFAULT_PASS: compass_password
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+
+  # Relay self-hosted de UnifiedPush (CPS-146) — push Android do RouteCraft.
+  ntfy:
+    image: binwiederhier/ntfy
+    command: serve
+    ports:
+      - "8083:80"
+
   backend:
     build:
       context: ..
@@ -26,10 +46,15 @@ services:
     depends_on:
       db:
         condition: service_healthy
+      rabbitmq:
+        condition: service_started
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/compass_db
       SPRING_DATASOURCE_USERNAME: compass_user
       SPRING_DATASOURCE_PASSWORD: compass_password
+      SPRING_RABBITMQ_HOST: rabbitmq
+      SPRING_RABBITMQ_USERNAME: compass_user
+      SPRING_RABBITMQ_PASSWORD: compass_password
 
   travel-matrix:
     image: nginx:alpine
