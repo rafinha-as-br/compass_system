@@ -61,22 +61,26 @@ class RouteCreationController extends ChangeNotifier {
 
   final TravelUseCases? _travelUseCasesOverride;
   final Future<String?> Function()? _getClientNameOverride;
+  final Future<String?> Function()? _getClientIdOverride;
   final Future<void> Function()? _requestNotificationPermissionOverride;
   final PlacesApiClient? _placesApiClientOverride;
   final Future<String?> Function()? _getTokenOverride;
 
-  /// [travelUseCases]/[getClientName]/[requestNotificationPermission]/
-  /// [placesApiClient]/[getToken] are injectable for tests, without
-  /// depending on the real network/singleton wiring (`AuthService.instance`/
-  /// `HttpApiClient.instance` are only touched when no override is given).
+  /// [travelUseCases]/[getClientName]/[getClientId]/
+  /// [requestNotificationPermission]/[placesApiClient]/[getToken] are
+  /// injectable for tests, without depending on the real network/singleton
+  /// wiring (`AuthService.instance`/`HttpApiClient.instance` are only
+  /// touched when no override is given).
   RouteCreationController({
     TravelUseCases? travelUseCases,
     Future<String?> Function()? getClientName,
+    Future<String?> Function()? getClientId,
     Future<void> Function()? requestNotificationPermission,
     PlacesApiClient? placesApiClient,
     Future<String?> Function()? getToken,
   })  : _travelUseCasesOverride = travelUseCases,
         _getClientNameOverride = getClientName,
+        _getClientIdOverride = getClientId,
         _requestNotificationPermissionOverride = requestNotificationPermission,
         _placesApiClientOverride = placesApiClient,
         _getTokenOverride = getToken {
@@ -94,6 +98,7 @@ class RouteCreationController extends ChangeNotifier {
   RouteCreationController.withState(this._state)
       : _travelUseCasesOverride = null,
         _getClientNameOverride = null,
+        _getClientIdOverride = null,
         _requestNotificationPermissionOverride = null,
         _placesApiClientOverride = null,
         _getTokenOverride = null;
@@ -102,6 +107,9 @@ class RouteCreationController extends ChangeNotifier {
 
   Future<String?> _getClientName() =>
       (_getClientNameOverride ?? AuthService.instance.getClientName)();
+
+  Future<String?> _getClientId() =>
+      (_getClientIdOverride ?? AuthService.instance.getClientId)();
 
   Future<void> _requestNotificationPermission() =>
       (_requestNotificationPermissionOverride ?? PushPermissionService.requestIfNeeded)();
@@ -307,7 +315,7 @@ class RouteCreationController extends ChangeNotifier {
     );
 
     final observations = observationsController.text.trim();
-    final clientId = await AuthService.instance.getClientId();
+    final clientId = await _getClientId();
 
     final travel = Travel(
       domainId: const Uuid().v4(),

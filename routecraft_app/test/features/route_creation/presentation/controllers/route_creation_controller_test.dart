@@ -31,6 +31,7 @@ Future<RouteCreationController> _controllerAtReview({
   final controller = RouteCreationController(
     travelUseCases: travelUseCases,
     getClientName: getClientName,
+    getClientId: () async => 'client-1',
     requestNotificationPermission: requestNotificationPermission ?? () async {},
   );
   await Future<void>.delayed(Duration.zero); // let the client auto-participant load
