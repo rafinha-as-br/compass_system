@@ -115,6 +115,22 @@ product defect (OS compatibility banner, unrelated to app code); if the AVD
 is recreated on an older Android image this step becomes a no-op (optional,
 won't fail).
 
+## Gotcha: Notification card merges text into one Semantics node (same pattern as TravelCard)
+
+Confirmed 2026-10-01, re-verification round for CPS-143 after the Kotlin
+plugin hotfix (`ab6d241`). The notification list item (`NotificationCard`,
+CPS-147) exposes title + timestamp as one combined `accessibilityText`
+(`"Your itinerary was published\n00:21"`), same as the already-documented
+`TravelCard` limitation above. `assertVisible: "Your itinerary was
+published"` (exact string, no wildcard) fails even though the text is
+visibly on screen and `extendedWaitUntil` was given — confirmed via the
+`screen-hierarchy` JSON dump (`.maestro/tests/<run>/.../screen-hierarchy/`),
+not a timing flake. Use a wildcard regex matching into the merged node
+instead, e.g. `".*Your itinerary was published.*00:.*"`. If a flow here
+ever needs to assert notification text, use this pattern — not the
+TravelCard flows' `takeScreenshot`-only workaround, since the message text
+here is useful to assert directly once wildcarded.
+
 ## Known testability gap
 
 `PlacesAutocompleteField` (CPS-154) — the Start Location / Destination
