@@ -46,6 +46,19 @@ class Travel {
   final String? backEndId;
 
   final String clientName;
+
+  /// The authenticated client's own id — set at creation so the backend can
+  /// resolve a CLIENT-type notification recipient (see
+  /// NotificationRecipientType). Travel Matrix has sent its own
+  /// clientId/agentId since the start; RouteCraft only started doing it once
+  /// the gap was found (fila de notificação sempre vazia ao criar roteiro).
+  final String? clientId;
+
+  /// The agent assigned to this travel. RouteCraft has no agent-assignment
+  /// flow yet, so this is always the hardcoded fallback agent for now — see
+  /// [RouteCreationController.submitRoute].
+  final String? agentId;
+
   final String travelName;
   TravelStatus travelStatus;
   final RoutePlan routePlan;
@@ -64,6 +77,8 @@ class Travel {
     required this.travelStatus,
     required this.routePlan,
     required this.participantsList,
+    this.clientId,
+    this.agentId,
     this.itinerary,
     this.observations,
   });

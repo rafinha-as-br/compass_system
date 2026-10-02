@@ -14,6 +14,8 @@ abstract final class CommonApiFields {
 abstract final class TravelApiFields {
   static const String id = CommonApiFields.id;
   static const String clientName = 'clientName';
+  static const String clientId = 'clientId';
+  static const String agentId = 'agentId';
   static const String travelName = 'travelName';
   static const String travelStatus = 'travelStatus';
   static const String routePlan = 'routePlan';

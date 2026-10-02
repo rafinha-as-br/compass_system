@@ -42,9 +42,20 @@ public class TravelController {
 
     // ─── POST /travels ─────────────────────────────────────────────────────────
     // Creates a new Travel. All nested id fields may be null; backend assigns them.
+    // @Transactional for the same reason as the upsert endpoints below: the
+    // notification must never fire for a create that ends up rolled back.
+    @Transactional
     @PostMapping
     public ResponseEntity<Travel> createTravel(@RequestBody Travel travel) {
         Travel saved = travelRepository.save(travel);
+
+        eventPublisher.publishEvent(new NotificationEvent(
+                NotificationRecipientType.AGENT,
+                saved.getAgentId(),
+                NotificationType.ROUTE_CREATED,
+                saved.getId(),
+                "O cliente criou uma rota para a viagem \"" + saved.getTravelName() + "\"."));
+
         return ResponseEntity.ok(saved);
     }
 

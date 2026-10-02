@@ -307,11 +307,17 @@ class RouteCreationController extends ChangeNotifier {
     );
 
     final observations = observationsController.text.trim();
+    final clientId = await AuthService.instance.getClientId();
 
     final travel = Travel(
       domainId: const Uuid().v4(),
       backEndId: null,
       clientName: clientName,
+      clientId: clientId,
+      // ponytail: agente fixo, ainda nao existe fila/pool de atribuicao real
+      // - trocar quando esse mecanismo for desenhado (ver relatorio
+      // NOTIFICACAO-ROTEIRO-RELATORIO-2026-10-02.md).
+      agentId: '1',
       travelName: tripNameController.text.trim(),
       travelStatus: TravelStatus.routeCreated,
       participantsList: participants,
