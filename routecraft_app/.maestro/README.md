@@ -99,6 +99,38 @@ None currently open. **CPS-92**'s `Bus`/`Airplane` empty-"Gate" defect
 `free_time_and_step_detail.yaml` now asserts the tile stays hidden for the
 "Bus to Kyoto" fixture step.
 
+## Gotcha: "Android App Compatibility" (16 KB page size) system dialog
+
+Confirmed 2026-10-01, QA round for CPS-143 (CPS-145/146/147/148). The
+`QA_-_Claude` AVD is now on Android 17 (API level beyond this app's target),
+which surfaces an OS-level "Android App Compatibility" dialog on every fresh
+launch (`LOAD segment alignment check failed` for `libwebcrypto.so` /
+`libflutter.so`, not 16 KB aligned). It reappears after every
+`launchApp: clearState: true`, not just the first install — the
+"Don't Show Again" tap does not persist across a cleared app state on this
+AVD/Android version. `common/login_as_joao.yaml` now dismisses it with an
+`optional: true` tap right after `launchApp`, before touching "Email" — this
+step is required for every flow that starts from a fresh launch here. Not a
+product defect (OS compatibility banner, unrelated to app code); if the AVD
+is recreated on an older Android image this step becomes a no-op (optional,
+won't fail).
+
+## Gotcha: Notification card merges text into one Semantics node (same pattern as TravelCard)
+
+Confirmed 2026-10-01, re-verification round for CPS-143 after the Kotlin
+plugin hotfix (`ab6d241`). The notification list item (`NotificationCard`,
+CPS-147) exposes title + timestamp as one combined `accessibilityText`
+(`"Your itinerary was published\n00:21"`), same as the already-documented
+`TravelCard` limitation above. `assertVisible: "Your itinerary was
+published"` (exact string, no wildcard) fails even though the text is
+visibly on screen and `extendedWaitUntil` was given — confirmed via the
+`screen-hierarchy` JSON dump (`.maestro/tests/<run>/.../screen-hierarchy/`),
+not a timing flake. Use a wildcard regex matching into the merged node
+instead, e.g. `".*Your itinerary was published.*00:.*"`. If a flow here
+ever needs to assert notification text, use this pattern — not the
+TravelCard flows' `takeScreenshot`-only workaround, since the message text
+here is useful to assert directly once wildcarded.
+
 ## Known testability gap
 
 `PlacesAutocompleteField` (CPS-154) — the Start Location / Destination
