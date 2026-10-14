@@ -18,4 +18,8 @@ class NotificationApiClient {
   Future<Map<String, dynamic>> markAllAsRead(String token) {
     return _client.put(token, ApiEndpoints.notificationsReadAll, const <String, dynamic>{});
   }
+
+  Future<Map<String, dynamic>> markAsRead(String token, String id) {
+    return _client.put(token, ApiEndpoints.notificationRead(id), const <String, dynamic>{});
+  }
 }

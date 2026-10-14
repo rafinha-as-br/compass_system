@@ -30,6 +30,7 @@ abstract final class ApiEndpoints {
   static String notifications(int page, int size) => '/notifications?page=$page&size=$size';
   static const String notificationsUnreadCount = '/notifications/unread-count';
   static const String notificationsReadAll = '/notifications/read-all';
+  static String notificationRead(String id) => '/notifications/$id/read';
 
   // Push targets
   static const String pushTargets = '/push-targets';
