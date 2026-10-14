@@ -43,4 +43,16 @@ class NotificationRepositoryImpl implements NotificationRepository {
       return const Result.failure('Não foi possível marcar as notificações como lidas.', isConnectivityError: true);
     }
   }
+
+  @override
+  Future<Result<void>> markAsRead(String id) async {
+    try {
+      await _dataSource.markAsRead(id);
+      return const Result.success(null);
+    } on ApiException catch (e) {
+      return Result.failure(e.message, isConnectivityError: e.isConnectivityError);
+    } catch (_) {
+      return const Result.failure('Não foi possível marcar a notificação como lida.', isConnectivityError: true);
+    }
+  }
 }

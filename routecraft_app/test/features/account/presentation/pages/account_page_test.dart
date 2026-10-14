@@ -40,6 +40,9 @@ class _FakeNotificationRepository implements NotificationRepository {
 
   @override
   Future<Result<void>> markAllAsRead() async => throw UnimplementedError();
+
+  @override
+  Future<Result<void>> markAsRead(String id) async => throw UnimplementedError();
 }
 
 Widget _wrap(AccountController controller, {AuthController? authController}) {
