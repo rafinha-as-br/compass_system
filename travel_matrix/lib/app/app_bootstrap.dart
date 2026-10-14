@@ -49,8 +49,8 @@ class AppBootstrap extends StatelessWidget {
             // controller's value, not whichever widget happens to be on
             // screen at that moment.
             ChangeNotifierProxyProvider<AuthController, NotificationsBadgeController>(
-              create: (_) => NotificationsBadgeController(),
-              update: (_, auth, badge) => (badge ?? NotificationsBadgeController())..onAuthChanged(auth),
+              create: (_) => NotificationsBadgeController(navigation: appRouter.router.routerDelegate),
+              update: (_, auth, badge) => badge!..onAuthChanged(auth),
             ),
             Provider.value(
               value: appRouter,
