@@ -1,5 +1,8 @@
 package com.compass.compass_system.controllers;
 
+import com.compass.compass_system.company.AgentRole;
+import com.compass.compass_system.company.Company;
+import com.compass.compass_system.company.CompanyService;
 import com.compass.compass_system.dto.LoginResponse;
 import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.entities.ClientUser;
@@ -14,6 +17,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.mindrot.jbcrypt.BCrypt;
 
@@ -41,6 +45,9 @@ public class AuthController {
 
     @Autowired
     private JavaMailSender mailSender;
+
+    @Autowired
+    private CompanyService companyService;
 
     @Value("${app.password-reset.token-expiration-minutes:30}")
     private long tokenExpirationMinutes;
@@ -89,10 +96,17 @@ public class AuthController {
         return ResponseEntity.ok("Cliente cadastrado com sucesso no Compass System!");
     }
 
-    // Rota para Cadastrar o Agente
+    // Rota para Cadastrar o Agente.
+    //
+    // Com o objeto opcional `company` {name, cnpj, domain, plan} no corpo, cria
+    // a empresa junto e o agente nasce como OWNER dela — é o único ponto de
+    // entrada de uma empresa nova no sistema (módulo company, CPS-162). O e-mail
+    // do agente fundador precisa usar o domínio da empresa. Sem `company`, o
+    // cadastro segue como antes (agente sem empresa).
     @PostMapping("/cadastrar/agente")
+    @Transactional
     public ResponseEntity<String> registerAgent(@RequestBody AgentUser newAgent) {
-        
+
         // Verifica se o e-mail já existe no banco antes de salvar
         Optional<AgentUser> existingAgent = agentRepository.findByEmail(newAgent.getEmail());
         if (existingAgent.isPresent()) {
@@ -105,9 +119,25 @@ public class AuthController {
             newAgent.setPassword(hashedPassword);
         }
 
-        // Salva o agente no banco de dados 
+        Company requested = newAgent.getCompany();
+        if (requested != null) {
+            String domain = CompanyService.normalizeDomain(requested.getDomain());
+            if (!CompanyService.loginMatchesDomain(newAgent.getEmail(), domain)) {
+                throw new BusinessException(
+                        "O e-mail do agente responsável deve usar o domínio da empresa (@" + domain + ").");
+            }
+            Company company = companyService.createCompany(
+                    requested.getName(), requested.getCnpj(), domain, requested.getPlan());
+            newAgent.setCompany(company);
+            newAgent.setRole(AgentRole.OWNER);
+        } else {
+            // Papel só faz sentido dentro de uma empresa — não aceitar do corpo.
+            newAgent.setRole(null);
+        }
+
+        // Salva o agente no banco de dados
         agentRepository.save(newAgent);
-        
+
         return ResponseEntity.ok("Agente cadastrado com sucesso no Compass System!");
     }
 
@@ -145,8 +175,9 @@ public class AuthController {
         // Verifica se o agente existe e se a senha digitada bate com a do banco
         if (agentOpt.isPresent() && BCrypt.checkpw(login.password, agentOpt.get().getPassword())) {
             AgentUser agent = agentOpt.get();
+            companyService.assertLoginMatchesCompany(agent);
             String token = jwtUtil.generateToken(agent.getEmail(), "AGENTE", agent.getId());
-            
+
             LoginResponse response = new LoginResponse(
                 token, agent.getId(), agent.getName(), agent.getEmail(), "AGENTE"
             );
@@ -171,6 +202,7 @@ public class AuthController {
                 throw new BusinessException("Acesso negado. Este usuário não tem permissão para acessar esta aplicação.");
             }
             AgentUser agent = agentOpt.get();
+            companyService.assertLoginMatchesCompany(agent);
             String token = jwtUtil.generateToken(agent.getEmail(), "AGENTE", agent.getId());
 
             Map<String, Object> data = new java.util.LinkedHashMap<>();
