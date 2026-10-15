@@ -39,11 +39,11 @@ class PlaceControllerTest {
     @Test
     void shouldReturnSuggestionsForAnAuthenticatedRequest() throws Exception {
         when(placeAutocompleteService.autocomplete(eq("flor")))
-                .thenReturn(List.of(new PlaceSuggestion("Florianópolis, SC, Brasil", -27.59, -48.55)));
+                .thenReturn(List.of(new PlaceSuggestion("Florianópolis", -27.59, -48.55)));
 
         mockMvc.perform(get("/places/autocomplete").param("query", "flor").header("Authorization", authHeader()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Florianópolis, SC, Brasil"))
+                .andExpect(jsonPath("$[0].name").value("Florianópolis"))
                 .andExpect(jsonPath("$[0].latitude").value(-27.59));
     }
 

@@ -240,10 +240,6 @@ class _PlacesAutocompleteFieldState extends State<PlacesAutocompleteField> {
   }
 
   Widget _buildSuggestionRow(PlaceSuggestion suggestion) {
-    final parts = suggestion.text.split(',');
-    final title = parts.first.trim();
-    final subtitle = parts.length > 1 ? parts.sublist(1).join(',').trim() : null;
-
     return InkWell(
       onTap: () => _selectSuggestion(suggestion),
       child: Padding(
@@ -254,14 +250,7 @@ class _PlacesAutocompleteFieldState extends State<PlacesAutocompleteField> {
             const Icon(Icons.location_on_outlined, size: 15, color: TravelAppColors.textSecondary),
             const SizedBox(width: 10),
             Expanded(
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(title, style: const TextStyle(fontSize: 13, color: TravelAppColors.textPrimary)),
-                  if (subtitle != null && subtitle.isNotEmpty)
-                    Text(subtitle, style: const TextStyle(fontSize: 11.5, color: TravelAppColors.textSecondary)),
-                ],
-              ),
+              child: Text(suggestion.text, style: const TextStyle(fontSize: 13, color: TravelAppColors.textPrimary)),
             ),
           ],
         ),
