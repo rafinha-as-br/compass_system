@@ -328,4 +328,53 @@ void main() {
     expect(receivedExtra?['clientId'], '1');
     expect(receivedExtra?['clientName'], 'Jane Doe');
   });
+
+  group('responsive layout of the travel history table', () {
+    Future<void> pumpAt(WidgetTester tester, double width, UsersController controller) async {
+      tester.view.physicalSize = Size(width, 1200);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
+      await tester.pumpWidget(
+        ChangeNotifierProvider.value(
+          value: controller,
+          child: MaterialApp(
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+            supportedLocales: AppLocalizations.supportedLocales,
+            home: ViewUserPage(user: _testUserWithTravel),
+          ),
+        ),
+      );
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('mobile shows only travel name and status', (tester) async {
+      await pumpAt(tester, 500, UsersController(useCases: useCases));
+
+      expect(find.text('TRAVEL NAME'), findsOneWidget);
+      expect(find.text('STATUS'), findsOneWidget);
+      expect(find.text('START DATE'), findsNothing);
+      expect(find.text('DESTINATION'), findsNothing);
+    });
+
+    testWidgets('tablet adds the start date column', (tester) async {
+      await pumpAt(tester, 800, UsersController(useCases: useCases));
+
+      expect(find.text('START DATE'), findsOneWidget);
+      expect(find.text('DESTINATION'), findsNothing);
+    });
+
+    testWidgets('desktop shows every column', (tester) async {
+      await pumpAt(tester, 1400, UsersController(useCases: useCases));
+
+      expect(find.text('START DATE'), findsOneWidget);
+      expect(find.text('DESTINATION'), findsOneWidget);
+    });
+  });
 }
