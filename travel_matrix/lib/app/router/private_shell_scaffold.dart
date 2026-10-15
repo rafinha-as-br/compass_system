@@ -6,6 +6,7 @@ import 'package:travel_matrix/app/global_controllers/notifications_badge_control
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
+import 'package:travel_matrix/shared/widgets/responsive_layout_builder.dart';
 
 class PrivateShellScaffold extends StatelessWidget {
   final StatefulNavigationShell navigationShell;
@@ -21,23 +22,134 @@ class PrivateShellScaffold extends StatelessWidget {
     final userName = auth.userName ?? l10n.travelAgentRole;
     final userEmail = auth.userEmail ?? '';
 
+    final destinations = [
+      (icon: Icons.dashboard, label: l10n.dashboardNav),
+      (icon: Icons.calendar_month, label: l10n.bookingNav),
+      (icon: Icons.people, label: l10n.usersTitle),
+    ];
+    final divider = theme.dividerColor;
+
+    // O shell é o contêiner mais externo: o orquestrador mede a largura da
+    // janela. Desktop mantém a sidebar; tablet vira rail de ícones; mobile
+    // vira top bar (Design Package da CPS-181).
     return Scaffold(
       backgroundColor: theme.scaffoldBackgroundColor,
-      body: Row(
-        children: [
-          Container(
-            width: 250,
-            color: theme.colorScheme.surface,
-            child: Column(
-              children: [
-                Container(
-                  width: double.infinity,
-                  padding: const EdgeInsets.all(20),
-                  decoration: BoxDecoration(
-                    border: Border(
-                      bottom: BorderSide(color: theme.colorScheme.outlineVariant),
+      body: ResponsiveLayoutBuilder(
+        desktop: (_) => Row(
+          children: [
+            Container(
+              width: 250,
+              color: theme.colorScheme.surface,
+              child: Column(
+                children: [
+                  Container(
+                    width: double.infinity,
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      border: Border(
+                        bottom: BorderSide(color: theme.colorScheme.outlineVariant),
+                      ),
+                    ),
+                    child: Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            l10n.compassSystemBrand,
+                            overflow: TextOverflow.ellipsis,
+                            style: theme.textTheme.titleMedium?.copyWith(
+                              color: theme.colorScheme.onSurface,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                        const _NotificationsBellButton(),
+                      ],
                     ),
                   ),
+                  Expanded(
+                    child: ListView(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                      children: [
+                        for (var i = 0; i < destinations.length; i++) ...[
+                          if (i > 0) const SizedBox(height: 4),
+                          _NavItem(
+                            icon: destinations[i].icon,
+                            label: destinations[i].label,
+                            isSelected: currentIndex == i,
+                            onTap: () => navigationShell.goBranch(i),
+                          ),
+                        ],
+                      ],
+                    ),
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
+                    ),
+                    child: _AccountMenu(
+                      onGoToAccount: () => navigationShell.goBranch(3),
+                      builder: (context, controller) => _AccountRow(
+                        controller: controller,
+                        userName: userName,
+                        userEmail: userEmail,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            VerticalDivider(width: 1, thickness: 1, color: divider),
+            Expanded(child: navigationShell),
+          ],
+        ),
+        tablet: (_) => Row(
+          children: [
+            Container(
+              width: 72,
+              color: theme.colorScheme.surface,
+              child: SafeArea(
+                right: false,
+                child: Column(
+                  children: [
+                    const SizedBox(height: 16),
+                    const _NotificationsBellButton(),
+                    const SizedBox(height: 8),
+                    Expanded(
+                      child: ListView(
+                        padding: const EdgeInsets.symmetric(vertical: 8),
+                        children: [
+                          for (final (i, d) in destinations.indexed)
+                            _NavIconButton(
+                              icon: d.icon,
+                              label: d.label,
+                              isSelected: currentIndex == i,
+                              onTap: () => navigationShell.goBranch(i),
+                            ),
+                        ],
+                      ),
+                    ),
+                    _AccountAvatarMenu(
+                      userName: userName,
+                      onGoToAccount: () => navigationShell.goBranch(3),
+                    ),
+                    const SizedBox(height: 12),
+                  ],
+                ),
+              ),
+            ),
+            VerticalDivider(width: 1, thickness: 1, color: divider),
+            Expanded(child: navigationShell),
+          ],
+        ),
+        mobile: (_) => Column(
+          children: [
+            Material(
+              color: theme.colorScheme.surface,
+              child: SafeArea(
+                bottom: false,
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
                   child: Row(
                     children: [
                       Expanded(
@@ -50,48 +162,28 @@ class PrivateShellScaffold extends StatelessWidget {
                           ),
                         ),
                       ),
+                      for (final (i, d) in destinations.indexed)
+                        _NavIconButton(
+                          icon: d.icon,
+                          label: d.label,
+                          isSelected: currentIndex == i,
+                          onTap: () => navigationShell.goBranch(i),
+                        ),
                       const _NotificationsBellButton(),
-                    ],
-                  ),
-                ),
-                Expanded(
-                  child: ListView(
-                    padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                    children: [
-                      _NavItem(
-                        icon: Icons.dashboard,
-                        label: l10n.dashboardNav,
-                        isSelected: currentIndex == 0,
-                        onTap: () => navigationShell.goBranch(0),
-                      ),
-                      const SizedBox(height: 4),
-                      _NavItem(
-                        icon: Icons.calendar_month,
-                        label: l10n.bookingNav,
-                        isSelected: currentIndex == 1,
-                        onTap: () => navigationShell.goBranch(1),
-                      ),
-                      const SizedBox(height: 4),
-                      _NavItem(
-                        icon: Icons.people,
-                        label: l10n.usersTitle,
-                        isSelected: currentIndex == 2,
-                        onTap: () => navigationShell.goBranch(2),
+                      const SizedBox(width: 4),
+                      _AccountAvatarMenu(
+                        userName: userName,
+                        onGoToAccount: () => navigationShell.goBranch(3),
                       ),
                     ],
                   ),
                 ),
-                _AccountFooter(
-                  userName: userName,
-                  userEmail: userEmail,
-                  onGoToAccount: () => navigationShell.goBranch(3),
-                ),
-              ],
+              ),
             ),
-          ),
-          VerticalDivider(width: 1, thickness: 1, color: theme.dividerColor),
-          Expanded(child: navigationShell),
-        ],
+            Divider(height: 1, thickness: 1, color: divider),
+            Expanded(child: navigationShell),
+          ],
+        ),
       ),
     );
   }
@@ -158,139 +250,221 @@ class _NavItem extends StatelessWidget {
   }
 }
 
-/// Rodapé da sidebar — a linha de conta é o gatilho de um `MenuAnchor` (menu
-/// nativo do Material): fecha sozinho ao selecionar um item, ao clicar fora
+/// Menu de conta — o gatilho (linha na sidebar, avatar no rail/top bar) abre
+/// um `MenuAnchor` (menu nativo do Material): fecha sozinho ao selecionar um item, ao clicar fora
 /// ou com Esc, e sobe automaticamente quando não cabe abaixo do gatilho
 /// (CPS-112) — nenhuma dessas regras precisou ser escrita à mão.
 /// `consumeOutsideTap: true` (CPS-112, correção pós-QA): sem isso, o tap que
 /// fecha o menu também vaza para o resto da árvore, e repetir abrir/fechar
 /// no mesmo local acumula listeners de "outside tap" que passam a bloquear
 /// o fechamento por clique fora em pontos específicos da tela.
-class _AccountFooter extends StatelessWidget {
-  const _AccountFooter({
-    required this.userName,
-    required this.userEmail,
-    required this.onGoToAccount,
-  });
+class _AccountMenu extends StatelessWidget {
+  const _AccountMenu({required this.onGoToAccount, required this.builder});
 
-  final String userName;
-  final String userEmail;
   final VoidCallback onGoToAccount;
+  final Widget Function(BuildContext context, MenuController controller) builder;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return Container(
-      padding: const EdgeInsets.all(12),
-      decoration: BoxDecoration(
-        border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
-      ),
-      child: MenuAnchor(
-        consumeOutsideTap: true,
-        style: MenuStyle(
-          backgroundColor: WidgetStatePropertyAll(theme.colorScheme.surface),
-          elevation: const WidgetStatePropertyAll(8),
-          shape: WidgetStatePropertyAll(
-            RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(12),
-              side: BorderSide(color: theme.colorScheme.outlineVariant),
-            ),
+    return MenuAnchor(
+      consumeOutsideTap: true,
+      style: MenuStyle(
+        backgroundColor: WidgetStatePropertyAll(theme.colorScheme.surface),
+        elevation: const WidgetStatePropertyAll(8),
+        shape: WidgetStatePropertyAll(
+          RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+            side: BorderSide(color: theme.colorScheme.outlineVariant),
           ),
-          minimumSize: const WidgetStatePropertyAll(Size(226, 0)),
-          maximumSize: const WidgetStatePropertyAll(Size(226, double.infinity)),
-          padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
         ),
-        menuChildren: [
-          MenuItemButton(
-            autofocus: true,
-            leadingIcon: Icon(Icons.person_outline, color: theme.colorScheme.onSurface),
-            onPressed: onGoToAccount,
-            child: Text(l10n.myAccountNav),
-          ),
-          MenuItemButton(
-            leadingIcon: Icon(Icons.settings_outlined, color: theme.colorScheme.onSurface),
-            onPressed: onGoToAccount,
-            child: Text(l10n.settingsNav),
-          ),
-          Divider(height: 1, color: theme.colorScheme.outlineVariant),
-          MenuItemButton(
-            leadingIcon: Icon(Icons.help_outline, color: theme.colorScheme.onSurface),
-            onPressed: () {},
-            child: Text(l10n.supportNav),
-          ),
-          MenuItemButton(
-            leadingIcon: Icon(Icons.logout, color: theme.colorScheme.error),
-            style: MenuItemButton.styleFrom(foregroundColor: theme.colorScheme.error),
-            onPressed: () => context.read<AuthController>().logout(),
-            child: Text(l10n.logoutNav),
-          ),
-        ],
-        builder: (context, controller, child) {
-          return InkWell(
-            onTap: () => controller.isOpen ? controller.close() : controller.open(),
-            borderRadius: BorderRadius.circular(8),
-            hoverColor: theme.colorScheme.primary.withValues(alpha: 0.04),
-            highlightColor: theme.colorScheme.primary.withValues(alpha: 0.09),
-            splashColor: Colors.transparent,
-            child: Padding(
-              padding: const EdgeInsets.all(8),
-              child: Row(
+        minimumSize: const WidgetStatePropertyAll(Size(226, 0)),
+        maximumSize: const WidgetStatePropertyAll(Size(226, double.infinity)),
+        padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
+      ),
+      menuChildren: [
+        MenuItemButton(
+          autofocus: true,
+          leadingIcon: Icon(Icons.person_outline, color: theme.colorScheme.onSurface),
+          onPressed: onGoToAccount,
+          child: Text(l10n.myAccountNav),
+        ),
+        MenuItemButton(
+          leadingIcon: Icon(Icons.settings_outlined, color: theme.colorScheme.onSurface),
+          onPressed: onGoToAccount,
+          child: Text(l10n.settingsNav),
+        ),
+        Divider(height: 1, color: theme.colorScheme.outlineVariant),
+        MenuItemButton(
+          leadingIcon: Icon(Icons.help_outline, color: theme.colorScheme.onSurface),
+          onPressed: () {},
+          child: Text(l10n.supportNav),
+        ),
+        MenuItemButton(
+          leadingIcon: Icon(Icons.logout, color: theme.colorScheme.error),
+          style: MenuItemButton.styleFrom(foregroundColor: theme.colorScheme.error),
+          onPressed: () => context.read<AuthController>().logout(),
+          child: Text(l10n.logoutNav),
+        ),
+      ],
+      builder: (context, controller, child) => builder(context, controller),
+    );
+  }
+}
+
+/// Linha de conta da sidebar (desktop): avatar, nome, e-mail e seta.
+class _AccountRow extends StatelessWidget {
+  const _AccountRow({
+    required this.controller,
+    required this.userName,
+    required this.userEmail,
+  });
+
+  final MenuController controller;
+  final String userName;
+  final String userEmail;
+
+  @override
+  Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+    final l10n = AppLocalizations.of(context)!;
+
+    return InkWell(
+      onTap: () => controller.isOpen ? controller.close() : controller.open(),
+      borderRadius: BorderRadius.circular(8),
+      hoverColor: theme.colorScheme.primary.withValues(alpha: 0.04),
+      highlightColor: theme.colorScheme.primary.withValues(alpha: 0.09),
+      splashColor: Colors.transparent,
+      child: Padding(
+        padding: const EdgeInsets.all(8),
+        child: Row(
+          children: [
+            _Avatar(userName: userName),
+            const SizedBox(width: 12),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  CircleAvatar(
-                    radius: 14,
-                    backgroundColor: TravelAppColors.primaryLight,
-                    child: Text(
-                      _initials(userName),
-                      style: const TextStyle(
-                        color: TravelAppColors.textOnPrimary,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 11,
-                      ),
-                    ),
+                  Text(
+                    userName,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
                   ),
-                  const SizedBox(width: 12),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          userName,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodyMedium?.copyWith(fontWeight: FontWeight.bold),
-                        ),
-                        Text(
-                          userEmail.isEmpty ? l10n.travelAgentRole : userEmail,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.bodySmall?.copyWith(
-                            color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
-                          ),
-                        ),
-                      ],
+                  Text(
+                    userEmail.isEmpty ? l10n.travelAgentRole : userEmail,
+                    overflow: TextOverflow.ellipsis,
+                    style: theme.textTheme.bodySmall?.copyWith(
+                      color: theme.colorScheme.onSurface.withValues(alpha: 0.6),
                     ),
-                  ),
-                  Icon(
-                    controller.isOpen ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
-                    size: 16,
-                    color: controller.isOpen
-                        ? theme.colorScheme.primary
-                        : theme.colorScheme.onSurface.withValues(alpha: 0.6),
                   ),
                 ],
               ),
             ),
-          );
-        },
+            Icon(
+              controller.isOpen ? Icons.keyboard_arrow_down : Icons.keyboard_arrow_up,
+              size: 16,
+              color: controller.isOpen
+                  ? theme.colorScheme.primary
+                  : theme.colorScheme.onSurface.withValues(alpha: 0.6),
+            ),
+          ],
+        ),
       ),
     );
   }
+}
 
-  String _initials(String value) {
-    final parts = value.trim().split(RegExp(r'\s+'));
-    if (parts.isEmpty || parts.first.isEmpty) return '?';
-    if (parts.length == 1) return parts.first[0].toUpperCase();
-    return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+/// Menu de conta compacto (rail e top bar): só o avatar como gatilho.
+class _AccountAvatarMenu extends StatelessWidget {
+  const _AccountAvatarMenu({required this.userName, required this.onGoToAccount});
+
+  final String userName;
+  final VoidCallback onGoToAccount;
+
+  @override
+  Widget build(BuildContext context) => _AccountMenu(
+        onGoToAccount: onGoToAccount,
+        builder: (context, controller) => _AccountAvatarButton(controller: controller, userName: userName),
+      );
+}
+
+/// Gatilho de conta compacto (rail e top bar): só o avatar, com tooltip.
+class _AccountAvatarButton extends StatelessWidget {
+  const _AccountAvatarButton({required this.controller, required this.userName});
+
+  final MenuController controller;
+  final String userName;
+
+  @override
+  Widget build(BuildContext context) {
+    return IconButton(
+      tooltip: userName,
+      onPressed: () => controller.isOpen ? controller.close() : controller.open(),
+      icon: _Avatar(userName: userName),
+    );
+  }
+}
+
+class _Avatar extends StatelessWidget {
+  const _Avatar({required this.userName});
+
+  final String userName;
+
+  @override
+  Widget build(BuildContext context) {
+    return CircleAvatar(
+      radius: 14,
+      backgroundColor: TravelAppColors.primaryLight,
+      child: Text(
+        _initials(userName),
+        style: const TextStyle(
+          color: TravelAppColors.textOnPrimary,
+          fontWeight: FontWeight.bold,
+          fontSize: 11,
+        ),
+      ),
+    );
+  }
+}
+
+String _initials(String value) {
+  final parts = value.trim().split(RegExp(r'\s+'));
+  if (parts.isEmpty || parts.first.isEmpty) return '?';
+  if (parts.length == 1) return parts.first[0].toUpperCase();
+  return '${parts.first[0]}${parts.last[0]}'.toUpperCase();
+}
+
+/// Item de navegação só com ícone (rail no tablet, top bar no mobile). O
+/// `IconButton` já dá o alvo de toque de 48x48 e o rótulo semântico via tooltip.
+class _NavIconButton extends StatelessWidget {
+  const _NavIconButton({
+    required this.icon,
+    required this.label,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  final IconData icon;
+  final String label;
+  final bool isSelected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final scheme = Theme.of(context).colorScheme;
+
+    return IconButton(
+      tooltip: label,
+      onPressed: onTap,
+      isSelected: isSelected,
+      icon: Icon(icon),
+      style: IconButton.styleFrom(
+        foregroundColor: isSelected ? scheme.primary : scheme.onSurface.withValues(alpha: 0.78),
+        backgroundColor: isSelected ? scheme.primary.withValues(alpha: 0.08) : null,
+      ),
+    );
   }
 }
 
