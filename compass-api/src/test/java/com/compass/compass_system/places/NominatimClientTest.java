@@ -17,19 +17,36 @@ class NominatimClientTest {
             new ObjectMapper());
 
     @Test
-    void shouldParseNominatimResponseIntoOwnContract() {
+    void shouldUseShortNameFieldAsSuggestionName() {
         String json = """
                 [
-                  {"display_name": "Florianópolis, SC, Brasil", "lat": "-27.5954", "lon": "-48.5480"},
-                  {"display_name": "Floriano, PI, Brasil", "lat": "-6.7671", "lon": "-43.0225"}
+                  {"name": "Florianópolis", "display_name": "Florianópolis, Santa Catarina, Região Sul, Brasil", "lat": "-27.5954", "lon": "-48.5480"},
+                  {"name": "Aeroporto Internacional de Navegantes", "display_name": "Aeroporto Internacional de Navegantes, Rua X, Centro, Navegantes, Brasil", "lat": "-26.8800", "lon": "-48.6500"}
                 ]
                 """;
 
         List<PlaceSuggestion> result = client.parse(json);
 
         assertThat(result).containsExactly(
-                new PlaceSuggestion("Florianópolis, SC, Brasil", -27.5954, -48.5480),
-                new PlaceSuggestion("Floriano, PI, Brasil", -6.7671, -43.0225)
+                new PlaceSuggestion("Florianópolis", -27.5954, -48.5480),
+                new PlaceSuggestion("Aeroporto Internacional de Navegantes", -26.8800, -48.6500)
+        );
+    }
+
+    @Test
+    void shouldFallBackToFirstDisplayNameSegmentWhenNameIsMissingOrBlank() {
+        String json = """
+                [
+                  {"display_name": "Floriano, PI, Brasil", "lat": "-6.7671", "lon": "-43.0225"},
+                  {"name": "  ", "display_name": "Blumenau, Santa Catarina, Brasil", "lat": "-26.9194", "lon": "-49.0661"}
+                ]
+                """;
+
+        List<PlaceSuggestion> result = client.parse(json);
+
+        assertThat(result).containsExactly(
+                new PlaceSuggestion("Floriano", -6.7671, -43.0225),
+                new PlaceSuggestion("Blumenau", -26.9194, -49.0661)
         );
     }
 
