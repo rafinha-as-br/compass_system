@@ -76,6 +76,25 @@ void main() {
     expect(find.text('10 days'), findsOneWidget);
   });
 
+  for (final width in [1200.0, 500.0]) {
+    testWidgets('route connector is centered on the origin/destination text at width $width', (tester) async {
+      await _pump(tester, _travel(), width: width);
+
+      final arrow = find.byIcon(Icons.arrow_forward);
+      expect(arrow, findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      final arrowCenter = tester.getCenter(arrow);
+      expect(arrowCenter.dy, closeTo(tester.getCenter(find.text('Sao Paulo')).dy, 1));
+      expect(arrowCenter.dy, closeTo(tester.getCenter(find.text('Lisbon')).dy, 1));
+      // Connector sits between origin and destination.
+      expect(arrowCenter.dx, greaterThan(tester.getRect(find.text('Sao Paulo')).right));
+      expect(arrowCenter.dx, lessThan(tester.getRect(find.text('Lisbon')).left));
+      // Icon matches the 22px value text instead of the old 18px.
+      expect(tester.getSize(arrow).height, 22);
+    });
+  }
+
   testWidgets('maps each TravelStatus to its localized label and support line', (tester) async {
     await tester.pumpWidget(Container());
 
