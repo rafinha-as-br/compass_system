@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
+import 'package:travel_matrix/shared/widgets/desktop_scale.dart';
 
 import 'global_controllers/settings_controller.dart';
 
@@ -34,6 +35,7 @@ class TravelMatrixApp extends StatelessWidget {
           ],
           supportedLocales: AppLocalizations.supportedLocales,
           routerConfig: router,
+          builder: (context, child) => DesktopScale(child: child!),
         );
       },
     );
