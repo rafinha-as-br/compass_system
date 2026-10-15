@@ -135,4 +135,22 @@ void main() {
 
     expect((receivedExtra?['user'] as UserClientViewModel?)?.name, 'Jane Doe');
   });
+
+  testWidgets('status filter, email and phone stay on one line instead of clipping/breaking mid-word (CPS-182 QA)', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(_wrap(controller, themeMode: ThemeMode.light));
+    await tester.pumpAndSettle();
+
+    for (final label in ['All Status', 'jane@example.com', '11999999999']) {
+      final text = tester.widget<Text>(find.text(label));
+      expect(text.maxLines, 1, reason: label);
+      expect(text.overflow, TextOverflow.ellipsis, reason: label);
+    }
+  });
 }
