@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/app/global_controllers/notifications_badge_controller.dart';
+import 'package:travel_matrix/app/global_controllers/sidebar_controller.dart';
 import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
@@ -29,139 +30,90 @@ class PrivateShellScaffold extends StatelessWidget {
     ];
     final divider = theme.dividerColor;
 
-    // O shell é o contêiner mais externo: o orquestrador mede a largura da
-    // janela. Desktop mantém a sidebar; tablet vira rail de ícones; mobile
-    // vira top bar (Design Package da CPS-181).
-    return Scaffold(
-      backgroundColor: theme.scaffoldBackgroundColor,
-      body: ResponsiveLayoutBuilder(
-        desktop: (_) => Row(
-          children: [
-            Container(
-              width: 250,
-              color: theme.colorScheme.surface,
-              child: Column(
-                children: [
-                  Container(
-                    width: double.infinity,
-                    padding: const EdgeInsets.all(20),
-                    decoration: BoxDecoration(
-                      border: Border(
-                        bottom: BorderSide(color: theme.colorScheme.outlineVariant),
-                      ),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            l10n.compassSystemBrand,
-                            overflow: TextOverflow.ellipsis,
-                            style: theme.textTheme.titleMedium?.copyWith(
-                              color: theme.colorScheme.onSurface,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ),
-                        const _NotificationsBellButton(),
-                      ],
-                    ),
+    final sidebar = context.watch<SidebarController>();
+
+    Widget fullSidebar() => Container(
+          width: 250,
+          color: theme.colorScheme.surface,
+          child: Column(
+            children: [
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  border: Border(
+                    bottom: BorderSide(color: theme.colorScheme.outlineVariant),
                   ),
-                  Expanded(
-                    child: ListView(
-                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
-                      children: [
-                        for (var i = 0; i < destinations.length; i++) ...[
-                          if (i > 0) const SizedBox(height: 4),
-                          _NavItem(
-                            icon: destinations[i].icon,
-                            label: destinations[i].label,
-                            isSelected: currentIndex == i,
-                            onTap: () => navigationShell.goBranch(i),
-                          ),
-                        ],
-                      ],
-                    ),
-                  ),
-                  Container(
-                    padding: const EdgeInsets.all(12),
-                    decoration: BoxDecoration(
-                      border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
-                    ),
-                    child: _AccountMenu(
-                      onGoToAccount: () => navigationShell.goBranch(3),
-                      builder: (context, controller) => _AccountRow(
-                        controller: controller,
-                        userName: userName,
-                        userEmail: userEmail,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            VerticalDivider(width: 1, thickness: 1, color: divider),
-            Expanded(child: navigationShell),
-          ],
-        ),
-        tablet: (_) => Row(
-          children: [
-            Container(
-              width: 72,
-              color: theme.colorScheme.surface,
-              child: SafeArea(
-                right: false,
-                child: Column(
+                ),
+                child: Row(
                   children: [
-                    const SizedBox(height: 16),
-                    const _NotificationsBellButton(),
-                    const SizedBox(height: 8),
                     Expanded(
-                      child: ListView(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        children: [
-                          for (final (i, d) in destinations.indexed)
-                            _NavIconButton(
-                              icon: d.icon,
-                              label: d.label,
-                              isSelected: currentIndex == i,
-                              onTap: () => navigationShell.goBranch(i),
-                            ),
-                        ],
+                      child: Text(
+                        l10n.compassSystemBrand,
+                        overflow: TextOverflow.ellipsis,
+                        style: theme.textTheme.titleMedium?.copyWith(
+                          color: theme.colorScheme.onSurface,
+                          fontWeight: FontWeight.bold,
+                        ),
                       ),
                     ),
-                    _AccountAvatarMenu(
-                      userName: userName,
-                      onGoToAccount: () => navigationShell.goBranch(3),
-                    ),
-                    const SizedBox(height: 12),
+                    const _NotificationsBellButton(),
+                    const SizedBox(width: 4),
+                    const _SidebarToggleButton(size: ScreenSize.desktop),
                   ],
                 ),
               ),
-            ),
-            VerticalDivider(width: 1, thickness: 1, color: divider),
-            Expanded(child: navigationShell),
-          ],
-        ),
-        mobile: (_) => Column(
-          children: [
-            Material(
-              color: theme.colorScheme.surface,
-              child: SafeArea(
-                bottom: false,
-                child: Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
-                  child: Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          l10n.compassSystemBrand,
-                          overflow: TextOverflow.ellipsis,
-                          style: theme.textTheme.titleMedium?.copyWith(
-                            color: theme.colorScheme.onSurface,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
+              Expanded(
+                child: ListView(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  children: [
+                    for (var i = 0; i < destinations.length; i++) ...[
+                      if (i > 0) const SizedBox(height: 4),
+                      _NavItem(
+                        icon: destinations[i].icon,
+                        label: destinations[i].label,
+                        isSelected: currentIndex == i,
+                        onTap: () => navigationShell.goBranch(i),
                       ),
+                    ],
+                  ],
+                ),
+              ),
+              Container(
+                padding: const EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
+                ),
+                child: _AccountMenu(
+                  onGoToAccount: () => navigationShell.goBranch(3),
+                  builder: (context, controller) => _AccountRow(
+                    controller: controller,
+                    userName: userName,
+                    userEmail: userEmail,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        );
+
+    // Rail de ícones: padrão do tablet e estado "recolhida" do desktop.
+    Widget rail(ScreenSize size) => Container(
+          width: 72,
+          color: theme.colorScheme.surface,
+          child: SafeArea(
+            right: false,
+            child: Column(
+              children: [
+                const SizedBox(height: 8),
+                _SidebarToggleButton(size: size),
+                const SizedBox(height: 4),
+                const _NotificationsBellButton(),
+                const SizedBox(height: 8),
+                Expanded(
+                  child: ListView(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    children: [
                       for (final (i, d) in destinations.indexed)
                         _NavIconButton(
                           icon: d.icon,
@@ -169,22 +121,144 @@ class PrivateShellScaffold extends StatelessWidget {
                           isSelected: currentIndex == i,
                           onTap: () => navigationShell.goBranch(i),
                         ),
-                      const _NotificationsBellButton(),
-                      const SizedBox(width: 4),
-                      _AccountAvatarMenu(
-                        userName: userName,
-                        onGoToAccount: () => navigationShell.goBranch(3),
-                      ),
                     ],
+                  ),
+                ),
+                _AccountAvatarMenu(
+                  userName: userName,
+                  onGoToAccount: () => navigationShell.goBranch(3),
+                ),
+                const SizedBox(height: 12),
+              ],
+            ),
+          ),
+        );
+
+    Widget withSide(Widget side) => Row(
+          children: [
+            side,
+            VerticalDivider(width: 1, thickness: 1, color: divider),
+            Expanded(child: navigationShell),
+          ],
+        );
+
+    // Menu oculto: o conteúdo ocupa tudo e um botão flutuante reabre o menu.
+    Widget hidden(ScreenSize size) => Stack(
+          fit: StackFit.expand,
+          children: [
+            navigationShell,
+            Positioned(
+              top: 0,
+              left: 0,
+              child: SafeArea(
+                child: Padding(
+                  padding: const EdgeInsets.all(8),
+                  child: Material(
+                    color: theme.colorScheme.surface,
+                    elevation: 2,
+                    shape: const CircleBorder(),
+                    child: _SidebarToggleButton(size: size),
                   ),
                 ),
               ),
             ),
-            Divider(height: 1, thickness: 1, color: divider),
-            Expanded(child: navigationShell),
           ],
-        ),
+        );
+
+    // O shell é o contêiner mais externo: o orquestrador mede a largura da
+    // janela. Desktop mantém a sidebar; tablet vira rail de ícones; mobile
+    // vira top bar (Design Package da CPS-181). Cada layout ainda pode ser
+    // recolhido ou ocultado (Design Package da CPS-200).
+    return Scaffold(
+      backgroundColor: theme.scaffoldBackgroundColor,
+      body: ResponsiveLayoutBuilder(
+        desktop: (_) => switch (sidebar.modeFor(ScreenSize.desktop)) {
+          SidebarMode.expanded => withSide(fullSidebar()),
+          SidebarMode.collapsed => withSide(rail(ScreenSize.desktop)),
+          SidebarMode.hidden => hidden(ScreenSize.desktop),
+        },
+        tablet: (_) => sidebar.modeFor(ScreenSize.tablet) == SidebarMode.hidden
+            ? hidden(ScreenSize.tablet)
+            : withSide(rail(ScreenSize.tablet)),
+        mobile: (_) => sidebar.modeFor(ScreenSize.mobile) == SidebarMode.hidden
+            ? hidden(ScreenSize.mobile)
+            : Column(
+                children: [
+                  Material(
+                    color: theme.colorScheme.surface,
+                    child: SafeArea(
+                      bottom: false,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                l10n.compassSystemBrand,
+                                overflow: TextOverflow.ellipsis,
+                                style: theme.textTheme.titleMedium?.copyWith(
+                                  color: theme.colorScheme.onSurface,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                            for (final (i, d) in destinations.indexed)
+                              _NavIconButton(
+                                icon: d.icon,
+                                label: d.label,
+                                isSelected: currentIndex == i,
+                                onTap: () => navigationShell.goBranch(i),
+                              ),
+                            const _NotificationsBellButton(),
+                            const SizedBox(width: 4),
+                            _AccountAvatarMenu(
+                              userName: userName,
+                              onGoToAccount: () => navigationShell.goBranch(3),
+                            ),
+                            const _SidebarToggleButton(size: ScreenSize.mobile),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                  Divider(height: 1, thickness: 1, color: divider),
+                  Expanded(child: navigationShell),
+                ],
+              ),
       ),
+    );
+  }
+}
+
+/// Controle único que cicla o estado do menu lateral no breakpoint [size]
+/// (`cps.candidate.sidebar-collapse-toggle`, CPS-200). Reaproveitado na sidebar,
+/// no rail, na top bar e no botão flutuante do menu oculto.
+class _SidebarToggleButton extends StatelessWidget {
+  const _SidebarToggleButton({required this.size});
+
+  final ScreenSize size;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final controller = context.watch<SidebarController>();
+    final mode = controller.modeFor(size);
+
+    final tooltip = switch ((mode, SidebarController.next(size, mode))) {
+      (SidebarMode.hidden, _) => l10n.sidebarShowTooltip,
+      (_, SidebarMode.collapsed) => l10n.sidebarCollapseTooltip,
+      _ => l10n.sidebarHideTooltip,
+    };
+    final icon = switch (mode) {
+      SidebarMode.hidden => Icons.chevron_right,
+      _ when size == ScreenSize.mobile => Icons.keyboard_arrow_up,
+      _ => Icons.chevron_left,
+    };
+
+    return IconButton(
+      tooltip: tooltip,
+      onPressed: () => controller.cycle(size),
+      icon: Icon(icon, color: Theme.of(context).colorScheme.primary),
     );
   }
 }

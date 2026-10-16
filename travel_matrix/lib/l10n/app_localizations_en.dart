@@ -1042,6 +1042,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get pickupLocationRequiredValidation => 'Pickup location is required';
 
   @override
+  String get sidebarCollapseTooltip => 'Collapse menu';
+
+  @override
+  String get sidebarHideTooltip => 'Hide menu';
+
+  @override
+  String get sidebarShowTooltip => 'Show menu';
+
+  @override
   String get notificationsBellTooltip => 'Notifications';
 
   @override
