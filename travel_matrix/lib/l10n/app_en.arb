@@ -423,6 +423,10 @@
   "pickupLocationLabel": "Pickup location",
   "pickupLocationRequiredValidation": "Pickup location is required",
 
+  "sidebarCollapseTooltip": "Collapse menu",
+  "sidebarHideTooltip": "Hide menu",
+  "sidebarShowTooltip": "Show menu",
+
   "notificationsBellTooltip": "Notifications",
   "notificationsTitle": "Notifications",
   "notificationsMarkAllRead": "Mark all as read",

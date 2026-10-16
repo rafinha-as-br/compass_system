@@ -1056,6 +1056,15 @@ class AppLocalizationsPt extends AppLocalizations {
       'Local de retirada é obrigatório';
 
   @override
+  String get sidebarCollapseTooltip => 'Recolher menu';
+
+  @override
+  String get sidebarHideTooltip => 'Ocultar menu';
+
+  @override
+  String get sidebarShowTooltip => 'Mostrar menu';
+
+  @override
   String get notificationsBellTooltip => 'Notificações';
 
   @override

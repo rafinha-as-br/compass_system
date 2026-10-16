@@ -48,7 +48,27 @@ completo, `adb reverse tcp:8081 tcp:8081` configurado, backend local via
 docker compose de pé, APK debug instalado (`flutter build apk --debug` dentro
 de `travel_matrix/`, depois `adb install -r`).
 
-## ⚠️ Bug de shell conhecido — CPS-167
+## Atualização 2026-10-16 (QA do Epic CPS-178 — layout responsivo)
+
+O shell responsivo (CPS-181: top bar no mobile) e a landing/login em coluna única
+(CPS-198) já estão em `develop`. Consequências para os flows:
+
+* `auth/login_qa_agent.yaml` foi reescrito: agora os campos expõem o hint
+  (`Email`/`Password`) e são tocados por texto, sem coordenadas percentuais (as de
+  83%,58% / 83%,65% deixaram de valer). Validado no emulador em 2026-10-16.
+* Os flows de `travels/` ainda usam coordenadas calibradas para a sidebar antiga
+  (nav lateral por `point`) e **precisam ser recalibrados** para a top bar do mobile;
+  não foram reexecutados nesta rodada.
+* O banco local pode ser recriado: se o login falhar com "E-mail ou senha incorretos",
+  cadastre o agente de novo via `POST /api/auth/cadastrar/agente`.
+* Testabilidade: a top bar e o botão de recolher/reabrir menu (CPS-200) não têm
+  `content-desc` próprio; só são tocáveis por `point`. Nenhum flow permanente foi criado
+  para eles.
+
+A seção abaixo (CPS-167) descreve o estado anterior ao shell responsivo e fica como
+histórico das coordenadas.
+
+## ⚠️ Bug de shell conhecido — CPS-167 (histórico, shell anterior)
 
 O shell do Travel Matrix **não é responsivo no Android**: a navegação lateral
 (Dashboard/Booking/Users, estilo desktop) nunca colapsa para um formato

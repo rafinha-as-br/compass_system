@@ -77,4 +77,41 @@ void main() {
     expect(clientsColor, isNot(travelsColor));
     expect(clientsColor, isNot(completedColor));
   });
+
+  group('grade por largura disponível (CPS-199)', () {
+    Future<List<Rect>> pumpAt(WidgetTester tester, double width) async {
+      tester.view.physicalSize = Size(width, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+      await tester.pumpWidget(_wrap(AppTheme.lightTheme));
+      expect(tester.takeException(), isNull, reason: 'largura $width');
+      return [for (final icon in [Icons.route, Icons.event_available, Icons.pending_actions, Icons.people_alt_outlined])
+        tester.getRect(find.ancestor(of: find.byIcon(icon), matching: find.byType(Card)))];
+    }
+
+    testWidgets('desktop (>= 1024): 4 cartões em uma linha, mesma largura', (tester) async {
+      final cards = await pumpAt(tester, 1400);
+      expect({for (final c in cards) c.top}, hasLength(1));
+      expect({for (final c in cards) c.width.round()}, hasLength(1));
+    });
+
+    testWidgets('tablet (600-1023, ex.: ~800 px de conteúdo): grade 2x2 alinhada, sem área vazia à direita', (tester) async {
+      final cards = await pumpAt(tester, 800);
+      expect(cards[0].top, cards[1].top);
+      expect(cards[2].top, cards[3].top);
+      expect(cards[2].top, greaterThan(cards[0].top));
+      expect(cards[0].left, cards[2].left);
+      expect(cards[1].left, cards[3].left);
+      expect({for (final c in cards) c.width.round()}, hasLength(1));
+      expect(cards[1].right, closeTo(800, 1));
+    });
+
+    testWidgets('mobile (< 600): uma coluna, cartões com a largura toda', (tester) async {
+      final cards = await pumpAt(tester, 400);
+      expect({for (final c in cards) c.left}, hasLength(1));
+      expect({for (final c in cards) c.width.round()}, hasLength(1));
+      expect(cards.first.width, closeTo(400, 1));
+    });
+  });
 }
