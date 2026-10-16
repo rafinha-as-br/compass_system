@@ -1,7 +1,8 @@
 package com.compass.compass_system.auth;
 
-import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.entities.ClientUser;
+import com.compass.compass_system.company.AgentFixtures;
+import com.compass.compass_system.company.CompanyRepository;
 import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -36,6 +37,9 @@ class AuthControllerTest {
     private AgentUserRepository agentUserRepository;
 
     @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
     private ClientUserRepository clientUserRepository;
 
     @BeforeEach
@@ -43,11 +47,8 @@ class AuthControllerTest {
         agentUserRepository.deleteAll();
         clientUserRepository.deleteAll();
 
-        AgentUser agent = new AgentUser();
-        agent.setName("Carlos Agente");
-        agent.setEmail("agente@matrix.com");
-        agent.setPassword(BCrypt.hashpw("senha123", BCrypt.gensalt()));
-        agentUserRepository.save(agent);
+        AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Carlos Agente",
+                "agente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
 
         ClientUser client = new ClientUser();
         client.setName("Maria Cliente");
