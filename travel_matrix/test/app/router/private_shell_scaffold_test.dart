@@ -8,9 +8,11 @@ import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
 import 'package:travel_matrix/app/global_controllers/notifications_badge_controller.dart';
+import 'package:travel_matrix/app/global_controllers/sidebar_controller.dart';
 import 'package:travel_matrix/app/router/private_shell_scaffold.dart';
 import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
+import 'package:travel_matrix/core/services/settings_storage_service.dart';
 import 'package:travel_matrix/features/notifications/domain/usecases/notification_usecases.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 
@@ -47,6 +49,7 @@ Future<GoRouter> _pumpShell(
     MultiProvider(
       providers: [
         ChangeNotifierProvider<AuthController>.value(value: auth),
+        ChangeNotifierProvider(create: (_) => SidebarController()),
         ChangeNotifierProvider(create: (_) => NotificationsBadgeController(useCases: notificationUseCases)),
       ],
       child: MaterialApp.router(
@@ -69,6 +72,8 @@ void main() {
   setUp(() async {
     SharedPreferences.setMockInitialValues({});
     await AuthStorageService.init();
+    SettingsStorageService.resetForTesting();
+    await SettingsStorageService.init();
   });
 
   testWidgets('renders the sidebar header without a logo, with 3 nav items (no Configurações)', (tester) async {
@@ -258,6 +263,79 @@ void main() {
       tester.view.physicalSize = const Size(400, 800);
       await tester.pumpAndSettle();
       expect(find.text('Compass System'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+  });
+
+  group('recolher/ocultar o menu (CPS-200)', () {
+    AuthController agent() => AuthController()
+      ..debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    Future<void> tap(WidgetTester tester, String tooltip) async {
+      await tester.tap(find.byTooltip(tooltip));
+      await tester.pumpAndSettle();
+    }
+
+    double contentWidth(WidgetTester tester) => tester.getSize(find.byType(StatefulNavigationShell)).width;
+
+    testWidgets('desktop cicla sidebar, rail e oculta; o conteúdo ocupa o espaço liberado', (tester) async {
+      await _pumpShell(tester, agent());
+      expect(find.text('Dashboard'), findsOneWidget);
+      expect(contentWidth(tester), 1280 - 250 - 1);
+
+      await tap(tester, 'Collapse menu');
+      expect(find.text('Dashboard'), findsNothing);
+      expect(find.byTooltip('Dashboard'), findsOneWidget);
+      expect(contentWidth(tester), 1280 - 72 - 1);
+
+      await tap(tester, 'Hide menu');
+      expect(find.byTooltip('Dashboard'), findsNothing);
+      expect(find.byTooltip('Show menu'), findsOneWidget);
+      expect(contentWidth(tester), 1280);
+
+      await tap(tester, 'Show menu');
+      expect(find.text('Dashboard'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('tablet alterna rail e oculta, sem estado "expandida"', (tester) async {
+      await _pumpShell(tester, agent(), size: const Size(800, 800));
+      expect(find.byTooltip('Collapse menu'), findsNothing);
+
+      await tap(tester, 'Hide menu');
+      expect(find.byTooltip('Dashboard'), findsNothing);
+      expect(contentWidth(tester), 800);
+
+      await tap(tester, 'Show menu');
+      expect(find.byTooltip('Dashboard'), findsOneWidget);
+      expect(find.text('Dashboard'), findsNothing);
+    });
+
+    testWidgets('mobile esconde a top bar e o botão flutuante a traz de volta', (tester) async {
+      await _pumpShell(tester, agent(), size: const Size(411, 800));
+      expect(find.text('Compass System'), findsOneWidget);
+
+      await tap(tester, 'Hide menu');
+      expect(find.text('Compass System'), findsNothing);
+      expect(find.byTooltip('Booking'), findsNothing);
+
+      await tap(tester, 'Show menu');
+      expect(find.text('Compass System'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('redimensionar preserva o estado de cada breakpoint', (tester) async {
+      await _pumpShell(tester, agent());
+      await tap(tester, 'Collapse menu'); // desktop: recolhida
+      await tap(tester, 'Hide menu'); // desktop: oculta
+
+      tester.view.physicalSize = const Size(800, 800);
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Dashboard'), findsOneWidget, reason: 'tablet continua em rail');
+
+      tester.view.physicalSize = const Size(1280, 800);
+      await tester.pumpAndSettle();
+      expect(find.byTooltip('Show menu'), findsOneWidget, reason: 'desktop continua oculto');
       expect(tester.takeException(), isNull);
     });
   });

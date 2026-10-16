@@ -2048,6 +2048,24 @@ abstract class AppLocalizations {
   /// **'Pickup location is required'**
   String get pickupLocationRequiredValidation;
 
+  /// No description provided for @sidebarCollapseTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Collapse menu'**
+  String get sidebarCollapseTooltip;
+
+  /// No description provided for @sidebarHideTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Hide menu'**
+  String get sidebarHideTooltip;
+
+  /// No description provided for @sidebarShowTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Show menu'**
+  String get sidebarShowTooltip;
+
   /// No description provided for @notificationsBellTooltip.
   ///
   /// In en, this message translates to:
