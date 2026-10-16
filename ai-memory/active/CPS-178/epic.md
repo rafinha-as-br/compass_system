@@ -15,3 +15,14 @@ Escopo: CPS-181, CPS-182, CPS-198, CPS-199. Todas movidas para `Análise - Rafin
 - CPS-199 — PR #192 (KPIs do dashboard). Ver `CPS-199.md`.
 
 Handoff: revisão de Rafinha → Integração (Modo A) → QA web (1024–1320 px, 411 dp) e Android. Pendente: criar a issue do recolhimento do menu lateral.
+
+## Integração Modo A (2026-10-15)
+Escopo: Epic CPS-178 ∩ `Integração` = CPS-181, CPS-182, CPS-198, CPS-199. Mergeados nesta ordem em `epic/CPS-178-layout-responsivo` (topo `92ad3ec`):
+- #189 CPS-181 → `d80449803fcab330700b46a3b9b5691dce253929`
+- #190 CPS-182 → `38a9b7189b53f29b1436436121f9b87460999489`
+- #191 CPS-198 → `2ad24b8aadde36d72999c74fc8ab3942dc629572`
+- #192 CPS-199 → `92ad3ece210d26de58c8a3b97192902c377d6d2b`
+
+R3 sem conflito em todas (`origin/epic` mergeado em cada branch, push normal); CI verde (compass-api, travel_matrix, routecraft_app) revalidada a cada reconciliação; sem subtarefas. Smoke no épico: analyze limpo, 285 testes do travel_matrix. `integrado-epico` aplicada nas 4; as issues seguem em `Integração`; branches das issues mantidas (Modo A).
+
+Handoff: o QA web (1024–1320 px, 411 dp) e Android só vem depois da promoção do Epic para `develop` (Modo B), que exige a autorização do Gate 15. A issue do recolhimento do menu lateral é a CPS-200 (`requires-design`), hoje em `Preparação técnica - Claude`, fora deste lote e com PR ainda inexistente: o Modo B depende de decidir se ela entra no Epic antes da promoção ou se a promoção é parcial.
