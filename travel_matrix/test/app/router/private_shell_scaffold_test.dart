@@ -16,7 +16,15 @@ import 'package:travel_matrix/l10n/app_localizations.dart';
 
 class _MockNotificationUseCases extends Mock implements NotificationUseCases {}
 
-Future<GoRouter> _pumpShell(WidgetTester tester, AuthController auth) async {
+Future<GoRouter> _pumpShell(
+  WidgetTester tester,
+  AuthController auth, {
+  Size size = const Size(1280, 800),
+}) async {
+  tester.view.physicalSize = size;
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+
   final notificationUseCases = _MockNotificationUseCases();
   when(() => notificationUseCases.getUnreadCount()).thenAnswer((_) async => const Result.success(0));
 
@@ -185,5 +193,72 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('My Account'), findsNothing);
+  });
+
+  group('layout por largura (CPS-181)', () {
+    AuthController agent() => AuthController()
+      ..debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    testWidgets('desktop (>= 1024) mostra a sidebar completa, sem tooltips de navegação', (tester) async {
+      await _pumpShell(tester, agent(), size: const Size(1024, 800));
+
+      expect(find.text('Dashboard'), findsOneWidget);
+      expect(find.text('Carlos Agent'), findsOneWidget);
+      expect(find.byTooltip('Dashboard'), findsNothing);
+    });
+
+    testWidgets('tablet (600-1023) vira rail de ícones: sem rótulos, navegação por tooltip', (tester) async {
+      final router = await _pumpShell(tester, agent(), size: const Size(1023, 800));
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Dashboard'), findsNothing);
+      expect(find.text('Compass System'), findsNothing);
+      expect(find.text('Carlos Agent'), findsNothing);
+      expect(find.byTooltip('Dashboard'), findsOneWidget);
+
+      await tester.tap(find.byTooltip('Users'));
+      await tester.pumpAndSettle();
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/c');
+    });
+
+    testWidgets('mobile (< 600) vira top bar acima do conteúdo, sem overflow em ~411 dp', (tester) async {
+      final router = await _pumpShell(tester, agent(), size: const Size(411, 800));
+
+      expect(tester.takeException(), isNull);
+      expect(find.text('Compass System'), findsOneWidget);
+      expect(find.text('Dashboard'), findsNothing);
+
+      await tester.tap(find.byTooltip('Booking'));
+      await tester.pumpAndSettle();
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b');
+    });
+
+    testWidgets('o menu de conta abre pelo avatar no rail e na top bar', (tester) async {
+      for (final width in [800.0, 411.0]) {
+        final router = await _pumpShell(tester, agent(), size: Size(width, 800));
+        await tester.tap(find.byTooltip('Carlos Agent'));
+        await tester.pumpAndSettle();
+        expect(find.text('My Account'), findsOneWidget, reason: 'largura $width');
+
+        await tester.tap(find.text('My Account'));
+        await tester.pumpAndSettle();
+        expect(router.routerDelegate.currentConfiguration.uri.toString(), '/d');
+      }
+    });
+
+    testWidgets('redimensionar troca sidebar, rail e top bar sem exceção', (tester) async {
+      await _pumpShell(tester, agent());
+      expect(find.text('Dashboard'), findsOneWidget);
+
+      tester.view.physicalSize = const Size(800, 800);
+      await tester.pumpAndSettle();
+      expect(find.text('Dashboard'), findsNothing);
+      expect(find.byTooltip('Dashboard'), findsOneWidget);
+
+      tester.view.physicalSize = const Size(400, 800);
+      await tester.pumpAndSettle();
+      expect(find.text('Compass System'), findsOneWidget);
+      expect(tester.takeException(), isNull);
+    });
   });
 }
