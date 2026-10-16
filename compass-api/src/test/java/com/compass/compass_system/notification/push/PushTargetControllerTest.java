@@ -1,6 +1,9 @@
 package com.compass.compass_system.notification.push;
 
 import com.compass.compass_system.security.JwtUtil;
+import com.compass.compass_system.company.AgentFixtures;
+import com.compass.compass_system.company.CompanyRepository;
+import com.compass.compass_system.repositories.AgentUserRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -37,6 +40,12 @@ class PushTargetControllerTest {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private AgentUserRepository agentUserRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
     private String clientAuthHeader() {
         return "Bearer " + jwtUtil.generateToken("client@matrix.com", "CLIENTE", 1L);
     }
@@ -47,6 +56,7 @@ class PushTargetControllerTest {
 
     @BeforeEach
     void setUp() {
+        AgentFixtures.ensureOwner(agentUserRepository, companyRepository, "agent@matrix.com");
         pushTargetRepository.deleteAll();
     }
 

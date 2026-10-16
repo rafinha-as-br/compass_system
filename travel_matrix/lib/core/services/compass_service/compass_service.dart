@@ -1,4 +1,5 @@
 import 'package:travel_matrix/core/services/compass_service/clients/auth_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/clients/company_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/dashboard_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/itinerary_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/notification_api_client.dart';
@@ -42,6 +43,7 @@ class CompassService {
     await PlacesApiClient.init();
     await NotificationApiClient.init();
     await PushTargetApiClient.init();
+    await CompanyApiClient.init();
     _instance = CompassService._();
     return _instance!;
   }

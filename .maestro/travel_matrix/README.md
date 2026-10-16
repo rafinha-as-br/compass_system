@@ -24,6 +24,10 @@ o Travel Matrix só era testado via Web (Claude in Chrome).
 especificamente para ter uma credencial estável, sem depender de nenhum
 agente pré-existente no seed do banco. Reutilizar em execuções futuras.
 
+Para recriar a conta: `POST /api/auth/cadastrar/agente` agora exige o header
+`X-Bootstrap-Key` (valor de `COMPASS_BOOTSTRAP_KEY`; no `compass-api/docker-compose.yml` o
+default é `dev-bootstrap-key`) e o objeto `company` no corpo — sem a chave, 403; sem `company`, 400.
+
 ## Viagem de teste usada nos flows
 
 `QA Trip CPS-89` (id `8faace8e-d568-4e15-8a15-60c653dcc587`) — primeira linha

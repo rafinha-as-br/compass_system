@@ -51,6 +51,7 @@ services:
       SPRING_DATASOURCE_URL: jdbc:postgresql://db:5432/compass_db
       SPRING_DATASOURCE_USERNAME: compass_user
       SPRING_DATASOURCE_PASSWORD: compass_password
+      COMPASS_BOOTSTRAP_KEY: ${COMPASS_BOOTSTRAP_KEY:-dev-bootstrap-key}
       SPRING_RABBITMQ_HOST: rabbitmq
       SPRING_RABBITMQ_USERNAME: compass_user
       SPRING_RABBITMQ_PASSWORD: compass_password

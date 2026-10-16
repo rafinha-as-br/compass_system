@@ -2,6 +2,9 @@ package com.compass.compass_system.controllers;
 
 import com.compass.compass_system.entities.ClientUser;
 import com.compass.compass_system.repositories.ClientUserRepository;
+import com.compass.compass_system.company.AgentFixtures;
+import com.compass.compass_system.company.CompanyRepository;
+import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.security.JwtUtil;
 import com.compass.compass_system.travel.Travel;
 import com.compass.compass_system.travel.TravelRepository;
@@ -34,6 +37,12 @@ class DashboardControllerTest {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private AgentUserRepository agentUserRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
     private String authHeader() {
         return "Bearer " + jwtUtil.generateToken("agent@matrix.com", "AGENTE", 1L);
     }
@@ -42,6 +51,10 @@ class DashboardControllerTest {
     void setUp() {
         travelRepository.deleteAll();
         clientUserRepository.deleteAll();
+        agentUserRepository.deleteAll();
+
+        // O filtro JWT rejeita token de agente inexistente (módulo company).
+        AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Agent", "agent@matrix.com", "hash");
 
         ClientUser client = new ClientUser();
         client.setName("Maria Cliente");
