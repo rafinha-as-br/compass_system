@@ -27,6 +27,7 @@ class PrivateShellScaffold extends StatelessWidget {
       (icon: Icons.dashboard, label: l10n.dashboardNav),
       (icon: Icons.calendar_month, label: l10n.bookingNav),
       (icon: Icons.people, label: l10n.usersTitle),
+      (icon: Icons.business_outlined, label: l10n.companyNav),
     ];
     final divider = theme.dividerColor;
 
@@ -85,7 +86,7 @@ class PrivateShellScaffold extends StatelessWidget {
                   border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
                 ),
                 child: _AccountMenu(
-                  onGoToAccount: () => navigationShell.goBranch(3),
+                  onGoToAccount: () => navigationShell.goBranch(4),
                   builder: (context, controller) => _AccountRow(
                     controller: controller,
                     userName: userName,
@@ -126,7 +127,7 @@ class PrivateShellScaffold extends StatelessWidget {
                 ),
                 _AccountAvatarMenu(
                   userName: userName,
-                  onGoToAccount: () => navigationShell.goBranch(3),
+                  onGoToAccount: () => navigationShell.goBranch(4),
                 ),
                 const SizedBox(height: 12),
               ],
@@ -189,7 +190,7 @@ class PrivateShellScaffold extends StatelessWidget {
                     child: SafeArea(
                       bottom: false,
                       child: Padding(
-                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                         child: Row(
                           children: [
                             Expanded(
@@ -213,7 +214,7 @@ class PrivateShellScaffold extends StatelessWidget {
                             const SizedBox(width: 4),
                             _AccountAvatarMenu(
                               userName: userName,
-                              onGoToAccount: () => navigationShell.goBranch(3),
+                              onGoToAccount: () => navigationShell.goBranch(4),
                             ),
                             const _SidebarToggleButton(size: ScreenSize.mobile),
                           ],

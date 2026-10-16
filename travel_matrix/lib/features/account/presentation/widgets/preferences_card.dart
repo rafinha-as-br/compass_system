@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 import 'package:travel_matrix/app/global_controllers/settings_controller.dart';
-import 'package:travel_matrix/features/account/presentation/widgets/card_shell.dart';
+import 'package:travel_matrix/shared/widgets/card_shell.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 
 class PreferencesCard extends StatelessWidget {

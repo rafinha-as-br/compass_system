@@ -40,6 +40,7 @@ Future<GoRouter> _pumpShell(
           StatefulShellBranch(routes: [GoRoute(path: '/b', builder: (_, __) => const SizedBox())]),
           StatefulShellBranch(routes: [GoRoute(path: '/c', builder: (_, __) => const SizedBox())]),
           StatefulShellBranch(routes: [GoRoute(path: '/d', builder: (_, __) => const SizedBox())]),
+          StatefulShellBranch(routes: [GoRoute(path: '/e', builder: (_, __) => const SizedBox())]),
         ],
       ),
     ],
@@ -76,7 +77,7 @@ void main() {
     await SettingsStorageService.init();
   });
 
-  testWidgets('renders the sidebar header without a logo, with 3 nav items (no Configurações)', (tester) async {
+  testWidgets('renders the sidebar header without a logo, with 4 nav items (Empresa after Users, no Configurações)', (tester) async {
     final auth = AuthController();
     auth.debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
 
@@ -88,6 +89,7 @@ void main() {
     expect(find.text('Dashboard'), findsOneWidget);
     expect(find.text('Booking'), findsOneWidget);
     expect(find.text('Users'), findsOneWidget);
+    expect(find.text('Company'), findsOneWidget);
     expect(find.text('Settings'), findsNothing);
     expect(find.text('Support'), findsNothing);
     expect(find.text('Logout'), findsNothing);
@@ -123,7 +125,7 @@ void main() {
     await tester.tap(find.text('My Account'));
     await tester.pumpAndSettle();
 
-    expect(router.routerDelegate.currentConfiguration.uri.toString(), '/d');
+    expect(router.routerDelegate.currentConfiguration.uri.toString(), '/e');
     expect(find.text('My Account'), findsNothing);
   });
 
@@ -238,6 +240,21 @@ void main() {
       expect(router.routerDelegate.currentConfiguration.uri.toString(), '/b');
     });
 
+    testWidgets('mobile em 360 dp cabe com os 4 destinos, sem overflow', (tester) async {
+      await _pumpShell(tester, agent(), size: const Size(360, 800));
+
+      expect(tester.takeException(), isNull);
+      expect(find.byTooltip('Company'), findsOneWidget);
+    });
+
+    testWidgets('Empresa é o 4º item e abre a 4ª branch', (tester) async {
+      final router = await _pumpShell(tester, agent());
+
+      await tester.tap(find.text('Company'));
+      await tester.pumpAndSettle();
+      expect(router.routerDelegate.currentConfiguration.uri.toString(), '/d');
+    });
+
     testWidgets('o menu de conta abre pelo avatar no rail e na top bar', (tester) async {
       for (final width in [800.0, 411.0]) {
         final router = await _pumpShell(tester, agent(), size: Size(width, 800));
@@ -247,7 +264,7 @@ void main() {
 
         await tester.tap(find.text('My Account'));
         await tester.pumpAndSettle();
-        expect(router.routerDelegate.currentConfiguration.uri.toString(), '/d');
+        expect(router.routerDelegate.currentConfiguration.uri.toString(), '/e');
       }
     });
 

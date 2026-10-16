@@ -54,4 +54,11 @@ abstract final class ApiEndpoints {
   static const String pushTargets = '/push-targets';
   static const String pushTargetsVapidPublicKey = '/push-targets/vapid-public-key';
   static String pushTarget(String id) => '/push-targets/$id';
+
+  // Company (módulo company — tenant do agente autenticado)
+  static const String companyMe = '/api/companies/me';
+  static const String companyAgents = '/api/companies/me/agents';
+  static const String companyAgentInvite = '/api/companies/me/agents/invite';
+  static String companyAgentById(String id) => '/api/companies/me/agents/$id';
+  static String companyAgentRole(String id) => '/api/companies/me/agents/$id/role';
 }
