@@ -1,7 +1,8 @@
 package com.compass.compass_system.users;
 
-import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.entities.ClientUser;
+import com.compass.compass_system.company.AgentFixtures;
+import com.compass.compass_system.company.CompanyRepository;
 import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import com.compass.compass_system.travel.RoutePlan;
@@ -44,6 +45,9 @@ class ClientUserControllerTest {
     private AgentUserRepository agentUserRepository;
 
     @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
     private TravelRepository travelRepository;
 
     private Long clientId;
@@ -62,11 +66,8 @@ class ClientUserControllerTest {
         client.setAge(30);
         clientId = clientUserRepository.save(client).getId();
 
-        AgentUser agent = new AgentUser();
-        agent.setName("Carlos Agente");
-        agent.setEmail("agente@matrix.com");
-        agent.setPassword(BCrypt.hashpw("senha123", BCrypt.gensalt()));
-        agentUserRepository.save(agent);
+        AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Carlos Agente",
+                "agente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
 
         agentToken = login("agente@matrix.com");
     }

@@ -1,5 +1,8 @@
 package com.compass.compass_system.notification;
 
+import com.compass.compass_system.company.AgentFixtures;
+import com.compass.compass_system.company.CompanyRepository;
+import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.itinerary.Itinerary;
 import com.compass.compass_system.itinerary.Stop;
 import com.compass.compass_system.security.JwtUtil;
@@ -47,6 +50,12 @@ class NotificationControllerTest {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private AgentUserRepository agentUserRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
     private String travelId;
 
     private String clientAuthHeader() {
@@ -75,6 +84,8 @@ class NotificationControllerTest {
 
     @BeforeEach
     void setUp() {
+        AgentFixtures.ensureOwner(agentUserRepository, companyRepository, "agent@matrix.com");
+        AgentFixtures.ensureOwner(agentUserRepository, companyRepository, "other-agent@matrix.com");
         notificationRepository.deleteAll();
         travelRepository.deleteAll();
 
