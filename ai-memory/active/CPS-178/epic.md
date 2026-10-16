@@ -25,4 +25,12 @@ Escopo: Epic CPS-178 ∩ `Integração` = CPS-181, CPS-182, CPS-198, CPS-199. Me
 
 R3 sem conflito em todas (`origin/epic` mergeado em cada branch, push normal); CI verde (compass-api, travel_matrix, routecraft_app) revalidada a cada reconciliação; sem subtarefas. Smoke no épico: analyze limpo, 285 testes do travel_matrix. `integrado-epico` aplicada nas 4; as issues seguem em `Integração`; branches das issues mantidas (Modo A).
 
-Handoff: o QA web (1024–1320 px, 411 dp) e Android só vem depois da promoção do Epic para `develop` (Modo B), que exige a autorização do Gate 15. A issue do recolhimento do menu lateral é a CPS-200 (`requires-design`), hoje em `Preparação técnica - Claude`, fora deste lote e com PR ainda inexistente: o Modo B depende de decidir se ela entra no Epic antes da promoção ou se a promoção é parcial.
+Handoff (na época): o QA só vem depois da promoção do Epic (Modo B, Gate 15). A CPS-200 (recolhimento do menu lateral, `requires-design`) ainda estava fora do lote; ver abaixo.
+
+## CPS-200 integrada no Epic (Modo A, 2026-10-16)
+Implementada e integrada depois do lote acima: PR #193 → `b8582d234e667146c253a6695f95075324b66cbb`, topo do Epic. Entrou na promoção completa. Ver `CPS-200.md`.
+
+## Integração Modo B (2026-10-16)
+Promoção completa do Epic: PR #194 `epic/CPS-178-layout-responsivo → develop`, merge `ff870e7f924a588b3bf1cb084f4731edcb191703` (a `develop` de origem, `7c30a43`, já era ancestral do Epic: sem conflito). Gate 15 autorizado por Rafinha em 2026-10-16; CI verde (compass-api, routecraft_app, travel_matrix). Smoke na `develop`: analyze limpo, 295 testes do travel_matrix. Branches do ciclo (Epic e das cinco issues) excluídas. CPS-181, CPS-182, CPS-198, CPS-199 e CPS-200 movidas para `QA - Claude`. Ledger completo no comentário do Jira em CPS-178.
+
+Handoff: QA web (1024–1320 px, 411 dp) e QA Android sobre a `develop`. Pontos de atenção do code review da CPS-200 para quem testar: botão flutuante do menu oculto sobre o conteúdo (pode cobrir título/voltar); top bar mobile com botão extra de 48 px (risco de overflow abaixo de ~316 dp); rail com 72 px (design cita 44 px); mobile do design prevê ☰ com drawer, mas o shell da CPS-181 usa top bar. Decisões de produto ficam com Rafinha.
