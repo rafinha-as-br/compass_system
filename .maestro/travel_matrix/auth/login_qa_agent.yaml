@@ -1,36 +1,25 @@
 appId: com.example.travel_matrix
 ---
-# Login com o agente fixo de QA (qa.claude.cps114@compass.test / QaClaude123!).
-# Conta criada via POST /api/auth/cadastrar/agente durante o QA de CPS-158/CPS-159
-# (2026-09-29) especificamente para ter uma credencial de agente estável e reutilizável
-# entre execuções — não depende de nenhum agente pré-existente no seed do banco.
+# Login por UI com o agente fixo de QA (qa.claude.cps114@compass.test / QaClaude123!).
+# Conta criada via POST /api/auth/cadastrar/agente (CPS-158/159, 2026-09-29) para ter uma
+# credencial de agente estável. Se o banco for recriado, cadastre o agente de novo.
 #
-# GOTCHA (testabilidade, ver .maestro/travel_matrix/README.md): os rótulos "Email" e
-# "Password" dos campos de texto desta tela desaparecem por causa do bug de overflow
-# de CPS-167 (shell não responsivo no Android) — o hint text não sobra espaço para
-# renderizar. Por isso os dois campos são preenchidos por coordenada percentual
-# (point), não por tapOn de texto. O teclado precisa ser fechado (`back`) entre um
-# campo e outro — senão ele cobre a posição percentual do campo seguinte e o toque
-# erra o alvo. Os botões "Access Travel Matrix" e "LOGIN AS AGENT" continuam com
-# texto visível e são tocados normalmente por texto.
+# Atualizado em 2026-10-16 (QA da CPS-198): a landing/login agora têm layout mobile em
+# coluna única, então os campos expõem o hint ("Email"/"Password") na árvore semântica e
+# são tocados por texto. Antes (CPS-167) o overflow escondia o hint e o flow usava
+# coordenadas percentuais (83%,58% / 83%,65%), que deixaram de valer.
+# O teclado é fechado com `back` para não cobrir o botão de login.
 - launchApp:
     clearState: true
 - tapOn: "Access Travel Matrix"
-- tapOn:
-    point: "83%,58%"
+- tapOn: "Email"
 - inputText: "qa.claude.cps114@compass.test"
 - back
-- tapOn:
-    point: "83%,65%"
+- tapOn: "Password"
 - inputText: "QaClaude123!"
 - back
 - tapOn: "LOGIN AS AGENT"
-# GOTCHA (testabilidade): `assertVisible` só funciona de forma confiável em
-# elementos CLICÁVEIS neste app (botões) — nós de texto puro (View sem
-# `clickable`), mesmo com `accessibilityText` presente e bounds válidos no
-# hierarchy dump (confirmado via `maestro hierarchy`), falham a asserção
-# sistematicamente. "Dashboard"/"Booking"/"Users" (nav lateral) nem chegam a
-# aparecer como nó de semântica. Por isso a confirmação de login usa
-# `assertNotVisible` no próprio botão de login (que é clicável), não texto do
-# Dashboard.
+# assertVisible só é confiável em elementos clicáveis neste app; o dashboard logado mostra
+# o botão do menu/top bar, então a confirmação é a saída da tela de login.
 - assertNotVisible: "LOGIN AS AGENT"
+- takeScreenshot: login_qa_agent_dashboard
