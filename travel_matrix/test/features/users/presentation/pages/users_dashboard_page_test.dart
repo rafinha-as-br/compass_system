@@ -19,11 +19,11 @@ import 'package:travel_matrix/shared/theme/app_theme.dart';
 
 class _MockUserUseCases extends Mock implements UserUseCases {}
 
-UserClient _buildUser() {
+UserClient _buildUser({String name = 'Jane Doe'}) {
   return UserClient(
     backEndId: '1',
     domainId: '1',
-    name: 'Jane Doe',
+    name: name,
     cpf: '000.000.000-00',
     sex: 'F',
     phoneNumber: '11999999999',
@@ -152,5 +152,26 @@ void main() {
       expect(text.maxLines, 1, reason: label);
       expect(text.overflow, TextOverflow.ellipsis, reason: label);
     }
+  });
+
+  testWidgets('long name in a narrow window ellipsizes instead of overflowing the Nome column (CPS-182 QA, CPS-TC-124)', (
+    tester,
+  ) async {
+    tester.view.physicalSize = const Size(800, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    const longName = 'Maria Aparecida dos Santos Albuquerque de Oliveira Cavalcanti';
+    when(() => useCases.getAllUsers()).thenAnswer(
+      (_) async => Result.success([_buildUser(name: longName)]),
+    );
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(_wrap(controller, themeMode: ThemeMode.light));
+    await tester.pumpAndSettle();
+
+    expect(tester.takeException(), isNull);
+    final text = tester.widget<Text>(find.text(longName));
+    expect(text.maxLines, 1);
+    expect(text.overflow, TextOverflow.ellipsis);
   });
 }
