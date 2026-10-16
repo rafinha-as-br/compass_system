@@ -17,6 +17,7 @@ import 'package:travel_matrix/features/users/presentation/view_models/travel_sum
 import 'package:travel_matrix/features/users/presentation/view_models/user_stats_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
+import 'package:travel_matrix/shared/widgets/desktop_scale.dart';
 
 class _MockUserUseCases extends Mock implements UserUseCases {}
 
@@ -61,10 +62,11 @@ final _testUserWithTravel = UserClientViewModel(
   stats: UserStatsViewModel(totalTravels: '1', uniqueDestinationsCount: '1'),
 );
 
-Widget _wrap(UsersController controller) {
+Widget _wrap(UsersController controller, {bool desktopScale = false}) {
   return ChangeNotifierProvider.value(
     value: controller,
     child: MaterialApp(
+      builder: desktopScale ? (context, child) => DesktopScale(child: child!) : null,
       localizationsDelegates: const [
         AppLocalizations.delegate,
         GlobalMaterialLocalizations.delegate,
@@ -86,6 +88,21 @@ void main() {
     useCases = _MockUserUseCases();
     when(() => useCases.getAllUsers())
         .thenAnswer((_) async => const Result.success(<UserClient>[]));
+  });
+
+  testWidgets('back button gets x1.15 more width and a single-line label on desktop (CPS-182 QA)', (tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final controller = UsersController(useCases: useCases);
+
+    await tester.pumpWidget(_wrap(controller, desktopScale: true));
+    await tester.pumpAndSettle();
+
+    // A fonte do flutter_test (Ahem) é mais larga que a Inter real: valida-se a
+    // regra (largura escala com o texto, rótulo em uma linha), não a medida em px.
+    expect(tester.widget<AppBar>(find.byType(AppBar)).leadingWidth, closeTo(220 * 1.15, 0.01));
+    expect(tester.widget<Text>(find.text('Back to Users')).maxLines, 1);
   });
 
   testWidgets('force logout requires confirmation before terminating sessions', (tester) async {

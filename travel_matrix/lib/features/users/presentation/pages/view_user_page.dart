@@ -30,12 +30,16 @@ class ViewUserPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leadingWidth: 160,
+        // Largura acompanha a escala de texto (desktop ×1,15) para o rótulo
+        // caber em uma linha dentro da altura fixa do botão; no mobile fica
+        // estreita para não competir com o botão de editar (o rótulo reticia).
+        leadingWidth: (MediaQuery.sizeOf(context).width < Breakpoints.tablet ? 160 : 220) *
+            MediaQuery.textScalerOf(context).scale(1),
         leading: Padding(
           padding: const EdgeInsets.only(left: 24, top: 8, bottom: 8),
           child: OutlinedButton.icon(
             icon: const Icon(Icons.arrow_back, size: 18),
-            label: Text(l10n.backToUsersButton),
+            label: Text(l10n.backToUsersButton, maxLines: 1, overflow: TextOverflow.ellipsis),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.onSurface,
               side: BorderSide(color: theme.colorScheme.outlineVariant),
