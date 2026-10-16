@@ -357,6 +357,10 @@
   "pickupLocationLabel": "Local de retirada",
   "pickupLocationRequiredValidation": "Local de retirada é obrigatório",
 
+  "sidebarCollapseTooltip": "Recolher menu",
+  "sidebarHideTooltip": "Ocultar menu",
+  "sidebarShowTooltip": "Mostrar menu",
+
   "notificationsBellTooltip": "Notificações",
   "notificationsTitle": "Notificações",
   "notificationsMarkAllRead": "Marcar todas como lidas",
