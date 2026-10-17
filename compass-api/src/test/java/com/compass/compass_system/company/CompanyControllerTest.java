@@ -2,6 +2,8 @@ package com.compass.compass_system.company;
 
 import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.repositories.AgentUserRepository;
+import com.compass.compass_system.repositories.ClientUserRepository;
+import com.compass.compass_system.travel.TravelRepository;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -53,6 +55,12 @@ class CompanyControllerTest {
     @Autowired
     private CompanyRepository companyRepository;
 
+    @Autowired
+    private ClientUserRepository clientUserRepository;
+
+    @Autowired
+    private TravelRepository travelRepository;
+
     private Company aurora;
     private Long ownerId;
     private Long memberId;
@@ -61,6 +69,9 @@ class CompanyControllerTest {
 
     @BeforeEach
     void setUp() throws Exception {
+        // Viagens e clientes de outras classes de teste referenciam empresas (FK company_id).
+        travelRepository.deleteAll();
+        clientUserRepository.deleteAll();
         agentUserRepository.deleteAll();
         companyRepository.deleteAll();
 
@@ -129,6 +140,18 @@ class CompanyControllerTest {
 
         // A senha temporária é uma credencial real: o convidado consegue logar.
         String invitedToken = login("ana.paula.ribeiro@aurora.com.br", temporaryPassword);
+
+        // O convidado nasce com troca de senha obrigatória (CPS-196): bloqueado até trocar a temporária.
+        mockMvc.perform(get("/api/companies/me").header("Authorization", bearer(invitedToken)))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("PASSWORD_CHANGE_REQUIRED"));
+        mockMvc.perform(put("/api/agents/me/password")
+                        .header("Authorization", bearer(invitedToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                Map.of("currentPassword", temporaryPassword, "newPassword", "SenhaDefinitiva1"))))
+                .andExpect(status().isOk());
+
         mockMvc.perform(get("/api/companies/me").header("Authorization", bearer(invitedToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.currentAgent.role").value("MEMBER"));

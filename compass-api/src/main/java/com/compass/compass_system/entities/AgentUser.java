@@ -49,6 +49,13 @@ public class AgentUser {
     // apagada), o login gerado continua reservado e nada é excluído em cascata.
     private Instant removedAt;
 
+    // Verdadeiro no convite (senha temporária) e falso no cadastro pelo bootstrap;
+    // enquanto ativo, o JwtAuthenticationFilter só deixa o agente trocar a senha.
+    // Nunca aceito do corpo da requisição (@JsonIgnore).
+    @JsonIgnore
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean mustChangePassword;
+
     // Preenchido na criação — é o "na empresa desde" exibido no Travel Matrix.
     // Agentes anteriores ao módulo ficam com null.
     @Column(updatable = false)
@@ -158,6 +165,14 @@ public class AgentUser {
 
     public void setRemovedAt(Instant removedAt) {
         this.removedAt = removedAt;
+    }
+
+    public boolean isMustChangePassword() {
+        return mustChangePassword;
+    }
+
+    public void setMustChangePassword(boolean mustChangePassword) {
+        this.mustChangePassword = mustChangePassword;
     }
 
     @JsonIgnore

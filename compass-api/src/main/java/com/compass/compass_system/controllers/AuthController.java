@@ -82,28 +82,6 @@ public class AuthController {
 
     // ==================== CADASTRO ====================
 
-    // Rota para Cadastrar o Cliente
-    @PostMapping("/cadastrar/cliente")
-    public ResponseEntity<String> registerClient(@RequestBody ClientUser newClient) {
-        
-        // Verifica se o e-mail já existe no banco antes de salvar
-        Optional<ClientUser> existingClient = clientRepository.findByEmail(newClient.getEmail());
-        if (existingClient.isPresent()) {
-            throw new BusinessException("Este e-mail já está cadastrado.");
-        }
-
-        // Criptografar a senha antes de salvar
-        if (newClient.getPassword() != null && !newClient.getPassword().isEmpty()) {
-            String hashedPassword = BCrypt.hashpw(newClient.getPassword(), BCrypt.gensalt());
-            newClient.setPassword(hashedPassword);
-        }
-
-        // Salva o cliente no banco de dados 
-        clientRepository.save(newClient);
-        
-        return ResponseEntity.ok("Cliente cadastrado com sucesso no Compass System!");
-    }
-
     // Rota para Cadastrar o Agente fundador.
     //
     // Exige o header X-Bootstrap-Key (variável de ambiente COMPASS_BOOTSTRAP_KEY);
@@ -149,6 +127,7 @@ public class AuthController {
         // Nunca aceitar do corpo: id (save() sobrescreveria um agente existente) e desativação.
         newAgent.setId(null);
         newAgent.setRemovedAt(null);
+        newAgent.setMustChangePassword(false);
 
         // Salva o agente no banco de dados
         agentRepository.save(newAgent);
@@ -204,6 +183,7 @@ public class AuthController {
             LoginResponse response = new LoginResponse(
                 token, agent.getId(), agent.getName(), agent.getEmail(), "AGENTE"
             );
+            response.setMustChangePassword(agent.isMustChangePassword());
             return ResponseEntity.ok(response);
         }
         
@@ -235,6 +215,7 @@ public class AuthController {
             data.put("name", agent.getName());
             data.put("email", agent.getEmail());
             data.put("userType", "AGENTE");
+            data.put("mustChangePassword", agent.isMustChangePassword());
 
             Map<String, Object> response = new java.util.LinkedHashMap<>();
             response.put("status", "success");
@@ -312,6 +293,7 @@ public class AuthController {
             AgentUser agent = agentRepository.findByEmail(resetToken.getEmail())
                     .orElseThrow(() -> new BusinessException("Token inválido ou expirado."));
             agent.setPassword(hashedPassword);
+            agent.setMustChangePassword(false);
             agentRepository.save(agent);
         }
 

@@ -428,5 +428,12 @@
   "temporaryPasswordLabel": "SENHA TEMPORÁRIA",
   "copyCredentialsButton": "Copiar credenciais",
   "credentialsCopiedSnack": "Credenciais copiadas.",
-  "backToPanelButton": "Voltar ao Painel"
+  "backToPanelButton": "Voltar ao Painel",
+  "changePasswordRequiredTitle": "Defina sua nova senha",
+  "changePasswordRequiredBody": "Você entrou com uma senha temporária. Escolha uma nova para continuar.",
+  "confirmNewPassword": "Confirmar nova senha",
+  "passwordMinLengthValidation": "Use pelo menos 8 caracteres",
+  "passwordsDoNotMatchValidation": "As senhas não coincidem",
+  "passwordChangedSuccess": "Senha atualizada",
+  "agentCreatedFirstLoginNote": "O agente trocará esta senha no primeiro acesso."
 }

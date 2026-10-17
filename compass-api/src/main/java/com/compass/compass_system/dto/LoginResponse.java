@@ -10,6 +10,7 @@ public class LoginResponse {
     private String name;
     private String email;
     private String userType;
+    private boolean mustChangePassword;
 
     public LoginResponse(String token, Long userId, String name, String email, String userType) {
         this.token = token;
@@ -30,6 +31,9 @@ public class LoginResponse {
 
     public String getEmail() { return email; }
     public void setEmail(String email) { this.email = email; }
+
+    public boolean isMustChangePassword() { return mustChangePassword; }
+    public void setMustChangePassword(boolean mustChangePassword) { this.mustChangePassword = mustChangePassword; }
 
     public String getUserType() { return userType; }
     public void setUserType(String userType) { this.userType = userType; }

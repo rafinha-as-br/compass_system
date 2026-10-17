@@ -2,7 +2,8 @@ appId: com.example.travel_matrix
 ---
 # Login por UI com o agente fixo de QA (qa.claude.cps114@compass.test / QaClaude123!).
 # Conta criada via POST /api/auth/cadastrar/agente (CPS-158/159, 2026-09-29) para ter uma
-# credencial de agente estável. Se o banco for recriado, cadastre o agente de novo.
+# credencial de agente estável. Se o banco for recriado, rode compass-api/scripts/seed_test_data.py:
+# ele recria esta conta (empresa compass.test, chave de bootstrap) e os clientes/viagens da empresa.
 #
 # Atualizado em 2026-10-16 (QA da CPS-198): a landing/login agora têm layout mobile em
 # coluna única, então os campos expõem o hint ("Email"/"Password") na árvore semântica e

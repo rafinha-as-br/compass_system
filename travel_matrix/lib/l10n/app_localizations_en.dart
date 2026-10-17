@@ -1255,4 +1255,27 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get backToPanelButton => 'Back to Panel';
+
+  @override
+  String get changePasswordRequiredTitle => 'Set your new password';
+
+  @override
+  String get changePasswordRequiredBody =>
+      'You signed in with a temporary password. Choose a new one to continue.';
+
+  @override
+  String get confirmNewPassword => 'Confirm New Password';
+
+  @override
+  String get passwordMinLengthValidation => 'Use at least 8 characters';
+
+  @override
+  String get passwordsDoNotMatchValidation => 'Passwords do not match';
+
+  @override
+  String get passwordChangedSuccess => 'Password updated';
+
+  @override
+  String get agentCreatedFirstLoginNote =>
+      'The agent will be asked to change this password on first sign-in.';
 }

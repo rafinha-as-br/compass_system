@@ -30,6 +30,10 @@ import java.util.Optional;
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    static final String PASSWORD_CHANGE_REQUIRED = "PASSWORD_CHANGE_REQUIRED";
+    static final String PASSWORD_CHANGE_PATH = "/api/agents/me/password";
+    static final String PROFILE_PATH = "/users/me";
+
     @Autowired
     private JwtUtil jwtUtil;
 
@@ -49,19 +53,42 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String token = authHeader.substring(7);
 
-            if (jwtUtil.isTokenValid(token) && !isSessionInvalidated(token)) {
+            if (jwtUtil.isTokenValid(token)) {
                 String email = jwtUtil.getEmailFromToken(token);
                 String userType = jwtUtil.getUserTypeFromToken(token);
+                Optional<AgentUser> agent = "AGENTE".equals(userType)
+                        ? agentUserRepository.findByEmail(email) : Optional.empty();
 
-                // Cria uma autenticação com a role do tipo de usuário
-                var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + userType.toUpperCase()));
-                var authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
+                if (!isSessionInvalidated(token, userType, email, agent)) {
+                    // Cria uma autenticação com a role do tipo de usuário
+                    var authorities = List.of(new SimpleGrantedAuthority("ROLE_" + userType.toUpperCase()));
+                    var authentication = new UsernamePasswordAuthenticationToken(email, null, authorities);
 
-                SecurityContextHolder.getContext().setAuthentication(authentication);
+                    SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                    if (agent.filter(AgentUser::isMustChangePassword).isPresent() && !isAllowedWhilePasswordChangePending(request)) {
+                        rejectPasswordChangeRequired(response);
+                        return;
+                    }
+                }
             }
         }
 
         filterChain.doFilter(request, response);
+    }
+
+    // Agente com troca de senha obrigatória só alcança a própria troca e o perfil.
+    private boolean isAllowedWhilePasswordChangePending(HttpServletRequest request) {
+        String path = request.getRequestURI();
+        return (PASSWORD_CHANGE_PATH.equals(path) && "PUT".equals(request.getMethod()))
+                || (PROFILE_PATH.equals(path) && "GET".equals(request.getMethod()));
+    }
+
+    private void rejectPasswordChangeRequired(HttpServletResponse response) throws IOException {
+        response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        response.setContentType("application/json;charset=UTF-8");
+        response.getWriter().write("{\"status\":403,\"error\":\"" + PASSWORD_CHANGE_REQUIRED
+                + "\",\"message\":\"É necessário trocar a senha temporária antes de continuar.\"}");
     }
 
     /**
@@ -72,12 +99,9 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
      * pelo OWNER, módulo company) é rejeitado — é o que dá efeito real à
      * remoção, já que o JWT é stateless.
      */
-    private boolean isSessionInvalidated(String token) {
-        String userType = jwtUtil.getUserTypeFromToken(token);
-        String email = jwtUtil.getEmailFromToken(token);
-
+    private boolean isSessionInvalidated(String token, String userType, String email, Optional<AgentUser> agent) {
         if ("AGENTE".equals(userType)) {
-            return agentUserRepository.findByEmail(email).filter(AgentUser::isActive).isEmpty();
+            return agent.filter(AgentUser::isActive).isEmpty();
         }
 
         if (!"CLIENTE".equals(userType)) {

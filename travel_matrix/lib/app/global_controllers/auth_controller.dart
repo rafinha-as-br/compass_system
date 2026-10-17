@@ -4,6 +4,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 import 'package:travel_matrix/core/services/auth_storage_service.dart';
 import 'package:travel_matrix/core/services/compass_service/compass_service.dart';
+import 'package:travel_matrix/core/services/compass_service/http_api_client.dart';
 import 'package:travel_matrix/core/services/web_push_service.dart';
 
 /// Controller responsible for managing authentication state.
@@ -15,6 +16,12 @@ class AuthController extends ChangeNotifier {
   Map<String, dynamic>? _userData;
 
   bool _initialized = false;
+
+  /// Agente convidado ainda com a senha temporária. Vem do login ou do 403
+  /// PASSWORD_CHANGE_REQUIRED (o flag não sobrevive a um reload, o 403 sim).
+  bool _mustChangePassword = false;
+
+  bool get mustChangePassword => _mustChangePassword;
 
   bool get initialized => _initialized;
 
@@ -35,6 +42,7 @@ class AuthController extends ChangeNotifier {
   }
 
   Future<void> initialize() async {
+    HttpApiClient.onPasswordChangeRequired = requirePasswordChange;
     _token = await _storage.getToken();
     if (_token != null) {
       await loadUserData();
@@ -44,12 +52,25 @@ class AuthController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> login(String token) async {
+  Future<void> login(String token, {bool mustChangePassword = false}) async {
     _token = token;
+    _mustChangePassword = mustChangePassword;
     await _storage.saveToken(token);
     await loadUserData();
     notifyListeners();
     unawaited(WebPushService.instance.registerForPush());
+  }
+
+  /// Roteia para a troca de senha obrigatória (o router reage ao notify).
+  void requirePasswordChange() {
+    if (_token == null || _mustChangePassword) return;
+    _mustChangePassword = true;
+    notifyListeners();
+  }
+
+  void passwordChanged() {
+    _mustChangePassword = false;
+    notifyListeners();
   }
 
   Future<void> loadUserData() async {
@@ -76,6 +97,7 @@ class AuthController extends ChangeNotifier {
     await WebPushService.instance.unregisterFromPush();
     _token = null;
     _userData = null;
+    _mustChangePassword = false;
     await _storage.clearToken();
     notifyListeners();
   }

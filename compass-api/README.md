@@ -34,15 +34,19 @@ python compass-api/scripts/seed_test_data.py
 
 O script usa só a biblioteca padrão do Python (sem dependências extras) e
 popula a API **pelos endpoints HTTP reais** (nunca escreve direto no banco):
-cadastra 5 clientes e cria 4 viagens para cada um — uma em cada estado do
+cadastra a empresa de teste e o agente fundador (chave de bootstrap
+`COMPASS_BOOTSTRAP_KEY`, default `dev-bootstrap-key`), cadastra 5 clientes pelo
+agente (`POST /users`) e cria 4 viagens para cada um, com o token do cliente — uma em cada estado do
 ciclo de vida (`route_created`, `itinerary_created`, `travel_started`,
 `travel_finished`), com exatamente 1 viagem "em andamento"
 (`travel_started`) por cliente. As viagens com itinerário recebem passos
 reais de tipos variados (hospedagem, parada, e trecho de avião/ônibus/carro
 alugado, alternando por viagem).
 
-É repetível: rodar de novo reaproveita o login dos clientes já cadastrados
-(a API responde 400 em cadastro duplicado) e cria mais um lote de viagens.
+É repetível: rodar de novo reaproveita o agente e os clientes já cadastrados
+(os clientes são identificados pelo e-mail) e cria mais um lote de viagens.
+O agente de teste é `qa.claude.cps114@compass.test` / `QaClaude123!`, o mesmo
+usado pelos flows Maestro do Travel Matrix.
 Para resetar o banco entre execuções, use `docker-compose down -v` antes de
 subir de novo.
 
@@ -64,21 +68,8 @@ A URL base da API é **`http://localhost:8081`**.
 
 ### 🔑 Autenticação de Clientes (`/api/auth`)
 
-*   **Cadastro de Cliente**
-    *   **Método:** `POST`
-    *   **Rota:** `/api/auth/cadastrar/cliente`
-    *   **Corpo da Requisição (JSON):**
-        ```json
-        {
-          "nome": "Maria Silva",
-          "cpf": "12345678909",
-          "idade": 34,
-          "sexo": "F",
-          "telefone": "11988887777",
-          "email": "maria@email.com",
-          "senha": "senha_segura"
-        }
-        ```
+> Clientes não têm autocadastro: nascem na empresa do agente que os cadastra
+> (`POST /users`, com o token do agente).
 
 *   **Login de Cliente**
     *   **Método:** `POST`

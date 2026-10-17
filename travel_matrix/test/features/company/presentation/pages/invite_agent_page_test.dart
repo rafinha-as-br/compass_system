@@ -80,6 +80,7 @@ void main() {
     expect(find.text('Agent created'), findsOneWidget);
     expect(find.text('ana.paula.ribeiro2@aurora.com.br'), findsOneWidget);
     expect(find.text('Xy7kQ2pL9m'), findsOneWidget);
+    expect(find.textContaining('change this password on first sign-in'), findsOneWidget);
     expect(find.text('Copy credentials'), findsOneWidget);
     expect(find.text('Back to Panel'), findsOneWidget);
     expect(find.byType(TextFormField), findsNothing);

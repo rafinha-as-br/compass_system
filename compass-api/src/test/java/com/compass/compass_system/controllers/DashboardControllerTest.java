@@ -1,6 +1,7 @@
 package com.compass.compass_system.controllers;
 
-import com.compass.compass_system.entities.ClientUser;
+import com.compass.compass_system.company.Company;
+import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import com.compass.compass_system.company.AgentFixtures;
 import com.compass.compass_system.company.CompanyRepository;
@@ -54,18 +55,32 @@ class DashboardControllerTest {
         agentUserRepository.deleteAll();
 
         // O filtro JWT rejeita token de agente inexistente (módulo company).
-        AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Agent", "agent@matrix.com", "hash");
+        AgentUser agent = AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Agent", "agent@matrix.com", "hash");
 
-        ClientUser client = new ClientUser();
-        client.setName("Maria Cliente");
-        client.setEmail("cliente@matrix.com");
-        client.setPassword("hash");
-        clientUserRepository.save(client);
+        AgentFixtures.saveClient(clientUserRepository, agent.getCompany(), "Maria Cliente", "cliente@matrix.com", "hash");
+        saveTravel(agent.getCompany(), "Maria Cliente", "Litoral Norte");
+    }
 
+    private void saveTravel(Company company, String clientName, String travelName) {
         Travel travel = new Travel();
-        travel.setClientName("Maria Cliente");
-        travel.setTravelName("Litoral Norte");
+        travel.setClientName(clientName);
+        travel.setTravelName(travelName);
+        travel.setCompany(company);
         travelRepository.save(travel);
+    }
+
+    @Test
+    void statsOnlyCountDataOfTheCallersCompany() throws Exception {
+        Company other = AgentFixtures.company(companyRepository, "outra.com");
+        AgentFixtures.saveClient(clientUserRepository, other, "Cliente Outra", "cliente@outra.com", "hash");
+        saveTravel(other, "Cliente Outra", "Viagem Outra");
+
+        mockMvc.perform(get("/dashboard/stats").header("Authorization", authHeader()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.totalTravels").value(1))
+                .andExpect(jsonPath("$.data.activeClients").value(1))
+                .andExpect(jsonPath("$.data.recentTravels.length()").value(1))
+                .andExpect(jsonPath("$.data.recentTravels[0].travelName").value("Litoral Norte"));
     }
 
     @Test
