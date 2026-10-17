@@ -1,5 +1,6 @@
 package com.compass.compass_system.controllers;
 
+import com.compass.compass_system.company.CompanyScope;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import com.compass.compass_system.travel.Travel;
 import com.compass.compass_system.travel.TravelRepository;
@@ -25,16 +26,20 @@ public class DashboardController {
     @Autowired
     private ClientUserRepository clientRepository;
 
+    @Autowired
+    private CompanyScope companyScope;
+
     // ─── GET /dashboard/stats ──────────────────────────────────────────────────
     @GetMapping("/stats")
     public ResponseEntity<Map<String, Object>> getDashboardStats() {
-        long totalTravels = travelRepository.count();
-        long completedItineraries = travelRepository.countByItineraryIsNotNull();
+        Long companyId = companyScope.currentCompanyId();
+        long totalTravels = travelRepository.countByCompany_Id(companyId);
+        long completedItineraries = travelRepository.countByCompany_IdAndItineraryIsNotNull(companyId);
         long pendingItineraries = totalTravels - completedItineraries;
-        long activeClients = clientRepository.countByIsActiveTrue();
+        long activeClients = clientRepository.countByCompany_IdAndIsActiveTrue(companyId);
 
         // Recent travels (last 10)
-        List<Travel> allTravels = travelRepository.findAll();
+        List<Travel> allTravels = travelRepository.findByCompany_Id(companyId);
         List<Travel> recentTravels = allTravels.stream()
                 .sorted((a, b) -> {
                     // Sort by id descending as a proxy for creation order

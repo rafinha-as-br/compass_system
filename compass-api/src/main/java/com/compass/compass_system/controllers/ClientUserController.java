@@ -1,7 +1,9 @@
 package com.compass.compass_system.controllers;
 
+import com.compass.compass_system.company.CompanyScope;
 import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.entities.ClientUser;
+import com.compass.compass_system.exceptions.BusinessException;
 import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import com.compass.compass_system.security.JwtUtil;
@@ -36,6 +38,14 @@ public class ClientUserController {
 
     @Autowired
     private JwtUtil jwtUtil;
+
+    @Autowired
+    private CompanyScope companyScope;
+
+    // Cliente de outra empresa responde como inexistente (404).
+    private Optional<ClientUser> findOwned(Long id) {
+        return clientRepository.findByIdAndCompany_Id(id, companyScope.currentCompanyId());
+    }
 
     // ─── GET /users/me ─────────────────────────────────────────────────────────
     // Returns the authenticated user's profile (agent or client) based on the JWT.
@@ -72,10 +82,10 @@ public class ClientUserController {
     }
 
     // ─── GET /users ────────────────────────────────────────────────────────────
-    // Returns all client users.
+    // Returns all client users of the caller's company.
     @GetMapping
     public ResponseEntity<Map<String, Object>> getAllUsers() {
-        List<ClientUser> clients = clientRepository.findAll();
+        List<ClientUser> clients = clientRepository.findByCompany_Id(companyScope.currentCompanyId());
         List<Map<String, Object>> userList = new ArrayList<>();
         for (ClientUser client : clients) {
             userList.add(mapClientToResponse(client));
@@ -93,7 +103,7 @@ public class ClientUserController {
     // Travel Matrix's user detail page (CPS-107) reads both.
     @GetMapping("/{id}")
     public ResponseEntity<Map<String, Object>> getUserById(@PathVariable Long id) {
-        Optional<ClientUser> opt = clientRepository.findById(id);
+        Optional<ClientUser> opt = findOwned(id);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -106,10 +116,15 @@ public class ClientUserController {
     }
 
     // ─── POST /users ───────────────────────────────────────────────────────────
-    // Creates a new client user (agent-initiated).
+    // Creates a new client user (agent-initiated); it is born in the agent's company.
     @PostMapping
     public ResponseEntity<Map<String, Object>> createUser(@RequestBody Map<String, Object> body) {
         ClientUser client = new ClientUser();
+        client.setCompany(companyScope.currentAgent().getCompany());
+        String email = (String) body.get("email");
+        if (email == null || clientRepository.findByEmail(email).isPresent()) {
+            throw new BusinessException("Este e-mail já está cadastrado.");
+        }
         client.setName((String) body.get("name"));
         client.setCpf((String) body.get("cpf"));
         client.setGender((String) body.getOrDefault("sex", "M"));
@@ -136,7 +151,7 @@ public class ClientUserController {
     public ResponseEntity<Map<String, Object>> updateUser(
             @PathVariable Long id, @RequestBody Map<String, Object> body) {
 
-        Optional<ClientUser> opt = clientRepository.findById(id);
+        Optional<ClientUser> opt = findOwned(id);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -167,7 +182,7 @@ public class ClientUserController {
     public ResponseEntity<Map<String, Object>> deactivateUser(
             @PathVariable Long id, @RequestBody Map<String, Object> body) {
 
-        Optional<ClientUser> opt = clientRepository.findById(id);
+        Optional<ClientUser> opt = findOwned(id);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -188,7 +203,7 @@ public class ClientUserController {
     // Resets a client's password to a default value.
     @PostMapping("/{id}/reset-password")
     public ResponseEntity<Map<String, Object>> resetPassword(@PathVariable Long id) {
-        Optional<ClientUser> opt = clientRepository.findById(id);
+        Optional<ClientUser> opt = findOwned(id);
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -210,7 +225,7 @@ public class ClientUserController {
     // JwtAuthenticationFilter, mesmo sem ter expirado naturalmente.
     @PostMapping("/{id}/force-logout")
     public ResponseEntity<Map<String, Object>> forceLogout(@PathVariable Long id) {
-        Optional<ClientUser> clientOpt = clientRepository.findById(id);
+        Optional<ClientUser> clientOpt = findOwned(id);
         if (clientOpt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
@@ -257,7 +272,8 @@ public class ClientUserController {
     private Map<String, Object> mapClientToDetailResponse(ClientUser client) {
         Map<String, Object> map = mapClientToResponse(client);
 
-        List<Travel> travels = travelRepository.findByClientName(client.getName());
+        List<Travel> travels = travelRepository.findByClientNameAndCompany_Id(
+                client.getName(), client.getCompany().getId());
         List<Map<String, Object>> travelSummaries = new ArrayList<>();
         Set<String> destinations = new HashSet<>();
         for (Travel travel : travels) {
