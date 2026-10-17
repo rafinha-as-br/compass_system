@@ -55,7 +55,7 @@ void main() {
         final result = await controller.login('agente@compass.com', 'senha123');
 
         expect(result.isSuccess, isTrue);
-        expect(result.data, 'abc123');
+        expect(result.data?.token, 'abc123');
         expect(controller.state.isLoading, isFalse);
         expect(controller.state.errorMessage, isNull);
       },

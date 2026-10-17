@@ -3,6 +3,7 @@ import 'package:travel_matrix/core/entities/result.dart';
 import 'package:travel_matrix/features/auth/data/auth_data_source.dart';
 import 'package:travel_matrix/features/auth/data/auth_repository_impl.dart';
 import 'package:travel_matrix/features/auth/domain/auth_repository.dart';
+import 'package:travel_matrix/features/auth/domain/entities/auth_session.dart';
 import 'package:travel_matrix/features/auth/domain/login.dart';
 import 'package:travel_matrix/features/auth/domain/request_password_reset.dart';
 import 'package:travel_matrix/features/auth/domain/reset_password.dart';
@@ -78,7 +79,7 @@ class LoginController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<Result<String>> login(String email, String password) async {
+  Future<Result<AuthSession>> login(String email, String password) async {
     _state = _state.copyWith(isLoading: true, errorMessage: null);
     notifyListeners();
 
@@ -86,7 +87,7 @@ class LoginController extends ChangeNotifier {
       final session = await _login(email, password);
       _state = _state.copyWith(isLoading: false);
       notifyListeners();
-      return Result.success(session.token);
+      return Result.success(session);
     } catch (e) {
       final message = e is StateError ? e.message : 'An error occurred during login.';
       _state = _state.copyWith(isLoading: false, errorMessage: message);

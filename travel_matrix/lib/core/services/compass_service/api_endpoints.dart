@@ -28,6 +28,9 @@ abstract final class ApiEndpoints {
   static const String forgotPassword = '/api/auth/esqueci-senha';
   static const String resetPassword = '/api/auth/redefinir-senha';
 
+  // Agent self-service (CPS-196)
+  static const String agentPassword = '/api/agents/me/password';
+
   // Dashboard
   static const String dashboardStats = '/dashboard/stats';
 

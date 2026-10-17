@@ -88,6 +88,20 @@ class CompassService {
     }
   }
 
+  /// Changes the authenticated agent's password. Returns {status, data, message};
+  /// a wrong current password comes back as status 'error' with the backend message.
+  Future<Map<String, dynamic>> changePassword(
+    String token,
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      return await _authApiClient.changePassword(token, currentPassword, newPassword);
+    } on ApiException catch (e) {
+      return {'status': 'error', 'data': null, 'message': e.message};
+    }
+  }
+
   // ─── Users ──────────────────────────────────────────────────────────
 
   /// Returns the authenticated user's data.

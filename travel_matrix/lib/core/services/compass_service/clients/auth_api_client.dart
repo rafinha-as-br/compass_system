@@ -33,6 +33,19 @@ class AuthApiClient {
     });
   }
 
+  /// Troca a senha do agente autenticado. É o único endpoint liberado enquanto
+  /// a troca obrigatória está pendente.
+  Future<Map<String, dynamic>> changePassword(
+    String token,
+    String currentPassword,
+    String newPassword,
+  ) async {
+    return HttpApiClient.instance.put(token, ApiEndpoints.agentPassword, {
+      'currentPassword': currentPassword,
+      'newPassword': newPassword,
+    });
+  }
+
   Future<Map<String, dynamic>> resetPassword(String token, String newPassword) async {
     return HttpApiClient.instance.post('', ApiEndpoints.resetPassword, {
       'token': token,

@@ -3,6 +3,10 @@ abstract class AppRoutes {
   /// Public
   static const landing = '/';
 
+  /// Private — forced first-login password change. Outside the shell so a
+  /// pending agent reaches no other screen (CPS-197).
+  static const changePassword = '/change-password';
+
   /// Private — shell branches
   static const dashboard = '/dashboard';
   static const travels = '/travels';

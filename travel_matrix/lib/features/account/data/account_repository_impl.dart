@@ -18,4 +18,12 @@ class AccountRepositoryImpl implements AccountRepository {
     final data = response['data'] as Map<String, dynamic>;
     return AgentProfileDto.fromJson(data).toDomain();
   }
+
+  @override
+  Future<void> changePassword(String currentPassword, String newPassword) async {
+    final response = await _dataSource.changePassword(currentPassword, newPassword);
+    if (response['status'] != 'success') {
+      throw StateError(response['message'] as String? ?? 'Failed to change password.');
+    }
+  }
 }

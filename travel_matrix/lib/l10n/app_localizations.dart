@@ -2419,6 +2419,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Back to Panel'**
   String get backToPanelButton;
+
+  /// No description provided for @changePasswordRequiredTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Set your new password'**
+  String get changePasswordRequiredTitle;
+
+  /// No description provided for @changePasswordRequiredBody.
+  ///
+  /// In en, this message translates to:
+  /// **'You signed in with a temporary password. Choose a new one to continue.'**
+  String get changePasswordRequiredBody;
+
+  /// No description provided for @confirmNewPassword.
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm New Password'**
+  String get confirmNewPassword;
+
+  /// No description provided for @passwordMinLengthValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Use at least 8 characters'**
+  String get passwordMinLengthValidation;
+
+  /// No description provided for @passwordsDoNotMatchValidation.
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatchValidation;
+
+  /// No description provided for @passwordChangedSuccess.
+  ///
+  /// In en, this message translates to:
+  /// **'Password updated'**
+  String get passwordChangedSuccess;
+
+  /// No description provided for @agentCreatedFirstLoginNote.
+  ///
+  /// In en, this message translates to:
+  /// **'The agent will be asked to change this password on first sign-in.'**
+  String get agentCreatedFirstLoginNote;
 }
 
 class _AppLocalizationsDelegate

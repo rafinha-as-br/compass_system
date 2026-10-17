@@ -1269,4 +1269,27 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get backToPanelButton => 'Voltar ao Painel';
+
+  @override
+  String get changePasswordRequiredTitle => 'Defina sua nova senha';
+
+  @override
+  String get changePasswordRequiredBody =>
+      'Você entrou com uma senha temporária. Escolha uma nova para continuar.';
+
+  @override
+  String get confirmNewPassword => 'Confirmar nova senha';
+
+  @override
+  String get passwordMinLengthValidation => 'Use pelo menos 8 caracteres';
+
+  @override
+  String get passwordsDoNotMatchValidation => 'As senhas não coincidem';
+
+  @override
+  String get passwordChangedSuccess => 'Senha atualizada';
+
+  @override
+  String get agentCreatedFirstLoginNote =>
+      'O agente trocará esta senha no primeiro acesso.';
 }

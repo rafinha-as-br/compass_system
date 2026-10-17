@@ -38,6 +38,12 @@ class InviteSuccessPanel extends StatelessWidget {
           textAlign: TextAlign.center,
           style: theme.textTheme.bodyMedium,
         ),
+        const SizedBox(height: 8),
+        Text(
+          l10n.agentCreatedFirstLoginNote,
+          textAlign: TextAlign.center,
+          style: theme.textTheme.bodyMedium,
+        ),
         const SizedBox(height: 24),
         Container(
           padding: const EdgeInsets.all(16),
