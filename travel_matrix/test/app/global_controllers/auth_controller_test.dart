@@ -9,6 +9,38 @@ void main() {
     await AuthStorageService.init();
   });
 
+  group('AuthController mustChangePassword', () {
+    test('requirePasswordChange flags an authenticated agent and notifies', () {
+      final controller = AuthController();
+      controller.debugSetUserData({'id': '1', 'name': 'Carlos', 'email': 'c@compass.com'});
+      var notified = 0;
+      controller.addListener(() => notified++);
+
+      controller.requirePasswordChange();
+
+      expect(controller.mustChangePassword, isTrue);
+      expect(notified, 1);
+    });
+
+    test('requirePasswordChange is ignored without a session', () {
+      final controller = AuthController();
+
+      controller.requirePasswordChange();
+
+      expect(controller.mustChangePassword, isFalse);
+    });
+
+    test('passwordChanged clears the flag', () {
+      final controller = AuthController();
+      controller.debugSetUserData({'id': '1'});
+      controller.requirePasswordChange();
+
+      controller.passwordChanged();
+
+      expect(controller.mustChangePassword, isFalse);
+    });
+  });
+
   group('AuthController agent info', () {
     test('userId reads the id from userData', () {
       final controller = AuthController();

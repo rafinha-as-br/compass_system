@@ -494,5 +494,12 @@
   "temporaryPasswordLabel": "TEMPORARY PASSWORD",
   "copyCredentialsButton": "Copy credentials",
   "credentialsCopiedSnack": "Credentials copied.",
-  "backToPanelButton": "Back to Panel"
+  "backToPanelButton": "Back to Panel",
+  "changePasswordRequiredTitle": "Set your new password",
+  "changePasswordRequiredBody": "You signed in with a temporary password. Choose a new one to continue.",
+  "confirmNewPassword": "Confirm New Password",
+  "passwordMinLengthValidation": "Use at least 8 characters",
+  "passwordsDoNotMatchValidation": "Passwords do not match",
+  "passwordChangedSuccess": "Password updated",
+  "agentCreatedFirstLoginNote": "The agent will be asked to change this password on first sign-in."
 }

@@ -19,4 +19,13 @@ class AccountDataSource {
 
     return _compassService.getAuthenticatedUser(token);
   }
+
+  Future<Map<String, dynamic>> changePassword(String currentPassword, String newPassword) async {
+    final token = await _authStorageService.getToken();
+    if (token == null) {
+      throw StateError('Not authenticated.');
+    }
+
+    return _compassService.changePassword(token, currentPassword, newPassword);
+  }
 }
