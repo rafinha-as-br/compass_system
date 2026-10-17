@@ -78,11 +78,8 @@ class PasswordResetControllerTest {
         agent = AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Carlos Agente",
                 "agente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
 
-        client = new ClientUser();
-        client.setName("Maria Cliente");
-        client.setEmail("cliente@matrix.com");
-        client.setPassword(BCrypt.hashpw("senha123", BCrypt.gensalt()));
-        client = clientUserRepository.save(client);
+        client = AgentFixtures.saveClient(clientUserRepository, agent.getCompany(), "Maria Cliente",
+                "cliente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
     }
 
     @Test
