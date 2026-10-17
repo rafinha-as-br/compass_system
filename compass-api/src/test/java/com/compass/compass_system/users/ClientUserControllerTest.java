@@ -1,5 +1,7 @@
 package com.compass.compass_system.users;
 
+import com.compass.compass_system.company.Company;
+import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.entities.ClientUser;
 import com.compass.compass_system.company.AgentFixtures;
 import com.compass.compass_system.company.CompanyRepository;
@@ -52,6 +54,7 @@ class ClientUserControllerTest {
 
     private Long clientId;
     private String agentToken;
+    private Company company;
 
     @BeforeEach
     void setUp() throws Exception {
@@ -59,15 +62,14 @@ class ClientUserControllerTest {
         clientUserRepository.deleteAll();
         agentUserRepository.deleteAll();
 
-        ClientUser client = new ClientUser();
-        client.setName("Maria Cliente");
-        client.setEmail("cliente@matrix.com");
-        client.setPassword(BCrypt.hashpw("senha123", BCrypt.gensalt()));
+        AgentUser agent = AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Carlos Agente",
+                "agente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
+        company = agent.getCompany();
+
+        ClientUser client = AgentFixtures.saveClient(clientUserRepository, company, "Maria Cliente",
+                "cliente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
         client.setAge(30);
         clientId = clientUserRepository.save(client).getId();
-
-        AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Carlos Agente",
-                "agente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
 
         agentToken = login("agente@matrix.com");
     }
@@ -161,6 +163,7 @@ class ClientUserControllerTest {
         travel.setTravelName("Viagem a " + destination);
         travel.setTravelStatus("route_created");
         travel.setRoutePlan(routePlan);
+        travel.setCompany(company);
 
         travelRepository.save(travel);
     }

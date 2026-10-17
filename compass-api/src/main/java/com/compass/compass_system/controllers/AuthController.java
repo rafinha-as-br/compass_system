@@ -82,28 +82,6 @@ public class AuthController {
 
     // ==================== CADASTRO ====================
 
-    // Rota para Cadastrar o Cliente
-    @PostMapping("/cadastrar/cliente")
-    public ResponseEntity<String> registerClient(@RequestBody ClientUser newClient) {
-        
-        // Verifica se o e-mail já existe no banco antes de salvar
-        Optional<ClientUser> existingClient = clientRepository.findByEmail(newClient.getEmail());
-        if (existingClient.isPresent()) {
-            throw new BusinessException("Este e-mail já está cadastrado.");
-        }
-
-        // Criptografar a senha antes de salvar
-        if (newClient.getPassword() != null && !newClient.getPassword().isEmpty()) {
-            String hashedPassword = BCrypt.hashpw(newClient.getPassword(), BCrypt.gensalt());
-            newClient.setPassword(hashedPassword);
-        }
-
-        // Salva o cliente no banco de dados 
-        clientRepository.save(newClient);
-        
-        return ResponseEntity.ok("Cliente cadastrado com sucesso no Compass System!");
-    }
-
     // Rota para Cadastrar o Agente fundador.
     //
     // Exige o header X-Bootstrap-Key (variável de ambiente COMPASS_BOOTSTRAP_KEY);

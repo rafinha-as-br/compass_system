@@ -1,6 +1,6 @@
 package com.compass.compass_system.auth;
 
-import com.compass.compass_system.entities.ClientUser;
+import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.company.AgentFixtures;
 import com.compass.compass_system.company.CompanyRepository;
 import com.compass.compass_system.repositories.AgentUserRepository;
@@ -47,14 +47,11 @@ class AuthControllerTest {
         agentUserRepository.deleteAll();
         clientUserRepository.deleteAll();
 
-        AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Carlos Agente",
+        AgentUser agent = AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Carlos Agente",
                 "agente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
 
-        ClientUser client = new ClientUser();
-        client.setName("Maria Cliente");
-        client.setEmail("cliente@matrix.com");
-        client.setPassword(BCrypt.hashpw("senha123", BCrypt.gensalt()));
-        clientUserRepository.save(client);
+        AgentFixtures.saveClient(clientUserRepository, agent.getCompany(), "Maria Cliente",
+                "cliente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
     }
 
     @Test
