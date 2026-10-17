@@ -24,6 +24,14 @@ o Travel Matrix só era testado via Web (Claude in Chrome).
 especificamente para ter uma credencial estável, sem depender de nenhum
 agente pré-existente no seed do banco. Reutilizar em execuções futuras.
 
+Para recriar a conta: rode `python compass-api/scripts/seed_test_data.py`. Ele cadastra a
+empresa `compass.test` e este agente via `POST /api/auth/cadastrar/agente` (header
+`X-Bootstrap-Key`, valor de `COMPASS_BOOTSTRAP_KEY`; no `compass-api/docker-compose.yml` o
+default é `dev-bootstrap-key`; objeto `company` no corpo — sem a chave, 403; sem `company`, 400),
+e em seguida cria os clientes e as viagens da mesma empresa. Viagens e clientes são isolados por
+empresa: um agente só vê os dados da própria empresa, então os dados de QA precisam ser criados
+a partir da empresa deste agente (o seed já faz isso).
+
 ## Viagem de teste usada nos flows
 
 `QA Trip CPS-89` (id `8faace8e-d568-4e15-8a15-60c653dcc587`) — primeira linha
@@ -56,7 +64,7 @@ O shell responsivo (CPS-181: top bar no mobile) e a landing/login em coluna úni
   (nav lateral por `point`) e **precisam ser recalibrados** para a top bar do mobile;
   não foram reexecutados nesta rodada.
 * O banco local pode ser recriado: se o login falhar com "E-mail ou senha incorretos",
-  cadastre o agente de novo via `POST /api/auth/cadastrar/agente`.
+  rode `compass-api/scripts/seed_test_data.py` (recria o agente, a empresa, os clientes e as viagens).
 * Testabilidade: a top bar e o botão de recolher/reabrir menu (CPS-200) não têm
   `content-desc` próprio; só são tocáveis por `point`. Nenhum flow permanente foi criado
   para eles.

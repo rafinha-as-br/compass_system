@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 
 import 'package:travel_matrix/features/account/presentation/view_models/agent_profile_view_model.dart';
-import 'package:travel_matrix/features/account/presentation/widgets/card_shell.dart';
+import 'package:travel_matrix/features/account/presentation/widgets/change_password_form.dart';
+import 'package:travel_matrix/shared/widgets/card_shell.dart';
 import 'package:travel_matrix/features/account/presentation/widgets/profile_field.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 
@@ -98,36 +99,27 @@ class ProfileDetailsCard extends StatelessWidget {
   }
 
   void _showChangePasswordDialog(BuildContext context, AppLocalizations l10n) {
+    final messenger = ScaffoldMessenger.of(context);
     showDialog<void>(
       context: context,
-      builder: (context) {
+      builder: (dialogContext) {
         return AlertDialog(
           title: Text(l10n.changePassword),
           content: SizedBox(
             width: 420,
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                TextFormField(
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: l10n.currentPassword),
-                ),
-                const SizedBox(height: 12),
-                TextFormField(
-                  obscureText: true,
-                  decoration: InputDecoration(labelText: l10n.newPassword),
-                ),
-              ],
+            child: SingleChildScrollView(
+              child: ChangePasswordForm(
+                onSuccess: () {
+                  Navigator.of(dialogContext).pop();
+                  messenger.showSnackBar(SnackBar(content: Text(l10n.passwordChangedSuccess)));
+                },
+              ),
             ),
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.of(context).pop(),
+              onPressed: () => Navigator.of(dialogContext).pop(),
               child: Text(l10n.cancelButton),
-            ),
-            FilledButton(
-              onPressed: () => Navigator.of(context).pop(),
-              child: Text(l10n.updateButton),
             ),
           ],
         );

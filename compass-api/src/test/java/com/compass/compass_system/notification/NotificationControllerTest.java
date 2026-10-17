@@ -1,5 +1,9 @@
 package com.compass.compass_system.notification;
 
+import com.compass.compass_system.company.AgentFixtures;
+import com.compass.compass_system.company.CompanyRepository;
+import com.compass.compass_system.repositories.AgentUserRepository;
+import com.compass.compass_system.repositories.ClientUserRepository;
 import com.compass.compass_system.itinerary.Itinerary;
 import com.compass.compass_system.itinerary.Stop;
 import com.compass.compass_system.security.JwtUtil;
@@ -47,6 +51,15 @@ class NotificationControllerTest {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Autowired
+    private AgentUserRepository agentUserRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
+    private ClientUserRepository clientUserRepository;
+
     private String travelId;
 
     private String clientAuthHeader() {
@@ -75,10 +88,19 @@ class NotificationControllerTest {
 
     @BeforeEach
     void setUp() {
+        AgentFixtures.ensureOwner(agentUserRepository, companyRepository, "agent@matrix.com");
+        AgentFixtures.ensureOwner(agentUserRepository, companyRepository, "other-agent@matrix.com");
+        // O token de cliente que chama /travels precisa de um cliente real (a empresa vem dele).
+        if (clientUserRepository.findByEmail("client@matrix.com").isEmpty()) {
+            AgentFixtures.saveClient(clientUserRepository,
+                    agentUserRepository.findByEmail("agent@matrix.com").orElseThrow().getCompany(),
+                    "Cliente", "client@matrix.com", "hash");
+        }
         notificationRepository.deleteAll();
         travelRepository.deleteAll();
 
         Travel travel = new Travel();
+        travel.setCompany(agentUserRepository.findByEmail("agent@matrix.com").orElseThrow().getCompany());
         travel.setClientName("Maria Silva");
         travel.setTravelName("Lisbon 2026");
         travel.setTravelStatus("route_created");
@@ -274,6 +296,7 @@ class NotificationControllerTest {
     @Test
     void travelWithoutAResolvedRecipientSkipsNotificationSilently() throws Exception {
         Travel legacyTravel = new Travel();
+        legacyTravel.setCompany(agentUserRepository.findByEmail("agent@matrix.com").orElseThrow().getCompany());
         legacyTravel.setClientName("Cliente Legado");
         legacyTravel.setTravelName("Viagem Legada");
         // clientId/agentId intentionally left null, as a pre-CPS-145 travel would be.

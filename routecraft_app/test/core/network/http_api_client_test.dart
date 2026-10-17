@@ -36,13 +36,13 @@ void main() {
     test('non-JSON 2xx body (plain text) is wrapped under data', () async {
       final client = HttpApiClient.forTesting(
         MockClient((request) async {
-          return http.Response('Cliente cadastrado com sucesso!', 200);
+          return http.Response('Senha redefinida com sucesso.', 200);
         }),
       );
 
-      final result = await client.post('', '/api/auth/cadastrar/cliente', {});
+      final result = await client.post('', '/api/auth/redefinir-senha', {});
 
-      expect(result['data'], 'Cliente cadastrado com sucesso!');
+      expect(result['data'], 'Senha redefinida com sucesso.');
     });
 
     test('throws ApiException with the server message on a 4xx response',
@@ -53,7 +53,7 @@ void main() {
             jsonEncode({
               'status': 400,
               'error': 'Erro de negócio',
-              'message': 'Este e-mail já está cadastrado.',
+              'message': 'Token inválido ou expirado.',
             }),
             400,
           );
@@ -61,12 +61,12 @@ void main() {
       );
 
       expect(
-        () => client.post('', '/api/auth/cadastrar/cliente', {}),
+        () => client.post('', '/api/auth/redefinir-senha', {}),
         throwsA(
           isA<ApiException>().having(
             (e) => e.message,
             'message',
-            'Este e-mail já está cadastrado.',
+            'Token inválido ou expirado.',
           ),
         ),
       );

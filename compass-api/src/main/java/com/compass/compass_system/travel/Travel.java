@@ -1,6 +1,8 @@
 package com.compass.compass_system.travel;
 
+import com.compass.compass_system.company.Company;
 import com.compass.compass_system.itinerary.Itinerary;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,13 @@ public class Travel {
     // existed simply can't resolve a notification recipient — no backfill.
     private Long clientId;
     private Long agentId;
+
+    // Empresa (tenant) dona da viagem: sai do token de quem cria, nunca do
+    // corpo da requisição (@JsonIgnore) — é o que isola uma empresa da outra.
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 
     // Distinct from travelStatus: "itinerary_created" advances automatically
     // (PUT .../itinerary, the moment an itinerary first exists) and stays
@@ -74,6 +83,9 @@ public class Travel {
 
     public Long getAgentId() { return agentId; }
     public void setAgentId(Long agentId) { this.agentId = agentId; }
+
+    public Company getCompany() { return company; }
+    public void setCompany(Company company) { this.company = company; }
 
     public String getTravelName() { return travelName; }
     public void setTravelName(String travelName) { this.travelName = travelName; }

@@ -245,7 +245,14 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text(user.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                Flexible(
+                  child: Text(
+                    user.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
               ],
             ),
           ),
