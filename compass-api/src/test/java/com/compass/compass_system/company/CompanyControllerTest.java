@@ -140,6 +140,18 @@ class CompanyControllerTest {
 
         // A senha temporária é uma credencial real: o convidado consegue logar.
         String invitedToken = login("ana.paula.ribeiro@aurora.com.br", temporaryPassword);
+
+        // O convidado nasce com troca de senha obrigatória (CPS-196): bloqueado até trocar a temporária.
+        mockMvc.perform(get("/api/companies/me").header("Authorization", bearer(invitedToken)))
+                .andExpect(status().isForbidden())
+                .andExpect(jsonPath("$.error").value("PASSWORD_CHANGE_REQUIRED"));
+        mockMvc.perform(put("/api/agents/me/password")
+                        .header("Authorization", bearer(invitedToken))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(
+                                Map.of("currentPassword", temporaryPassword, "newPassword", "SenhaDefinitiva1"))))
+                .andExpect(status().isOk());
+
         mockMvc.perform(get("/api/companies/me").header("Authorization", bearer(invitedToken)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.data.currentAgent.role").value("MEMBER"));

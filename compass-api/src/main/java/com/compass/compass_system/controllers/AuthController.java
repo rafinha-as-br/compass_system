@@ -127,6 +127,7 @@ public class AuthController {
         // Nunca aceitar do corpo: id (save() sobrescreveria um agente existente) e desativação.
         newAgent.setId(null);
         newAgent.setRemovedAt(null);
+        newAgent.setMustChangePassword(false);
 
         // Salva o agente no banco de dados
         agentRepository.save(newAgent);
@@ -182,6 +183,7 @@ public class AuthController {
             LoginResponse response = new LoginResponse(
                 token, agent.getId(), agent.getName(), agent.getEmail(), "AGENTE"
             );
+            response.setMustChangePassword(agent.isMustChangePassword());
             return ResponseEntity.ok(response);
         }
         
@@ -213,6 +215,7 @@ public class AuthController {
             data.put("name", agent.getName());
             data.put("email", agent.getEmail());
             data.put("userType", "AGENTE");
+            data.put("mustChangePassword", agent.isMustChangePassword());
 
             Map<String, Object> response = new java.util.LinkedHashMap<>();
             response.put("status", "success");
@@ -290,6 +293,7 @@ public class AuthController {
             AgentUser agent = agentRepository.findByEmail(resetToken.getEmail())
                     .orElseThrow(() -> new BusinessException("Token inválido ou expirado."));
             agent.setPassword(hashedPassword);
+            agent.setMustChangePassword(false);
             agentRepository.save(agent);
         }
 
