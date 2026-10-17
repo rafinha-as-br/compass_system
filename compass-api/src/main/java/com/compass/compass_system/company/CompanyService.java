@@ -160,6 +160,7 @@ public class CompanyService {
         agent.setPassword(BCrypt.hashpw(temporaryPassword, BCrypt.gensalt()));
         agent.setCompany(company);
         agent.setRole(AgentRole.MEMBER);
+        agent.setMustChangePassword(true);
 
         try {
             return new InvitedAgent(agentRepository.saveAndFlush(agent), temporaryPassword);
