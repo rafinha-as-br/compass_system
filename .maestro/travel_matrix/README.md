@@ -11,7 +11,8 @@ o Travel Matrix só era testado via Web (Claude in Chrome).
 .maestro/travel_matrix/
 ├── README.md
 ├── auth/
-│   └── login_qa_agent.yaml              — login com agente fixo de QA
+│   ├── login_qa_agent.yaml              — login com agente fixo de QA
+│   └── forced_password_change.yaml      — troca de senha obrigatória do agente convidado (CPS-196/197)
 └── travels/
     ├── overview_and_participants_smoke.yaml  — navega às abas Overview/Participants
     └── participants_add_remove.yaml          — CRUD completo de participante
@@ -51,6 +52,30 @@ Pré-requisitos: AVD `QA - Claude` (`QA_-_Claude`) já de pé e com boot
 completo, `adb reverse tcp:8081 tcp:8081` configurado, backend local via
 docker compose de pé, APK debug instalado (`flutter build apk --debug` dentro
 de `travel_matrix/`, depois `adb install -r`).
+
+## Atualização 2026-10-17 (QA do Epic CPS-29 — módulo Company)
+
+* **Novo flow `auth/forced_password_change.yaml`** (CPS-196/197). Precisa de um agente recém-convidado
+  a cada execução, porque a senha temporária só aparece uma vez no convite. Crie-o com o token de
+  OWNER (`POST /api/companies/me/agents/invite`, corpo `{"name": "..."}`) e rode:
+
+  ```bash
+  maestro test -e LOGIN=<login> -e TEMP_PASSWORD=<senha temporária> -e NEW_PASSWORD=<nova, mínimo 8> \
+    .maestro/travel_matrix/auth/forced_password_change.yaml
+  ```
+
+  Cobre a tela "Set your new password", o botão voltar do Android (sai do app, não chega ao painel),
+  o reabrir app (cai de novo na troca), o erro de senha atual errada e a troca válida até o painel.
+  Validado via CLI no AVD `QA - Claude` em 2026-10-17. Detalhe de teste: `eraseText` apaga a partir do
+  cursor e deixava resto da senha errada no campo; por isso a troca válida reabre o app em vez de apagar.
+* `auth/login_qa_agent.yaml` ganhou `extendedWaitUntil` ("Access Travel Matrix", 40 s) depois do
+  `launchApp`. Alteração de robustez, não de comportamento: no primeiro lançamento do APK debug o
+  Flutter demora para pintar o primeiro frame (tela roxa) e o `tapOn` falhava com "Element not found".
+* O top bar mobile não tem `content-desc` próprio, então o item Empresa só é tocável por `point`
+  (57%,9% no AVD atual). Nenhum flow permanente foi criado para ele.
+* **Armazenamento do AVD**: com o disco do `QA - Claude` quase cheio (~92%), `adb install` falha com
+  `INSTALL_FAILED_INSUFFICIENT_STORAGE`. `adb install --incremental` instala sem staging e funciona.
+  Debug APK de `flutter build apk --debug` = ~187 MB; com `--target-platform android-x64` = ~150 MB.
 
 ## Atualização 2026-10-16 (QA do Epic CPS-178 — layout responsivo)
 
