@@ -12,5 +12,7 @@ class NotificationUseCases {
 
   Future<Result<int>> getUnreadCount() => repository.getUnreadCount();
 
+  Future<Result<void>> markAsRead(String id) => repository.markAsRead(id);
+
   Future<Result<void>> markAllAsRead() => repository.markAllAsRead();
 }

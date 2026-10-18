@@ -177,7 +177,7 @@ class _NotificationTile extends StatelessWidget {
                   Align(
                     alignment: Alignment.centerRight,
                     child: TextButton(
-                      onPressed: () => _openTrip(context, controller, notification.travelId),
+                      onPressed: () => _openTrip(context, controller, notification),
                       child: Text(l10n.notificationViewTripLink),
                     ),
                   ),
@@ -190,8 +190,12 @@ class _NotificationTile extends StatelessWidget {
     );
   }
 
-  Future<void> _openTrip(BuildContext context, NotificationsController controller, String travelId) async {
-    final travel = await controller.resolveTravel(travelId);
+  Future<void> _openTrip(BuildContext context, NotificationsController controller, TravelNotification notification) async {
+    final travelId = notification.travelId;
+    // Opening a notification is what reads it: the write is awaited together
+    // with the travel fetch so the unread count Conta re-fetches on return
+    // already reflects it.
+    final (travel, _) = await (controller.resolveTravel(travelId), controller.markRead(notification.id)).wait;
     if (!context.mounted) return;
     if (travel == null) {
       ScaffoldMessenger.of(context)

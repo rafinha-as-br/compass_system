@@ -37,4 +37,8 @@ class NotificationDataSource {
   Future<void> markAllAsRead() async {
     await _client.markAllAsRead(await _token());
   }
+
+  Future<void> markAsRead(String id) async {
+    await _client.markAsRead(await _token(), id);
+  }
 }

@@ -12,6 +12,8 @@ import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.
 class _FakeNotificationRepository implements NotificationRepository {
   Result<(List<TravelNotification>, bool)>? Function(int page)? nextPage;
   Result<void>? markAllAsReadResult;
+  Result<void> markAsReadResult = const Result.success(null);
+  final List<String> markedAsRead = [];
   List<TravelNotification>? markedAllAsRead;
 
   @override
@@ -20,6 +22,12 @@ class _FakeNotificationRepository implements NotificationRepository {
 
   @override
   Future<Result<int>> getUnreadCount() async => throw UnimplementedError();
+
+  @override
+  Future<Result<void>> markAsRead(String id) async {
+    markedAsRead.add(id);
+    return markAsReadResult;
+  }
 
   @override
   Future<Result<void>> markAllAsRead() async => markAllAsReadResult ?? const Result.success(null);
@@ -179,6 +187,67 @@ void main() {
       );
 
       expect(await controller.resolveTravel('t1'), isNull);
+    });
+
+    test('markRead flips only that notification and persists it on the server', () async {
+      final repository = _FakeNotificationRepository()
+        ..nextPage = (page) => Result.success(([_notification('n1'), _notification('n2')], false));
+      final controller = NotificationsController(notificationUseCases: NotificationUseCases(repository));
+      await Future<void>.delayed(Duration.zero);
+
+      await controller.markRead('n1');
+
+      expect(controller.state.notifications.map((n) => n.read), [true, false]);
+      expect(repository.markedAsRead, ['n1']);
+    });
+
+    test('markRead goes back to unread when the server write fails', () async {
+      final repository = _FakeNotificationRepository()
+        ..markAsReadResult = const Result.failure('boom')
+        ..nextPage = ((page) => Result.success(([_notification('n1')], false)));
+      final controller = NotificationsController(notificationUseCases: NotificationUseCases(repository));
+      await Future<void>.delayed(Duration.zero);
+
+      await controller.markRead('n1');
+
+      expect(controller.state.notifications.single.read, isFalse);
+    });
+
+    test('markRead does not call the server for an already-read or unknown notification', () async {
+      final repository = _FakeNotificationRepository()
+        ..nextPage = (page) => Result.success(([_notification('n1', read: true)], false));
+      final controller = NotificationsController(notificationUseCases: NotificationUseCases(repository));
+      await Future<void>.delayed(Duration.zero);
+
+      await controller.markRead('n1');
+      await controller.markRead('nope');
+
+      expect(repository.markedAsRead, isEmpty);
+    });
+
+    test('markAllRead restores only the notifications that were unread when the server write fails', () async {
+      final repository = _FakeNotificationRepository()
+        ..markAllAsReadResult = const Result.failure('boom')
+        ..nextPage = ((page) => Result.success(([_notification('n1', read: true), _notification('n2')], false)));
+      final controller = NotificationsController(notificationUseCases: NotificationUseCases(repository));
+      await Future<void>.delayed(Duration.zero);
+
+      await controller.markAllRead();
+
+      expect(controller.state.notifications.map((n) => n.read), [true, false]);
+    });
+
+    test('a write that finishes after dispose does not notify', () async {
+      final repository = _FakeNotificationRepository()
+        ..markAsReadResult = const Result.failure('boom')
+        ..nextPage = ((page) => Result.success(([_notification('n1')], false)));
+      final controller = NotificationsController(notificationUseCases: NotificationUseCases(repository));
+      await Future<void>.delayed(Duration.zero);
+
+      final pending = controller.markRead('n1');
+      controller.dispose();
+
+      await expectLater(pending, completes);
     });
   });
 }
