@@ -95,6 +95,14 @@ void main() {
     });
   }
 
+  testWidgets('narrow connector takes no more room from the endpoints than the old 18px arrow', (tester) async {
+    await _pump(tester, _travel(), width: 500);
+
+    final gap = tester.getRect(find.text('Lisbon')).left - tester.getRect(find.text('Sao Paulo')).right;
+    expect(gap, lessThanOrEqualTo(18));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('maps each TravelStatus to its localized label and support line', (tester) async {
     await tester.pumpWidget(Container());
 
