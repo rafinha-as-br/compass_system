@@ -14,7 +14,7 @@ import 'package:travel_matrix/l10n/app_localizations.dart';
 
 class _MockNotificationUseCases extends Mock implements NotificationUseCases {}
 
-Widget _wrap(NotificationsController controller) {
+Widget _wrap(NotificationsController controller, {ThemeData? theme}) {
   final router = GoRouter(
     initialLocation: '/notifications',
     routes: [
@@ -26,6 +26,7 @@ Widget _wrap(NotificationsController controller) {
   return ChangeNotifierProvider(
     create: (_) => NotificationsBadgeController(useCases: _MockNotificationUseCases()),
     child: MaterialApp.router(
+      theme: theme,
       routerConfig: router,
       localizationsDelegates: const [
         AppLocalizations.delegate,
@@ -39,6 +40,48 @@ Widget _wrap(NotificationsController controller) {
 }
 
 void main() {
+  testWidgets('"mark all as read" uses the AppBar foreground, enabled or disabled, so it never blends into the AppBar', (
+    tester,
+  ) async {
+    const appBarForeground = Colors.white;
+    final theme = ThemeData(
+      colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+      appBarTheme: const AppBarTheme(backgroundColor: Colors.deepPurple, foregroundColor: appBarForeground),
+    );
+    final unread = TravelNotification(
+      id: 'n1',
+      travelId: 't1',
+      type: TravelNotificationType.routeCreated,
+      createdAt: DateTime.now(),
+      read: false,
+    );
+
+    Color? resolvedForeground(WidgetTester tester, Set<WidgetState> states) => tester
+        .widget<TextButton>(find.widgetWithText(TextButton, 'Mark all as read'))
+        .style
+        ?.foregroundColor
+        ?.resolve(states);
+
+    await tester.pumpWidget(
+      _wrap(NotificationsController.withState(NotificationsState(isLoading: false, notifications: [unread])), theme: theme),
+    );
+    await tester.pumpAndSettle();
+    expect(resolvedForeground(tester, {}), appBarForeground);
+
+    await tester.pumpWidget(
+      _wrap(
+        NotificationsController.withState(
+          NotificationsState(isLoading: false, notifications: [unread.copyWith(read: true)]),
+        ),
+        theme: theme,
+      ),
+    );
+    await tester.pumpAndSettle();
+    final disabled = resolvedForeground(tester, {WidgetState.disabled});
+    expect(disabled, isNot(theme.colorScheme.primary));
+    expect(disabled, appBarForeground.withValues(alpha: 0.5));
+  });
+
   testWidgets('shows the empty state when there are no notifications', (tester) async {
     final controller = NotificationsController.withState(const NotificationsState(isLoading: false));
 
