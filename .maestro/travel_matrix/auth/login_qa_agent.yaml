@@ -12,6 +12,11 @@ appId: com.example.travel_matrix
 # O teclado é fechado com `back` para não cobrir o botão de login.
 - launchApp:
     clearState: true
+# Atualizado em 2026-10-17 (QA do Epic CPS-29): na primeira abertura do APK debug o Flutter
+# demora para pintar o primeiro frame (tela roxa) e o tapOn falhava com "Element not found".
+- extendedWaitUntil:
+    visible: "Access Travel Matrix"
+    timeout: 40000
 - tapOn: "Access Travel Matrix"
 - tapOn: "Email"
 - inputText: "qa.claude.cps114@compass.test"

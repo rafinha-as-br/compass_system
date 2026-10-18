@@ -44,6 +44,24 @@ permanente.
                                                     (Início/Roteiro/Conta) sem crash
 ```
 
+## Atualização 2026-10-17 (QA do Epic CPS-29 — módulo Company)
+
+O banco local foi recriado e populado por `compass-api/scripts/seed_test_data.py`, que agora cria a
+empresa `compass.test`, o agente de QA e 5 clientes (todos com senha `senha123`): `ana.souza`,
+`bruno.lima`, `carla.rocha`, `diego.alves` e `elisa.pinto` (`@teste.com`). O cliente
+`joao.teste@teste.com` **não existe mais**. Consequências:
+
+* `auth/login_success.yaml`, `regression/home_screens_smoke.yaml` e `regression/create_route_smoke.yaml`
+  ainda usam `joao.teste@teste.com` e **falham no login** (`Assertion is false: "My Travels" is visible`);
+  `login_success.yaml` tem o mesmo problema pela senha divergente já documentada. Os flows **não
+  foram alterados**: falha de dado de teste, não regressão. `home_screens_smoke` também assume rótulos
+  de abas e o estado "No trip selected" de um cliente sem viagem em andamento.
+* Passaram em 2026-10-17 no AVD `QA - Claude`: `auth/login_invalid_credentials.yaml` e
+  `home/home_trip_in_progress.yaml` (cliente `carla.rocha`). As etapas dos dois smokes foram refeitas
+  inline com `carla.rocha` (abas Travels/Account e "Create a Route") e passaram.
+* Instalação do APK no AVD quase cheio: usar `adb install --incremental` (ver
+  `travel_matrix/README.md`).
+
 ## Atualização 2026-09-27 (QA da CPS-128 — Início mostra só a viagem em andamento)
 
 Os 3 flows novos em `home/` usam usuários de teste criados nesta rodada de QA
