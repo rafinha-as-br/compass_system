@@ -44,6 +44,38 @@ permanente.
                                                     (Início/Roteiro/Conta) sem crash
 ```
 
+## Atualização 2026-10-18 (QA da CPS-147 — leitura de notificação no RouteCraft)
+
+Flow novo: `routecraft/notifications/open_notification_marks_read.yaml` (cliente `carla.rocha@teste.com`).
+Recebe `BEFORE`, `AFTER` e `CARD_INDEX` por `-e` porque a contagem depende do estado do banco
+(`GET /notifications/unread-count`; o seed deixa 6 não lidas): abre uma notificação não lida
+("View trip"), confere o badge da Conta, repete após novo login (a leitura vem do servidor) e
+termina com "mark all read". O badge da Conta compartilha o rótulo da linha ("Notifications\n5"),
+então é conferido pelo texto completo.
+
+```bash
+maestro test -e BEFORE=6 -e AFTER=5 -e CARD_INDEX=0 .maestro/routecraft/notifications/open_notification_marks_read.yaml
+```
+
+Para gerar notificações do cliente de novo, recriar o banco e rodar `seed_test_data.py`.
+
+## Atualização 2026-10-17 (QA da CPS-168 — autocomplete grava só o nome curto)
+
+Flow novo: `routecraft/places/autocomplete_short_name.yaml` (cliente `carla.rocha@teste.com`,
+wizard "Create a Route"): confere que as sugestões de cidade e de aeroporto mostram só o nome
+(sem "Santa Catarina"/"Brasil") e que a revisão exibe o nome curto. Depende da API real
+(Nominatim, precisa de internet). Os campos de localidade não têm rótulo próprio e são
+localizados por `below`/`above` dos rótulos "Start Location"/"Destination".
+
+O flow `routecraft_app/.maestro/places/autocomplete_create_route.yaml` (CPS-155, fora desta
+pasta) assere o texto longo antigo (`.*Santa Catarina.*`) e **não vale mais** depois da CPS-168;
+não foi alterado nesta rodada.
+
+Travel Matrix no Android (viewport ~411dp): a navegação virou barra superior; os ícones não têm
+rótulo e são tocados por `point` percentual (Booking ≈ `34%,9%`; primeira linha da lista ≈ `40%,40%`).
+O `login_qa_agent.yaml` pode falhar de forma intermitente com "E-mail ou senha incorretos" quando
+o teclado capitaliza a primeira letra do e-mail; reexecutar resolve.
+
 ## Atualização 2026-10-17 (QA do Epic CPS-29 — módulo Company)
 
 O banco local foi recriado e populado por `compass-api/scripts/seed_test_data.py`, que agora cria a
