@@ -44,6 +44,23 @@ permanente.
                                                     (Início/Roteiro/Conta) sem crash
 ```
 
+## Atualização 2026-10-17 (QA da CPS-168 — autocomplete grava só o nome curto)
+
+Flow novo: `routecraft/places/autocomplete_short_name.yaml` (cliente `carla.rocha@teste.com`,
+wizard "Create a Route"): confere que as sugestões de cidade e de aeroporto mostram só o nome
+(sem "Santa Catarina"/"Brasil") e que a revisão exibe o nome curto. Depende da API real
+(Nominatim, precisa de internet). Os campos de localidade não têm rótulo próprio e são
+localizados por `below`/`above` dos rótulos "Start Location"/"Destination".
+
+O flow `routecraft_app/.maestro/places/autocomplete_create_route.yaml` (CPS-155, fora desta
+pasta) assere o texto longo antigo (`.*Santa Catarina.*`) e **não vale mais** depois da CPS-168;
+não foi alterado nesta rodada.
+
+Travel Matrix no Android (viewport ~411dp): a navegação virou barra superior; os ícones não têm
+rótulo e são tocados por `point` percentual (Booking ≈ `34%,9%`; primeira linha da lista ≈ `40%,40%`).
+O `login_qa_agent.yaml` pode falhar de forma intermitente com "E-mail ou senha incorretos" quando
+o teclado capitaliza a primeira letra do e-mail; reexecutar resolve.
+
 ## Atualização 2026-10-17 (QA do Epic CPS-29 — módulo Company)
 
 O banco local foi recriado e populado por `compass-api/scripts/seed_test_data.py`, que agora cria a
