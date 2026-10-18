@@ -208,8 +208,9 @@ class _RouteEndpoints extends StatelessWidget {
   final String toLabel;
   final String to;
 
-  /// Narrow window: connector is just the arrow (28px), so the endpoints keep
-  /// about the width they had before.
+  /// Narrow window: connector is just the arrow. Its box stays 18px (the width
+  /// the endpoints had before the 22px arrow) and the arrow overflows it by the
+  /// icon's own padding, so the endpoint texts do not lose width and truncate.
   final bool compact;
 
   @override
@@ -218,7 +219,8 @@ class _RouteEndpoints extends StatelessWidget {
     final primary = theme.colorScheme.primary;
     final labelStyle = TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6));
     const valueStyle = TextStyle(fontSize: _valueFontSize, fontWeight: FontWeight.w700);
-    final connectorWidth = compact ? 28.0 : 72.0;
+    final connectorWidth = compact ? 18.0 : 72.0;
+    final arrow = Icon(Icons.arrow_forward, size: _valueFontSize, color: primary);
 
     return Column(
       children: [
@@ -235,20 +237,21 @@ class _RouteEndpoints extends StatelessWidget {
             Expanded(child: Text(from, style: valueStyle, maxLines: 1, overflow: TextOverflow.ellipsis)),
             SizedBox(
               width: connectorWidth,
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  if (!compact)
-                    Expanded(
-                      child: Padding(
-                        padding: const EdgeInsets.only(left: 8),
-                        child: Container(height: 1.5, color: primary.withValues(alpha: 0.4)),
-                      ),
+              height: _valueFontSize,
+              child: compact
+                  ? OverflowBox(maxWidth: _valueFontSize, child: arrow)
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Container(height: 1.5, color: primary.withValues(alpha: 0.4)),
+                          ),
+                        ),
+                        arrow,
+                        const SizedBox(width: 8),
+                      ],
                     ),
-                  Icon(Icons.arrow_forward, size: _valueFontSize, color: primary),
-                  if (!compact) const SizedBox(width: 8),
-                ],
-              ),
             ),
             Expanded(
               child: Text(to, style: valueStyle, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.end),
