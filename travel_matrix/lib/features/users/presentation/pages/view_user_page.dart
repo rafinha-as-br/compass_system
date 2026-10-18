@@ -11,6 +11,7 @@ import 'package:travel_matrix/features/users/presentation/view_models/travel_sum
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/theme/app_theme.dart';
 import 'package:travel_matrix/shared/widgets/app_data_table.dart';
+import 'package:travel_matrix/shared/widgets/responsive_layout_builder.dart';
 
 import '../view_models/client_status_view_model.dart';
 
@@ -29,12 +30,16 @@ class ViewUserPage extends StatelessWidget {
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         elevation: 0,
-        leadingWidth: 160,
+        // Largura acompanha a escala de texto (desktop ×1,15) para o rótulo
+        // caber em uma linha dentro da altura fixa do botão; no mobile fica
+        // estreita para não competir com o botão de editar (o rótulo reticia).
+        leadingWidth: (MediaQuery.sizeOf(context).width < Breakpoints.tablet ? 160 : 220) *
+            MediaQuery.textScalerOf(context).scale(1),
         leading: Padding(
           padding: const EdgeInsets.only(left: 24, top: 8, bottom: 8),
           child: OutlinedButton.icon(
             icon: const Icon(Icons.arrow_back, size: 18),
-            label: Text(l10n.backToUsersButton),
+            label: Text(l10n.backToUsersButton, maxLines: 1, overflow: TextOverflow.ellipsis),
             style: OutlinedButton.styleFrom(
               foregroundColor: theme.colorScheme.onSurface,
               side: BorderSide(color: theme.colorScheme.outlineVariant),
@@ -73,36 +78,38 @@ class ViewUserPage extends StatelessWidget {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24),
-        child: LayoutBuilder(
-          builder: (context, constraints) {
-            final isDesktop = constraints.maxWidth > 800;
-            if (isDesktop) {
-              return Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  SizedBox(
-                    width: 300,
-                    child: _buildSidebar(theme, l10n),
-                  ),
-                  const SizedBox(width: 24),
-                  Expanded(
-                    child: _buildMainContent(theme, controller, context, l10n),
-                  ),
-                ],
-              );
-            } else {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _buildSidebar(theme, l10n),
-                  const SizedBox(height: 24),
-                  _buildMainContent(theme, controller, context, l10n),
-                ],
-              );
-            }
-          },
+        child: ResponsiveLayoutBuilder(
+          mobile: (context) => _buildStacked(theme, controller, context, l10n, ScreenSize.mobile),
+          tablet: (context) => _buildStacked(theme, controller, context, l10n, ScreenSize.tablet),
+          desktop: (context) => Row(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              SizedBox(width: 300, child: _buildSidebar(theme, l10n)),
+              const SizedBox(width: 24),
+              Expanded(
+                child: _buildMainContent(theme, controller, context, l10n, ScreenSize.desktop),
+              ),
+            ],
+          ),
         ),
       ),
+    );
+  }
+
+  Widget _buildStacked(
+    ThemeData theme,
+    UsersController controller,
+    BuildContext context,
+    AppLocalizations l10n,
+    ScreenSize size,
+  ) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _buildSidebar(theme, l10n),
+        const SizedBox(height: 24),
+        _buildMainContent(theme, controller, context, l10n, size),
+      ],
     );
   }
 
@@ -225,11 +232,11 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildMainContent(ThemeData theme, UsersController controller, BuildContext context, AppLocalizations l10n) {
+  Widget _buildMainContent(ThemeData theme, UsersController controller, BuildContext context, AppLocalizations l10n, ScreenSize size) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        _buildTravelHistory(theme, context, l10n),
+        _buildTravelHistory(theme, context, l10n, size),
         const SizedBox(height: 24),
         _buildSecurityActions(theme, controller, context, l10n),
         const SizedBox(height: 24),
@@ -238,7 +245,7 @@ class ViewUserPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTravelHistory(ThemeData theme, BuildContext context, AppLocalizations l10n) {
+  Widget _buildTravelHistory(ThemeData theme, BuildContext context, AppLocalizations l10n, ScreenSize size) {
     final dateFormat = DateFormat.yMMMd(l10n.localeName);
     final headerStyle = TextStyle(
       fontSize: 12,
@@ -259,10 +266,12 @@ class ViewUserPage extends StatelessWidget {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(
-                  l10n.travelHistoryTitle,
-                  style: theme.textTheme.titleLarge?.copyWith(
-                    fontWeight: FontWeight.bold,
+                Expanded(
+                  child: Text(
+                    l10n.travelHistoryTitle,
+                    style: theme.textTheme.titleLarge?.copyWith(
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
                 ),
                 ElevatedButton.icon(
@@ -302,27 +311,29 @@ class ViewUserPage extends StatelessWidget {
                   cellBuilder: (context, travel) =>
                       Text(travel.travelName, style: const TextStyle(fontWeight: FontWeight.w500)),
                 ),
-                AppDataColumn(
-                  label: l10n.destinationLabel.toUpperCase(),
-                  width: const FlexColumnWidth(2),
-                  headerBuilder: (context) => Text(l10n.destinationLabel.toUpperCase(), style: headerStyle),
-                  cellBuilder: (context, travel) => Text(travel.destination, style: mutedStyle),
-                ),
+                if (size == ScreenSize.desktop)
+                  AppDataColumn(
+                    label: l10n.destinationLabel.toUpperCase(),
+                    width: const FlexColumnWidth(2),
+                    headerBuilder: (context) => Text(l10n.destinationLabel.toUpperCase(), style: headerStyle),
+                    cellBuilder: (context, travel) => Text(travel.destination, style: mutedStyle),
+                  ),
                 AppDataColumn(
                   label: l10n.statusColumn.toUpperCase(),
                   width: const FlexColumnWidth(2),
                   headerBuilder: (context) => Text(l10n.statusColumn.toUpperCase(), style: headerStyle),
                   cellBuilder: (context, travel) => _buildStatusBadge(theme, travel.status),
                 ),
-                AppDataColumn(
-                  label: l10n.startDateLabel.toUpperCase(),
-                  width: const FlexColumnWidth(2),
-                  headerBuilder: (context) => Text(l10n.startDateLabel.toUpperCase(), style: headerStyle),
-                  cellBuilder: (context, travel) => Text(
-                    dateFormat.format(travel.startDate),
-                    style: mutedStyle,
+                if (size != ScreenSize.mobile)
+                  AppDataColumn(
+                    label: l10n.startDateLabel.toUpperCase(),
+                    width: const FlexColumnWidth(2),
+                    headerBuilder: (context) => Text(l10n.startDateLabel.toUpperCase(), style: headerStyle),
+                    cellBuilder: (context, travel) => Text(
+                      dateFormat.format(travel.startDate),
+                      style: mutedStyle,
+                    ),
                   ),
-                ),
               ],
             ),
         ],
@@ -365,6 +376,76 @@ class ViewUserPage extends StatelessWidget {
   }
 
   Widget _buildSecurityActions(ThemeData theme, UsersController controller, BuildContext context, AppLocalizations l10n) {
+    final cards = [
+      _buildActionCard(
+        theme: theme,
+        title: l10n.resetPasswordActionTitle,
+        description: l10n.resetPasswordActionDescription,
+        icon: Icons.key_outlined,
+        iconColor: theme.colorScheme.primary,
+        onTap: () async {
+          final success = await controller.resetPassword(user.localId);
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(success ? l10n.resetPasswordSuccessMessage : l10n.resetPasswordFailureMessage)),
+            );
+          }
+        },
+      ),
+      _buildActionCard(
+        theme: theme,
+        title: l10n.forceLogoutActionTitle,
+        description: l10n.forceLogoutActionDescription,
+        icon: Icons.power_settings_new,
+        iconColor: theme.colorScheme.error,
+        onTap: () async {
+          final confirmed = await showConfirmationDialog(
+            context,
+            title: l10n.forceLogoutConfirmTitle,
+            message: l10n.forceLogoutConfirmMessage,
+            confirmLabel: l10n.confirmActionButton,
+            cancelLabel: l10n.cancelActionButton,
+          );
+          if (confirmed != true || !context.mounted) return;
+
+          final success = await controller.forceLogout(user.localId);
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(success ? l10n.forceLogoutSuccessMessage : l10n.forceLogoutFailureMessage)),
+            );
+          }
+        },
+      ),
+      _buildActionCard(
+        theme: theme,
+        title: l10n.deactivateUserDialogTitle,
+        description: l10n.deactivateUserActionDescription,
+        icon: Icons.block,
+        iconColor: theme.colorScheme.error,
+        onTap: () async {
+          final reason = await showDeactivateUserDialog(context, user.name);
+          if (reason == null || !context.mounted) return;
+
+          final success = await controller.deactivateUser(user.localId, reason);
+          if (context.mounted) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(content: Text(success ? l10n.deactivateUserSuccessMessage : l10n.deactivateUserFailureMessage)),
+            );
+          }
+        },
+      ),
+    ];
+
+    // Largura do próprio cartão: abaixo de 600 empilha, a partir daí lado a lado.
+    Widget cardsRow(BuildContext context) => Row(
+          children: [
+            for (final card in cards) ...[
+              Expanded(child: card),
+              if (card != cards.last) const SizedBox(width: 16),
+            ],
+          ],
+        );
+
     return Container(
       decoration: BoxDecoration(
         color: theme.colorScheme.surface,
@@ -382,88 +463,17 @@ class ViewUserPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 24),
-          LayoutBuilder(
-            builder: (context, constraints) {
-              final cards = [
-                _buildActionCard(
-                  theme: theme,
-                  title: l10n.resetPasswordActionTitle,
-                  description: l10n.resetPasswordActionDescription,
-                  icon: Icons.key_outlined,
-                  iconColor: theme.colorScheme.primary,
-                  onTap: () async {
-                    final success = await controller.resetPassword(user.localId);
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(success ? l10n.resetPasswordSuccessMessage : l10n.resetPasswordFailureMessage)),
-                      );
-                    }
-                  },
-                ),
-                _buildActionCard(
-                  theme: theme,
-                  title: l10n.forceLogoutActionTitle,
-                  description: l10n.forceLogoutActionDescription,
-                  icon: Icons.power_settings_new,
-                  iconColor: theme.colorScheme.error,
-                  onTap: () async {
-                    final confirmed = await showConfirmationDialog(
-                      context,
-                      title: l10n.forceLogoutConfirmTitle,
-                      message: l10n.forceLogoutConfirmMessage,
-                      confirmLabel: l10n.confirmActionButton,
-                      cancelLabel: l10n.cancelActionButton,
-                    );
-                    if (confirmed != true || !context.mounted) return;
-
-                    final success = await controller.forceLogout(user.localId);
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(success ? l10n.forceLogoutSuccessMessage : l10n.forceLogoutFailureMessage)),
-                      );
-                    }
-                  },
-                ),
-                _buildActionCard(
-                  theme: theme,
-                  title: l10n.deactivateUserDialogTitle,
-                  description: l10n.deactivateUserActionDescription,
-                  icon: Icons.block,
-                  iconColor: theme.colorScheme.error,
-                  onTap: () async {
-                    final reason = await showDeactivateUserDialog(context, user.name);
-                    if (reason == null || !context.mounted) return;
-
-                    final success = await controller.deactivateUser(user.localId, reason);
-                    if (context.mounted) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text(success ? l10n.deactivateUserSuccessMessage : l10n.deactivateUserFailureMessage)),
-                      );
-                    }
-                  },
-                ),
-              ];
-
-              if (constraints.maxWidth < 700) {
-                return Column(
-                  children: [
-                    for (final card in cards) ...[
-                      card,
-                      if (card != cards.last) const SizedBox(height: 16),
-                    ],
-                  ],
-                );
-              }
-
-              return Row(
-                children: [
-                  for (final card in cards) ...[
-                    Expanded(child: card),
-                    if (card != cards.last) const SizedBox(width: 16),
-                  ],
+          ResponsiveLayoutBuilder(
+            mobile: (context) => Column(
+              children: [
+                for (final card in cards) ...[
+                  card,
+                  if (card != cards.last) const SizedBox(height: 16),
                 ],
-              );
-            },
+              ],
+            ),
+            tablet: cardsRow,
+            desktop: cardsRow,
           ),
         ],
       ),

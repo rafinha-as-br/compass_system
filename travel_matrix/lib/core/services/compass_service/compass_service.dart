@@ -1,4 +1,5 @@
 import 'package:travel_matrix/core/services/compass_service/clients/auth_api_client.dart';
+import 'package:travel_matrix/core/services/compass_service/clients/company_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/dashboard_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/itinerary_api_client.dart';
 import 'package:travel_matrix/core/services/compass_service/clients/notification_api_client.dart';
@@ -42,6 +43,7 @@ class CompassService {
     await PlacesApiClient.init();
     await NotificationApiClient.init();
     await PushTargetApiClient.init();
+    await CompanyApiClient.init();
     _instance = CompassService._();
     return _instance!;
   }
@@ -81,6 +83,20 @@ class CompassService {
   Future<Map<String, dynamic>> resetPasswordWithToken(String token, String newPassword) async {
     try {
       return await _authApiClient.resetPassword(token, newPassword);
+    } on ApiException catch (e) {
+      return {'status': 'error', 'data': null, 'message': e.message};
+    }
+  }
+
+  /// Changes the authenticated agent's password. Returns {status, data, message};
+  /// a wrong current password comes back as status 'error' with the backend message.
+  Future<Map<String, dynamic>> changePassword(
+    String token,
+    String currentPassword,
+    String newPassword,
+  ) async {
+    try {
+      return await _authApiClient.changePassword(token, currentPassword, newPassword);
     } on ApiException catch (e) {
       return {'status': 'error', 'data': null, 'message': e.message};
     }

@@ -1,9 +1,13 @@
 package com.compass.compass_system.entities;
 
+import com.compass.compass_system.company.Company;
 import jakarta.persistence.Entity;
+import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 
 import java.time.Instant;
 
@@ -29,6 +33,12 @@ public class ClientUser {
     // (JWT é stateless, então isso é a única forma de invalidar uma sessão
     // já emitida antes do seu vencimento natural).
     private Instant sessionInvalidatedAt;
+
+    // Empresa do agente que cadastrou o cliente; o cliente pertence a uma única
+    // empresa. EAGER, como em AgentUser: é lida a cada requisição autenticada.
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "company_id", nullable = false)
+    private Company company;
 
     public ClientUser() {
     }
@@ -120,5 +130,13 @@ public class ClientUser {
 
     public void setSessionInvalidatedAt(Instant sessionInvalidatedAt) {
         this.sessionInvalidatedAt = sessionInvalidatedAt;
+    }
+
+    public Company getCompany() {
+        return company;
+    }
+
+    public void setCompany(Company company) {
+        this.company = company;
     }
 }

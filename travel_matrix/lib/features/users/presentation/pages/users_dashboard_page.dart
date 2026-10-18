@@ -112,7 +112,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
               
               // Status Filter
               Expanded(
-                flex: 1,
+                flex: 2,
                 child: Container(
                   height: 48,
                   decoration: BoxDecoration(
@@ -123,13 +123,13 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
                       isExpanded: true,
-                      hint: Text(l10n.statusColumn),
+                      hint: Text(l10n.statusColumn, maxLines: 1, overflow: TextOverflow.ellipsis),
                       value: _statusFilter,
                       icon: const Icon(Icons.keyboard_arrow_down),
                       items: [
-                        DropdownMenuItem(value: null, child: Text(l10n.allStatus)),
-                        DropdownMenuItem(value: activeLabel, child: Text(activeLabel)),
-                        DropdownMenuItem(value: inactiveLabel, child: Text(inactiveLabel)),
+                        DropdownMenuItem(value: null, child: Text(l10n.allStatus, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                        DropdownMenuItem(value: activeLabel, child: Text(activeLabel, maxLines: 1, overflow: TextOverflow.ellipsis)),
+                        DropdownMenuItem(value: inactiveLabel, child: Text(inactiveLabel, maxLines: 1, overflow: TextOverflow.ellipsis)),
                       ],
                       onChanged: (value) {
                         setState(() {
@@ -143,7 +143,7 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
               const SizedBox(width: 16),
 
               // Spacer
-              const Spacer(flex: 2),
+              const Spacer(),
 
               // Create Button
               ElevatedButton.icon(
@@ -245,7 +245,14 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
                   ),
                 ),
                 const SizedBox(width: 12),
-                Text(user.name, style: const TextStyle(fontWeight: FontWeight.w600)),
+                Flexible(
+                  child: Text(
+                    user.name,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
+                    style: const TextStyle(fontWeight: FontWeight.w600),
+                  ),
+                ),
               ],
             ),
           ),
@@ -254,6 +261,8 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
             width: const FlexColumnWidth(2),
             cellBuilder: (context, user) => Text(
               user.email,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
           ),
@@ -262,6 +271,8 @@ class _UsersDashboardViewState extends State<_UsersDashboardView> {
             width: const FlexColumnWidth(2),
             cellBuilder: (context, user) => Text(
               user.phoneNumber,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
               style: TextStyle(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
             ),
           ),

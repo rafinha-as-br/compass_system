@@ -1,6 +1,10 @@
 package com.compass.compass_system.places;
 
+import com.compass.compass_system.company.AgentFixtures;
+import com.compass.compass_system.company.CompanyRepository;
+import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.security.JwtUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -31,6 +35,17 @@ class PlaceControllerTest {
     // Substitui o serviço real para nenhum teste depender de rede/Nominatim.
     @MockBean
     private PlaceAutocompleteService placeAutocompleteService;
+
+    @Autowired
+    private AgentUserRepository agentUserRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @BeforeEach
+    void ensureAgentExists() {
+        AgentFixtures.ensureOwner(agentUserRepository, companyRepository, "agent@matrix.com");
+    }
 
     private String authHeader() {
         return "Bearer " + jwtUtil.generateToken("agent@matrix.com", "AGENTE", 1L);
