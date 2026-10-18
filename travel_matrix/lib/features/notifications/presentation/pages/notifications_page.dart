@@ -42,6 +42,10 @@ class _NotificationsView extends StatelessWidget {
     final controller = context.watch<NotificationsController>();
     final state = controller.state;
     final hasUnread = state.notifications.any((n) => !n.read);
+    // A bare TextButton picks the theme's primary colour, which is the AppBar's
+    // own background here — so take the AppBar foreground instead.
+    final theme = Theme.of(context);
+    final appBarForeground = theme.appBarTheme.foregroundColor ?? theme.colorScheme.onPrimary;
 
     return Scaffold(
       appBar: AppBar(
@@ -52,6 +56,10 @@ class _NotificationsView extends StatelessWidget {
         actions: [
           TextButton(
             onPressed: hasUnread ? controller.markAllRead : null,
+            style: TextButton.styleFrom(
+              foregroundColor: appBarForeground,
+              disabledForegroundColor: appBarForeground.withValues(alpha: 0.5),
+            ),
             child: Text(l10n.notificationsMarkAllRead),
           ),
         ],
