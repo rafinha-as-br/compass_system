@@ -37,7 +37,7 @@ void main() {
       busViewModel: _bus(),
       onChanged: (v) => emitted = v,
       fetchSuggestions: (query) async => const [
-        PlaceSuggestion(text: 'Terminal Tietê, SP', coordinate: PlaceCoordinate(-23.51, -46.62)),
+        PlaceSuggestion(text: 'Terminal Tietê', coordinate: PlaceCoordinate(-23.51, -46.62)),
       ],
     )));
 
@@ -52,7 +52,7 @@ void main() {
     await tester.pump();
 
     expect(emitted, isNotNull);
-    expect(emitted!.busStationName, 'Terminal Tietê, SP');
+    expect(emitted!.busStationName, 'Terminal Tietê');
     expect(emitted!.busStationCoordinate, const PlaceCoordinate(-23.51, -46.62));
   });
 
