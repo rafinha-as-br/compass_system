@@ -45,4 +45,12 @@ class SettingsStorageService {
   Future<String?> getLocale() async {
     return _prefs.getString('locale');
   }
+
+  /// Sidebar collapse state, one entry per breakpoint (`desktop`, `tablet`,
+  /// `mobile`). Synchronous: [SharedPreferences] is already loaded in memory.
+  String? getSidebarMode(String breakpoint) => _prefs.getString('sidebar_mode_$breakpoint');
+
+  Future<void> saveSidebarMode(String breakpoint, String mode) async {
+    await _prefs.setString('sidebar_mode_$breakpoint', mode);
+  }
 }

@@ -47,7 +47,7 @@ void main() {
       rentalCar: _rentalCar(),
       onChanged: (v) => emitted = v,
       fetchSuggestions: (query) async => const [
-        PlaceSuggestion(text: 'Aeroporto de Congonhas, SP', coordinate: PlaceCoordinate(-23.62, -46.65)),
+        PlaceSuggestion(text: 'Aeroporto de Congonhas', coordinate: PlaceCoordinate(-23.62, -46.65)),
       ],
     )));
 
@@ -61,7 +61,7 @@ void main() {
     await tester.pump();
 
     expect(emitted, isNotNull);
-    expect(emitted!.pickupLocation, 'Aeroporto de Congonhas, SP');
+    expect(emitted!.pickupLocation, 'Aeroporto de Congonhas');
     expect(emitted!.pickupLocationCoordinate, const PlaceCoordinate(-23.62, -46.65));
   });
 

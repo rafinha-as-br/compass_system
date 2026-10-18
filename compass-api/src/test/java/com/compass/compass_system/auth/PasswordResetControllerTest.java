@@ -3,6 +3,8 @@ package com.compass.compass_system.auth;
 import com.compass.compass_system.entities.AgentUser;
 import com.compass.compass_system.entities.ClientUser;
 import com.compass.compass_system.entities.PasswordResetToken;
+import com.compass.compass_system.company.AgentFixtures;
+import com.compass.compass_system.company.CompanyRepository;
 import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.repositories.ClientUserRepository;
 import com.compass.compass_system.repositories.PasswordResetTokenRepository;
@@ -53,6 +55,9 @@ class PasswordResetControllerTest {
     private AgentUserRepository agentUserRepository;
 
     @Autowired
+    private CompanyRepository companyRepository;
+
+    @Autowired
     private ClientUserRepository clientUserRepository;
 
     @Autowired
@@ -70,17 +75,11 @@ class PasswordResetControllerTest {
         agentUserRepository.deleteAll();
         clientUserRepository.deleteAll();
 
-        agent = new AgentUser();
-        agent.setName("Carlos Agente");
-        agent.setEmail("agente@matrix.com");
-        agent.setPassword(BCrypt.hashpw("senha123", BCrypt.gensalt()));
-        agent = agentUserRepository.save(agent);
+        agent = AgentFixtures.saveOwner(agentUserRepository, companyRepository, "Carlos Agente",
+                "agente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
 
-        client = new ClientUser();
-        client.setName("Maria Cliente");
-        client.setEmail("cliente@matrix.com");
-        client.setPassword(BCrypt.hashpw("senha123", BCrypt.gensalt()));
-        client = clientUserRepository.save(client);
+        client = AgentFixtures.saveClient(clientUserRepository, agent.getCompany(), "Maria Cliente",
+                "cliente@matrix.com", BCrypt.hashpw("senha123", BCrypt.gensalt()));
     }
 
     @Test

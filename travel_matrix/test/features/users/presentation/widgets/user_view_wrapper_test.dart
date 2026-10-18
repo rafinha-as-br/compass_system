@@ -92,6 +92,12 @@ void main() {
   testWidgets(
     'fetches the user detail endpoint and shows travels the listing never carried',
     (tester) async {
+      // Destination column only appears at desktop width.
+      tester.view.physicalSize = const Size(1400, 900);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.resetPhysicalSize);
+      addTearDown(tester.view.resetDevicePixelRatio);
+
       // GET /users (the listing) doesn't populate travels/stats — only
       // GET /users/{id} does — so the list-derived user always starts empty.
       final listUser = _buildUser(phoneNumber: '11911111111');

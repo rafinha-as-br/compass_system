@@ -28,6 +28,18 @@ void main() {
       },
     );
 
+    test('fromJson lê mustChangePassword e assume false quando ausente', () {
+      final pending = AuthSessionDto.fromJson(const {
+        'token': 't',
+        'userType': 'AGENTE',
+        'mustChangePassword': true,
+      });
+      final regular = AuthSessionDto.fromJson(const {'token': 't', 'userType': 'AGENTE'});
+
+      expect(pending.toDomain().mustChangePassword, isTrue);
+      expect(regular.toDomain().mustChangePassword, isFalse);
+    });
+
     test(
       'fromJson usa string vazia quando token/userType estão ausentes '
       '(comportamento atual — ver observação de code review sobre '

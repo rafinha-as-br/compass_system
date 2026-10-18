@@ -31,7 +31,7 @@ class PlaceAutocompleteServiceTest {
 
     @Test
     void shouldCallProviderOnceAndCacheResult() {
-        List<PlaceSuggestion> results = List.of(new PlaceSuggestion("Florianópolis, SC, Brasil", -27.59, -48.55));
+        List<PlaceSuggestion> results = List.of(new PlaceSuggestion("Florianópolis", -27.59, -48.55));
         when(provider.search("Floripa")).thenReturn(results);
 
         List<PlaceSuggestion> first = service.autocomplete("Floripa");

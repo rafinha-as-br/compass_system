@@ -116,7 +116,7 @@ void main() {
       labelText: 'Origem',
       debounceDuration: _debounce,
       fetchSuggestions: (query) async => const [
-        PlaceSuggestion(text: 'Florianópolis, SC, Brasil', coordinate: PlaceCoordinate(-27.5954, -48.5480)),
+        PlaceSuggestion(text: 'Florianópolis', coordinate: PlaceCoordinate(-27.5954, -48.5480)),
       ],
       onChanged: reported.add,
     )));
@@ -130,14 +130,34 @@ void main() {
     await tester.pump();
 
     final textField = tester.widget<TextField>(find.byType(TextField));
-    expect(textField.controller!.text, 'Florianópolis, SC, Brasil');
+    expect(textField.controller!.text, 'Florianópolis');
 
     final last = reported.last;
-    expect(last.text, 'Florianópolis, SC, Brasil');
+    expect(last.text, 'Florianópolis');
     expect(last.coordinate, const PlaceCoordinate(-27.5954, -48.5480));
 
-    await tester.enterText(find.byType(TextField), 'Florianópolis, SC, Brasil!');
+    await tester.enterText(find.byType(TextField), 'Florianópolis!');
     expect(reported.last.coordinate, isNull);
+  });
+
+  testWidgets('suggestion list shows only the name, with no subtitle line', (tester) async {
+    await tester.pumpWidget(_wrap(PlacesAutocompleteField(
+      labelText: 'Origem',
+      debounceDuration: _debounce,
+      fetchSuggestions: (query) async => const [
+        PlaceSuggestion(text: 'Blumenau, Santa Catarina', coordinate: PlaceCoordinate(-26.9, -49.0)),
+      ],
+      onChanged: (_) {},
+    )));
+
+    await tester.tap(find.byType(TextField));
+    await tester.enterText(find.byType(TextField), 'blum');
+    await tester.pump(_debounce);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Blumenau, Santa Catarina'), findsOneWidget);
+    expect(find.text('Blumenau'), findsNothing);
+    expect(find.text('Santa Catarina'), findsNothing);
   });
 
   testWidgets('a query shorter than 2 chars never triggers a fetch', (tester) async {

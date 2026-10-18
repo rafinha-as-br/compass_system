@@ -36,7 +36,7 @@ void main() {
       airplaneViewModel: _airplane(),
       onChanged: (v) => emitted = v,
       fetchSuggestions: (query) async => const [
-        PlaceSuggestion(text: 'Aeroporto de Guarulhos, SP', coordinate: PlaceCoordinate(-23.43, -46.47)),
+        PlaceSuggestion(text: 'Aeroporto de Guarulhos', coordinate: PlaceCoordinate(-23.43, -46.47)),
       ],
     )));
 
@@ -51,7 +51,7 @@ void main() {
     await tester.pump();
 
     expect(emitted, isNotNull);
-    expect(emitted!.departureAirport, 'Aeroporto de Guarulhos, SP');
+    expect(emitted!.departureAirport, 'Aeroporto de Guarulhos');
     expect(emitted!.departureAirportCoordinate, const PlaceCoordinate(-23.43, -46.47));
   });
 
