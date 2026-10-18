@@ -44,6 +44,21 @@ permanente.
                                                     (Início/Roteiro/Conta) sem crash
 ```
 
+## Atualização 2026-10-18 (QA da CPS-147 — leitura de notificação no RouteCraft)
+
+Flow novo: `routecraft/notifications/open_notification_marks_read.yaml` (cliente `carla.rocha@teste.com`).
+Recebe `BEFORE`, `AFTER` e `CARD_INDEX` por `-e` porque a contagem depende do estado do banco
+(`GET /notifications/unread-count`; o seed deixa 6 não lidas): abre uma notificação não lida
+("View trip"), confere o badge da Conta, repete após novo login (a leitura vem do servidor) e
+termina com "mark all read". O badge da Conta compartilha o rótulo da linha ("Notifications\n5"),
+então é conferido pelo texto completo.
+
+```bash
+maestro test -e BEFORE=6 -e AFTER=5 -e CARD_INDEX=0 .maestro/routecraft/notifications/open_notification_marks_read.yaml
+```
+
+Para gerar notificações do cliente de novo, recriar o banco e rodar `seed_test_data.py`.
+
 ## Atualização 2026-10-17 (QA da CPS-168 — autocomplete grava só o nome curto)
 
 Flow novo: `routecraft/places/autocomplete_short_name.yaml` (cliente `carla.rocha@teste.com`,
