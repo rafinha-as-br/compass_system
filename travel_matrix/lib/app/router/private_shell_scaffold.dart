@@ -86,6 +86,7 @@ class PrivateShellScaffold extends StatelessWidget {
                   border: Border(top: BorderSide(color: theme.colorScheme.outlineVariant)),
                 ),
                 child: _AccountMenu(
+                  matchTriggerWidth: true,
                   onGoToAccount: () => navigationShell.goBranch(4),
                   builder: (context, controller) => _AccountRow(
                     controller: controller,
@@ -333,10 +334,23 @@ class _NavItem extends StatelessWidget {
 /// fecha o menu também vaza para o resto da árvore, e repetir abrir/fechar
 /// no mesmo local acumula listeners de "outside tap" que passam a bloquear
 /// o fechamento por clique fora em pontos específicos da tela.
+///
+/// Largura (CPS-187): `matchTriggerWidth` (linha da sidebar) liga o popup à
+/// largura do gatilho, medida em tempo de layout; os gatilhos de avatar não têm
+/// largura própria e usam [_defaultMenuWidth]. `crossAxisUnconstrained: false`
+/// é o que faz o painel visível ocupar a largura pedida — no padrão, o
+/// `minimumSize` só estica a caixa externa e o painel encolhe ao item mais largo.
 class _AccountMenu extends StatelessWidget {
-  const _AccountMenu({required this.onGoToAccount, required this.builder});
+  const _AccountMenu({
+    required this.onGoToAccount,
+    required this.builder,
+    this.matchTriggerWidth = false,
+  });
+
+  static const _defaultMenuWidth = 226.0;
 
   final VoidCallback onGoToAccount;
+  final bool matchTriggerWidth;
   final Widget Function(BuildContext context, MenuController controller) builder;
 
   @override
@@ -344,8 +358,9 @@ class _AccountMenu extends StatelessWidget {
     final theme = Theme.of(context);
     final l10n = AppLocalizations.of(context)!;
 
-    return MenuAnchor(
+    Widget menu(double width) => MenuAnchor(
       consumeOutsideTap: true,
+      crossAxisUnconstrained: false,
       style: MenuStyle(
         backgroundColor: WidgetStatePropertyAll(theme.colorScheme.surface),
         elevation: const WidgetStatePropertyAll(8),
@@ -355,8 +370,8 @@ class _AccountMenu extends StatelessWidget {
             side: BorderSide(color: theme.colorScheme.outlineVariant),
           ),
         ),
-        minimumSize: const WidgetStatePropertyAll(Size(226, 0)),
-        maximumSize: const WidgetStatePropertyAll(Size(226, double.infinity)),
+        minimumSize: WidgetStatePropertyAll(Size(width, 0)),
+        maximumSize: WidgetStatePropertyAll(Size(width, double.infinity)),
         padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
       ),
       menuChildren: [
@@ -386,6 +401,9 @@ class _AccountMenu extends StatelessWidget {
       ],
       builder: (context, controller, child) => builder(context, controller),
     );
+
+    if (!matchTriggerWidth) return menu(_defaultMenuWidth);
+    return LayoutBuilder(builder: (context, constraints) => menu(constraints.maxWidth));
   }
 }
 
