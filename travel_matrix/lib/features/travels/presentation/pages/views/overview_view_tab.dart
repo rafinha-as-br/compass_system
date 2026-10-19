@@ -416,7 +416,10 @@ class _ParticipantsCard extends StatelessWidget {
           const SizedBox(height: 12),
           TextButton(
             onPressed: onViewParticipants,
-            style: TextButton.styleFrom(padding: EdgeInsets.zero, alignment: Alignment.centerLeft),
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(horizontal: 12),
+              alignment: Alignment.centerLeft,
+            ),
             child: Text(l10n.overviewViewParticipantsAction),
           ),
         ],
