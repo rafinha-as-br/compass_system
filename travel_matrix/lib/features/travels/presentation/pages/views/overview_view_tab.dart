@@ -5,6 +5,7 @@ import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/features/travels/presentation/models/build_models/itinerary_build_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/widgets/participant_avatar.dart';
 
 /// Read-only consolidated summary of the travel — route, status,
 /// participants and itinerary — as the landing tab of `TravelViewPage`.
@@ -364,8 +365,6 @@ class _ParticipantsCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final participants = travel.participants;
-    final preview = participants.take(3).toList();
-    final remaining = participants.length - preview.length;
 
     return _OverviewCard(
       child: Column(
@@ -389,28 +388,28 @@ class _ParticipantsCard extends StatelessWidget {
             ],
           ),
           const SizedBox(height: 12),
-          if (preview.isNotEmpty)
-            Row(
+          if (participants.isNotEmpty)
+            Wrap(
+              spacing: 14,
+              runSpacing: 14,
               children: [
-                SizedBox(
-                  height: 28,
-                  child: Stack(
-                    children: [
-                      for (var i = 0; i < preview.length; i++)
-                        Padding(
-                          padding: EdgeInsets.only(left: i * 19.0),
-                          child: _InitialsAvatar(name: preview[i].name),
+                for (final person in participants)
+                  SizedBox(
+                    width: 56,
+                    child: Column(
+                      children: [
+                        ParticipantAvatar(name: person.name, avatarIndex: person.avatarIndex, radius: 24),
+                        const SizedBox(height: 6),
+                        Text(
+                          person.name,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(fontSize: 10, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
                         ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
-                if (remaining > 0) ...[
-                  const SizedBox(width: 8),
-                  Text(
-                    l10n.overviewParticipantsMore(remaining),
-                    style: TextStyle(fontSize: 12, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
-                  ),
-                ],
               ],
             ),
           const SizedBox(height: 12),
@@ -420,32 +419,6 @@ class _ParticipantsCard extends StatelessWidget {
             child: Text(l10n.overviewViewParticipantsAction),
           ),
         ],
-      ),
-    );
-  }
-}
-
-class _InitialsAvatar extends StatelessWidget {
-  const _InitialsAvatar({required this.name});
-
-  final String name;
-
-  @override
-  Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final tokens = name.trim().split(RegExp(r'\s+')).where((t) => t.isNotEmpty).toList();
-    final initials = tokens.isEmpty
-        ? ''
-        : tokens.length == 1
-            ? tokens.first.substring(0, 1).toUpperCase()
-            : (tokens.first.substring(0, 1) + tokens.last.substring(0, 1)).toUpperCase();
-
-    return CircleAvatar(
-      radius: 14,
-      backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.12),
-      child: Text(
-        initials,
-        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: theme.colorScheme.primary),
       ),
     );
   }

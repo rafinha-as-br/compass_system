@@ -1358,6 +1358,30 @@ abstract class AppLocalizations {
   /// **'Age'**
   String get participantAgeFieldLabel;
 
+  /// No description provided for @participantAvatarFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Character'**
+  String get participantAvatarFieldLabel;
+
+  /// No description provided for @changeParticipantAvatarTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Change character'**
+  String get changeParticipantAvatarTooltip;
+
+  /// No description provided for @participantAvatarRandomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'randomly picked, tap to change'**
+  String get participantAvatarRandomHint;
+
+  /// No description provided for @participantAvatarOptionSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Character {index}'**
+  String participantAvatarOptionSemantics(int index);
+
   /// No description provided for @noParticipantsTitle.
   ///
   /// In en, this message translates to:
@@ -1483,12 +1507,6 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'people on this trip'**
   String get overviewParticipantsCaption;
-
-  /// No description provided for @overviewParticipantsMore.
-  ///
-  /// In en, this message translates to:
-  /// **'and {count} more'**
-  String overviewParticipantsMore(int count);
 
   /// No description provided for @overviewViewParticipantsAction.
   ///

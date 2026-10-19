@@ -312,7 +312,9 @@ class TravelControllerTest {
         client.setName("Maria Silva");
         client.setAge("34");
         client.setSex("F");
+        client.setAvatarIndex(3);
 
+        // No character chosen (e.g. participant created before avatars existed).
         Person child = new Person();
         child.setName("Joaquim Silva");
         child.setAge("8");
@@ -326,12 +328,17 @@ class TravelControllerTest {
                 .andExpect(jsonPath("$[0].id").isNotEmpty())
                 .andExpect(jsonPath("$[0].name").value("Maria Silva"))
                 .andExpect(jsonPath("$[1].name").value("Joaquim Silva"))
-                .andExpect(jsonPath("$[1].age").value("8"));
+                .andExpect(jsonPath("$[1].age").value("8"))
+                .andExpect(jsonPath("$[0].avatarIndex").value(3))
+                .andExpect(jsonPath("$[1].avatarIndex").doesNotExist());
 
         mockMvc.perform(get("/travels/" + createdTravelId)
                 .header("Authorization", authHeader()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.participants", hasSize(2)))
+                // The character index persists; a participant without one stays null.
+                .andExpect(jsonPath("$.participants[0].avatarIndex").value(3))
+                .andExpect(jsonPath("$.participants[1].avatarIndex").doesNotExist())
                 // The route/itinerary from previous steps stay untouched.
                 .andExpect(jsonPath("$.routePlan.destination").value("Porto"))
                 .andExpect(jsonPath("$.travelStatus").value("itinerary_created"))

@@ -12,6 +12,11 @@ public class Person {
     private String age;
     private String sex;
 
+    // Index (1-based) of the participant's character in the apps' avatar catalog
+    // (assets/avatars/animal_<n>.png). Only the index is stored; null = no
+    // character. The catalog is append-only, so a stored value never changes meaning.
+    private Integer avatarIndex;
+
     @PrePersist
     private void ensureId() {
         if (this.id == null || this.id.isBlank()) {
@@ -30,4 +35,10 @@ public class Person {
 
     public String getSex() { return sex; }
     public void setSex(String sex) { this.sex = sex; }
+
+    public Integer getAvatarIndex() { return avatarIndex; }
+    public void setAvatarIndex(Integer avatarIndex) {
+        // Indexes start at 1; anything lower is stored as "no character".
+        this.avatarIndex = avatarIndex != null && avatarIndex >= 1 ? avatarIndex : null;
+    }
 }

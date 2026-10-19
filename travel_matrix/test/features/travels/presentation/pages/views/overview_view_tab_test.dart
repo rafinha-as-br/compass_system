@@ -9,6 +9,7 @@ import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/pages/views/overview_view_tab.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/widgets/participant_avatar.dart';
 
 RoutePlan _route() => RoutePlan(
   domainId: 'r1',
@@ -122,7 +123,7 @@ void main() {
     }
   });
 
-  testWidgets('shows the participants count and "and N more" beyond the first 3 avatars', (tester) async {
+  testWidgets('shows the participants count and every participant, with no "and N more" cutoff', (tester) async {
     await _pump(
       tester,
       _travel(
@@ -132,22 +133,40 @@ void main() {
           _person('Carla Souza'),
           _person('Diego Lima'),
           _person('Elis Rocha'),
+          _person('Fabio Nunes'),
+          _person('Gina Prado'),
         ],
       ),
     );
 
-    expect(find.text('5'), findsOneWidget);
-    expect(find.text('and 2 more'), findsOneWidget);
+    expect(find.text('7'), findsOneWidget);
+    expect(find.byType(ParticipantAvatar), findsNWidgets(7));
+    for (final name in ['Ana Silva', 'Gina Prado']) {
+      expect(find.text(name), findsOneWidget);
+    }
+    expect(find.textContaining('more'), findsNothing);
+    expect(tester.takeException(), isNull);
   });
 
-  testWidgets('does not show "and N more" with 3 or fewer participants', (tester) async {
+  testWidgets('participants card shows the chosen character, and initials for those without one', (tester) async {
     await _pump(
       tester,
-      _travel(participants: [_person('Ana Silva'), _person('Bruno Costa')]),
+      _travel(
+        participants: [
+          Person(domainId: 'a', backendId: 'a', name: 'Ana Silva', age: '30', sex: 'F', avatarIndex: 3),
+          _person('Bruno Costa'),
+          Person(domainId: 'c', backendId: 'c', name: 'Carla Souza', age: '30', sex: 'F', avatarIndex: 99),
+        ],
+      ),
     );
 
-    expect(find.text('2'), findsOneWidget);
-    expect(find.textContaining('more'), findsNothing);
+    final avatars = tester.widgetList<ParticipantAvatar>(find.byType(ParticipantAvatar)).toList();
+    expect(avatars.map((a) => a.avatarIndex), [3, null, 99]);
+    // Initials only where there is no (known) character: Bruno has none, and
+    // index 99 comes from a newer catalog this build does not ship.
+    expect(find.text('BC'), findsOneWidget);
+    expect(find.text('CS'), findsOneWidget);
+    expect(find.text('AS'), findsNothing);
   });
 
   testWidgets('tapping "View participants" does not throw even without a Participants tab yet', (tester) async {

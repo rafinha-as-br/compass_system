@@ -101,8 +101,9 @@ class PersonDTO {
   final String name;
   final String age;
   final String sex;
+  final int? avatarIndex;
 
-  PersonDTO({required this.id, required this.name, required this.age, required this.sex});
+  PersonDTO({required this.id, required this.name, required this.age, required this.sex, this.avatarIndex});
 
   factory PersonDTO.fromJson(Map<String, dynamic> json) {
     return PersonDTO(
@@ -110,6 +111,7 @@ class PersonDTO {
       name: json[PersonApiFields.name]?.toString() ?? '',
       age: json[PersonApiFields.age]?.toString() ?? '',
       sex: json[PersonApiFields.sex]?.toString() ?? '',
+      avatarIndex: int.tryParse(json[PersonApiFields.avatarIndex]?.toString() ?? ''),
     );
   }
 
@@ -119,14 +121,28 @@ class PersonDTO {
       PersonApiFields.name: name,
       PersonApiFields.age: age,
       PersonApiFields.sex: sex,
+      PersonApiFields.avatarIndex: avatarIndex,
     };
   }
 
   Person toDomain() {
-    return Person(domainId: const Uuid().v4(), backEndId: id, name: name, age: age, sex: sex);
+    return Person(
+      domainId: const Uuid().v4(),
+      backEndId: id,
+      name: name,
+      age: age,
+      sex: sex,
+      avatarIndex: avatarIndex,
+    );
   }
 
   factory PersonDTO.fromDomain(Person person) {
-    return PersonDTO(id: person.backEndId, name: person.name, age: person.age, sex: person.sex);
+    return PersonDTO(
+      id: person.backEndId,
+      name: person.name,
+      age: person.age,
+      sex: person.sex,
+      avatarIndex: person.avatarIndex,
+    );
   }
 }

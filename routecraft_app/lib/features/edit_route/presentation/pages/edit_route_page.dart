@@ -8,8 +8,10 @@ import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/models/place_suggestion.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
+import 'package:routecraft_app/shared/utils/participant_avatars.dart';
 import 'package:routecraft_app/shared/widgets/app_button.dart';
 import 'package:routecraft_app/shared/widgets/app_text_field.dart';
+import 'package:routecraft_app/shared/widgets/avatar_picker.dart';
 import 'package:routecraft_app/shared/widgets/date_field.dart';
 import 'package:routecraft_app/shared/widgets/places_autocomplete_field.dart';
 
@@ -363,6 +365,9 @@ class _ParticipantsSectionState extends State<_ParticipantsSection> {
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
   String? _sex;
+  // Pre-selected by lot; the user may keep it or pick another one.
+  int _avatarIndex = randomParticipantAvatarIndex();
+  bool _avatarPicked = false;
 
   @override
   void dispose() {
@@ -376,10 +381,14 @@ class _ParticipantsSectionState extends State<_ParticipantsSection> {
     final age = _ageController.text.trim();
     final sex = _sex;
     if (name.isEmpty || age.isEmpty || sex == null) return;
-    controller.addParticipant(name: name, age: age, sex: sex);
+    controller.addParticipant(name: name, age: age, sex: sex, avatarIndex: _avatarIndex);
     _nameController.clear();
     _ageController.clear();
-    setState(() => _sex = null);
+    setState(() {
+      _sex = null;
+      _avatarIndex = randomParticipantAvatarIndex();
+      _avatarPicked = false;
+    });
   }
 
   @override
@@ -406,6 +415,7 @@ class _ParticipantsSectionState extends State<_ParticipantsSection> {
               pendingRemoval: controller.isParticipantPendingRemoval(person.domainId),
               onChanged: (name, age, sex) =>
                   controller.updateParticipant(person.domainId, name: name, age: age, sex: sex),
+              onAvatarChanged: (index) => controller.updateParticipant(person.domainId, avatarIndex: index),
               onRemove: () => controller.markParticipantForRemoval(person.domainId),
               onUndo: () => controller.undoParticipantRemoval(person.domainId),
             ),
@@ -428,6 +438,24 @@ class _ParticipantsSectionState extends State<_ParticipantsSection> {
           ],
           onChanged: (value) => setState(() => _sex = value),
         ),
+        const SizedBox(height: 16),
+        Text(
+          _avatarPicked
+              ? l10n.participantAvatarFieldLabel
+              : '${l10n.participantAvatarFieldLabel} · ${l10n.participantAvatarRandomHint}',
+          style: Theme.of(context).textTheme.bodySmall,
+        ),
+        const SizedBox(height: 8),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: AvatarPicker(
+            selectedIndex: _avatarIndex,
+            onChanged: (index) => setState(() {
+              _avatarIndex = index;
+              _avatarPicked = true;
+            }),
+          ),
+        ),
         const SizedBox(height: 8),
         Align(
           alignment: Alignment.centerRight,
@@ -448,6 +476,7 @@ class _ParticipantRow extends StatelessWidget {
     required this.isClient,
     required this.pendingRemoval,
     required this.onChanged,
+    required this.onAvatarChanged,
     required this.onRemove,
     required this.onUndo,
   });
@@ -456,6 +485,7 @@ class _ParticipantRow extends StatelessWidget {
   final bool isClient;
   final bool pendingRemoval;
   final void Function(String name, String age, String sex) onChanged;
+  final ValueChanged<int> onAvatarChanged;
   final VoidCallback onRemove;
   final VoidCallback onUndo;
 
@@ -490,6 +520,13 @@ class _ParticipantRow extends StatelessWidget {
           children: [
             Row(
               children: [
+                ParticipantAvatarButton(
+                  key: ValueKey('${person.domainId}-avatar'),
+                  name: person.name,
+                  avatarIndex: person.avatarIndex,
+                  onChanged: onAvatarChanged,
+                ),
+                const SizedBox(width: 12),
                 Expanded(
                   child: TextFormField(
                     key: ValueKey('${person.domainId}-name'),

@@ -1058,6 +1058,30 @@ abstract class AppLocalizations {
   /// **'Participants'**
   String get participantsSectionLabel;
 
+  /// No description provided for @participantAvatarFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Character'**
+  String get participantAvatarFieldLabel;
+
+  /// No description provided for @participantAvatarRandomHint.
+  ///
+  /// In en, this message translates to:
+  /// **'randomly picked, tap to change'**
+  String get participantAvatarRandomHint;
+
+  /// No description provided for @participantAvatarOptionSemantics.
+  ///
+  /// In en, this message translates to:
+  /// **'Character {index}'**
+  String participantAvatarOptionSemantics(int index);
+
+  /// No description provided for @changeParticipantAvatarTooltip.
+  ///
+  /// In en, this message translates to:
+  /// **'Change character'**
+  String get changeParticipantAvatarTooltip;
+
   /// No description provided for @editRouteSubmitCta.
   ///
   /// In en, this message translates to:

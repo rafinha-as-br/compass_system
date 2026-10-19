@@ -236,6 +236,8 @@ class PersonViewModel{
   final String name;
   final String age;
   final String sex;
+  /// Character index in the avatar catalog, null when none was chosen
+  final int? avatarIndex;
 
   PersonViewModel({
     required this.backEndId,
@@ -243,6 +245,7 @@ class PersonViewModel{
     required this.name,
     required this.age,
     required this.sex,
+    this.avatarIndex,
   });
 
   /// To domain mapper method
@@ -253,6 +256,7 @@ class PersonViewModel{
       name: name,
       age: age,
       sex: sex,
+      avatarIndex: avatarIndex,
     );
   }
 
@@ -266,6 +270,7 @@ class PersonViewModel{
       name: person.name,
       age: person.age,
       sex: person.sex,
+      avatarIndex: person.avatarIndex,
     );
   }
 
@@ -273,8 +278,9 @@ class PersonViewModel{
   factory PersonViewModel.fromLocal(
       String name,
       String age,
-      String sex,
-    ){
+      String sex, {
+      int? avatarIndex,
+    }){
     return PersonViewModel(
       backEndId: null,
       // Uuid, not `name` — matches RoutePlanViewModel/InterestPointViewModel's
@@ -284,11 +290,24 @@ class PersonViewModel{
       name: name,
       age: age,
       sex: sex,
+      avatarIndex: avatarIndex,
     );
   }
 
   /// Provides the local ID for UI reference
   String get id => localId;
+
+  /// Copy of this person with the character at [avatarIndex]
+  PersonViewModel withAvatarIndex(int avatarIndex) {
+    return PersonViewModel(
+      backEndId: backEndId,
+      localId: localId,
+      name: name,
+      age: age,
+      sex: sex,
+      avatarIndex: avatarIndex,
+    );
+  }
 
 
 }

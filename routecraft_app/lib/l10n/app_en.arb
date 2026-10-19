@@ -286,6 +286,15 @@
   },
   "editRouteDiffParticipantsUpdated": "participant details updated",
   "participantsSectionLabel": "Participants",
+  "participantAvatarFieldLabel": "Character",
+  "participantAvatarRandomHint": "randomly picked, tap to change",
+  "participantAvatarOptionSemantics": "Character {index}",
+  "@participantAvatarOptionSemantics": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "changeParticipantAvatarTooltip": "Change character",
   "editRouteSubmitCta": "Send changes",
   "editRouteSubmitError": "Failed to update route: {error}",
   "@editRouteSubmitError": {
