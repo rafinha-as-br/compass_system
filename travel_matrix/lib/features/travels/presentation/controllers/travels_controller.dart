@@ -195,6 +195,19 @@ class TravelsController extends ChangeNotifier {
     return _submitParticipants(travelId, [...currentParticipants, newParticipant]);
   }
 
+  /// Sets the character of the participant with [participantId] in
+  /// [currentParticipants] and upserts the whole list.
+  Future<List<PersonViewModel>?> changeParticipantAvatar(
+    String travelId,
+    List<PersonViewModel> currentParticipants,
+    String participantId,
+    int avatarIndex,
+  ) {
+    return _submitParticipants(travelId, [
+      for (final p in currentParticipants) p.id == participantId ? p.withAvatarIndex(avatarIndex) : p,
+    ]);
+  }
+
   /// Removes the participant with [participantId] from [currentParticipants]
   /// and upserts the whole list.
   Future<List<PersonViewModel>?> removeParticipant(

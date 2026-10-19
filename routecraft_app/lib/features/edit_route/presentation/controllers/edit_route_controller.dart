@@ -13,6 +13,7 @@ import 'package:routecraft_app/features/travels/domain/usecases/route_usecases.d
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/models/place_suggestion.dart';
 import 'package:routecraft_app/shared/utils/date_formatting.dart';
+import 'package:routecraft_app/shared/utils/participant_avatars.dart';
 
 class EditRouteState {
   final bool isSubmitting;
@@ -166,8 +167,18 @@ class EditRouteController extends ChangeNotifier {
   bool isClientParticipant(Person person) => person.name == clientName;
   bool isParticipantPendingRemoval(String domainId) => _pendingParticipantRemovalIds.contains(domainId);
 
-  void addParticipant({required String name, required String age, required String sex}) {
-    participants.add(Person(domainId: const Uuid().v4(), backEndId: null, name: name, age: age, sex: sex));
+  /// Without a chosen [avatarIndex] the participant gets a random character.
+  void addParticipant({required String name, required String age, required String sex, int? avatarIndex}) {
+    participants.add(
+      Person(
+        domainId: const Uuid().v4(),
+        backEndId: null,
+        name: name,
+        age: age,
+        sex: sex,
+        avatarIndex: avatarIndex ?? randomParticipantAvatarIndex(),
+      ),
+    );
     notifyListeners();
   }
 
@@ -186,7 +197,7 @@ class EditRouteController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateParticipant(String domainId, {String? name, String? age, String? sex}) {
+  void updateParticipant(String domainId, {String? name, String? age, String? sex, int? avatarIndex}) {
     final index = participants.indexWhere((p) => p.domainId == domainId);
     if (index == -1) return;
     final current = participants[index];
@@ -196,6 +207,7 @@ class EditRouteController extends ChangeNotifier {
       name: name ?? current.name,
       age: age ?? current.age,
       sex: sex ?? current.sex,
+      avatarIndex: avatarIndex ?? current.avatarIndex,
     );
     notifyListeners();
   }
@@ -220,7 +232,12 @@ class EditRouteController extends ChangeNotifier {
         }
       }
       if (original == null) continue; // added this session, already counted
-      if (original.name != person.name || original.age != person.age || original.sex != person.sex) return true;
+      if (original.name != person.name ||
+          original.age != person.age ||
+          original.sex != person.sex ||
+          original.avatarIndex != person.avatarIndex) {
+        return true;
+      }
     }
     return false;
   }

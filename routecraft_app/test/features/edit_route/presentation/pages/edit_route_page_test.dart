@@ -16,6 +16,8 @@ import 'package:routecraft_app/features/travels/domain/repositories/route_reposi
 import 'package:routecraft_app/features/travels/domain/usecases/participants_usecases.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/route_usecases.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
+import 'package:routecraft_app/shared/widgets/avatar_picker.dart';
+import 'package:routecraft_app/shared/widgets/participant_avatar.dart';
 
 // PlacesAutocompleteField never hits the network in these tests — it always
 // resolves with no suggestions, so location fields behave as plain free text.
@@ -153,6 +155,67 @@ void main() {
     expect(find.text('Rafaela Souza'), findsOneWidget);
     expect(find.text('You'), findsOneWidget);
     expect(find.byIcon(Icons.delete_outline), findsNothing);
+  });
+
+  group('participant character', () {
+    testWidgets('a participant without a character shows initials; tapping the avatar picks one and counts as a change', (tester) async {
+      tester.view.physicalSize = const Size(1080, 2400);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      await tester.pumpWidget(_wrap(_travel(TravelStatus.routeCreated)));
+
+      expect(find.text('RS'), findsOneWidget); // Rafaela Souza, no character yet
+      expect(find.textContaining('PENDING CHANGE'), findsNothing);
+
+      await tester.ensureVisible(find.byKey(const ValueKey('p1-avatar')));
+      await tester.tap(find.byKey(const ValueKey('p1-avatar')));
+      await tester.pumpAndSettle();
+      // The add-participant form has its own picker; target the dialog's.
+      await tester.tap(
+        find.descendant(of: find.byType(AlertDialog), matching: find.byKey(const Key('avatar_picker_option_3'))),
+      );
+      await tester.pumpAndSettle();
+
+      expect(find.text('RS'), findsNothing);
+      final avatar = tester.widget<ParticipantAvatar>(
+        find.descendant(of: find.byKey(const ValueKey('p1-avatar')), matching: find.byType(ParticipantAvatar)),
+      );
+      expect(avatar.avatarIndex, 3);
+      expect(find.textContaining('1 PENDING CHANGE'), findsOneWidget);
+    });
+
+    testWidgets('the add-participant form pre-selects a character, and adding keeps the chosen one', (tester) async {
+      tester.view.physicalSize = const Size(1080, 3000);
+      tester.view.devicePixelRatio = 1.0;
+      addTearDown(tester.view.reset);
+
+      final participantsRepository = _FakeParticipantsRepository();
+      await tester.pumpWidget(_wrap(_travel(TravelStatus.routeCreated), participantsRepository: participantsRepository));
+
+      expect(find.byType(AvatarPicker), findsOneWidget);
+      expect(find.textContaining('randomly picked, tap to change'), findsOneWidget);
+
+      await tester.ensureVisible(find.byKey(const Key('avatar_picker_option_6')));
+      await tester.tap(find.byKey(const Key('avatar_picker_option_6')));
+      await tester.pump();
+      expect(find.textContaining('randomly picked'), findsNothing);
+
+      final fields = find.byType(TextField);
+      await tester.enterText(fields.at(fields.evaluate().length - 2), 'João');
+      await tester.enterText(fields.at(fields.evaluate().length - 1), '10');
+      await tester.tap(find.byType(DropdownButtonFormField<String>).last);
+      await tester.pumpAndSettle();
+      await tester.tap(find.text('Male').last);
+      await tester.pumpAndSettle();
+      // The participants form is the last "+ Add" on the page.
+      await tester.ensureVisible(find.byIcon(Icons.add).last);
+      await tester.tap(find.byIcon(Icons.add).last);
+      await tester.pumpAndSettle();
+
+      final avatars = tester.widgetList<ParticipantAvatar>(find.byType(ParticipantAvatar)).toList();
+      expect(avatars.where((a) => a.name == 'João').single.avatarIndex, 6);
+    });
   });
 
   testWidgets('marking a non-client participant for removal strikes it through with an undo action', (tester) async {

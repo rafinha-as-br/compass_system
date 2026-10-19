@@ -263,6 +263,15 @@
   "addParticipantDialogTitle": "Add participant",
   "participantNameFieldLabel": "Name",
   "participantAgeFieldLabel": "Age",
+  "participantAvatarFieldLabel": "Character",
+  "changeParticipantAvatarTooltip": "Change character",
+  "participantAvatarRandomHint": "randomly picked, tap to change",
+  "participantAvatarOptionSemantics": "Character {index}",
+  "@participantAvatarOptionSemantics": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
   "noParticipantsTitle": "No participants yet",
   "noParticipantsMessage": "Add the people traveling to keep this list up to date.",
   "removeParticipantTooltip": "Remove participant",
@@ -299,12 +308,6 @@
   "travelStatusCompletedSupportLine": "Travel finished",
   "overviewParticipantsLabel": "PARTICIPANTS",
   "overviewParticipantsCaption": "people on this trip",
-  "overviewParticipantsMore": "and {count} more",
-  "@overviewParticipantsMore": {
-    "placeholders": {
-      "count": { "type": "int" }
-    }
-  },
   "overviewViewParticipantsAction": "View participants →",
   "overviewItineraryLabel": "ITINERARY",
   "overviewItineraryStepsSummary": "{count} steps · by {agentName}",

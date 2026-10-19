@@ -12,6 +12,9 @@ class Person {
   final String age;
   /// Person sex
   final String sex;
+  /// 1-based index of the person's character in the avatar catalog
+  /// (`assets/avatars/animal_<n>.png`); null when no character was chosen
+  final int? avatarIndex;
 
   /// Private constructor
   Person({
@@ -20,6 +23,7 @@ class Person {
     required this.name,
     required this.age,
     required this.sex,
+    this.avatarIndex,
   });
 
 }

@@ -76,6 +76,8 @@ static const String name = CommonApiFields.name;
 static const String age = 'age';
 
 static const String sex = 'sex';
+
+static const String avatarIndex = 'avatarIndex';
 }
 
 /// ===========================================================

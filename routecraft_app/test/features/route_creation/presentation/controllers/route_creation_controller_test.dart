@@ -5,6 +5,7 @@ import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/domain/repositories/travel_repository.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
+import 'package:routecraft_app/shared/utils/participant_avatars.dart';
 
 class _FakeTravelRepository implements TravelRepository {
   Result<Travel>? nextCreateResult;
@@ -369,6 +370,45 @@ void main() {
       controller.removeParticipant(added.domainId);
 
       expect(controller.participants, hasLength(1));
+    });
+
+    test('the auto-added client and a participant added without a choice both get a known character', () async {
+      final controller = RouteCreationController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      controller.addParticipant(name: 'João', age: '10', sex: 'M');
+
+      expect(controller.participants.map((p) => isKnownParticipantAvatar(p.avatarIndex)), [true, true]);
+    });
+
+    test('addParticipant keeps the character the user picked', () async {
+      final controller = RouteCreationController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      controller.addParticipant(name: 'João', age: '10', sex: 'M', avatarIndex: 4);
+
+      expect(controller.participants.last.avatarIndex, 4);
+    });
+
+    test('updateParticipant changes the character, and other edits keep it', () async {
+      final controller = RouteCreationController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+      final clientId = controller.participants.single.domainId;
+
+      controller.updateParticipant(clientId, avatarIndex: 6);
+      controller.updateParticipant(clientId, age: '35');
+
+      expect(controller.participants.single.avatarIndex, 6);
+      expect(controller.participants.single.age, '35');
     });
 
     test('updateParticipant changes only the given fields', () async {

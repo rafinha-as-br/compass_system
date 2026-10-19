@@ -3,6 +3,8 @@ import 'package:provider/provider.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
+import 'package:travel_matrix/shared/utils/participant_avatars.dart';
+import 'package:travel_matrix/shared/widgets/avatar_picker.dart';
 
 /// Participants tab of `TravelViewPage` — add and remove participants,
 /// persisted through [TravelsController.addParticipant]/[removeParticipant]
@@ -41,6 +43,18 @@ class ParticipantsViewTab extends StatelessWidget {
       onTravelUpdated?.call(travel.copyWith(participants: updated));
     } else {
       _showError(context, () => _submitAdd(context, newParticipant));
+    }
+  }
+
+  Future<void> _submitAvatar(BuildContext context, PersonViewModel person, int index) async {
+    final controller = context.read<TravelsController>();
+    final updated = await controller.changeParticipantAvatar(travel.localId, travel.participants, person.id, index);
+    if (!context.mounted) return;
+
+    if (updated != null) {
+      onTravelUpdated?.call(travel.copyWith(participants: updated));
+    } else {
+      _showError(context, () => _submitAvatar(context, person, index));
     }
   }
 
@@ -148,6 +162,7 @@ class ParticipantsViewTab extends StatelessWidget {
                           person: person,
                           isRemoving: removingId == person.id,
                           onRemove: isSubmitting ? null : () => _removeParticipant(context, person),
+                          onChangeAvatar: isSubmitting ? null : (index) => _submitAvatar(context, person, index),
                         );
                       },
                     ),
@@ -202,11 +217,18 @@ class _EmptyState extends StatelessWidget {
 }
 
 class _ParticipantTile extends StatelessWidget {
-  const _ParticipantTile({super.key, required this.person, required this.isRemoving, required this.onRemove});
+  const _ParticipantTile({
+    super.key,
+    required this.person,
+    required this.isRemoving,
+    required this.onRemove,
+    required this.onChangeAvatar,
+  });
 
   final PersonViewModel person;
   final bool isRemoving;
   final VoidCallback? onRemove;
+  final ValueChanged<int>? onChangeAvatar;
 
   @override
   Widget build(BuildContext context) {
@@ -224,12 +246,11 @@ class _ParticipantTile extends StatelessWidget {
         side: BorderSide(color: theme.colorScheme.outlineVariant),
       ),
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundColor: theme.colorScheme.primary.withValues(alpha: 0.12),
-          child: Text(
-            _initials(person.name),
-            style: TextStyle(fontWeight: FontWeight.w700, color: theme.colorScheme.primary),
-          ),
+        leading: ParticipantAvatarButton(
+          key: Key('participant_avatar_button_${person.id}'),
+          name: person.name,
+          avatarIndex: person.avatarIndex,
+          onChanged: onChangeAvatar,
         ),
         title: Text(person.name, style: const TextStyle(fontWeight: FontWeight.w600)),
         subtitle: subtitleParts.isEmpty ? null : Text(subtitleParts.join(' · ')),
@@ -255,13 +276,6 @@ class _ParticipantTile extends StatelessWidget {
         return l10n.otherOptionLabel;
     }
   }
-
-  String _initials(String name) {
-    final tokens = name.trim().split(RegExp(r'\s+')).where((t) => t.isNotEmpty).toList();
-    if (tokens.isEmpty) return '';
-    if (tokens.length == 1) return tokens.first.substring(0, 1).toUpperCase();
-    return (tokens.first.substring(0, 1) + tokens.last.substring(0, 1)).toUpperCase();
-  }
 }
 
 /// Local, ephemeral form state for a brand-new participant — deliberately
@@ -279,6 +293,9 @@ class _AddParticipantDialogState extends State<_AddParticipantDialog> {
   final _ageController = TextEditingController();
   String _sex = 'F';
   bool _nameTouched = false;
+  // Pre-selected by lot; the user may keep it or pick another one.
+  int _avatarIndex = randomParticipantAvatarIndex();
+  bool _avatarPicked = false;
 
   @override
   void dispose() {
@@ -326,6 +343,21 @@ class _AddParticipantDialogState extends State<_AddParticipantDialog> {
               selected: {_sex},
               onSelectionChanged: (selection) => setState(() => _sex = selection.first),
             ),
+            const SizedBox(height: 16),
+            Text(
+              _avatarPicked
+                  ? l10n.participantAvatarFieldLabel
+                  : '${l10n.participantAvatarFieldLabel} · ${l10n.participantAvatarRandomHint}',
+              style: theme.textTheme.bodySmall,
+            ),
+            const SizedBox(height: 8),
+            AvatarPicker(
+              selectedIndex: _avatarIndex,
+              onChanged: (index) => setState(() {
+                _avatarIndex = index;
+                _avatarPicked = true;
+              }),
+            ),
           ],
         ),
       ),
@@ -339,7 +371,7 @@ class _AddParticipantDialogState extends State<_AddParticipantDialog> {
           onPressed: name.isEmpty
               ? null
               : () => Navigator.of(context).pop(
-                    PersonViewModel.fromLocal(name, _ageController.text.trim(), _sex),
+                    PersonViewModel.fromLocal(name, _ageController.text.trim(), _sex, avatarIndex: _avatarIndex),
                   ),
           style: ElevatedButton.styleFrom(
             backgroundColor: theme.colorScheme.primary,
