@@ -120,7 +120,7 @@ void main() {
     await tester.pumpWidget(wrap(
       auth,
       fetchSuggestions: (query) async => const [
-        PlaceSuggestion(text: 'São Paulo, SP, Brasil', coordinate: PlaceCoordinate(-23.5505, -46.6333)),
+        PlaceSuggestion(text: 'São Paulo', coordinate: PlaceCoordinate(-23.5505, -46.6333)),
       ],
     ));
     await tester.pumpAndSettle();
@@ -141,7 +141,7 @@ void main() {
     final captured = verify(() => travelUseCases.createFromRequest(captureAny())).captured;
     final request = captured.single as Map<String, dynamic>;
     final routePlan = request['routePlan'] as Map<String, dynamic>;
-    expect(routePlan['startLocation'], 'São Paulo, SP, Brasil');
+    expect(routePlan['startLocation'], 'São Paulo');
     expect(routePlan['startLocationCoordinate'], {'latitude': -23.5505, 'longitude': -46.6333});
   });
 

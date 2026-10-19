@@ -8,6 +8,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
+import org.springframework.web.servlet.resource.NoResourceFoundException;
 
 /**
  * Handler global de exceções. Captura erros em TODOS os controllers
@@ -60,6 +61,19 @@ public class GlobalExceptionHandler {
     }
 
     /**
+     * Trata erros de permissão (usuário autenticado, mas sem acesso à operação).
+     */
+    @ExceptionHandler(ForbiddenException.class)
+    public ResponseEntity<ErrorResponse> handleForbidden(ForbiddenException ex) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.FORBIDDEN.value(),
+                "Acesso negado",
+                ex.getMessage()
+        );
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body(error);
+    }
+
+    /**
      * Trata erros de regra de negócio (ex: email já cadastrado).
      */
     @ExceptionHandler(BusinessException.class)
@@ -85,6 +99,21 @@ public class GlobalExceptionHandler {
                 ex.getMessage()
         );
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
+    }
+
+    /**
+     * Trata requisição a uma rota sem mapeamento (Spring tenta resolvê-la como
+     * recurso estático e lança NoResourceFoundException). Sem este handler cairia
+     * no handler genérico e viraria 500.
+     */
+    @ExceptionHandler(NoResourceFoundException.class)
+    public ResponseEntity<ErrorResponse> handleNoResourceFound(NoResourceFoundException ex) {
+        ErrorResponse error = new ErrorResponse(
+                HttpStatus.NOT_FOUND.value(),
+                "Recurso não encontrado",
+                "A rota solicitada não existe."
+        );
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
     /**

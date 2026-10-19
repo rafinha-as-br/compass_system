@@ -173,7 +173,7 @@ void main() {
             builder: (context, state) => RouteCreationPage(
               travel: travel,
               fetchSuggestions: (query) async => const [
-                PlaceSuggestion(text: 'Lisboa, Portugal', coordinate: PlaceCoordinate(38.7223, -9.1393)),
+                PlaceSuggestion(text: 'Lisboa', coordinate: PlaceCoordinate(38.7223, -9.1393)),
               ],
             ),
           ),
@@ -213,7 +213,7 @@ void main() {
 
       final captured = verify(() => routeRepository.updateRoute(any(), captureAny())).captured;
       final updatedRoute = captured.single as RoutePlan;
-      expect(updatedRoute.destination, 'Lisboa, Portugal');
+      expect(updatedRoute.destination, 'Lisboa');
       expect(updatedRoute.destinationCoordinate, const PlaceCoordinate(38.7223, -9.1393));
     },
   );

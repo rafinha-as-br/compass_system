@@ -1,6 +1,10 @@
 package com.compass.compass_system.places;
 
+import com.compass.compass_system.company.AgentFixtures;
+import com.compass.compass_system.company.CompanyRepository;
+import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.security.JwtUtil;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -32,6 +36,17 @@ class PlaceControllerTest {
     @MockBean
     private PlaceAutocompleteService placeAutocompleteService;
 
+    @Autowired
+    private AgentUserRepository agentUserRepository;
+
+    @Autowired
+    private CompanyRepository companyRepository;
+
+    @BeforeEach
+    void ensureAgentExists() {
+        AgentFixtures.ensureOwner(agentUserRepository, companyRepository, "agent@matrix.com");
+    }
+
     private String authHeader() {
         return "Bearer " + jwtUtil.generateToken("agent@matrix.com", "AGENTE", 1L);
     }
@@ -39,11 +54,11 @@ class PlaceControllerTest {
     @Test
     void shouldReturnSuggestionsForAnAuthenticatedRequest() throws Exception {
         when(placeAutocompleteService.autocomplete(eq("flor")))
-                .thenReturn(List.of(new PlaceSuggestion("Florianópolis, SC, Brasil", -27.59, -48.55)));
+                .thenReturn(List.of(new PlaceSuggestion("Florianópolis", -27.59, -48.55)));
 
         mockMvc.perform(get("/places/autocomplete").param("query", "flor").header("Authorization", authHeader()))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("$[0].name").value("Florianópolis, SC, Brasil"))
+                .andExpect(jsonPath("$[0].name").value("Florianópolis"))
                 .andExpect(jsonPath("$[0].latitude").value(-27.59));
     }
 

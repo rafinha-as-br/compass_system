@@ -40,7 +40,7 @@ void main() {
       onChanged: (h) => emitted = h,
       onDelete: () {},
       fetchSuggestions: (query) async => const [
-        PlaceSuggestion(text: 'Rua das Flores, 100', coordinate: PlaceCoordinate(-23.5, -46.6)),
+        PlaceSuggestion(text: 'Rua das Flores', coordinate: PlaceCoordinate(-23.5, -46.6)),
       ],
     )));
 
@@ -59,7 +59,7 @@ void main() {
     await tester.pump();
 
     expect(emitted, isNotNull);
-    expect(emitted!.address, 'Rua das Flores, 100');
+    expect(emitted!.address, 'Rua das Flores');
     expect(emitted!.coordinate, const PlaceCoordinate(-23.5, -46.6));
   });
 

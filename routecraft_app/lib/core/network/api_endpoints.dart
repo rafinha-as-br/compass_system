@@ -10,7 +10,6 @@ abstract final class ApiEndpoints {
 
   // Auth
   static const String login = '/api/auth/login';
-  static const String registerClient = '/api/auth/cadastrar/cliente';
   static const String forgotPassword = '/api/auth/esqueci-senha';
   static const String resetPassword = '/api/auth/redefinir-senha';
 
@@ -30,6 +29,7 @@ abstract final class ApiEndpoints {
   static String notifications(int page, int size) => '/notifications?page=$page&size=$size';
   static const String notificationsUnreadCount = '/notifications/unread-count';
   static const String notificationsReadAll = '/notifications/read-all';
+  static String notificationRead(String id) => '/notifications/$id/read';
 
   // Push targets
   static const String pushTargets = '/push-targets';

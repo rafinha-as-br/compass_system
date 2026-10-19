@@ -1,7 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/notifications/domain/entities/travel_notification.dart';
+import 'package:routecraft_app/features/notifications/domain/repositories/notification_repository.dart';
+import 'package:routecraft_app/features/notifications/domain/usecases/notification_usecases.dart';
+import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
+import 'package:routecraft_app/features/travels/domain/repositories/travel_repository.dart';
+import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 import 'package:routecraft_app/features/notifications/presentation/controllers/notifications_controller.dart';
 import 'package:routecraft_app/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
@@ -132,4 +138,64 @@ void main() {
 
     expect(find.byType(CircularProgressIndicator), findsOneWidget);
   });
+
+  testWidgets('opening a notification marks it as read on the server (even when the trip cannot be opened)', (tester) async {
+    final notificationRepository = _FakeNotificationRepository();
+    final controller = NotificationsController(
+      notificationUseCases: NotificationUseCases(notificationRepository),
+      travelUseCases: TravelUseCases(_FailingTravelRepository()),
+    );
+    await tester.pumpWidget(_wrap(NotificationsPage(controller: controller)));
+    await tester.pump();
+    expect(find.text('Your itinerary was published'), findsOneWidget);
+
+    await tester.tap(find.text('View trip'));
+    await tester.pump();
+    await tester.pump();
+
+    expect(notificationRepository.markedAsRead, ['n1']);
+    expect(controller.state.notifications.single.read, isTrue);
+    expect(find.text('Could not open this trip.'), findsOneWidget);
+  });
+}
+
+class _FakeNotificationRepository implements NotificationRepository {
+  final List<String> markedAsRead = [];
+
+  @override
+  Future<Result<(List<TravelNotification>, bool)>> getNotifications({required int page, required int size}) async =>
+      Result.success((
+        [
+          TravelNotification(
+            id: 'n1',
+            travelId: 't1',
+            type: TravelNotificationType.itineraryPublished,
+            createdAt: DateTime.now(),
+          ),
+        ],
+        false,
+      ));
+
+  @override
+  Future<Result<int>> getUnreadCount() async => throw UnimplementedError();
+
+  @override
+  Future<Result<void>> markAsRead(String id) async {
+    markedAsRead.add(id);
+    return const Result.success(null);
+  }
+
+  @override
+  Future<Result<void>> markAllAsRead() async => throw UnimplementedError();
+}
+
+class _FailingTravelRepository implements TravelRepository {
+  @override
+  Future<Result<Travel>> getTravel(String id) async => const Result.failure('not found');
+
+  @override
+  Future<Result<List<Travel>>> getTravelsForClient(String clientName) async => throw UnimplementedError();
+
+  @override
+  Future<Result<Travel>> createTravel(Travel travel) async => throw UnimplementedError();
 }

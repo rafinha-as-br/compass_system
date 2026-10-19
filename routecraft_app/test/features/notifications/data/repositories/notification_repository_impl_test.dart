@@ -135,4 +135,31 @@ void main() {
       expect((result as Failure<void>).message, 'Não autorizado');
     });
   });
+
+  group('NotificationRepositoryImpl.markAsRead', () {
+    test('PUTs /notifications/{id}/read and returns Success', () async {
+      late http.Request sent;
+      final repository = _repositoryWith(MockClient((request) async {
+        sent = request;
+        return http.Response(jsonEncode(_notificationJson(read: true)), 200);
+      }));
+
+      final result = await repository.markAsRead('n1');
+
+      expect(result.isSuccess, isTrue);
+      expect(sent.method, 'PUT');
+      expect(sent.url.path, endsWith('/notifications/n1/read'));
+    });
+
+    test('returns Failure with the server message on a 404', () async {
+      final repository = _repositoryWith(MockClient((request) async {
+        return http.Response(jsonEncode({'message': 'Notificação não encontrada'}), 404);
+      }));
+
+      final result = await repository.markAsRead('n1');
+
+      expect(result.isSuccess, isFalse);
+      expect((result as Failure<void>).message, 'Notificação não encontrada');
+    });
+  });
 }

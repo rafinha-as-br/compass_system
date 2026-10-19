@@ -11,7 +11,8 @@ o Travel Matrix só era testado via Web (Claude in Chrome).
 .maestro/travel_matrix/
 ├── README.md
 ├── auth/
-│   └── login_qa_agent.yaml              — login com agente fixo de QA
+│   ├── login_qa_agent.yaml              — login com agente fixo de QA
+│   └── forced_password_change.yaml      — troca de senha obrigatória do agente convidado (CPS-196/197)
 └── travels/
     ├── overview_and_participants_smoke.yaml  — navega às abas Overview/Participants
     └── participants_add_remove.yaml          — CRUD completo de participante
@@ -23,6 +24,14 @@ o Travel Matrix só era testado via Web (Claude in Chrome).
 `POST /api/auth/cadastrar/agente` durante o QA de CPS-158/CPS-159
 especificamente para ter uma credencial estável, sem depender de nenhum
 agente pré-existente no seed do banco. Reutilizar em execuções futuras.
+
+Para recriar a conta: rode `python compass-api/scripts/seed_test_data.py`. Ele cadastra a
+empresa `compass.test` e este agente via `POST /api/auth/cadastrar/agente` (header
+`X-Bootstrap-Key`, valor de `COMPASS_BOOTSTRAP_KEY`; no `compass-api/docker-compose.yml` o
+default é `dev-bootstrap-key`; objeto `company` no corpo — sem a chave, 403; sem `company`, 400),
+e em seguida cria os clientes e as viagens da mesma empresa. Viagens e clientes são isolados por
+empresa: um agente só vê os dados da própria empresa, então os dados de QA precisam ser criados
+a partir da empresa deste agente (o seed já faz isso).
 
 ## Viagem de teste usada nos flows
 
@@ -44,7 +53,51 @@ completo, `adb reverse tcp:8081 tcp:8081` configurado, backend local via
 docker compose de pé, APK debug instalado (`flutter build apk --debug` dentro
 de `travel_matrix/`, depois `adb install -r`).
 
-## ⚠️ Bug de shell conhecido — CPS-167
+## Atualização 2026-10-17 (QA do Epic CPS-29 — módulo Company)
+
+* **Novo flow `auth/forced_password_change.yaml`** (CPS-196/197). Precisa de um agente recém-convidado
+  a cada execução, porque a senha temporária só aparece uma vez no convite. Crie-o com o token de
+  OWNER (`POST /api/companies/me/agents/invite`, corpo `{"name": "..."}`) e rode:
+
+  ```bash
+  maestro test -e LOGIN=<login> -e TEMP_PASSWORD=<senha temporária> -e NEW_PASSWORD=<nova, mínimo 8> \
+    .maestro/travel_matrix/auth/forced_password_change.yaml
+  ```
+
+  Cobre a tela "Set your new password", o botão voltar do Android (sai do app, não chega ao painel),
+  o reabrir app (cai de novo na troca), o erro de senha atual errada e a troca válida até o painel.
+  Validado via CLI no AVD `QA - Claude` em 2026-10-17. Detalhe de teste: `eraseText` apaga a partir do
+  cursor e deixava resto da senha errada no campo; por isso a troca válida reabre o app em vez de apagar.
+* `auth/login_qa_agent.yaml` ganhou `extendedWaitUntil` ("Access Travel Matrix", 40 s) depois do
+  `launchApp`. Alteração de robustez, não de comportamento: no primeiro lançamento do APK debug o
+  Flutter demora para pintar o primeiro frame (tela roxa) e o `tapOn` falhava com "Element not found".
+* O top bar mobile não tem `content-desc` próprio, então o item Empresa só é tocável por `point`
+  (57%,9% no AVD atual). Nenhum flow permanente foi criado para ele.
+* **Armazenamento do AVD**: com o disco do `QA - Claude` quase cheio (~92%), `adb install` falha com
+  `INSTALL_FAILED_INSUFFICIENT_STORAGE`. `adb install --incremental` instala sem staging e funciona.
+  Debug APK de `flutter build apk --debug` = ~187 MB; com `--target-platform android-x64` = ~150 MB.
+
+## Atualização 2026-10-16 (QA do Epic CPS-178 — layout responsivo)
+
+O shell responsivo (CPS-181: top bar no mobile) e a landing/login em coluna única
+(CPS-198) já estão em `develop`. Consequências para os flows:
+
+* `auth/login_qa_agent.yaml` foi reescrito: agora os campos expõem o hint
+  (`Email`/`Password`) e são tocados por texto, sem coordenadas percentuais (as de
+  83%,58% / 83%,65% deixaram de valer). Validado no emulador em 2026-10-16.
+* Os flows de `travels/` ainda usam coordenadas calibradas para a sidebar antiga
+  (nav lateral por `point`) e **precisam ser recalibrados** para a top bar do mobile;
+  não foram reexecutados nesta rodada.
+* O banco local pode ser recriado: se o login falhar com "E-mail ou senha incorretos",
+  rode `compass-api/scripts/seed_test_data.py` (recria o agente, a empresa, os clientes e as viagens).
+* Testabilidade: a top bar e o botão de recolher/reabrir menu (CPS-200) não têm
+  `content-desc` próprio; só são tocáveis por `point`. Nenhum flow permanente foi criado
+  para eles.
+
+A seção abaixo (CPS-167) descreve o estado anterior ao shell responsivo e fica como
+histórico das coordenadas.
+
+## ⚠️ Bug de shell conhecido — CPS-167 (histórico, shell anterior)
 
 O shell do Travel Matrix **não é responsivo no Android**: a navegação lateral
 (Dashboard/Booking/Users, estilo desktop) nunca colapsa para um formato

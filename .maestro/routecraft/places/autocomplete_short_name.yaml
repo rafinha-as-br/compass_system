@@ -1,0 +1,75 @@
+appId: com.example.routecraft_app
+---
+# CPS-168: autocomplete de localidade grava e exibe so o nome curto (campo `name`
+# do Nominatim), sem estado/regiao/pais/endereco. Wizard "Create a Route" do
+# RouteCraft: escolhe uma cidade (origem) e um local especifico (destino, aeroporto),
+# confirma que a lista mostra so o nome e que a tela de revisao exibe o nome curto.
+# Depende da API real (Nominatim): precisa de internet e do backend local de pe.
+# Cliente de teste: carla.rocha@teste.com / senha123 (seed_test_data.py).
+# Locale do AVD e en-US (strings em ingles). Os dois campos de localidade nao tem
+# rotulo proprio: sao localizados por posicao (`below`/`above` dos rotulos).
+- launchApp:
+    clearState: true
+- clearKeychain
+- extendedWaitUntil:
+    visible: "Email"
+    timeout: 40000
+- tapOn: "Email"
+- eraseText
+- inputText: "carla.rocha@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- waitForAnimationToEnd
+- tapOn: ".*Tab 2 of 3.*"
+- waitForAnimationToEnd
+- tapOn: "Create a Route"
+- tapOn: "Trip Name"
+- inputText: "QA CPS-168 Android"
+- tapOn: "NEXT"
+- tapOn: "1 week"
+- tapOn: "NEXT"
+- waitForAnimationToEnd
+# Cidade: so o nome, sem estado/pais na lista de sugestoes
+- tapOn:
+    below: "Start Location"
+    above: "Destination"
+- inputText: "Florianopolis"
+- extendedWaitUntil:
+    visible: "Florianópolis"
+    timeout: 10000
+- assertNotVisible: ".*Santa Catarina.*"
+- assertNotVisible: ".*Brasil.*"
+- takeScreenshot: cps168_sugestoes_cidade
+- tapOn: "Florianópolis"
+# Local especifico: so o nome, sem endereco/bairro/pais
+- tapOn:
+    below: "Destination"
+- inputText: "Aeroporto Internacional de Navegantes"
+- extendedWaitUntil:
+    visible: "Aeroporto Internacional de Navegantes Ministro Victor Konder"
+    timeout: 10000
+- assertNotVisible: ".*Santa Catarina.*"
+- assertNotVisible: ".*Brasil.*"
+- takeScreenshot: cps168_sugestoes_aeroporto
+- tapOn: "Aeroporto Internacional de Navegantes Ministro Victor Konder"
+- tapOn: "NEXT"
+- tapOn: "NEXT"
+- tapOn:
+    text: "Age"
+    index: 0
+- inputText: "41"
+- hideKeyboard
+- tapOn:
+    text: "Sex"
+    index: 0
+- tapOn: "Female"
+- tapOn: "NEXT"
+- waitForAnimationToEnd
+# Revisao: origem -> destino exibidos com o nome curto
+- assertVisible: ".*Florianópolis.*Aeroporto Internacional de Navegantes Ministro Victor Konder.*"
+- assertNotVisible: ".*Santa Catarina.*"
+- takeScreenshot: cps168_revisao_rota
+- tapOn: "Send to my agent"
+- waitForAnimationToEnd

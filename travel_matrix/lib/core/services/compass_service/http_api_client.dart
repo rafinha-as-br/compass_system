@@ -9,6 +9,10 @@ class HttpApiClient {
   static HttpApiClient? _instance;
   late final http.Client _client;
 
+  /// Chamado quando o backend barra o agente com 403 PASSWORD_CHANGE_REQUIRED.
+  /// Registrado pelo AuthController, que leva o agente à tela de troca.
+  static void Function()? onPasswordChangeRequired;
+
   HttpApiClient._({http.Client? client}) : _client = client ?? http.Client();
 
   static HttpApiClient get instance {
@@ -90,6 +94,11 @@ class HttpApiClient {
         errorData = jsonDecode(response.body);
       } catch (_) {
         errorData = response.body;
+      }
+      if (response.statusCode == 403 &&
+          errorData is Map &&
+          errorData['error'] == 'PASSWORD_CHANGE_REQUIRED') {
+        onPasswordChangeRequired?.call();
       }
       throw ApiException.fromStatusCode(response.statusCode, errorData);
     }

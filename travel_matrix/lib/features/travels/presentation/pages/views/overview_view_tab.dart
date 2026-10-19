@@ -35,7 +35,7 @@ class OverviewViewTab extends StatelessWidget {
       builder: (context, constraints) {
         final isNarrow = constraints.maxWidth < 900;
 
-        final routeCard = _RouteSummaryCard(travel: travel, l10n: l10n);
+        final routeCard = _RouteSummaryCard(travel: travel, l10n: l10n, compact: isNarrow);
         final statusCard = _StatusCard(travel: travel, l10n: l10n);
         final participantsCard = _ParticipantsCard(
           travel: travel,
@@ -139,14 +139,14 @@ class _CardLabel extends StatelessWidget {
 }
 
 class _RouteSummaryCard extends StatelessWidget {
-  const _RouteSummaryCard({required this.travel, required this.l10n});
+  const _RouteSummaryCard({required this.travel, required this.l10n, required this.compact});
 
   final TravelViewModel travel;
   final AppLocalizations l10n;
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final route = travel.route;
     final dateFormat = DateFormat.yMMMd(l10n.localeName);
     final durationInDays = route.endDate.difference(route.startDate).inDays;
@@ -157,20 +157,12 @@ class _RouteSummaryCard extends StatelessWidget {
         children: [
           _CardLabel(l10n.overviewRouteLabel),
           const SizedBox(height: 12),
-          Row(
-            children: [
-              Expanded(
-                child: _RoutePoint(label: l10n.fromLabel, value: route.start),
-              ),
-              Icon(Icons.arrow_forward, size: 18, color: theme.colorScheme.primary),
-              Expanded(
-                child: _RoutePoint(
-                  label: l10n.toLabel,
-                  value: route.destination,
-                  alignEnd: true,
-                ),
-              ),
-            ],
+          _RouteEndpoints(
+            fromLabel: l10n.fromLabel,
+            from: route.start,
+            toLabel: l10n.toLabel,
+            to: route.destination,
+            compact: compact,
           ),
           const SizedBox(height: 16),
           const Divider(height: 1),
@@ -197,29 +189,74 @@ class _RouteSummaryCard extends StatelessWidget {
   }
 }
 
-class _RoutePoint extends StatelessWidget {
-  const _RoutePoint({required this.label, required this.value, this.alignEnd = false});
+/// Origin → destination. Labels and values sit in two rows that share the same
+/// column widths, so the connector lives in the *value* row and is centered on
+/// the 22px text — not on the label+value block.
+class _RouteEndpoints extends StatelessWidget {
+  const _RouteEndpoints({
+    required this.fromLabel,
+    required this.from,
+    required this.toLabel,
+    required this.to,
+    required this.compact,
+  });
 
-  final String label;
-  final String value;
-  final bool alignEnd;
+  static const _valueFontSize = 22.0;
+
+  final String fromLabel;
+  final String from;
+  final String toLabel;
+  final String to;
+
+  /// Narrow window: connector is just the arrow. Its box stays 18px (the width
+  /// the endpoints had before the 22px arrow) and the arrow overflows it by the
+  /// icon's own padding, so the endpoint texts do not lose width and truncate.
+  final bool compact;
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final primary = theme.colorScheme.primary;
+    final labelStyle = TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6));
+    const valueStyle = TextStyle(fontSize: _valueFontSize, fontWeight: FontWeight.w700);
+    final connectorWidth = compact ? 18.0 : 72.0;
+    final arrow = Icon(Icons.arrow_forward, size: _valueFontSize, color: primary);
+
     return Column(
-      crossAxisAlignment: alignEnd ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        Text(
-          label,
-          style: TextStyle(fontSize: 11, color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+        Row(
+          children: [
+            Expanded(child: Text(fromLabel, style: labelStyle)),
+            SizedBox(width: connectorWidth),
+            Expanded(child: Text(toLabel, style: labelStyle, textAlign: TextAlign.end)),
+          ],
         ),
         const SizedBox(height: 2),
-        Text(
-          value,
-          style: const TextStyle(fontSize: 22, fontWeight: FontWeight.w700),
-          maxLines: 1,
-          overflow: TextOverflow.ellipsis,
+        Row(
+          children: [
+            Expanded(child: Text(from, style: valueStyle, maxLines: 1, overflow: TextOverflow.ellipsis)),
+            SizedBox(
+              width: connectorWidth,
+              height: _valueFontSize,
+              child: compact
+                  ? OverflowBox(maxWidth: _valueFontSize, child: arrow)
+                  : Row(
+                      children: [
+                        Expanded(
+                          child: Padding(
+                            padding: const EdgeInsets.only(left: 8),
+                            child: Container(height: 1.5, color: primary.withValues(alpha: 0.4)),
+                          ),
+                        ),
+                        arrow,
+                        const SizedBox(width: 8),
+                      ],
+                    ),
+            ),
+            Expanded(
+              child: Text(to, style: valueStyle, maxLines: 1, overflow: TextOverflow.ellipsis, textAlign: TextAlign.end),
+            ),
+          ],
         ),
       ],
     );

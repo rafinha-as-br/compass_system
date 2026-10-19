@@ -126,12 +126,42 @@ class NotificationsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> markAllRead() async {
-    if (_state.notifications.every((n) => n.read)) return;
+  /// Marks one notification as read when the user opens it. Optimistic, but
+  /// the server is the source of truth: if the write fails the notification
+  /// goes back to unread, so the list never claims a state that was not
+  /// persisted (and the unread badge, re-fetched from the server, agrees).
+  Future<void> markRead(String id) async {
+    final target = _state.notifications.where((n) => n.id == id).firstOrNull;
+    if (target == null || target.read) return;
 
-    final updated = _state.notifications.map((n) => n.copyWith(read: true)).toList();
-    _state = _state.copyWith(notifications: updated);
+    _setRead((n) => n.id == id, true);
+    final result = await _notificationUseCases.markAsRead(id);
+    if (result is Failure<void>) _setRead((n) => n.id == id, false);
+  }
+
+  Future<void> markAllRead() async {
+    final previouslyUnread = _state.notifications.where((n) => !n.read).map((n) => n.id).toSet();
+    if (previouslyUnread.isEmpty) return;
+
+    _setRead((n) => true, true);
+    final result = await _notificationUseCases.markAllAsRead();
+    if (result is Failure<void>) _setRead((n) => previouslyUnread.contains(n.id), false);
+  }
+
+  bool _disposed = false;
+
+  @override
+  void dispose() {
+    _disposed = true;
+    super.dispose();
+  }
+
+  /// A write can finish after the user left the screen (controller disposed).
+  void _setRead(bool Function(TravelNotification) matches, bool read) {
+    if (_disposed) return;
+    _state = _state.copyWith(
+      notifications: [for (final n in _state.notifications) matches(n) ? n.copyWith(read: read) : n],
+    );
     notifyListeners();
-    await _notificationUseCases.markAllAsRead();
   }
 }

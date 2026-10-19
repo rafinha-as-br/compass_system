@@ -1,0 +1,74 @@
+appId: com.example.routecraft_app
+---
+# CPS-147 (retrabalho): abrir uma notificacao ("View trip") a marca como lida NO SERVIDOR e o
+# contador de nao lidas da tela Conta cai. O estado persiste em novo login (nao e local) e
+# "mark all read" zera o contador.
+#
+# Variaveis (env), porque o estado do banco muda a cada execucao:
+#   BEFORE      - contagem de nao lidas antes (ex.: 5) = GET /notifications/unread-count
+#   AFTER       - contagem esperada depois de abrir UMA notificacao (BEFORE - 1)
+#   CARD_INDEX  - indice (0 = mais recente) do "View trip" de uma notificacao NAO lida
+# Ex.: maestro test -e BEFORE=5 -e AFTER=4 -e CARD_INDEX=1 .maestro/routecraft/notifications/open_notification_marks_read.yaml
+# Cliente: carla.rocha@teste.com / senha123 (seed_test_data.py gera 6 notificacoes nao lidas).
+# Locale do AVD e en-US. A linha "Notifications" da Conta expoe o badge no mesmo rotulo
+# ("Notifications\n5"), por isso a contagem e conferida pelo texto completo.
+- launchApp:
+    clearState: true
+- clearKeychain
+- extendedWaitUntil:
+    visible: "Email"
+    timeout: 40000
+- tapOn: "Email"
+- eraseText
+- inputText: "carla.rocha@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- waitForAnimationToEnd
+- tapOn: ".*Tab 3 of 3.*"
+- waitForAnimationToEnd
+- assertVisible: "Notifications\n${BEFORE}"
+- takeScreenshot: cps147_conta_antes
+- tapOn: "Notifications\n${BEFORE}"
+- waitForAnimationToEnd
+- tapOn:
+    text: "View trip"
+    index: ${CARD_INDEX}
+- waitForAnimationToEnd
+# Volta para a Conta: o contador reflete a leitura (servidor)
+- tapOn: ".*Tab 3 of 3.*"
+- waitForAnimationToEnd
+- back
+- waitForAnimationToEnd
+- assertVisible: "Notifications\n${AFTER}"
+- takeScreenshot: cps147_conta_depois
+# Novo login (sessao limpa): a leitura persiste, nao e estado local
+- launchApp:
+    clearState: true
+- clearKeychain
+- extendedWaitUntil:
+    visible: "Email"
+    timeout: 40000
+- tapOn: "Email"
+- eraseText
+- inputText: "carla.rocha@teste.com"
+- tapOn: "Password"
+- eraseText
+- inputText: "senha123"
+- tapOn: "LOGIN"
+- waitForAnimationToEnd
+- tapOn: ".*Tab 3 of 3.*"
+- waitForAnimationToEnd
+- assertVisible: "Notifications\n${AFTER}"
+- takeScreenshot: cps147_conta_apos_relogin
+# Marcar todas: zera o contador
+- tapOn: "Notifications\n${AFTER}"
+- waitForAnimationToEnd
+- tapOn: "mark all read"
+- waitForAnimationToEnd
+- back
+- waitForAnimationToEnd
+- assertVisible: "Notifications"
+- assertNotVisible: "Notifications\n.*"
+- takeScreenshot: cps147_conta_zerada

@@ -76,6 +76,33 @@ void main() {
     expect(find.text('10 days'), findsOneWidget);
   });
 
+  for (final width in [1200.0, 500.0]) {
+    testWidgets('route connector is centered on the origin/destination text at width $width', (tester) async {
+      await _pump(tester, _travel(), width: width);
+
+      final arrow = find.byIcon(Icons.arrow_forward);
+      expect(arrow, findsOneWidget);
+      expect(tester.takeException(), isNull);
+
+      final arrowCenter = tester.getCenter(arrow);
+      expect(arrowCenter.dy, closeTo(tester.getCenter(find.text('Sao Paulo')).dy, 1));
+      expect(arrowCenter.dy, closeTo(tester.getCenter(find.text('Lisbon')).dy, 1));
+      // Connector sits between origin and destination.
+      expect(arrowCenter.dx, greaterThan(tester.getRect(find.text('Sao Paulo')).right));
+      expect(arrowCenter.dx, lessThan(tester.getRect(find.text('Lisbon')).left));
+      // Icon matches the 22px value text instead of the old 18px.
+      expect(tester.getSize(arrow).height, 22);
+    });
+  }
+
+  testWidgets('narrow connector takes no more room from the endpoints than the old 18px arrow', (tester) async {
+    await _pump(tester, _travel(), width: 500);
+
+    final gap = tester.getRect(find.text('Lisbon')).left - tester.getRect(find.text('Sao Paulo')).right;
+    expect(gap, lessThanOrEqualTo(18));
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('maps each TravelStatus to its localized label and support line', (tester) async {
     await tester.pumpWidget(Container());
 

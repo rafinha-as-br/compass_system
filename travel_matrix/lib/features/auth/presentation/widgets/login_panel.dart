@@ -37,9 +37,13 @@ class _LoginPanelState extends State<LoginPanel> {
       _passwordController.text,
     );
 
-    if (result.isSuccess && mounted) {
+    final session = result.data;
+    if (session != null && mounted) {
       // AuthController will trigger router redirect
-      context.read<AuthController>().login(result.data!);
+      context.read<AuthController>().login(
+        session.token,
+        mustChangePassword: session.mustChangePassword,
+      );
     }
   }
 
