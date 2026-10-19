@@ -178,6 +178,17 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('"View participants" button keeps horizontal padding between its edges and the label', (tester) async {
+    await _pump(tester, _travel(participants: [_person('Ana Silva')]));
+
+    final button = find.widgetWithText(TextButton, 'View participants →');
+    final buttonRect = tester.getRect(button);
+    final labelRect = tester.getRect(find.descendant(of: button, matching: find.text('View participants →')));
+
+    expect(labelRect.left - buttonRect.left, greaterThanOrEqualTo(12));
+    expect(buttonRect.right - labelRect.right, greaterThanOrEqualTo(12));
+  });
+
   testWidgets('shows the itinerary summary and navigates to the Itinerary tab on tap', (tester) async {
     await _pump(
       tester,
