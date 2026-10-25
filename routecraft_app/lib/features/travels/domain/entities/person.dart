@@ -14,6 +14,10 @@ class Person {
   /// (`assets/avatars/animal_<n>.png`); null when no character was chosen.
   final int? avatarIndex;
 
+  /// Free-text note written by the agent; read-only for the client (never edited
+  /// here, only carried through so the participants PUT does not erase it).
+  final String? note;
+
   Person({
     required this.domainId,
     required this.backEndId,
@@ -21,5 +25,6 @@ class Person {
     required this.age,
     required this.sex,
     this.avatarIndex,
+    this.note,
   });
 }

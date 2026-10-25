@@ -208,6 +208,7 @@ class EditRouteController extends ChangeNotifier {
       age: age ?? current.age,
       sex: sex ?? current.sex,
       avatarIndex: avatarIndex ?? current.avatarIndex,
+      note: current.note,
     );
     notifyListeners();
   }

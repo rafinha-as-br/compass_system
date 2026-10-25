@@ -272,6 +272,24 @@ void main() {
       expect(participantsRepository.capturedParticipants?.single.avatarIndex, 3);
     });
 
+    test('editing a participant keeps the agent note, and submit sends it back so the PUT does not erase it', () async {
+      final participantsRepository = _FakeParticipantsRepository();
+      final controller = _controller(
+        participantsRepository: participantsRepository,
+        originalParticipants: [
+          Person(domainId: 'p1', backEndId: 'p1', name: 'Maria Silva', age: '34', sex: 'F', note: 'Intolerância a lactose'),
+        ],
+      );
+
+      controller.updateParticipant('p1', age: '35');
+
+      expect(controller.participants.single.note, 'Intolerância a lactose');
+
+      await controller.submit();
+
+      expect(participantsRepository.capturedParticipants?.single.note, 'Intolerância a lactose');
+    });
+
     test('a participant added without a choice gets a known character, and a picked one is kept', () {
       final controller = _controller();
 

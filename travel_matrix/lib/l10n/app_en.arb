@@ -266,6 +266,9 @@
   "participantAvatarFieldLabel": "Character",
   "changeParticipantAvatarTooltip": "Change character",
   "participantAvatarRandomHint": "randomly picked, tap to change",
+  "participantNoteLabel": "Note",
+  "participantNoteAddButton": "+ Add note",
+  "participantNoteFieldLabel": "Note (free text)",
   "participantAvatarOptionSemantics": "Character {index}",
   "@participantAvatarOptionSemantics": {
     "placeholders": {

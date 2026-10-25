@@ -232,6 +232,108 @@ void main() {
     });
   });
 
+  group('participant note', () {
+    Future<List<Person>> saveNoteOf(WidgetTester tester, String id, String text) async {
+      await tester.enterText(find.byKey(Key('participant_note_field_$id')), text);
+      await tester.tap(find.byKey(Key('participant_note_save_$id')));
+      await tester.pumpAndSettle();
+      return verify(() => participantsUseCases.updateParticipants('t1', captureAny())).captured.single as List<Person>;
+    }
+
+    setUp(() {
+      when(() => participantsUseCases.updateParticipants('t1', any())).thenAnswer(
+        (invocation) async => Result.success(invocation.positionalArguments[1] as List<Person>),
+      );
+    });
+
+    testWidgets('shows the note when there is one and an "Add note" action when there is not', (tester) async {
+      await pump(
+        tester,
+        _travel(
+          participants: [
+            Person(domainId: 'a', backendId: 'a', name: 'Ana Silva', age: '30', sex: 'F', note: 'Intolerância a lactose'),
+            Person(domainId: 'b', backendId: 'b', name: 'Bruno Costa', age: '28', sex: 'M'),
+          ],
+        ),
+      );
+
+      expect(find.text('Intolerância a lactose'), findsOneWidget);
+      expect(find.byKey(const Key('participant_note_add_a')), findsNothing);
+      expect(find.byKey(const Key('participant_note_add_b')), findsOneWidget);
+      expect(find.text('+ Add note'), findsOneWidget);
+    });
+
+    testWidgets('adds a note to a participant, saving it without touching the others', (tester) async {
+      TravelViewModel? updatedTravel;
+      await pump(
+        tester,
+        _travel(
+          participants: [
+            Person(domainId: 'a', backendId: 'a', name: 'Ana Silva', age: '30', sex: 'F', note: 'Vegetariana'),
+            Person(domainId: 'b', backendId: 'b', name: 'Bruno Costa', age: '28', sex: 'M', avatarIndex: 2),
+          ],
+        ),
+        onTravelUpdated: (t) => updatedTravel = t,
+      );
+
+      await tester.tap(find.byKey(const Key('participant_note_add_b')));
+      await tester.pumpAndSettle();
+      final saved = await saveNoteOf(tester, 'b', '  Mobilidade reduzida  ');
+
+      expect(saved.map((p) => p.note), ['Vegetariana', 'Mobilidade reduzida']);
+      expect(saved.map((p) => p.avatarIndex), [null, 2]);
+      expect(updatedTravel!.participants.map((p) => p.note), ['Vegetariana', 'Mobilidade reduzida']);
+      // Back to the read state once saved.
+      expect(find.byKey(const Key('participant_note_field_b')), findsNothing);
+    });
+
+    testWidgets('editing starts from the current note and a blank save clears it', (tester) async {
+      await pump(
+        tester,
+        _travel(participants: [Person(domainId: 'a', backendId: 'a', name: 'Ana Silva', age: '30', sex: 'F', note: 'Vegetariana')]),
+      );
+
+      await tester.tap(find.byKey(const Key('participant_note_view_a')));
+      await tester.pumpAndSettle();
+      expect(tester.widget<TextField>(find.byKey(const Key('participant_note_field_a'))).controller!.text, 'Vegetariana');
+
+      final saved = await saveNoteOf(tester, 'a', '   ');
+      expect(saved.single.note, isNull);
+    });
+
+    testWidgets('cancelling the edit saves nothing and keeps the note', (tester) async {
+      await pump(
+        tester,
+        _travel(participants: [Person(domainId: 'a', backendId: 'a', name: 'Ana Silva', age: '30', sex: 'F', note: 'Vegetariana')]),
+      );
+
+      await tester.tap(find.byKey(const Key('participant_note_view_a')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('participant_note_field_a')), 'Outra coisa');
+      await tester.tap(find.byKey(const Key('participant_note_cancel_a')));
+      await tester.pumpAndSettle();
+
+      verifyNever(() => participantsUseCases.updateParticipants(any(), any()));
+      expect(find.text('Vegetariana'), findsOneWidget);
+      expect(find.byKey(const Key('participant_note_field_a')), findsNothing);
+    });
+
+    testWidgets('a failed save keeps the field open with the typed text', (tester) async {
+      when(() => participantsUseCases.updateParticipants('t1', any())).thenAnswer((_) async => const Result.failure('x'));
+      await pump(tester, _travel(participants: [Person(domainId: 'a', backendId: 'a', name: 'Ana Silva', age: '30', sex: 'F')]));
+
+      await tester.tap(find.byKey(const Key('participant_note_add_a')));
+      await tester.pumpAndSettle();
+      await tester.enterText(find.byKey(const Key('participant_note_field_a')), 'Alérgica a amendoim');
+      await tester.tap(find.byKey(const Key('participant_note_save_a')));
+      await tester.pumpAndSettle();
+
+      expect(find.byKey(const Key('participant_note_field_a')), findsOneWidget);
+      expect(tester.widget<TextField>(find.byKey(const Key('participant_note_field_a'))).controller!.text, 'Alérgica a amendoim');
+      expect(find.text('Try again'), findsOneWidget);
+    });
+  });
+
   testWidgets('the "Add participant" submit button stays disabled until a name is entered', (tester) async {
     await pump(tester, _travel());
 

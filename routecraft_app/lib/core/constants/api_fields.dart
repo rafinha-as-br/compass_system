@@ -30,6 +30,7 @@ abstract final class PersonApiFields {
   static const String age = 'age';
   static const String sex = 'sex';
   static const String avatarIndex = 'avatarIndex';
+  static const String note = 'note';
 }
 
 /// Field names for `GET /users/me`, `GET /users/{id}` and `PUT /users/{id}`

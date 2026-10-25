@@ -208,6 +208,19 @@ class TravelsController extends ChangeNotifier {
     ]);
   }
 
+  /// Sets the note of the participant with [participantId] in
+  /// [currentParticipants] and upserts the whole list. Blank [note] clears it.
+  Future<List<PersonViewModel>?> changeParticipantNote(
+    String travelId,
+    List<PersonViewModel> currentParticipants,
+    String participantId,
+    String note,
+  ) {
+    return _submitParticipants(travelId, [
+      for (final p in currentParticipants) p.id == participantId ? p.withNote(note) : p,
+    ]);
+  }
+
   /// Removes the participant with [participantId] from [currentParticipants]
   /// and upserts the whole list.
   Future<List<PersonViewModel>?> removeParticipant(

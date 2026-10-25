@@ -679,6 +679,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get participantAvatarRandomHint => 'randomly picked, tap to change';
 
   @override
+  String get participantNoteLabel => 'Note';
+
+  @override
+  String get participantNoteAddButton => '+ Add note';
+
+  @override
+  String get participantNoteFieldLabel => 'Note (free text)';
+
+  @override
   String participantAvatarOptionSemantics(int index) {
     return 'Character $index';
   }
