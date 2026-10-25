@@ -157,6 +157,41 @@ void main() {
     expect(find.byIcon(Icons.delete_outline), findsNothing);
   });
 
+  group('participant note', () {
+    Travel travelWith(List<Person> participants) {
+      final travel = _travel(TravelStatus.routeCreated);
+      return Travel(
+        domainId: travel.domainId,
+        backEndId: travel.backEndId,
+        clientName: travel.clientName,
+        travelName: travel.travelName,
+        travelStatus: travel.travelStatus,
+        participantsList: participants,
+        routePlan: travel.routePlan,
+      );
+    }
+
+    testWidgets('shows the agent note as plain text under the participant, with no way to edit it', (tester) async {
+      await tester.pumpWidget(_wrap(travelWith([
+        Person(domainId: 'p1', backEndId: 'p1', name: 'Rafaela Souza', age: '30', sex: 'F', note: 'Intolerância a lactose'),
+      ])));
+
+      expect(find.byKey(const ValueKey('p1-note')), findsOneWidget);
+      expect(find.text('Intolerância a lactose'), findsOneWidget);
+      // Within the participant card only name and age are editable; the note is not a field.
+      final card = find.ancestor(of: find.byKey(const ValueKey('p1-note')), matching: find.byType(Card));
+      expect(find.descendant(of: card, matching: find.byType(TextFormField)), findsNWidgets(2));
+    });
+
+    testWidgets('a participant without a note shows no extra line', (tester) async {
+      await tester.pumpWidget(_wrap(travelWith([
+        Person(domainId: 'p1', backEndId: 'p1', name: 'Rafaela Souza', age: '30', sex: 'F'),
+      ])));
+
+      expect(find.byKey(const ValueKey('p1-note')), findsNothing);
+    });
+  });
+
   group('participant character', () {
     testWidgets('a participant without a character shows initials; tapping the avatar picks one and counts as a change', (tester) async {
       tester.view.physicalSize = const Size(1080, 2400);

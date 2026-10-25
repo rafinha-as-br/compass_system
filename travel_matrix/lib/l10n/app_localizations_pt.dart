@@ -685,6 +685,15 @@ class AppLocalizationsPt extends AppLocalizations {
   String get participantAvatarRandomHint => 'sorteado, toque para trocar';
 
   @override
+  String get participantNoteLabel => 'Nota';
+
+  @override
+  String get participantNoteAddButton => '+ Adicionar nota';
+
+  @override
+  String get participantNoteFieldLabel => 'Nota (texto livre)';
+
+  @override
   String participantAvatarOptionSemantics(int index) {
     return 'Personagem $index';
   }

@@ -158,12 +158,16 @@ class PersonDTO {
   /// Character index in the avatar catalog, null when none was chosen
   final int? avatarIndex;
 
+  /// Free-text note about the person, null when there is none
+  final String? note;
+
   PersonDTO({
     required this.id,
     required this.name,
     required this.age,
     required this.sex,
     this.avatarIndex,
+    this.note,
   });
 
   Map<String, dynamic> toJson() {
@@ -173,6 +177,7 @@ class PersonDTO {
       PersonApiFields.age: age,
       PersonApiFields.sex: sex,
       PersonApiFields.avatarIndex: avatarIndex,
+      PersonApiFields.note: note,
     };
   }
 
@@ -183,6 +188,7 @@ class PersonDTO {
       age: json[PersonApiFields.age]?.toString() ?? '',
       sex: json[PersonApiFields.sex]?.toString() ?? '',
       avatarIndex: int.tryParse(json[PersonApiFields.avatarIndex]?.toString() ?? ''),
+      note: json[PersonApiFields.note]?.toString(),
     );
   }
 
@@ -195,6 +201,7 @@ class PersonDTO {
       age: age,
       sex: sex,
       avatarIndex: avatarIndex,
+      note: note,
     );
   }
 
@@ -206,6 +213,7 @@ class PersonDTO {
       age: person.age,
       sex: person.sex,
       avatarIndex: person.avatarIndex,
+      note: person.note,
     );
   }
 }

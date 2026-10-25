@@ -576,6 +576,16 @@ class _ParticipantRow extends StatelessWidget {
                 ),
               ],
             ),
+            // Read-only: only the agent writes notes. Nothing is shown without one.
+            if (person.note != null)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: Text(
+                  person.note!,
+                  key: ValueKey('${person.domainId}-note'),
+                  style: theme.textTheme.bodySmall?.copyWith(color: theme.colorScheme.onSurface.withValues(alpha: 0.6)),
+                ),
+              ),
           ],
         ),
       ),

@@ -238,6 +238,8 @@ class PersonViewModel{
   final String sex;
   /// Character index in the avatar catalog, null when none was chosen
   final int? avatarIndex;
+  /// Free-text note written by the agent, null when there is none
+  final String? note;
 
   PersonViewModel({
     required this.backEndId,
@@ -246,6 +248,7 @@ class PersonViewModel{
     required this.age,
     required this.sex,
     this.avatarIndex,
+    this.note,
   });
 
   /// To domain mapper method
@@ -257,6 +260,7 @@ class PersonViewModel{
       age: age,
       sex: sex,
       avatarIndex: avatarIndex,
+      note: note,
     );
   }
 
@@ -271,6 +275,7 @@ class PersonViewModel{
       age: person.age,
       sex: person.sex,
       avatarIndex: person.avatarIndex,
+      note: person.note,
     );
   }
 
@@ -306,8 +311,22 @@ class PersonViewModel{
       age: age,
       sex: sex,
       avatarIndex: avatarIndex,
+      note: note,
     );
   }
 
+  /// Copy of this person carrying [note]; blank text means no note
+  PersonViewModel withNote(String note) {
+    final trimmed = note.trim();
+    return PersonViewModel(
+      backEndId: backEndId,
+      localId: localId,
+      name: name,
+      age: age,
+      sex: sex,
+      avatarIndex: avatarIndex,
+      note: trimmed.isEmpty ? null : trimmed,
+    );
+  }
 
 }

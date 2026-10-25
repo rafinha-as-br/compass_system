@@ -15,6 +15,9 @@ class Person {
   /// 1-based index of the person's character in the avatar catalog
   /// (`assets/avatars/animal_<n>.png`); null when no character was chosen
   final int? avatarIndex;
+  /// Free-text observations about the person (food intolerance, mobility...);
+  /// null when there is none
+  final String? note;
 
   /// Private constructor
   Person({
@@ -24,6 +27,7 @@ class Person {
     required this.age,
     required this.sex,
     this.avatarIndex,
+    this.note,
   });
 
 }

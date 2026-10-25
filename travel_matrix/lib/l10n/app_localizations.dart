@@ -1376,6 +1376,24 @@ abstract class AppLocalizations {
   /// **'randomly picked, tap to change'**
   String get participantAvatarRandomHint;
 
+  /// No description provided for @participantNoteLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get participantNoteLabel;
+
+  /// No description provided for @participantNoteAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add note'**
+  String get participantNoteAddButton;
+
+  /// No description provided for @participantNoteFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note (free text)'**
+  String get participantNoteFieldLabel;
+
   /// No description provided for @participantAvatarOptionSemantics.
   ///
   /// In en, this message translates to:

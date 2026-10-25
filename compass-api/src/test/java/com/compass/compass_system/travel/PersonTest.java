@@ -27,4 +27,25 @@ class PersonTest {
         person.setAvatarIndex(null);
         assertNull(person.getAvatarIndex());
     }
+
+    @Test
+    void noteIsTrimmedAndBlankMeansNoNote() {
+        Person person = new Person();
+        person.setNote("  Vegetariana  ");
+        assertEquals("Vegetariana", person.getNote());
+
+        person.setNote("   ");
+        assertNull(person.getNote());
+
+        person.setNote(null);
+        assertNull(person.getNote());
+    }
+
+    @Test
+    void noteLongerThanTheColumnIsCut() {
+        Person person = new Person();
+        person.setNote("a".repeat(Person.NOTE_MAX_LENGTH + 50));
+
+        assertEquals(Person.NOTE_MAX_LENGTH, person.getNote().length());
+    }
 }

@@ -102,8 +102,16 @@ class PersonDTO {
   final String age;
   final String sex;
   final int? avatarIndex;
+  final String? note;
 
-  PersonDTO({required this.id, required this.name, required this.age, required this.sex, this.avatarIndex});
+  PersonDTO({
+    required this.id,
+    required this.name,
+    required this.age,
+    required this.sex,
+    this.avatarIndex,
+    this.note,
+  });
 
   factory PersonDTO.fromJson(Map<String, dynamic> json) {
     return PersonDTO(
@@ -112,6 +120,7 @@ class PersonDTO {
       age: json[PersonApiFields.age]?.toString() ?? '',
       sex: json[PersonApiFields.sex]?.toString() ?? '',
       avatarIndex: int.tryParse(json[PersonApiFields.avatarIndex]?.toString() ?? ''),
+      note: json[PersonApiFields.note]?.toString(),
     );
   }
 
@@ -122,6 +131,7 @@ class PersonDTO {
       PersonApiFields.age: age,
       PersonApiFields.sex: sex,
       PersonApiFields.avatarIndex: avatarIndex,
+      PersonApiFields.note: note,
     };
   }
 
@@ -133,6 +143,7 @@ class PersonDTO {
       age: age,
       sex: sex,
       avatarIndex: avatarIndex,
+      note: note,
     );
   }
 
@@ -143,6 +154,7 @@ class PersonDTO {
       age: person.age,
       sex: person.sex,
       avatarIndex: person.avatarIndex,
+      note: person.note,
     );
   }
 }
