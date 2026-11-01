@@ -236,6 +236,10 @@ class PersonViewModel{
   final String name;
   final String age;
   final String sex;
+  /// Character index in the avatar catalog, null when none was chosen
+  final int? avatarIndex;
+  /// Free-text note written by the agent, null when there is none
+  final String? note;
 
   PersonViewModel({
     required this.backEndId,
@@ -243,6 +247,8 @@ class PersonViewModel{
     required this.name,
     required this.age,
     required this.sex,
+    this.avatarIndex,
+    this.note,
   });
 
   /// To domain mapper method
@@ -253,6 +259,8 @@ class PersonViewModel{
       name: name,
       age: age,
       sex: sex,
+      avatarIndex: avatarIndex,
+      note: note,
     );
   }
 
@@ -266,6 +274,8 @@ class PersonViewModel{
       name: person.name,
       age: person.age,
       sex: person.sex,
+      avatarIndex: person.avatarIndex,
+      note: person.note,
     );
   }
 
@@ -273,8 +283,9 @@ class PersonViewModel{
   factory PersonViewModel.fromLocal(
       String name,
       String age,
-      String sex,
-    ){
+      String sex, {
+      int? avatarIndex,
+    }){
     return PersonViewModel(
       backEndId: null,
       // Uuid, not `name` — matches RoutePlanViewModel/InterestPointViewModel's
@@ -284,11 +295,38 @@ class PersonViewModel{
       name: name,
       age: age,
       sex: sex,
+      avatarIndex: avatarIndex,
     );
   }
 
   /// Provides the local ID for UI reference
   String get id => localId;
 
+  /// Copy of this person with the character at [avatarIndex]
+  PersonViewModel withAvatarIndex(int avatarIndex) {
+    return PersonViewModel(
+      backEndId: backEndId,
+      localId: localId,
+      name: name,
+      age: age,
+      sex: sex,
+      avatarIndex: avatarIndex,
+      note: note,
+    );
+  }
+
+  /// Copy of this person carrying [note]; blank text means no note
+  PersonViewModel withNote(String note) {
+    final trimmed = note.trim();
+    return PersonViewModel(
+      backEndId: backEndId,
+      localId: localId,
+      name: name,
+      age: age,
+      sex: sex,
+      avatarIndex: avatarIndex,
+      note: trimmed.isEmpty ? null : trimmed,
+    );
+  }
 
 }

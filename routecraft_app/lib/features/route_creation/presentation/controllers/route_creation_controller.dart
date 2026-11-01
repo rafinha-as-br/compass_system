@@ -13,6 +13,7 @@ import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 import 'package:routecraft_app/shared/models/place_suggestion.dart';
+import 'package:routecraft_app/shared/utils/participant_avatars.dart';
 
 /// Number of guided data-entry steps (name, dates, locations, interests,
 /// participants) before the review screen —
@@ -224,14 +225,31 @@ class RouteCreationController extends ChangeNotifier {
 
   Future<void> _addClientAsParticipant() async {
     final clientName = await _getClientName();
-    final client = Person(domainId: const Uuid().v4(), backEndId: null, name: clientName ?? '', age: '', sex: '');
+    final client = Person(
+      domainId: const Uuid().v4(),
+      backEndId: null,
+      name: clientName ?? '',
+      age: '',
+      sex: '',
+      avatarIndex: randomParticipantAvatarIndex(),
+    );
     _clientParticipantId = client.domainId;
     participants.insert(0, client);
     notifyListeners();
   }
 
-  void addParticipant({required String name, required String age, required String sex}) {
-    participants.add(Person(domainId: const Uuid().v4(), backEndId: null, name: name, age: age, sex: sex));
+  /// Without a chosen [avatarIndex] the participant gets a random character.
+  void addParticipant({required String name, required String age, required String sex, int? avatarIndex}) {
+    participants.add(
+      Person(
+        domainId: const Uuid().v4(),
+        backEndId: null,
+        name: name,
+        age: age,
+        sex: sex,
+        avatarIndex: avatarIndex ?? randomParticipantAvatarIndex(),
+      ),
+    );
     notifyListeners();
   }
 
@@ -244,7 +262,7 @@ class RouteCreationController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void updateParticipant(String domainId, {String? name, String? age, String? sex}) {
+  void updateParticipant(String domainId, {String? name, String? age, String? sex, int? avatarIndex}) {
     final index = participants.indexWhere((p) => p.domainId == domainId);
     if (index == -1) return;
     final current = participants[index];
@@ -254,6 +272,7 @@ class RouteCreationController extends ChangeNotifier {
       name: name ?? current.name,
       age: age ?? current.age,
       sex: sex ?? current.sex,
+      avatarIndex: avatarIndex ?? current.avatarIndex,
     );
     notifyListeners();
   }

@@ -8,6 +8,7 @@ import 'package:routecraft_app/features/travels/domain/repositories/route_reposi
 import 'package:routecraft_app/features/travels/domain/usecases/participants_usecases.dart';
 import 'package:routecraft_app/features/travels/domain/usecases/route_usecases.dart';
 import 'package:routecraft_app/l10n/app_localizations_en.dart';
+import 'package:routecraft_app/shared/utils/participant_avatars.dart';
 
 class _FakeRouteRepository implements RouteRepository {
   Result<RoutePlan>? nextUpdateResult;
@@ -253,6 +254,50 @@ void main() {
 
       expect(controller.participantFieldsEdited, isTrue);
       expect(controller.hasChanges, isTrue);
+    });
+
+    test('picking a character for an existing participant counts as a change and is submitted', () async {
+      final participantsRepository = _FakeParticipantsRepository();
+      final controller = _controller(participantsRepository: participantsRepository);
+      final clientId = controller.participants.single.domainId;
+      expect(controller.participants.single.avatarIndex, isNull);
+
+      controller.updateParticipant(clientId, avatarIndex: 3);
+
+      expect(controller.participantFieldsEdited, isTrue);
+      expect(controller.hasChanges, isTrue);
+
+      await controller.submit();
+
+      expect(participantsRepository.capturedParticipants?.single.avatarIndex, 3);
+    });
+
+    test('editing a participant keeps the agent note, and submit sends it back so the PUT does not erase it', () async {
+      final participantsRepository = _FakeParticipantsRepository();
+      final controller = _controller(
+        participantsRepository: participantsRepository,
+        originalParticipants: [
+          Person(domainId: 'p1', backEndId: 'p1', name: 'Maria Silva', age: '34', sex: 'F', note: 'Intolerância a lactose'),
+        ],
+      );
+
+      controller.updateParticipant('p1', age: '35');
+
+      expect(controller.participants.single.note, 'Intolerância a lactose');
+
+      await controller.submit();
+
+      expect(participantsRepository.capturedParticipants?.single.note, 'Intolerância a lactose');
+    });
+
+    test('a participant added without a choice gets a known character, and a picked one is kept', () {
+      final controller = _controller();
+
+      controller.addParticipant(name: 'João', age: '10', sex: 'M');
+      controller.addParticipant(name: 'Ana', age: '8', sex: 'F', avatarIndex: 5);
+
+      expect(isKnownParticipantAvatar(controller.participants[1].avatarIndex), isTrue);
+      expect(controller.participants[2].avatarIndex, 5);
     });
 
     test('submit sends only the surviving participants, excluding pending-removal ones', () async {

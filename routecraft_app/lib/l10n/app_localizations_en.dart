@@ -599,6 +599,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get participantsSectionLabel => 'Participants';
 
   @override
+  String get participantAvatarFieldLabel => 'Character';
+
+  @override
+  String get participantAvatarRandomHint => 'randomly picked, tap to change';
+
+  @override
+  String participantAvatarOptionSemantics(int index) {
+    return 'Character $index';
+  }
+
+  @override
+  String get changeParticipantAvatarTooltip => 'Change character';
+
+  @override
   String get editRouteSubmitCta => 'Send changes';
 
   @override

@@ -175,6 +175,15 @@
   "editRouteDiffParticipantsRemoved": "{count, plural, one{1 participante removido} other{{count} participantes removidos}}",
   "editRouteDiffParticipantsUpdated": "dados de participante atualizados",
   "participantsSectionLabel": "Participantes",
+  "participantAvatarFieldLabel": "Personagem",
+  "participantAvatarRandomHint": "sorteado, toque para trocar",
+  "participantAvatarOptionSemantics": "Personagem {index}",
+  "@participantAvatarOptionSemantics": {
+    "placeholders": {
+      "index": { "type": "int" }
+    }
+  },
+  "changeParticipantAvatarTooltip": "Trocar personagem",
   "editRouteSubmitCta": "Enviar alterações",
   "editRouteSubmitError": "Falha ao atualizar rota: {error}",
   "editRouteUpdateSuccess": "Rota atualizada com sucesso!",

@@ -676,6 +676,29 @@ class AppLocalizationsPt extends AppLocalizations {
   String get participantAgeFieldLabel => 'Idade';
 
   @override
+  String get participantAvatarFieldLabel => 'Personagem';
+
+  @override
+  String get changeParticipantAvatarTooltip => 'Trocar personagem';
+
+  @override
+  String get participantAvatarRandomHint => 'sorteado, toque para trocar';
+
+  @override
+  String get participantNoteLabel => 'Nota';
+
+  @override
+  String get participantNoteAddButton => '+ Adicionar nota';
+
+  @override
+  String get participantNoteFieldLabel => 'Nota (texto livre)';
+
+  @override
+  String participantAvatarOptionSemantics(int index) {
+    return 'Personagem $index';
+  }
+
+  @override
   String get noParticipantsTitle => 'Nenhum participante ainda';
 
   @override
@@ -746,11 +769,6 @@ class AppLocalizationsPt extends AppLocalizations {
 
   @override
   String get overviewParticipantsCaption => 'pessoas na viagem';
-
-  @override
-  String overviewParticipantsMore(int count) {
-    return 'e mais $count';
-  }
 
   @override
   String get overviewViewParticipantsAction => 'Ver participantes →';
