@@ -22,6 +22,7 @@ Future<GoRouter> _pumpShell(
   WidgetTester tester,
   AuthController auth, {
   Size size = const Size(1280, 800),
+  ThemeData? theme,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -55,6 +56,7 @@ Future<GoRouter> _pumpShell(
       ],
       child: MaterialApp.router(
         routerConfig: router,
+        theme: theme,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -112,6 +114,69 @@ void main() {
     expect(settingsY, lessThan(supportY));
     expect(supportY, lessThan(logoutY));
     expect(find.byType(Divider), findsOneWidget);
+  });
+
+  // Painel visível do popup: o Material mais externo acima do item (o primeiro é o do próprio item).
+  Rect popupPanel(WidgetTester tester) =>
+      tester.getRect(find.ancestor(of: find.text('My Account'), matching: find.byType(Material)).at(1));
+
+  testWidgets('the popup has the same width and edges as the account row trigger (CPS-187)', (tester) async {
+    final auth = AuthController();
+    auth.debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    await _pumpShell(tester, auth);
+    final row = tester.getRect(find.ancestor(of: find.text('Carlos Agent'), matching: find.byType(InkWell)).first);
+    await tester.tap(find.text('Carlos Agent'));
+    await tester.pumpAndSettle();
+
+    final panel = popupPanel(tester);
+    expect(panel.left, row.left);
+    expect(panel.right, row.right);
+    // O item também ocupa a largura toda (a área de hover/clique não encolhe).
+    final item = tester.getRect(find.ancestor(of: find.text('My Account'), matching: find.byType(MenuItemButton)).first);
+    expect(item.width, row.width);
+  });
+
+  testWidgets('the avatar triggers (rail) keep the fixed 226 popup width (CPS-187)', (tester) async {
+    final auth = AuthController();
+    auth.debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+    await _pumpShell(tester, auth, size: const Size(800, 800));
+    await tester.tap(find.byTooltip('Carlos Agent'));
+    await tester.pumpAndSettle();
+
+    expect(popupPanel(tester).width, 226);
+  });
+
+  // Web/desktop usa VisualDensity.compact (adaptativo); o MenuAnchor desconta 8px do minimumSize
+  // nesse caso, e o popup renderizava 218px em vez dos 226px do gatilho (CPS-187, QA no Chrome).
+  group('with VisualDensity.compact, as on web/desktop (CPS-187)', () {
+    final compact = ThemeData(visualDensity: VisualDensity.compact);
+
+    testWidgets('the sidebar popup still matches the trigger edges', (tester) async {
+      final auth = AuthController();
+      auth.debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+      await _pumpShell(tester, auth, theme: compact);
+      final row = tester.getRect(find.ancestor(of: find.text('Carlos Agent'), matching: find.byType(InkWell)).first);
+      await tester.tap(find.text('Carlos Agent'));
+      await tester.pumpAndSettle();
+
+      final panel = popupPanel(tester);
+      expect(panel.left, row.left);
+      expect(panel.right, row.right);
+    });
+
+    testWidgets('the avatar popup (rail) is still 226 wide', (tester) async {
+      final auth = AuthController();
+      auth.debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+      await _pumpShell(tester, auth, size: const Size(800, 800), theme: compact);
+      await tester.tap(find.byTooltip('Carlos Agent'));
+      await tester.pumpAndSettle();
+
+      expect(popupPanel(tester).width, 226);
+    });
   });
 
   testWidgets('"Minha Conta" and "Configurações" navigate to /account and close the popup', (tester) async {
