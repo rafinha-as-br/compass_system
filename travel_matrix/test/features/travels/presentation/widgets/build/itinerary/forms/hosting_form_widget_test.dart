@@ -40,7 +40,11 @@ void main() {
       onChanged: (h) => emitted = h,
       onDelete: () {},
       fetchSuggestions: (query) async => const [
-        PlaceSuggestion(text: 'Rua das Flores', coordinate: PlaceCoordinate(-23.5, -46.6)),
+        PlaceSuggestion(
+          text: 'Rua das Flores',
+          label: 'Rua das Flores, Centro, São Paulo, Brasil',
+          coordinate: PlaceCoordinate(-23.5, -46.6),
+        ),
       ],
     )));
 
@@ -53,13 +57,13 @@ void main() {
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
 
-    // PlacesAutocompleteField splits the suggestion at the first comma into
-    // title/subtitle — tap the title fragment.
-    await tester.tap(find.text('Rua das Flores'));
+    // The address field lists and saves the full label, not the short name.
+    expect(find.text('Rua das Flores'), findsNothing);
+    await tester.tap(find.text('Rua das Flores, Centro, São Paulo, Brasil'));
     await tester.pump();
 
     expect(emitted, isNotNull);
-    expect(emitted!.address, 'Rua das Flores');
+    expect(emitted!.address, 'Rua das Flores, Centro, São Paulo, Brasil');
     expect(emitted!.coordinate, const PlaceCoordinate(-23.5, -46.6));
   });
 

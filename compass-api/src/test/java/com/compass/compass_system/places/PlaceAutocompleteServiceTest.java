@@ -31,7 +31,7 @@ class PlaceAutocompleteServiceTest {
 
     @Test
     void shouldCallProviderOnceAndCacheResult() {
-        List<PlaceSuggestion> results = List.of(new PlaceSuggestion("Florianópolis", -27.59, -48.55));
+        List<PlaceSuggestion> results = List.of(new PlaceSuggestion("Florianópolis", "Florianópolis, Santa Catarina, Brasil", -27.59, -48.55));
         when(provider.search("Floripa")).thenReturn(results);
 
         List<PlaceSuggestion> first = service.autocomplete("Floripa");
@@ -46,7 +46,7 @@ class PlaceAutocompleteServiceTest {
     void shouldPropagateProviderFailureWithoutCachingIt() {
         when(provider.search("indisponivel"))
                 .thenThrow(new PlaceProviderUnavailableException("fora do ar"))
-                .thenReturn(List.of(new PlaceSuggestion("Recuperado", 0, 0)));
+                .thenReturn(List.of(new PlaceSuggestion("Recuperado", "Recuperado", 0, 0)));
 
         assertThatThrownBy(() -> service.autocomplete("indisponivel"))
                 .isInstanceOf(PlaceProviderUnavailableException.class);

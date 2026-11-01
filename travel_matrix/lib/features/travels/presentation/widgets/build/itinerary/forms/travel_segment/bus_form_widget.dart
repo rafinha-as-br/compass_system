@@ -183,6 +183,7 @@ class _BusFormState extends State<BusForm> {
                 initialText: widget.busViewModel.busStationName,
                 initialCoordinate: widget.busViewModel.busStationCoordinate,
                 fetchSuggestions: widget.fetchSuggestions,
+                useFullLabel: true,
                 onChanged: _onBusStationNameChanged,
               ),
               if (_showError(_formState.busStationName) != null)

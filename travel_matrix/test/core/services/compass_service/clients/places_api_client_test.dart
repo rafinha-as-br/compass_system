@@ -17,7 +17,12 @@ void main() {
           return http.Response(
             jsonEncode([
               {'name': 'Florianópolis, SC, Brasil', 'latitude': -27.5954, 'longitude': -48.5480},
-              {'name': 'Floriano, PI, Brasil', 'latitude': -6.7671, 'longitude': -43.0225},
+              {
+                'name': 'Floriano',
+                'label': 'Floriano, Piauí, Brasil',
+                'latitude': -6.7671,
+                'longitude': -43.0225,
+              },
             ]),
             200,
           );
@@ -28,6 +33,10 @@ void main() {
 
       expect(results, hasLength(2));
       expect(results[0].text, 'Florianópolis, SC, Brasil');
+      // Older backend without `label`: falls back to the short name.
+      expect(results[0].label, 'Florianópolis, SC, Brasil');
+      expect(results[1].text, 'Floriano');
+      expect(results[1].label, 'Floriano, Piauí, Brasil');
       expect(results[0].coordinate.latitude, -27.5954);
       expect(results[0].coordinate.longitude, -48.5480);
     });

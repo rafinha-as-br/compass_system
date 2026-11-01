@@ -28,6 +28,7 @@ class PlacesAutocompleteField extends StatefulWidget {
     required this.onChanged,
     this.initialText,
     this.initialCoordinate,
+    this.useFullLabel = false,
     this.debounceDuration = const Duration(milliseconds: 400),
   });
 
@@ -36,6 +37,11 @@ class PlacesAutocompleteField extends StatefulWidget {
   final ValueChanged<PlaceAutocompleteResult> onChanged;
   final String? initialText;
   final PlaceCoordinate? initialCoordinate;
+
+  /// Address fields set this: suggestions are listed and saved with the full
+  /// label (street, number, district, city) instead of the short name, so
+  /// results sharing a name stay distinguishable.
+  final bool useFullLabel;
   final Duration debounceDuration;
 
   @override
@@ -116,17 +122,20 @@ class _PlacesAutocompleteFieldState extends State<PlacesAutocompleteField> {
     }
   }
 
+  String _displayText(PlaceSuggestion suggestion) => widget.useFullLabel ? suggestion.label : suggestion.text;
+
   void _selectSuggestion(PlaceSuggestion suggestion) {
+    final text = _displayText(suggestion);
     _controller.value = TextEditingValue(
-      text: suggestion.text,
-      selection: TextSelection.collapsed(offset: suggestion.text.length),
+      text: text,
+      selection: TextSelection.collapsed(offset: text.length),
     );
     setState(() {
       _status = _AutocompleteStatus.idle;
       _suggestions = const [];
     });
     _focusNode.unfocus();
-    widget.onChanged(PlaceAutocompleteResult(text: suggestion.text, coordinate: suggestion.coordinate));
+    widget.onChanged(PlaceAutocompleteResult(text: text, coordinate: suggestion.coordinate));
   }
 
   @override
@@ -251,7 +260,7 @@ class _PlacesAutocompleteFieldState extends State<PlacesAutocompleteField> {
             Icon(Icons.location_on_outlined, size: 15, color: TravelAppColors.textSecondary),
             const SizedBox(width: 10),
             Expanded(
-              child: Text(suggestion.text, style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface)),
+              child: Text(_displayText(suggestion), style: TextStyle(fontSize: 13, color: theme.colorScheme.onSurface)),
             ),
           ],
         ),
