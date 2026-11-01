@@ -183,6 +183,7 @@ class _HostingFormWidgetState extends State<HostingFormWidget> {
             initialText: widget.hosting.address,
             initialCoordinate: widget.hosting.coordinate,
             fetchSuggestions: widget.fetchSuggestions,
+            useFullLabel: true,
             onChanged: _onAddressChanged,
           ),
           if (_formState.address.isTouched && _formState.address.error != null)

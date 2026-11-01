@@ -167,6 +167,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
                       initialText: widget.airplaneViewModel.departureAirport,
                       initialCoordinate: widget.airplaneViewModel.departureAirportCoordinate,
                       fetchSuggestions: widget.fetchSuggestions,
+                      useFullLabel: true,
                       onChanged: _onDepartureAirportChanged,
                     ),
                     if (_showError(_formState.departureAirport) != null)
@@ -186,6 +187,7 @@ class _AirplaneFormState extends State<AirplaneForm> {
                       initialText: widget.airplaneViewModel.arrivalAirport,
                       initialCoordinate: widget.airplaneViewModel.arrivalAirportCoordinate,
                       fetchSuggestions: widget.fetchSuggestions,
+                      useFullLabel: true,
                       onChanged: _onArrivalAirportChanged,
                     ),
                     if (_showError(_formState.arrivalAirport) != null)

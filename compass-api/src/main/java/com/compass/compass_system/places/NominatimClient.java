@@ -71,7 +71,7 @@ public class NominatimClient implements PlaceProvider {
         try {
             List<NominatimResult> results = objectMapper.readValue(json, new TypeReference<List<NominatimResult>>() {});
             return results.stream()
-                    .map(r -> new PlaceSuggestion(shortName(r), Double.parseDouble(r.lat()), Double.parseDouble(r.lon())))
+                    .map(r -> new PlaceSuggestion(shortName(r), label(r), Double.parseDouble(r.lat()), Double.parseDouble(r.lon())))
                     .toList();
         } catch (IOException | NumberFormatException | NullPointerException e) {
             // NumberFormatException/NullPointerException: lat/lon ausentes ou não
@@ -91,6 +91,17 @@ public class NominatimClient implements PlaceProvider {
             return r.name().trim();
         }
         return r.display_name().split(",", 2)[0].trim();
+    }
+
+    /**
+     * Rótulo completo da localidade: o {@code display_name} do Nominatim; se
+     * vier ausente ou vazio, cai no nome curto.
+     */
+    private static String label(NominatimResult r) {
+        if (r.display_name() != null && !r.display_name().isBlank()) {
+            return r.display_name().trim();
+        }
+        return shortName(r);
     }
 
     // Nomes de campo batem exatamente com o JSON do Nominatim (name/display_name/lat/lon),

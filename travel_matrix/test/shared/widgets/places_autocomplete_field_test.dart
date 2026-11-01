@@ -160,6 +160,43 @@ void main() {
     expect(find.text('Santa Catarina'), findsNothing);
   });
 
+  testWidgets('useFullLabel lists same-name suggestions by label and saves the picked label', (tester) async {
+    final reported = <PlaceAutocompleteResult>[];
+
+    await tester.pumpWidget(_wrap(PlacesAutocompleteField(
+      labelText: 'Endereço',
+      useFullLabel: true,
+      debounceDuration: _debounce,
+      fetchSuggestions: (query) async => const [
+        PlaceSuggestion(
+          text: 'Avenida Paulista',
+          label: 'Avenida Paulista, Bela Vista, São Paulo, Brasil',
+          coordinate: PlaceCoordinate(-23.56, -46.65),
+        ),
+        PlaceSuggestion(
+          text: 'Avenida Paulista',
+          label: 'Avenida Paulista, Jardim Paulista, São Paulo, Brasil',
+          coordinate: PlaceCoordinate(-23.57, -46.65),
+        ),
+      ],
+      onChanged: reported.add,
+    )));
+
+    await tester.tap(find.byType(TextField));
+    await tester.enterText(find.byType(TextField), 'avenida paulista');
+    await tester.pump(_debounce);
+    await tester.pumpAndSettle();
+
+    expect(find.text('Avenida Paulista'), findsNothing);
+    expect(find.text('Avenida Paulista, Bela Vista, São Paulo, Brasil'), findsOneWidget);
+
+    await tester.tap(find.text('Avenida Paulista, Jardim Paulista, São Paulo, Brasil'));
+    await tester.pump();
+
+    expect(reported.last.text, 'Avenida Paulista, Jardim Paulista, São Paulo, Brasil');
+    expect(reported.last.coordinate, const PlaceCoordinate(-23.57, -46.65));
+  });
+
   testWidgets('a query shorter than 2 chars never triggers a fetch', (tester) async {
     var called = false;
 

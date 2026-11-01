@@ -39,15 +39,22 @@ class PlaceCoordinate {
 
 /// One suggestion returned by `GET /places/autocomplete` — always carries a
 /// coordinate, unlike the free-text value the user may end up submitting.
+///
+/// [text] is the short name (city/place); [label] is the full address label
+/// (street, number, district, city) used by address fields. [label] falls
+/// back to [text] when the backend doesn't send one.
 class PlaceSuggestion {
   final String text;
+  final String label;
   final PlaceCoordinate coordinate;
 
-  const PlaceSuggestion({required this.text, required this.coordinate});
+  const PlaceSuggestion({required this.text, String? label, required this.coordinate})
+      : label = label ?? text;
 
   factory PlaceSuggestion.fromJson(Map<String, dynamic> json) {
     return PlaceSuggestion(
       text: json['name'] as String,
+      label: json['label'] as String?,
       coordinate: PlaceCoordinate(
         (json['latitude'] as num).toDouble(),
         (json['longitude'] as num).toDouble(),

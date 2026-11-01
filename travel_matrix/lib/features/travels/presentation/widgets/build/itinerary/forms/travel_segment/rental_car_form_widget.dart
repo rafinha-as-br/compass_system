@@ -169,6 +169,7 @@ class _RentalCarFormState extends State<RentalCarForm> {
                 initialText: widget.rentalCar.pickupLocation,
                 initialCoordinate: widget.rentalCar.pickupLocationCoordinate,
                 fetchSuggestions: widget.fetchSuggestions,
+                useFullLabel: true,
                 onChanged: _onPickupLocationChanged,
               ),
               if (_showError(_formState.pickupLocation) != null)

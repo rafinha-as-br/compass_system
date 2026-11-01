@@ -28,8 +28,9 @@ class NominatimClientTest {
         List<PlaceSuggestion> result = client.parse(json);
 
         assertThat(result).containsExactly(
-                new PlaceSuggestion("Florianópolis", -27.5954, -48.5480),
-                new PlaceSuggestion("Aeroporto Internacional de Navegantes", -26.8800, -48.6500)
+                new PlaceSuggestion("Florianópolis", "Florianópolis, Santa Catarina, Região Sul, Brasil", -27.5954, -48.5480),
+                new PlaceSuggestion("Aeroporto Internacional de Navegantes",
+                        "Aeroporto Internacional de Navegantes, Rua X, Centro, Navegantes, Brasil", -26.8800, -48.6500)
         );
     }
 
@@ -45,9 +46,26 @@ class NominatimClientTest {
         List<PlaceSuggestion> result = client.parse(json);
 
         assertThat(result).containsExactly(
-                new PlaceSuggestion("Floriano", -6.7671, -43.0225),
-                new PlaceSuggestion("Blumenau", -26.9194, -49.0661)
+                new PlaceSuggestion("Floriano", "Floriano, PI, Brasil", -6.7671, -43.0225),
+                new PlaceSuggestion("Blumenau", "Blumenau, Santa Catarina, Brasil", -26.9194, -49.0661)
         );
+    }
+
+    @Test
+    void shouldExposeFullDisplayNameAsLabelToDisambiguateSameNameAddresses() {
+        String json = """
+                [
+                  {"name": "Avenida Paulista", "display_name": "Avenida Paulista, Bela Vista, São Paulo, Brasil", "lat": "-23.5614", "lon": "-46.6559"},
+                  {"name": "Avenida Paulista", "display_name": "Avenida Paulista, Jardim Paulista, São Paulo, Brasil", "lat": "-23.5700", "lon": "-46.6500"}
+                ]
+                """;
+
+        List<PlaceSuggestion> result = client.parse(json);
+
+        assertThat(result).extracting(PlaceSuggestion::name).containsOnly("Avenida Paulista");
+        assertThat(result).extracting(PlaceSuggestion::label).containsExactly(
+                "Avenida Paulista, Bela Vista, São Paulo, Brasil",
+                "Avenida Paulista, Jardim Paulista, São Paulo, Brasil");
     }
 
     @Test
