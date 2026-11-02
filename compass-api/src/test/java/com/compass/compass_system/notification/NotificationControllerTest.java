@@ -10,7 +10,9 @@ import com.compass.compass_system.security.JwtUtil;
 import com.compass.compass_system.travel.RoutePlan;
 import com.compass.compass_system.travel.Travel;
 import com.compass.compass_system.travel.TravelRepository;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -139,13 +141,36 @@ class NotificationControllerTest {
                 .andExpect(status().isForbidden());
     }
 
-    @Test
-    void publishingItineraryNotifiesOnlyTheClient() throws Exception {
+    private void saveItinerary() throws Exception {
         mockMvc.perform(put("/travels/" + travelId + "/itinerary")
                         .header("Authorization", agentAuthHeader())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(sampleItinerary())))
                 .andExpect(status().isOk());
+    }
+
+    /** "Preparar viagem": the only action that publishes the itinerary and notifies the client (CPS-191). */
+    private void prepareTravel() throws Exception {
+        String body = mockMvc.perform(get("/travels/" + travelId).header("Authorization", agentAuthHeader()))
+                .andReturn().getResponse().getContentAsString();
+        JsonNode travel = objectMapper.readTree(body);
+        ((ObjectNode) travel).put("prepared", true);
+        mockMvc.perform(put("/travels/" + travelId)
+                        .header("Authorization", agentAuthHeader())
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(travel)))
+                .andExpect(status().isOk());
+    }
+
+    @Test
+    void savingTheItineraryDoesNotNotifyAndPreparingTheTravelPublishesToTheClientOnly() throws Exception {
+        saveItinerary();
+
+        mockMvc.perform(get("/notifications").header("Authorization", clientAuthHeader()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.content", org.hamcrest.Matchers.hasSize(0)));
+
+        prepareTravel();
 
         awaitNotificationCount(1);
 
@@ -162,12 +187,9 @@ class NotificationControllerTest {
     }
 
     @Test
-    void editingAnAlreadyPublishedItineraryNotifiesAsStepChangedNotPublished() throws Exception {
-        mockMvc.perform(put("/travels/" + travelId + "/itinerary")
-                        .header("Authorization", agentAuthHeader())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(sampleItinerary())))
-                .andExpect(status().isOk());
+    void republishingAnEditedItineraryNotifiesAsStepChangedNotPublished() throws Exception {
+        saveItinerary();
+        prepareTravel();
 
         // Waiting for the first event to be fully delivered before firing the
         // second is what actually keeps `createdAt` ordering deterministic —
@@ -176,11 +198,12 @@ class NotificationControllerTest {
         // already-open one.
         awaitNotificationCount(1);
 
-        mockMvc.perform(put("/travels/" + travelId + "/itinerary")
-                        .header("Authorization", agentAuthHeader())
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(sampleItinerary())))
-                .andExpect(status().isOk());
+        // Editing the published itinerary only leaves a pending draft: no notification yet.
+        saveItinerary();
+        mockMvc.perform(get("/notifications").header("Authorization", clientAuthHeader()))
+                .andExpect(jsonPath("$.content", org.hamcrest.Matchers.hasSize(1)));
+
+        prepareTravel();
 
         awaitNotificationCount(2);
 

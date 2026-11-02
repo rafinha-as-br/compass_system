@@ -3,6 +3,7 @@ package com.compass.compass_system.travel;
 import com.compass.compass_system.company.Company;
 import com.compass.compass_system.itinerary.Itinerary;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import jakarta.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -53,9 +54,24 @@ public class Travel {
     @JoinColumn(name = "route_plan_id")
     private RoutePlan routePlan;
 
+    // Rascunho: o que o Travel Matrix edita e o "Salvar" grava. Invisível ao
+    // cliente (CPS-191).
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "itinerary_id")
     private Itinerary itinerary;
+
+    // Cópia do rascunho gravada em "Preparar viagem": é a única versão que o
+    // cliente enxerga. Só o servidor a escreve (READ_ONLY na entrada).
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "published_itinerary_id")
+    private Itinerary publishedItinerary;
+
+    // true quando o rascunho foi editado depois de publicado: "Preparar viagem"
+    // volta a ficar disponível para republicar. Só o servidor o escreve.
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    @Column(nullable = false, columnDefinition = "boolean default false")
+    private boolean itineraryDraftPending = false;
 
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "travel_id")
@@ -104,6 +120,12 @@ public class Travel {
 
     public Itinerary getItinerary() { return itinerary; }
     public void setItinerary(Itinerary itinerary) { this.itinerary = itinerary; }
+
+    public Itinerary getPublishedItinerary() { return publishedItinerary; }
+    public void setPublishedItinerary(Itinerary publishedItinerary) { this.publishedItinerary = publishedItinerary; }
+
+    public boolean isItineraryDraftPending() { return itineraryDraftPending; }
+    public void setItineraryDraftPending(boolean itineraryDraftPending) { this.itineraryDraftPending = itineraryDraftPending; }
 
     public List<Person> getParticipants() { return participants; }
     public void setParticipants(List<Person> participants) { this.participants = participants; }

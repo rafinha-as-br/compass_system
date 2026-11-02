@@ -24,6 +24,10 @@ class TravelDTO {
   /// [Travel.prepared].
   final bool prepared;
 
+  /// Whether the saved itinerary has edits the client hasn't been shown yet
+  /// — see [Travel.itineraryDraftPending]. Server-owned: read-only here, never sent back.
+  final bool itineraryDraftPending;
+
   /// Route plan back end id for the travel
   final RoutePlanDTO routePlan;
 
@@ -48,6 +52,7 @@ class TravelDTO {
     required this.routePlan,
     required this.participants,
     this.prepared = false,
+    this.itineraryDraftPending = false,
     this.eventsLog,
     this.itinerary,
     this.observations,
@@ -64,6 +69,7 @@ class TravelDTO {
       travelStatus:
           json[TravelApiFields.travelStatus]?.toString() ?? 'route_created',
       prepared: json[TravelApiFields.prepared] as bool? ?? false,
+      itineraryDraftPending: json[TravelApiFields.itineraryDraftPending] as bool? ?? false,
       routePlan: RoutePlanDTO.fromJson(routePlan ?? const <String, dynamic>{}),
       participants:
           (json[TravelApiFields.participants] as List<dynamic>?)
@@ -112,6 +118,7 @@ class TravelDTO {
       participantsList: participants.map((x) => x.toDomain()).toList(),
       travelStatus: TravelStatus.fromApiValue(travelStatus),
       prepared: prepared,
+      itineraryDraftPending: itineraryDraftPending,
       eventsLog: eventsLog?.map((x) => x.toDomain()).toList(),
       itinerary: itinerary?.toDomain(),
       observations: observations,
@@ -126,6 +133,7 @@ class TravelDTO {
       travelName: travel.travelName,
       travelStatus: travel.travelStatus.toApiValue(),
       prepared: travel.prepared,
+      itineraryDraftPending: travel.itineraryDraftPending,
       routePlan: RoutePlanDTO.fromDomain(routePlan: travel.routePlan),
       participants: travel.participantsList
           .map((x) => PersonDTO.fromDomain(person: x))

@@ -32,6 +32,7 @@ Travel _buildNotReadyTravel({
   List<Person> participants = const [],
   TravelStatus travelStatus = TravelStatus.routeCreated,
   bool prepared = false,
+  bool itineraryDraftPending = false,
 }) {
   return Travel(
     domainId: '1',
@@ -40,6 +41,7 @@ Travel _buildNotReadyTravel({
     travelName: travelName,
     travelStatus: travelStatus,
     prepared: prepared,
+    itineraryDraftPending: itineraryDraftPending,
     participantsList: participants,
     routePlan: RoutePlan(
       domainId: 'route-1',
@@ -395,6 +397,32 @@ void main() {
       final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
       final travel = TravelViewModel.fromDomain(
         _buildNotReadyTravel(travelStatus: TravelStatus.itineraryCreated),
+      );
+      final l10n = await AppLocalizations.delegate.load(const Locale('en'));
+
+      await tester.pumpWidget(_wrap(controller, travel));
+      await tester.pumpAndSettle();
+
+      await tester.tap(find.byIcon(Icons.more_vert));
+      await tester.pumpAndSettle();
+
+      final menuItem = tester.widget<MenuItemButton>(
+        find.ancestor(of: find.text(l10n.prepareTravelButton), matching: find.byType(MenuItemButton)),
+      );
+      expect(menuItem.onPressed, isNotNull);
+    },
+  );
+
+  testWidgets(
+    '"Preparar viagem" is available again for a prepared travel whose itinerary has a pending draft (CPS-191)',
+    (tester) async {
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+      final travel = TravelViewModel.fromDomain(
+        _buildNotReadyTravel(
+          travelStatus: TravelStatus.itineraryCreated,
+          prepared: true,
+          itineraryDraftPending: true,
+        ),
       );
       final l10n = await AppLocalizations.delegate.load(const Locale('en'));
 
