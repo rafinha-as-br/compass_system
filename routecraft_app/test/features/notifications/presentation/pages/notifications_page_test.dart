@@ -25,6 +25,28 @@ Widget _wrap(Widget child) {
   );
 }
 
+class _CountingNotificationRepository implements NotificationRepository {
+  _CountingNotificationRepository(this.items);
+
+  final List<TravelNotification> items;
+  var calls = 0;
+
+  @override
+  Future<Result<(List<TravelNotification>, bool)>> getNotifications({required int page, required int size}) async {
+    calls++;
+    return Result.success((items, false));
+  }
+
+  @override
+  Future<Result<int>> getUnreadCount() async => throw UnimplementedError();
+
+  @override
+  Future<Result<void>> markAsRead(String id) async => throw UnimplementedError();
+
+  @override
+  Future<Result<void>> markAllAsRead() async => throw UnimplementedError();
+}
+
 void main() {
   testWidgets('shows an empty state when there are no notifications', (tester) async {
     await tester.pumpWidget(_wrap(NotificationsPage(
@@ -157,6 +179,26 @@ void main() {
     expect(controller.state.notifications.single.read, isTrue);
     expect(find.text('Could not open this trip.'), findsOneWidget);
   });
+
+  for (final (name, items, anchor) in [
+    ('the list', [TravelNotification(id: 'n1', travelId: 't1', type: TravelNotificationType.itineraryPublished, createdAt: DateTime.now())], 'Your itinerary was published'),
+    ('the empty state', <TravelNotification>[], 'No notifications yet.'),
+  ]) {
+    testWidgets('pulling down on $name re-fetches the notifications (pull-to-refresh)', (tester) async {
+      final repository = _CountingNotificationRepository(items);
+      final controller = NotificationsController(notificationUseCases: NotificationUseCases(repository));
+      await tester.pumpWidget(_wrap(NotificationsPage(controller: controller)));
+      await tester.pumpAndSettle();
+      expect(repository.calls, 1);
+
+      await tester.fling(find.text(anchor), const Offset(0, 400), 1000);
+      await tester.pump();
+      expect(find.byType(RefreshProgressIndicator), findsOneWidget);
+      await tester.pumpAndSettle();
+
+      expect(repository.calls, 2);
+    });
+  }
 }
 
 class _FakeNotificationRepository implements NotificationRepository {

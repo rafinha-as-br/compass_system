@@ -54,6 +54,13 @@ class _NotificationsView extends StatelessWidget {
         // to this route), instead of asserting.
         title: Text(l10n.notificationsTitle),
         actions: [
+          IconButton(
+            tooltip: l10n.notificationsRefresh,
+            onPressed: state.isLoading ? null : controller.reload,
+            icon: const Icon(Icons.refresh),
+            color: appBarForeground,
+            disabledColor: appBarForeground.withValues(alpha: 0.5),
+          ),
           TextButton(
             onPressed: hasUnread ? controller.markAllRead : null,
             style: TextButton.styleFrom(

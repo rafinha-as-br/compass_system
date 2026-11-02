@@ -82,6 +82,13 @@ class NotificationsController extends ChangeNotifier {
   /// Re-runs the initial fetch — the retry action on the network-error state.
   Future<void> retry() => _load();
 
+  /// Manual refresh button: re-fetches the list and the sidebar's unread
+  /// badge (separate controller, reached through [onReadStateChanged]).
+  Future<void> reload() async {
+    await _load();
+    onReadStateChanged?.call();
+  }
+
   /// Fetches the next page and appends it — called by the list as the user
   /// scrolls near the bottom.
   Future<void> loadMore() async {

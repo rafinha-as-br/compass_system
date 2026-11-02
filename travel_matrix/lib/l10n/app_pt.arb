@@ -375,6 +375,7 @@
   "notificationsBellTooltip": "Notificações",
   "notificationsTitle": "Notificações",
   "notificationsMarkAllRead": "Marcar todas como lidas",
+  "notificationsRefresh": "Atualizar",
   "notificationsEmptyTitle": "Nenhuma notificação por aqui",
   "notificationsEmptyMessage": "Quando um cliente criar ou editar uma rota, o aviso aparece aqui.",
   "failedToLoadNotifications": "Não foi possível carregar suas notificações agora. Tente novamente mais tarde.",
