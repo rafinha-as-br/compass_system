@@ -5,6 +5,7 @@ import 'package:travel_matrix/features/travels/presentation/models/view_models/t
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/travel_segment/airplane_form_widget.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/models/place_suggestion.dart';
+import 'package:travel_matrix/shared/widgets/places_autocomplete_field.dart';
 
 Widget _wrap(Widget child) => MaterialApp(
       localizationsDelegates: const [
@@ -29,46 +30,48 @@ AirplaneViewModel _airplane() {
 }
 
 void main() {
-  testWidgets('selecting a departure airport suggestion emits its coordinate', (tester) async {
+  testWidgets('airport fields are plain text and never query the places service', (tester) async {
     AirplaneViewModel? emitted;
 
     await tester.pumpWidget(_wrap(AirplaneForm(
       airplaneViewModel: _airplane(),
       onChanged: (v) => emitted = v,
-      fetchSuggestions: (query) async => const [
-        PlaceSuggestion(text: 'Aeroporto de Guarulhos', coordinate: PlaceCoordinate(-23.43, -46.47)),
-      ],
     )));
 
     // Order: flightNumber(0), flightCompany(1), flightDate(2, date picker
     // TextField), departureGate(3), departureAirport(4), arrivalAirport(5).
-    final departureField = find.byType(TextField).at(4);
-    await tester.enterText(departureField, 'Guaru');
+    await tester.enterText(find.byType(TextField).at(4), 'Aeroporto de Guarulhos');
     await tester.pump(const Duration(milliseconds: 400));
     await tester.pumpAndSettle();
 
-    await tester.tap(find.text('Aeroporto de Guarulhos'));
-    await tester.pump();
-
+    expect(find.byType(PlacesAutocompleteField), findsNothing);
+    expect(find.byType(ListTile), findsNothing);
     expect(emitted, isNotNull);
     expect(emitted!.departureAirport, 'Aeroporto de Guarulhos');
-    expect(emitted!.departureAirportCoordinate, const PlaceCoordinate(-23.43, -46.47));
+    expect(emitted!.departureAirportCoordinate, isNull);
   });
 
   testWidgets('typing free text over the arrival airport clears its coordinate', (tester) async {
     AirplaneViewModel? emitted;
 
     await tester.pumpWidget(_wrap(AirplaneForm(
-      airplaneViewModel: _airplane(),
+      airplaneViewModel: TransportViewModel.newAirplane(
+        flightNumber: 'AZ123',
+        flightCompany: 'Azul',
+        flightDate: DateTime(2026, 10, 1),
+        departureGate: 'A1',
+        departureAirport: 'GRU',
+        arrivalAirport: 'LIS',
+        arrivalAirportCoordinate: const PlaceCoordinate(38.77, -9.13),
+      ) as AirplaneViewModel,
       onChanged: (v) => emitted = v,
-      fetchSuggestions: (query) async => const [],
     )));
 
-    final arrivalField = find.byType(TextField).at(5);
-    await tester.enterText(arrivalField, 'Aeroporto digitado à mão');
+    await tester.enterText(find.byType(TextField).at(5), 'Aeroporto digitado à mão');
     await tester.pump();
 
     expect(emitted, isNotNull);
+    expect(emitted!.arrivalAirport, 'Aeroporto digitado à mão');
     expect(emitted!.arrivalAirportCoordinate, isNull);
   });
 }
