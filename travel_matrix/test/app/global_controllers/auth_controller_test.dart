@@ -75,4 +75,133 @@ void main() {
       expect(controller.agentDisplayName, '');
     });
   });
+
+  group('AuthController session validation (CPS-190)', () {
+    const agent = {'id': '1', 'name': 'Carlos', 'email': 'c@compass.com'};
+
+    Map<String, dynamic> ok() => {'status': 'success', 'data': agent, 'message': null};
+
+    Map<String, dynamic> failed(int code) =>
+        {'status': 'error', 'data': null, 'message': 'x', 'statusCode': code};
+
+    Future<String?> storedToken() => AuthStorageService.instance.getToken();
+
+    setUp(() async {
+      await AuthStorageService.instance.saveToken('stored-token');
+    });
+
+    test('a valid token reopens the session with the agent data loaded', () async {
+      String? sentToken;
+      final controller = AuthController(fetchAuthenticatedUser: (token) async {
+        sentToken = token;
+        return ok();
+      });
+
+      await controller.initialize();
+
+      expect(sentToken, 'stored-token');
+      expect(controller.isAuthenticated, isTrue);
+      expect(controller.userName, 'Carlos');
+      expect(controller.hasConnectionError, isFalse);
+      expect(await storedToken(), 'stored-token');
+    });
+
+    for (final code in [401, 403]) {
+      test('a token refused with $code ends the session and removes the token', () async {
+        final controller = AuthController(fetchAuthenticatedUser: (_) async => failed(code));
+
+        await controller.initialize();
+
+        expect(controller.isAuthenticated, isFalse);
+        expect(controller.userData, isNull);
+        expect(controller.hasConnectionError, isFalse);
+        expect(await storedToken(), isNull);
+      });
+    }
+
+    test('an unreachable API keeps the token but exposes no agent data', () async {
+      final controller = AuthController(fetchAuthenticatedUser: (_) async => throw Exception('offline'));
+
+      await controller.initialize();
+
+      expect(controller.hasConnectionError, isTrue);
+      expect(controller.userData, isNull);
+      expect(await storedToken(), 'stored-token');
+    });
+
+    test('a server error is not a refusal: the session and token are kept', () async {
+      final controller = AuthController(fetchAuthenticatedUser: (_) async => failed(500));
+
+      await controller.initialize();
+
+      expect(controller.hasConnectionError, isTrue);
+      expect(await storedToken(), 'stored-token');
+    });
+
+    test('a 403 flagged as PASSWORD_CHANGE_REQUIRED does not drop the session', () async {
+      late AuthController controller;
+      controller = AuthController(fetchAuthenticatedUser: (_) async {
+        controller.requirePasswordChange();
+        return failed(403);
+      });
+
+      await controller.initialize();
+
+      expect(controller.mustChangePassword, isTrue);
+      expect(await storedToken(), 'stored-token');
+    });
+
+    test('retrySession enters logged in with the agent data once the API is back', () async {
+      var apiUp = false;
+      final controller = AuthController(
+        fetchAuthenticatedUser: (_) async => apiUp ? ok() : throw Exception('offline'),
+      );
+      await controller.initialize();
+      expect(controller.hasConnectionError, isTrue);
+
+      apiUp = true;
+      await controller.retrySession();
+
+      expect(controller.hasConnectionError, isFalse);
+      expect(controller.userName, 'Carlos');
+      expect(await storedToken(), 'stored-token');
+    });
+
+    test('retrySession stays on the error while the API is still down and flags the retry', () async {
+      final controller = AuthController(fetchAuthenticatedUser: (_) async => throw Exception('offline'));
+      await controller.initialize();
+      final states = <bool>[];
+      controller.addListener(() => states.add(controller.isRetryingSession));
+
+      await controller.retrySession();
+
+      expect(states, [true, false]);
+      expect(controller.hasConnectionError, isTrue);
+    });
+
+    test('retrySession after a token refusal goes to login', () async {
+      var refused = false;
+      final controller = AuthController(
+        fetchAuthenticatedUser: (_) async => refused ? failed(401) : throw Exception('offline'),
+      );
+      await controller.initialize();
+
+      refused = true;
+      await controller.retrySession();
+
+      expect(controller.isAuthenticated, isFalse);
+      expect(controller.hasConnectionError, isFalse);
+      expect(await storedToken(), isNull);
+    });
+
+    test('logout clears the connection error', () async {
+      final controller = AuthController(fetchAuthenticatedUser: (_) async => throw Exception('offline'));
+      await controller.initialize();
+
+      await controller.logout();
+
+      expect(controller.hasConnectionError, isFalse);
+      expect(controller.isAuthenticated, isFalse);
+    });
+  });
 }

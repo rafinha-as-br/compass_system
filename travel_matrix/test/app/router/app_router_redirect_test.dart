@@ -5,11 +5,13 @@ import 'package:travel_matrix/app/router/app_routes.dart';
 String? _redirect({
   required bool isAuth,
   bool mustChangePassword = false,
+  bool connectionError = false,
   required String location,
 }) {
   return AppRouter.redirectFor(
     isAuth: isAuth,
     mustChangePassword: mustChangePassword,
+    connectionError: connectionError,
     location: location,
   );
 }
@@ -50,6 +52,34 @@ void main() {
 
     test('after the change, the agent leaves the change-password screen', () {
       expect(_redirect(isAuth: true, location: AppRoutes.changePassword), AppRoutes.dashboard);
+    });
+
+    test('a session whose agent data could not load is locked to the connection-error screen', () {
+      for (final location in [
+        AppRoutes.landing,
+        AppRoutes.dashboard,
+        AppRoutes.travels,
+        AppRoutes.account,
+        AppRoutes.changePassword,
+      ]) {
+        expect(
+          _redirect(isAuth: true, connectionError: true, location: location),
+          AppRoutes.connectionError,
+          reason: location,
+        );
+      }
+      expect(
+        _redirect(isAuth: true, connectionError: true, location: AppRoutes.connectionError),
+        isNull,
+      );
+    });
+
+    test('once the retry succeeds, the agent leaves the connection-error screen', () {
+      expect(_redirect(isAuth: true, location: AppRoutes.connectionError), AppRoutes.dashboard);
+    });
+
+    test('without a session the connection-error screen goes to the landing page', () {
+      expect(_redirect(isAuth: false, location: AppRoutes.connectionError), AppRoutes.landing);
     });
   });
 }

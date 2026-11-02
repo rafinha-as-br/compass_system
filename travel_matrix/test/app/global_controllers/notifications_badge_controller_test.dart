@@ -73,6 +73,21 @@ void main() {
     verifyNever(() => useCases.getUnreadCount());
   });
 
+  test('onAuthChanged does not hit the server while the session has a connection error', () async {
+    final useCases = _MockNotificationUseCases();
+    when(() => useCases.getUnreadCount()).thenAnswer((_) async => const Result.success(4));
+    final controller = NotificationsBadgeController(useCases: useCases);
+    addTearDown(controller.dispose);
+    await AuthStorageService.instance.saveToken('stored-token');
+    final auth = AuthController(fetchAuthenticatedUser: (_) async => throw Exception('offline'));
+    await auth.initialize();
+
+    controller.onAuthChanged(auth);
+    await pumpEventQueue();
+
+    verifyNever(() => useCases.getUnreadCount());
+  });
+
   group('keeps the count fresh while signed in (no push needed)', () {
     late _MockNotificationUseCases useCases;
     late ValueNotifier<int> navigation;
