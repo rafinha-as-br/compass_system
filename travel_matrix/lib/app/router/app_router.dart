@@ -5,6 +5,7 @@ import 'package:travel_matrix/app/router/app_routes.dart';
 import 'package:travel_matrix/app/router/private_shell.dart';
 import 'package:travel_matrix/app/router/public_shell.dart';
 import 'package:travel_matrix/features/account/presentation/pages/change_password_page.dart';
+import 'package:travel_matrix/features/auth/presentation/pages/connection_error_page.dart';
 import 'package:travel_matrix/features/notifications/presentation/pages/notifications_page.dart';
 
 class AppRouter {
@@ -27,6 +28,10 @@ class AppRouter {
         builder: (context, state) => const ChangePasswordPage(),
       ),
       GoRoute(
+        path: AppRoutes.connectionError,
+        builder: (context, state) => const ConnectionErrorPage(),
+      ),
+      GoRoute(
         path: AppRoutes.notifications,
         builder: (context, state) => const NotificationsPage(),
       ),
@@ -37,6 +42,7 @@ class AppRouter {
     return redirectFor(
       isAuth: _authController.isAuthenticated,
       mustChangePassword: _authController.mustChangePassword,
+      connectionError: _authController.hasConnectionError,
       location: state.matchedLocation,
     );
   }
@@ -46,16 +52,22 @@ class AppRouter {
   static String? redirectFor({
     required bool isAuth,
     required bool mustChangePassword,
+    bool connectionError = false,
     required String location,
   }) {
     // Treat any route that is exactly '/' as public.
     final isOnPublic = location == AppRoutes.landing;
     final isOnChangePassword = location == AppRoutes.changePassword;
+    final isOnConnectionError = location == AppRoutes.connectionError;
 
     if (!isAuth) return isOnPublic ? null : AppRoutes.landing;
+    // A stored token whose agent data couldn't load (API unreachable) keeps
+    // the session but shows no authenticated screen until a retry succeeds
+    // (CPS-190).
+    if (connectionError) return isOnConnectionError ? null : AppRoutes.connectionError;
     // A pending agent is locked to the change-password screen (CPS-197).
     if (mustChangePassword) return isOnChangePassword ? null : AppRoutes.changePassword;
-    if (isOnPublic || isOnChangePassword) return AppRoutes.dashboard;
+    if (isOnPublic || isOnChangePassword || isOnConnectionError) return AppRoutes.dashboard;
     return null;
   }
 }

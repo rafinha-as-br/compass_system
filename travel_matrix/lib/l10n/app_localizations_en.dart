@@ -1296,4 +1296,11 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get agentCreatedFirstLoginNote =>
       'The agent will be asked to change this password on first sign-in.';
+
+  @override
+  String get connectionErrorTitle => 'Can\'t reach the server';
+
+  @override
+  String get connectionErrorBody =>
+      'We couldn\'t load your data right now. Your session was kept; check your connection and try again.';
 }

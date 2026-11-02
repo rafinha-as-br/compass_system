@@ -111,7 +111,10 @@ class CompassService {
       final response = await _userApiClient.getUser(token);
       return {'status': 'success', 'data': response, 'message': null};
     } on ApiException catch (e) {
-      return {'status': 'error', 'data': null, 'message': e.message};
+      // statusCode lets the session check tell a rejected token (401/403)
+      // from an API that is just failing; a network failure is not an
+      // ApiException and propagates to the caller instead.
+      return {'status': 'error', 'data': null, 'message': e.message, 'statusCode': e.statusCode};
     }
   }
 

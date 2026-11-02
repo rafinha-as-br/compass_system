@@ -446,5 +446,7 @@
   "passwordMinLengthValidation": "Use pelo menos 8 caracteres",
   "passwordsDoNotMatchValidation": "As senhas não coincidem",
   "passwordChangedSuccess": "Senha atualizada",
-  "agentCreatedFirstLoginNote": "O agente trocará esta senha no primeiro acesso."
+  "agentCreatedFirstLoginNote": "O agente trocará esta senha no primeiro acesso.",
+  "connectionErrorTitle": "Sem conexão com o servidor",
+  "connectionErrorBody": "Não foi possível carregar seus dados agora. Sua sessão foi mantida; verifique sua conexão e tente novamente."
 }

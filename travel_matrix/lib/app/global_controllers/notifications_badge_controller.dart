@@ -62,7 +62,9 @@ class NotificationsBadgeController extends ChangeNotifier with WidgetsBindingObs
   /// different account signing in on the same tab never briefly shows the
   /// previous agent's count.
   void onAuthChanged(AuthController auth) {
-    _signedIn = auth.isAuthenticated;
+    // No polling while the session's agent data couldn't load (CPS-190): the
+    // API is unreachable and the connection-error screen is up.
+    _signedIn = auth.isAuthenticated && !auth.hasConnectionError;
     if (_signedIn) {
       refresh();
       _startPolling();

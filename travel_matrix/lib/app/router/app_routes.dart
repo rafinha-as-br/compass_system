@@ -7,6 +7,10 @@ abstract class AppRoutes {
   /// pending agent reaches no other screen (CPS-197).
   static const changePassword = '/change-password';
 
+  /// Private — shown instead of any authenticated screen while the stored
+  /// session's agent data can't be loaded (API unreachable, CPS-190).
+  static const connectionError = '/connection-error';
+
   /// Private — shell branches
   static const dashboard = '/dashboard';
   static const travels = '/travels';

@@ -2497,6 +2497,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The agent will be asked to change this password on first sign-in.'**
   String get agentCreatedFirstLoginNote;
+
+  /// No description provided for @connectionErrorTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Can\'t reach the server'**
+  String get connectionErrorTitle;
+
+  /// No description provided for @connectionErrorBody.
+  ///
+  /// In en, this message translates to:
+  /// **'We couldn\'t load your data right now. Your session was kept; check your connection and try again.'**
+  String get connectionErrorBody;
 }
 
 class _AppLocalizationsDelegate

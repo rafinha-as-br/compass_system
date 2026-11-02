@@ -1310,4 +1310,11 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get agentCreatedFirstLoginNote =>
       'O agente trocará esta senha no primeiro acesso.';
+
+  @override
+  String get connectionErrorTitle => 'Sem conexão com o servidor';
+
+  @override
+  String get connectionErrorBody =>
+      'Não foi possível carregar seus dados agora. Sua sessão foi mantida; verifique sua conexão e tente novamente.';
 }
