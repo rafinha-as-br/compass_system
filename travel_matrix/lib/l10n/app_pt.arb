@@ -446,5 +446,22 @@
   "passwordMinLengthValidation": "Use pelo menos 8 caracteres",
   "passwordsDoNotMatchValidation": "As senhas não coincidem",
   "passwordChangedSuccess": "Senha atualizada",
-  "agentCreatedFirstLoginNote": "O agente trocará esta senha no primeiro acesso."
+  "agentCreatedFirstLoginNote": "O agente trocará esta senha no primeiro acesso.",
+  "timelineProblemConflictTitle": "Conflito de datas",
+  "timelineProblemConflictDescription": "As datas se sobrepõem entre o fim de \"{firstStep}\" ({firstDate}) e o início de \"{secondStep}\" ({secondDate}).",
+  "@timelineProblemConflictDescription": {"placeholders": {"firstStep": {"type": "String"}, "firstDate": {"type": "String"}, "secondStep": {"type": "String"}, "secondDate": {"type": "String"}}},
+  "timelineProblemEmptyGapTitle": "Lacuna entre steps",
+  "timelineProblemEmptyGapDescription": "Há uma lacuna grande entre o fim de \"{firstStep}\" ({firstDate}) e o início de \"{secondStep}\" ({secondDate}).",
+  "@timelineProblemEmptyGapDescription": {"placeholders": {"firstStep": {"type": "String"}, "firstDate": {"type": "String"}, "secondStep": {"type": "String"}, "secondDate": {"type": "String"}}},
+  "timelineProblemChronologicalOrderTitle": "Steps fora de ordem",
+  "timelineProblemChronologicalOrderDescription": "As datas de \"{firstStep}\" e \"{secondStep}\" não seguem a ordem dos steps. Reordene os steps ou ajuste as datas.",
+  "@timelineProblemChronologicalOrderDescription": {"placeholders": {"firstStep": {"type": "String"}, "secondStep": {"type": "String"}}},
+  "timelineProblemInvalidDateTitle": "Datas inválidas",
+  "timelineProblemInvalidDateDescription": "A data de início de \"{step}\" é posterior à data de fim. Ajuste as datas.",
+  "@timelineProblemInvalidDateDescription": {"placeholders": {"step": {"type": "String"}}},
+  "timelineProblemOutsideStepPeriodTitle": "Data fora do período do step",
+  "timelineProblemFlightOutsideStepPeriodDescription": "A data do voo ({flightDate}) está fora do período do step ({stepStart} a {stepEnd}). Ajuste a data do voo ou o período do step.",
+  "@timelineProblemFlightOutsideStepPeriodDescription": {"placeholders": {"flightDate": {"type": "String"}, "stepStart": {"type": "String"}, "stepEnd": {"type": "String"}}},
+  "timelineProblemContentOutsideStepPeriodDescription": "As datas dos detalhes deste step ({contentStart} a {contentEnd}) estão fora do período do step ({stepStart} a {stepEnd}). Ajuste as datas ou o período do step.",
+  "@timelineProblemContentOutsideStepPeriodDescription": {"placeholders": {"contentStart": {"type": "String"}, "contentEnd": {"type": "String"}, "stepStart": {"type": "String"}, "stepEnd": {"type": "String"}}}
 }

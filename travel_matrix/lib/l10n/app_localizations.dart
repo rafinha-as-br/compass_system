@@ -2497,6 +2497,94 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'The agent will be asked to change this password on first sign-in.'**
   String get agentCreatedFirstLoginNote;
+
+  /// No description provided for @timelineProblemConflictTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Date conflict'**
+  String get timelineProblemConflictTitle;
+
+  /// No description provided for @timelineProblemConflictDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'Dates overlap between the end of \"{firstStep}\" ({firstDate}) and the start of \"{secondStep}\" ({secondDate}).'**
+  String timelineProblemConflictDescription(
+    String firstStep,
+    String firstDate,
+    String secondStep,
+    String secondDate,
+  );
+
+  /// No description provided for @timelineProblemEmptyGapTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Gap between steps'**
+  String get timelineProblemEmptyGapTitle;
+
+  /// No description provided for @timelineProblemEmptyGapDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'There is a large gap between the end of \"{firstStep}\" ({firstDate}) and the start of \"{secondStep}\" ({secondDate}).'**
+  String timelineProblemEmptyGapDescription(
+    String firstStep,
+    String firstDate,
+    String secondStep,
+    String secondDate,
+  );
+
+  /// No description provided for @timelineProblemChronologicalOrderTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Steps out of order'**
+  String get timelineProblemChronologicalOrderTitle;
+
+  /// No description provided for @timelineProblemChronologicalOrderDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The dates of \"{firstStep}\" and \"{secondStep}\" do not follow the order of the steps. Reorder the steps or adjust their dates.'**
+  String timelineProblemChronologicalOrderDescription(
+    String firstStep,
+    String secondStep,
+  );
+
+  /// No description provided for @timelineProblemInvalidDateTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid dates'**
+  String get timelineProblemInvalidDateTitle;
+
+  /// No description provided for @timelineProblemInvalidDateDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The start date of \"{step}\" is after its end date. Adjust the dates.'**
+  String timelineProblemInvalidDateDescription(String step);
+
+  /// No description provided for @timelineProblemOutsideStepPeriodTitle.
+  ///
+  /// In en, this message translates to:
+  /// **'Date outside the step period'**
+  String get timelineProblemOutsideStepPeriodTitle;
+
+  /// No description provided for @timelineProblemFlightOutsideStepPeriodDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The flight date ({flightDate}) is outside the step period ({stepStart} to {stepEnd}). Adjust the flight date or the step period.'**
+  String timelineProblemFlightOutsideStepPeriodDescription(
+    String flightDate,
+    String stepStart,
+    String stepEnd,
+  );
+
+  /// No description provided for @timelineProblemContentOutsideStepPeriodDescription.
+  ///
+  /// In en, this message translates to:
+  /// **'The dates of this step\'s details ({contentStart} to {contentEnd}) are outside the step period ({stepStart} to {stepEnd}). Adjust the dates or the step period.'**
+  String timelineProblemContentOutsideStepPeriodDescription(
+    String contentStart,
+    String contentEnd,
+    String stepStart,
+    String stepEnd,
+  );
 }
 
 class _AppLocalizationsDelegate
