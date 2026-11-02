@@ -143,7 +143,7 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
         newTransport = TransportViewModel.newAirplane(
           flightNumber: '',
           flightCompany: '',
-          flightDate: DateTime.now(),
+          flightDate: widget.segment.startDate,
           departureGate: '',
           departureAirport: '',
           arrivalAirport: '',
@@ -155,7 +155,7 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
           travelNumber: '',
           travelCompany: '',
           departureGate: '',
-          departureDateTime: DateTime.now(),
+          departureDateTime: widget.segment.startDate,
           busStationName: '',
           description: '',
           details: null,
@@ -167,8 +167,8 @@ class _TravelSegmentFormWidgetState extends State<TravelSegmentFormWidget> {
           vehicleModelName: '',
           vehicleLicensePlate: '',
           companyName: '',
-          checkInDate: DateTime.now(),
-          checkOutDate: DateTime.now(),
+          checkInDate: widget.segment.startDate,
+          checkOutDate: widget.segment.startDate,
         );
         break;
     }

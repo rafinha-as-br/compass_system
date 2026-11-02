@@ -14,7 +14,7 @@ class StepsListPanel extends StatelessWidget {
   /// Select [step] callback method
   final void Function(int index) onSelectStep;
   /// Add [step] callback method
-  final void Function({required ItineraryStepViewModel newStep}) addStep;
+  final void Function() addNewStep;
   /// Reorder [steps] callback method
   final void Function(int oldIndex, int newIndex) onReorder;
   /// Delete [step] callback method
@@ -25,7 +25,7 @@ class StepsListPanel extends StatelessWidget {
     required this.steps,
     required this.selectedIndex,
     required this.onSelectStep,
-    required this.addStep,
+    required this.addNewStep,
     required this.onReorder,
     required this.onDeleteStep,
   });
@@ -85,16 +85,7 @@ class StepsListPanel extends StatelessWidget {
 
           // Add step button
           ElevatedButton(
-            onPressed: (){
-              // add a placeholder step, guarantees that the title is not empty
-              addStep(
-                newStep: ItineraryStepViewModel.newPlaceHolder(
-                  position: StepPosition.middle,
-                  title: l10n.newStepDefaultTitle(stepsList.length + 1),
-                  description: l10n.newStepDefaultDescription,
-                )
-              );
-            },
+            onPressed: addNewStep,
             child: Text(l10n.addStep),
           ),
 
