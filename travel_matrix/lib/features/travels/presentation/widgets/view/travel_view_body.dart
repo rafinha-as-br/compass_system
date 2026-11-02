@@ -18,8 +18,9 @@ class TravelViewBody extends StatelessWidget {
 
   final TravelViewModel travel;
 
-  /// Forwarded to [ParticipantsViewTab] — called after a successful
-  /// add/remove so the header count and this tab's list stay in sync.
+  /// Forwarded to [ParticipantsViewTab] and [RouteViewTab] — called after a
+  /// successful add/remove or observation edit so the header count and the
+  /// tabs' content stay in sync.
   final ValueChanged<TravelViewModel>? onTravelUpdated;
 
   @override
@@ -29,7 +30,7 @@ class TravelViewBody extends StatelessWidget {
       child: TabBarView(
         children: [
           OverviewViewTab(travel: travel),
-          RouteViewTab(travel: travel),
+          RouteViewTab(travel: travel, onTravelUpdated: onTravelUpdated),
           ItineraryViewTab(travel: travel),
           ParticipantsViewTab(travel: travel, onTravelUpdated: onTravelUpdated),
         ],

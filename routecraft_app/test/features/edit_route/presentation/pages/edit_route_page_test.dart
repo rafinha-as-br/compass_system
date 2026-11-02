@@ -136,6 +136,19 @@ void main() {
     expect(find.textContaining('PENDING CHANGE'), findsNothing);
   });
 
+  testWidgets('a saved interest has an editable observation that counts as a pending change', (tester) async {
+    await tester.pumpWidget(_wrap(_travel(TravelStatus.routeCreated)));
+    expect(find.textContaining('PENDING CHANGE'), findsNothing);
+
+    await tester.enterText(find.widgetWithText(TextField, 'Point note (optional)').first, 'Chegar cedo');
+    await tester.pump();
+
+    expect(find.textContaining('1 PENDING CHANGE'), findsOneWidget);
+    expect(find.textContaining('point notes updated'), findsOneWidget);
+    final submitButton = tester.widget<ElevatedButton>(find.widgetWithText(ElevatedButton, 'Send changes'));
+    expect(submitButton.onPressed, isNotNull);
+  });
+
   testWidgets('submitting successfully shows the success screen', (tester) async {
     final repository = _FakeRouteRepository()..nextUpdateResult = Result.success(_originalRoute());
     await tester.pumpWidget(_wrap(_travel(TravelStatus.routeCreated), repository: repository));

@@ -195,12 +195,13 @@ class RouteCreationController extends ChangeNotifier {
   // Step 4 — interests (optional: always valid to continue).
   final List<InterestPoint> interestPoints = [];
 
-  void addInterestPoint(String name, String description, {PlaceCoordinate? coordinate}) {
+  void addInterestPoint(String name, String description, {String observation = '', PlaceCoordinate? coordinate}) {
     interestPoints.add(InterestPoint(
       domainId: const Uuid().v4(),
       backEndId: null,
       name: name,
       description: description,
+      observation: observation,
       coordinate: coordinate,
     ));
     notifyListeners();

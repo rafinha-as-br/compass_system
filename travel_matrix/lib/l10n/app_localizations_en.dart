@@ -718,6 +718,19 @@ class AppLocalizationsEn extends AppLocalizations {
       'Could not update participants. Please try again.';
 
   @override
+  String get interestObservationLabel => 'Note';
+
+  @override
+  String get interestObservationAddButton => '+ Add note';
+
+  @override
+  String get interestObservationFieldLabel => 'Point note';
+
+  @override
+  String get failedToUpdateInterestObservation =>
+      'Could not save the note. Please try again.';
+
+  @override
   String participantAgeYears(String age) {
     return '$age years old';
   }

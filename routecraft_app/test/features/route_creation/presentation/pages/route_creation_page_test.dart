@@ -148,6 +148,7 @@ void main() {
 
     // Step 4 — interests (optional, skip straight through).
     expect(find.text('STEP 4 OF 5'), findsOneWidget);
+    await tester.ensureVisible(find.text('NEXT'));
     await tester.tap(find.text('NEXT'));
     await tester.pumpAndSettle();
 

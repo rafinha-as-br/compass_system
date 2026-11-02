@@ -119,12 +119,16 @@ class InterestPointDTO {
   /// Description of the place for the interest point
   final String description;
 
+  /// Free-text note about the point; empty when none
+  final String observation;
+
   final PlaceCoordinate? coordinate;
 
   InterestPointDTO({
     required this.id,
     required this.name,
     required this.description,
+    this.observation = '',
     this.coordinate,
   });
 
@@ -134,6 +138,7 @@ class InterestPointDTO {
       CommonApiFields.id: id,
       InterestPointApiFields.name: name,
       InterestPointApiFields.description: description,
+      InterestPointApiFields.observation: observation,
       InterestPointApiFields.coordinate: coordinate?.toJson(),
     };
   }
@@ -144,6 +149,7 @@ class InterestPointDTO {
       id: json[CommonApiFields.id]?.toString(),
       name: json[InterestPointApiFields.name]?.toString() ?? '',
       description: json[InterestPointApiFields.description]?.toString() ?? '',
+      observation: json[InterestPointApiFields.observation]?.toString() ?? '',
       coordinate: PlaceCoordinate.tryFromJson(json[InterestPointApiFields.coordinate]),
     );
   }
@@ -155,6 +161,7 @@ class InterestPointDTO {
       backEndId: id,
       name: name,
       description: description,
+      observation: observation,
       coordinate: coordinate,
     );
   }
@@ -165,6 +172,7 @@ class InterestPointDTO {
       id: interestPoint.backEndId,
       name: interestPoint.name,
       description: interestPoint.description,
+      observation: interestPoint.observation,
       coordinate: interestPoint.coordinate,
     );
   }

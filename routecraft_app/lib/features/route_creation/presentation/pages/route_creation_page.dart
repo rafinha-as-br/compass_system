@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:routecraft_app/features/route_creation/presentation/controllers/route_creation_controller.dart';
 import 'package:routecraft_app/features/travels/domain/entities/person.dart';
+import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/models/place_suggestion.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
@@ -288,6 +289,7 @@ class _InterestsStep extends StatefulWidget {
 
 class _InterestsStepState extends State<_InterestsStep> {
   final _descriptionController = TextEditingController();
+  final _observationController = TextEditingController();
   String _interestName = '';
   PlaceCoordinate? _interestCoordinate;
   // Forces PlacesAutocompleteField to remount (fresh, empty internal state)
@@ -297,14 +299,21 @@ class _InterestsStepState extends State<_InterestsStep> {
   @override
   void dispose() {
     _descriptionController.dispose();
+    _observationController.dispose();
     super.dispose();
   }
 
   void _addInterest(RouteCreationController controller) {
     final name = _interestName.trim();
     if (name.isEmpty) return;
-    controller.addInterestPoint(name, _descriptionController.text.trim(), coordinate: _interestCoordinate);
+    controller.addInterestPoint(
+      name,
+      _descriptionController.text.trim(),
+      observation: _observationController.text.trim(),
+      coordinate: _interestCoordinate,
+    );
     _descriptionController.clear();
+    _observationController.clear();
     setState(() {
       _interestName = '';
       _interestCoordinate = null;
@@ -348,6 +357,13 @@ class _InterestsStepState extends State<_InterestsStep> {
           ),
           const SizedBox(height: 16),
           AppTextField(controller: _descriptionController, labelText: l10n.routeCreationInterestDescriptionLabel),
+          const SizedBox(height: 16),
+          AppTextField(
+            controller: _observationController,
+            labelText: l10n.routeCreationInterestObservationLabel,
+            maxLines: 2,
+            maxLength: InterestPoint.observationMaxLength,
+          ),
           const SizedBox(height: 8),
           Align(
             alignment: Alignment.centerRight,

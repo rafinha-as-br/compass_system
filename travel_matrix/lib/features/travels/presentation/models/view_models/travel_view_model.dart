@@ -210,6 +210,7 @@ class TravelViewModel{
   /// piece back from the API, not the whole [Travel].
   TravelViewModel copyWith({
     List<PersonViewModel>? participants,
+    RoutePlanViewModel? route,
   }) {
     return TravelViewModel(
       backEndId: backEndId,
@@ -217,7 +218,7 @@ class TravelViewModel{
       clientName: clientName,
       travelTitle: travelTitle,
       travelStatus: travelStatus,
-      route: route,
+      route: route ?? this.route,
       participants: participants ?? this.participants,
       events: events,
       itinerary: itinerary,

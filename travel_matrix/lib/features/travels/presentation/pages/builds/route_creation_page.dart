@@ -117,6 +117,7 @@ class _RouteCreationPageState extends State<RouteCreationPage> {
           'id': p.backEndId ?? p.localId,
           'name': p.name,
           'description': p.description,
+          InterestPointApiFields.observation: p.observation,
           InterestPointApiFields.coordinate: p.coordinate?.toJson(),
         };
       }).toList(),

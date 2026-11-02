@@ -831,4 +831,12 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get placesAutocompleteUnavailable =>
       'Busca indisponível — texto livre aceito';
+
+  @override
+  String get routeCreationInterestObservationLabel =>
+      'Observação do ponto (opcional)';
+
+  @override
+  String get editRouteDiffObservationsUpdated =>
+      'observações de pontos atualizadas';
 }

@@ -197,6 +197,60 @@ void main() {
     });
   });
 
+  group('EditRouteController interest point observations (CPS-180)', () {
+    test('editing a saved point observation counts as a change and is described', () {
+      final controller = _controller();
+
+      controller.updateInterestObservation('i1', 'Chegar cedo');
+
+      expect(controller.hasChanges, isTrue);
+      expect(controller.interestsObservationChangedCount, 1);
+      expect(editRouteChangeDescriptions(controller, _l10n, 'en'), contains(_l10n.editRouteDiffObservationsUpdated));
+    });
+
+    test('restoring the saved text (ignoring whitespace) cancels the change', () {
+      final controller = _controller();
+
+      controller.updateInterestObservation('i1', 'Chegar cedo');
+      controller.updateInterestObservation('i1', '   ');
+
+      expect(controller.hasChanges, isFalse);
+    });
+
+    test('a point marked for removal does not count as an edited observation', () {
+      final controller = _controller();
+
+      controller.updateInterestObservation('i1', 'Chegar cedo');
+      controller.markForRemoval('i1');
+
+      expect(controller.interestsObservationChangedCount, 0);
+    });
+
+    test('submit sends the trimmed observation along with the points', () async {
+      final repository = _FakeRouteRepository()..nextUpdateResult = Result.success(_originalRoute());
+      final controller = _controller(repository: repository);
+
+      controller.updateInterestObservation('i1', '  Chegar cedo  ');
+      controller.addInterestPoint('Alfama', '', observation: 'Subir a pé');
+      await controller.submit();
+
+      final sent = repository.capturedRoutePlan!.interestsList;
+      expect(sent.firstWhere((p) => p.domainId == 'i1').observation, 'Chegar cedo');
+      expect(sent.firstWhere((p) => p.name == 'Alfama').observation, 'Subir a pé');
+    });
+
+    test('an edit made only to the observation still submits the route', () async {
+      final repository = _FakeRouteRepository()..nextUpdateResult = Result.success(_originalRoute());
+      final controller = _controller(repository: repository);
+
+      controller.updateInterestObservation('i2', 'Levar casaco');
+      await controller.submit();
+
+      expect(controller.state.isSuccess, isTrue);
+      expect(repository.capturedRoutePlan, isNotNull);
+    });
+  });
+
   group('EditRouteController participants', () {
     test('isClientParticipant identifies the entry matching clientName', () {
       final controller = _controller();

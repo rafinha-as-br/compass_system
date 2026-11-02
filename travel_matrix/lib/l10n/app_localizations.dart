@@ -1442,6 +1442,30 @@ abstract class AppLocalizations {
   /// **'Could not update participants. Please try again.'**
   String get failedToUpdateParticipants;
 
+  /// No description provided for @interestObservationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Note'**
+  String get interestObservationLabel;
+
+  /// No description provided for @interestObservationAddButton.
+  ///
+  /// In en, this message translates to:
+  /// **'+ Add note'**
+  String get interestObservationAddButton;
+
+  /// No description provided for @interestObservationFieldLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Point note'**
+  String get interestObservationFieldLabel;
+
+  /// No description provided for @failedToUpdateInterestObservation.
+  ///
+  /// In en, this message translates to:
+  /// **'Could not save the note. Please try again.'**
+  String get failedToUpdateInterestObservation;
+
   /// No description provided for @participantAgeYears.
   ///
   /// In en, this message translates to:

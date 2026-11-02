@@ -11,6 +11,7 @@ import 'package:travel_matrix/core/constants/api_fields.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
 import 'package:travel_matrix/shared/models/place_suggestion.dart';
 
+import '../models/view_models/route_view_model.dart';
 import '../models/view_models/travel_view_model.dart';
 
 class TravelsState {
@@ -128,6 +129,8 @@ class TravelsController extends ChangeNotifier {
               backEndId: isTemporaryId ? null : rawId,
               name: map['name']?.toString() ?? '',
               description: map['description']?.toString() ?? '',
+              // Carried through so re-saving the route never erases the point's observation (CPS-180).
+              observation: map[InterestPointApiFields.observation]?.toString() ?? '',
               coordinate: PlaceCoordinate.tryFromJson(map[InterestPointApiFields.coordinate]),
             );
           })
@@ -153,6 +156,28 @@ class TravelsController extends ChangeNotifier {
       return false;
     } catch (_) {
       return false;
+    }
+  }
+
+  /// Sets the observation of the interest point [pointId] in [currentRoute]
+  /// and upserts the whole route (`PUT /travels/{id}/route`, the same call the
+  /// route form uses). Blank [observation] clears it. Returns the saved route,
+  /// or null on failure — the caller updates its own already-open
+  /// [TravelViewModel], as with the participants methods below.
+  Future<RoutePlanViewModel?> changeInterestObservation(
+    String travelId,
+    RoutePlanViewModel currentRoute,
+    String pointId,
+    String observation,
+  ) async {
+    try {
+      final updatedRoute = currentRoute.withInterestObservation(pointId, observation);
+      final result = await _routeUseCases.updateRoute(travelId, updatedRoute.toDomain());
+      if (!result.isSuccess) return null;
+      await fetchTravels();
+      return RoutePlanViewModel.fromDomain(result.data ?? updatedRoute.toDomain());
+    } catch (_) {
+      return null;
     }
   }
 
