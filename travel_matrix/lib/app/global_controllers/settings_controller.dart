@@ -5,7 +5,7 @@ class SettingsController extends ChangeNotifier {
   final SettingsStorageService _storage = SettingsStorageService.instance;
 
   ThemeMode _themeMode = ThemeMode.light;
-  Locale _locale = const Locale('en');
+  Locale _locale = const Locale('pt');
 
   ThemeMode get themeMode => _themeMode;
   Locale get locale => _locale;

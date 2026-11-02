@@ -10,7 +10,7 @@ void main() {
   });
 
   group('SettingsController.initialize', () {
-    test('falls back to light theme and English locale when nothing was saved', () async {
+    test('falls back to light theme and Portuguese locale when nothing was saved', () async {
       SharedPreferences.setMockInitialValues({});
       await SettingsStorageService.init();
       final controller = SettingsController();
@@ -18,18 +18,18 @@ void main() {
       await controller.initialize();
 
       expect(controller.themeMode, ThemeMode.light);
-      expect(controller.locale.languageCode, 'en');
+      expect(controller.locale.languageCode, 'pt');
     });
 
-    test('loads the persisted theme mode and locale', () async {
-      SharedPreferences.setMockInitialValues({'theme_mode': 'dark', 'locale': 'pt'});
+    test('loads the persisted theme mode and locale, which win over the default', () async {
+      SharedPreferences.setMockInitialValues({'theme_mode': 'dark', 'locale': 'en'});
       await SettingsStorageService.init();
       final controller = SettingsController();
 
       await controller.initialize();
 
       expect(controller.themeMode, ThemeMode.dark);
-      expect(controller.locale.languageCode, 'pt');
+      expect(controller.locale.languageCode, 'en');
     });
   });
 
@@ -55,18 +55,18 @@ void main() {
   });
 
   group('SettingsController.toggleLanguage', () {
-    test('flips between en and pt, and persists the new value', () async {
+    test('flips between pt and en, and persists the new value', () async {
       SharedPreferences.setMockInitialValues({});
       final storage = await SettingsStorageService.init();
       final controller = SettingsController();
 
       controller.toggleLanguage();
-      expect(controller.locale.languageCode, 'pt');
-
-      controller.toggleLanguage();
       expect(controller.locale.languageCode, 'en');
 
-      expect(await storage.getLocale(), 'en');
+      controller.toggleLanguage();
+      expect(controller.locale.languageCode, 'pt');
+
+      expect(await storage.getLocale(), 'pt');
     });
   });
 }
