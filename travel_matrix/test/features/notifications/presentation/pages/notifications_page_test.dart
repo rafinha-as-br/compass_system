@@ -215,4 +215,17 @@ void main() {
     expect(landedOn, 'travel-42');
     verify(() => useCases.markAsRead('n1')).called(1);
   });
+
+  testWidgets('the refresh button re-fetches the notifications', (tester) async {
+    final useCases = _MockNotificationUseCases();
+    when(() => useCases.getNotifications(page: 0, size: 20)).thenAnswer((_) async => const Result.success((<TravelNotification>[], false)));
+    final controller = NotificationsController(notificationUseCases: useCases);
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byTooltip('Refresh'));
+    await tester.pumpAndSettle();
+
+    verify(() => useCases.getNotifications(page: 0, size: 20)).called(2);
+  });
 }

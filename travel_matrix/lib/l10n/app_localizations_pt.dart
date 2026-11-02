@@ -1092,6 +1092,9 @@ class AppLocalizationsPt extends AppLocalizations {
   String get notificationsMarkAllRead => 'Marcar todas como lidas';
 
   @override
+  String get notificationsRefresh => 'Atualizar';
+
+  @override
   String get notificationsEmptyTitle => 'Nenhuma notificação por aqui';
 
   @override

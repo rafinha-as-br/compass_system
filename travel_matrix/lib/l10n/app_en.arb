@@ -436,6 +436,7 @@
   "notificationsBellTooltip": "Notifications",
   "notificationsTitle": "Notifications",
   "notificationsMarkAllRead": "Mark all as read",
+  "notificationsRefresh": "Refresh",
   "notificationsEmptyTitle": "No notifications yet",
   "notificationsEmptyMessage": "When a client creates or edits a route, the alert shows up here.",
   "failedToLoadNotifications": "Unable to load your notifications right now. Please try again later.",

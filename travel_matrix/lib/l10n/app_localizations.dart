@@ -2120,6 +2120,12 @@ abstract class AppLocalizations {
   /// **'Mark all as read'**
   String get notificationsMarkAllRead;
 
+  /// No description provided for @notificationsRefresh.
+  ///
+  /// In en, this message translates to:
+  /// **'Refresh'**
+  String get notificationsRefresh;
+
   /// No description provided for @notificationsEmptyTitle.
   ///
   /// In en, this message translates to:

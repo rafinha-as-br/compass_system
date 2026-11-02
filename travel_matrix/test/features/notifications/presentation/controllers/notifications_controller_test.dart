@@ -130,4 +130,19 @@ void main() {
     await controller.markAllRead();
     expect(callbackCount, 2);
   });
+
+  test('reload re-fetches the list and refreshes the sidebar badge', () async {
+    when(() => useCases.getNotifications(page: 0, size: 20))
+        .thenAnswer((_) async => Result.success(([_notification('1')], false)));
+    var badgeRefreshes = 0;
+    final controller = NotificationsController(notificationUseCases: useCases, onReadStateChanged: () => badgeRefreshes++);
+    await pumpEventQueue();
+
+    when(() => useCases.getNotifications(page: 0, size: 20))
+        .thenAnswer((_) async => Result.success(([_notification('1'), _notification('2')], false)));
+    await controller.reload();
+
+    expect(controller.state.notifications, hasLength(2));
+    expect(badgeRefreshes, 1);
+  });
 }

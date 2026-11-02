@@ -81,9 +81,11 @@ class NotificationsController extends ChangeNotifier {
     };
   }
 
-  Future<void> _load() async {
-    _state = const NotificationsState(isLoading: true);
-    notifyListeners();
+  Future<void> _load({bool showLoading = true}) async {
+    if (showLoading) {
+      _state = const NotificationsState(isLoading: true);
+      notifyListeners();
+    }
 
     final result = await _notificationUseCases.getNotifications(page: 0, size: _pageSize);
     switch (result) {
@@ -91,6 +93,8 @@ class NotificationsController extends ChangeNotifier {
         final (items, hasMore) = data;
         _state = NotificationsState(isLoading: false, notifications: items, hasMore: hasMore);
       case Failure<(List<TravelNotification>, bool)>():
+        // A failed pull-to-refresh keeps the list already on screen.
+        if (!showLoading && _state.notifications.isNotEmpty) return;
         _state = const NotificationsState(isLoading: false, isError: true);
     }
     notifyListeners();
@@ -98,6 +102,10 @@ class NotificationsController extends ChangeNotifier {
 
   /// Re-runs the initial fetch — the retry action on the network-error state.
   Future<void> retry() => _load();
+
+  /// Pull-to-refresh: re-fetches the first page without swapping the screen
+  /// for the loading spinner, so the `RefreshIndicator` stays mounted.
+  Future<void> reload() => _load(showLoading: false);
 
   /// Fetches the next page and appends it — called by the list as the user
   /// scrolls near the bottom.

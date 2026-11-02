@@ -249,5 +249,26 @@ void main() {
 
       await expectLater(pending, completes);
     });
+
+    test('reload re-fetches without going through the loading state, and a failed reload keeps the list', () async {
+      final repository = _FakeNotificationRepository()..nextPage = (_) => Result.success(([_notification('1')], false));
+      final controller = NotificationsController(
+        notificationUseCases: NotificationUseCases(repository),
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      repository.nextPage = (_) => Result.success(([_notification('1'), _notification('2')], false));
+      var wasLoading = false;
+      controller.addListener(() => wasLoading = wasLoading || controller.state.isLoading);
+      await controller.reload();
+      expect(wasLoading, isFalse);
+      expect(controller.state.notifications, hasLength(2));
+
+      repository.nextPage = (_) => const Result.failure('Erro de rede');
+      await controller.reload();
+      expect(controller.state.isError, isFalse);
+      expect(controller.state.notifications, hasLength(2));
+    });
   });
 }
