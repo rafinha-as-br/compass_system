@@ -49,6 +49,13 @@ class InterestPoint {
   /// Description of the place for the interest point
   final String description;
 
+  /// Free-text note about this point (CPS-180), written by the client and
+  /// editable by the agent; empty when none.
+  final String observation;
+
+  /// Same cap the API enforces for [observation].
+  static const int observationMaxLength = 500;
+
   /// Chosen via the places autocomplete (CPS-154) — null for points added
   /// before CPS-144, or free text without a picked suggestion.
   final PlaceCoordinate? coordinate;
@@ -58,6 +65,7 @@ class InterestPoint {
     required this.backEndId,
     required this.name,
     required this.description,
+    this.observation = '',
     this.coordinate,
   });
 

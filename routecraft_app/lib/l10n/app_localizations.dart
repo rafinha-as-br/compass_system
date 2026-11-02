@@ -1495,6 +1495,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search unavailable — free text accepted'**
   String get placesAutocompleteUnavailable;
+
+  /// No description provided for @routeCreationInterestObservationLabel.
+  ///
+  /// In en, this message translates to:
+  /// **'Point note (optional)'**
+  String get routeCreationInterestObservationLabel;
+
+  /// No description provided for @editRouteDiffObservationsUpdated.
+  ///
+  /// In en, this message translates to:
+  /// **'point notes updated'**
+  String get editRouteDiffObservationsUpdated;
 }
 
 class _AppLocalizationsDelegate

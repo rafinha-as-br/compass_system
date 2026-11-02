@@ -313,6 +313,19 @@ void main() {
       expect(controller.interestPoints.single.backEndId, isNull);
     });
 
+    test('addInterestPoint carries the observation, empty when none is given', () {
+      final controller = RouteCreationController(
+        travelUseCases: TravelUseCases(_FakeTravelRepository()),
+        getClientName: () async => null,
+      );
+
+      controller.addInterestPoint('Torre', '', observation: 'Chegar cedo');
+      controller.addInterestPoint('Alfama', '');
+
+      expect(controller.interestPoints[0].observation, 'Chegar cedo');
+      expect(controller.interestPoints[1].observation, '');
+    });
+
     test('removeInterestPoint removes the point with the matching id', () {
       final controller = RouteCreationController(
         travelUseCases: TravelUseCases(_FakeTravelRepository()),

@@ -258,5 +258,7 @@
   "travelStatusTravelFinished": "Concluída",
 
   "placesAutocompleteNoResults": "Nenhum lugar encontrado",
-  "placesAutocompleteUnavailable": "Busca indisponível — texto livre aceito"
+  "placesAutocompleteUnavailable": "Busca indisponível — texto livre aceito",
+  "routeCreationInterestObservationLabel": "Observação do ponto (opcional)",
+  "editRouteDiffObservationsUpdated": "observações de pontos atualizadas"
 }

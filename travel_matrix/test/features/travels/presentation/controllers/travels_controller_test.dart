@@ -10,6 +10,7 @@ import 'package:travel_matrix/features/travels/domain/usecases/crud_participants
 import 'package:travel_matrix/features/travels/domain/usecases/crud_route.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/crud_travel.dart';
 import 'package:travel_matrix/features/travels/presentation/controllers/travels_controller.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/route_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/travel_view_model.dart';
 
 class _MockCrudTravelUseCases extends Mock implements CrudTravelUseCases {}
@@ -182,6 +183,84 @@ void main() {
       });
 
       expect(success, isFalse);
+      verify(() => travelUseCases.readAll()).called(1); // only the initial fetch
+    });
+  });
+
+  group('updateRoute keeps interest point observations (CPS-180)', () {
+    test('carries each point observation from the form map into the RoutePlan', () async {
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+      await pumpEventQueue();
+      when(() => routeUseCases.updateRoute(any(), any()))
+          .thenAnswer((_) async => Result.success(_buildTravel('1').routePlan));
+
+      await controller.updateRoute('1', {
+        'startDate': '2026-02-01T00:00:00.000',
+        'endDate': '2026-02-10T00:00:00.000',
+        'startLocation': 'SP',
+        'destination': 'Rome',
+        'interestsList': [
+          {'id': 'interest-9', 'name': 'Old POI', 'description': '', 'observation': 'Chegar cedo'},
+          {'id': 'poi_1', 'name': 'New POI', 'description': ''},
+        ],
+      });
+
+      final captured = verify(() => routeUseCases.updateRoute('1', captureAny())).captured.single as RoutePlan;
+      expect(captured.interestsList[0].observation, 'Chegar cedo');
+      expect(captured.interestsList[1].observation, '');
+    });
+  });
+
+  group('changeInterestObservation', () {
+    RoutePlanViewModel routeWithPoints() => RoutePlanViewModel.fromDomain(
+          RoutePlan(
+            domainId: 'route-1',
+            backEndId: 'route-1',
+            startDate: DateTime(2026, 1, 1),
+            endDate: DateTime(2026, 1, 10),
+            startLocation: 'SP',
+            destination: 'Paris',
+            interestsList: [
+              InterestPoint(domainId: 'a', backEndId: 'a', name: 'Torre', description: '', observation: 'Antiga'),
+              InterestPoint(domainId: 'b', backEndId: 'b', name: 'Louvre', description: ''),
+            ],
+          ),
+        );
+
+    test('upserts the whole route with only that point changed, trimmed, and refetches', () async {
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+      await pumpEventQueue();
+      when(() => routeUseCases.updateRoute(any(), any())).thenAnswer((invocation) async =>
+          Result.success(invocation.positionalArguments[1] as RoutePlan));
+
+      final saved = await controller.changeInterestObservation('1', routeWithPoints(), 'b', '  Reservar  ');
+
+      final sent = verify(() => routeUseCases.updateRoute('1', captureAny())).captured.single as RoutePlan;
+      expect(sent.interestsList.map((p) => p.observation), ['Antiga', 'Reservar']);
+      expect(saved!.interests.map((p) => p.observation), ['Antiga', 'Reservar']);
+      verify(() => travelUseCases.readAll()).called(2); // initial fetch + refetch
+    });
+
+    test('a blank observation clears the point', () async {
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+      await pumpEventQueue();
+      when(() => routeUseCases.updateRoute(any(), any())).thenAnswer((invocation) async =>
+          Result.success(invocation.positionalArguments[1] as RoutePlan));
+
+      final saved = await controller.changeInterestObservation('1', routeWithPoints(), 'a', '   ');
+
+      expect(saved!.interests.first.observation, '');
+    });
+
+    test('returns null without refetching when the update fails', () async {
+      final controller = TravelsController(travelUseCases: travelUseCases, routeUseCases: routeUseCases, participantsUseCases: participantsUseCases);
+      await pumpEventQueue();
+      when(() => routeUseCases.updateRoute(any(), any()))
+          .thenAnswer((_) async => const Result.failure('Network error'));
+
+      final saved = await controller.changeInterestObservation('1', routeWithPoints(), 'a', 'Nova');
+
+      expect(saved, isNull);
       verify(() => travelUseCases.readAll()).called(1); // only the initial fetch
     });
   });

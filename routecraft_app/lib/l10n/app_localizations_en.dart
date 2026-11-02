@@ -830,4 +830,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get placesAutocompleteUnavailable =>
       'Search unavailable — free text accepted';
+
+  @override
+  String get routeCreationInterestObservationLabel => 'Point note (optional)';
+
+  @override
+  String get editRouteDiffObservationsUpdated => 'point notes updated';
 }

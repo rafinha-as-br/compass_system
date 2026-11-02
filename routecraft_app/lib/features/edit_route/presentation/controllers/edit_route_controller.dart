@@ -135,14 +135,24 @@ class EditRouteController extends ChangeNotifier {
     notifyListeners();
   }
 
-  void addInterestPoint(String name, String description, {PlaceCoordinate? coordinate}) {
+  void addInterestPoint(String name, String description, {String observation = '', PlaceCoordinate? coordinate}) {
     interestPoints.add(InterestPoint(
       domainId: const Uuid().v4(),
       backEndId: null,
       name: name,
       description: description,
+      observation: observation,
       coordinate: coordinate,
     ));
+    notifyListeners();
+  }
+
+  /// Edits the observation of a point already on the form (saved or added
+  /// this session). The text is trimmed when submitted, not while typing.
+  void updateInterestObservation(String domainId, String observation) {
+    final index = interestPoints.indexWhere((p) => p.domainId == domainId);
+    if (index == -1) return;
+    interestPoints[index] = interestPoints[index].copyWithObservation(observation);
     notifyListeners();
   }
 
@@ -274,21 +284,34 @@ class EditRouteController extends ChangeNotifier {
   int get interestsRemovedCount =>
       _pendingRemovalIds.where((id) => original.interestsList.any((p) => p.domainId == id)).length;
 
+  /// Saved points kept on the form whose observation differs from the saved
+  /// one (ignoring surrounding whitespace). Points marked for removal don't
+  /// count, and neither do points added this session — those already count as
+  /// "added".
+  int get interestsObservationChangedCount => interestPoints.where((p) {
+        if (_pendingRemovalIds.contains(p.domainId)) return false;
+        final saved = original.interestsList.where((o) => o.domainId == p.domainId);
+        return saved.isNotEmpty && saved.first.observation.trim() != p.observation.trim();
+      }).length;
+
   bool get _routeChanged =>
       startDateChanged ||
       endDateChanged ||
       startLocationChanged ||
       destinationChanged ||
       interestsAddedCount > 0 ||
-      interestsRemovedCount > 0;
+      interestsRemovedCount > 0 ||
+      interestsObservationChangedCount > 0;
 
   bool get hasChanges => _routeChanged || participantsChanged;
 
   /// The interest points that would actually be submitted — added ones kept,
   /// pending-removal ones dropped. Used both for the request body and for
   /// [interestsAddedCount] logic elsewhere.
-  List<InterestPoint> get _submittedInterestPoints =>
-      interestPoints.where((p) => !_pendingRemovalIds.contains(p.domainId)).toList();
+  List<InterestPoint> get _submittedInterestPoints => interestPoints
+      .where((p) => !_pendingRemovalIds.contains(p.domainId))
+      .map((p) => p.copyWithObservation(p.observation.trim()))
+      .toList();
 
   /// Submits only what actually changed — route and participants are
   /// isolated endpoints, so an unchanged one is never called just because
@@ -374,6 +397,9 @@ List<String> editRouteChangeDescriptions(EditRouteController controller, AppLoca
   }
   if (controller.interestsRemovedCount > 0) {
     descriptions.add(l10n.editRouteDiffInterestsRemoved(controller.interestsRemovedCount));
+  }
+  if (controller.interestsObservationChangedCount > 0) {
+    descriptions.add(l10n.editRouteDiffObservationsUpdated);
   }
   if (controller.participantsAddedCount > 0) {
     descriptions.add(l10n.editRouteDiffParticipantsAdded(controller.participantsAddedCount));

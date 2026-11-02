@@ -86,15 +86,23 @@ class InterestPointDTO {
   final String? id;
   final String name;
   final String description;
+  final String observation;
   final PlaceCoordinate? coordinate;
 
-  InterestPointDTO({required this.id, required this.name, required this.description, this.coordinate});
+  InterestPointDTO({
+    required this.id,
+    required this.name,
+    required this.description,
+    this.observation = '',
+    this.coordinate,
+  });
 
   factory InterestPointDTO.fromJson(Map<String, dynamic> json) {
     return InterestPointDTO(
       id: json[InterestPointApiFields.id]?.toString(),
       name: json[InterestPointApiFields.name]?.toString() ?? '',
       description: json[InterestPointApiFields.description]?.toString() ?? '',
+      observation: json[InterestPointApiFields.observation]?.toString() ?? '',
       coordinate: PlaceCoordinate.tryFromJson(json[InterestPointApiFields.coordinate]),
     );
   }
@@ -104,12 +112,20 @@ class InterestPointDTO {
       InterestPointApiFields.id: id,
       InterestPointApiFields.name: name,
       InterestPointApiFields.description: description,
+      InterestPointApiFields.observation: observation,
       InterestPointApiFields.coordinate: coordinate?.toJson(),
     };
   }
 
   InterestPoint toDomain() {
-    return InterestPoint(domainId: const Uuid().v4(), backEndId: id, name: name, description: description, coordinate: coordinate);
+    return InterestPoint(
+      domainId: const Uuid().v4(),
+      backEndId: id,
+      name: name,
+      description: description,
+      observation: observation,
+      coordinate: coordinate,
+    );
   }
 
   factory InterestPointDTO.fromDomain(InterestPoint interestPoint) {
@@ -117,6 +133,7 @@ class InterestPointDTO {
       id: interestPoint.backEndId,
       name: interestPoint.name,
       description: interestPoint.description,
+      observation: interestPoint.observation,
       coordinate: interestPoint.coordinate,
     );
   }

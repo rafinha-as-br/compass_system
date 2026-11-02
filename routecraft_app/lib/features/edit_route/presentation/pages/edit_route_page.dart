@@ -247,6 +247,7 @@ class _InterestsSection extends StatefulWidget {
 
 class _InterestsSectionState extends State<_InterestsSection> {
   final _descriptionController = TextEditingController();
+  final _observationController = TextEditingController();
   String _interestName = '';
   PlaceCoordinate? _interestCoordinate;
   // Forces PlacesAutocompleteField to remount (fresh, empty internal state)
@@ -256,14 +257,21 @@ class _InterestsSectionState extends State<_InterestsSection> {
   @override
   void dispose() {
     _descriptionController.dispose();
+    _observationController.dispose();
     super.dispose();
   }
 
   void _addInterest(EditRouteController controller) {
     final name = _interestName.trim();
     if (name.isEmpty) return;
-    controller.addInterestPoint(name, _descriptionController.text.trim(), coordinate: _interestCoordinate);
+    controller.addInterestPoint(
+      name,
+      _descriptionController.text.trim(),
+      observation: _observationController.text.trim(),
+      coordinate: _interestCoordinate,
+    );
     _descriptionController.clear();
+    _observationController.clear();
     setState(() {
       _interestName = '';
       _interestCoordinate = null;
@@ -291,6 +299,7 @@ class _InterestsSectionState extends State<_InterestsSection> {
             pendingRemoval: controller.isPendingRemoval(point.domainId),
             onRemove: () => controller.markForRemoval(point.domainId),
             onUndo: () => controller.undoRemoval(point.domainId),
+            onObservationChanged: (text) => controller.updateInterestObservation(point.domainId, text),
           ),
         if (controller.interestPoints.isNotEmpty) const SizedBox(height: 16),
         PlacesAutocompleteField(
@@ -304,6 +313,13 @@ class _InterestsSectionState extends State<_InterestsSection> {
         ),
         const SizedBox(height: 16),
         AppTextField(controller: _descriptionController, labelText: l10n.routeCreationInterestDescriptionLabel),
+        const SizedBox(height: 16),
+        AppTextField(
+          controller: _observationController,
+          labelText: l10n.routeCreationInterestObservationLabel,
+          maxLines: 2,
+          maxLength: InterestPoint.observationMaxLength,
+        ),
         const SizedBox(height: 8),
         Align(
           alignment: Alignment.centerRight,
@@ -319,12 +335,19 @@ class _InterestsSectionState extends State<_InterestsSection> {
 }
 
 class _InterestRow extends StatelessWidget {
-  const _InterestRow({required this.point, required this.pendingRemoval, required this.onRemove, required this.onUndo});
+  const _InterestRow({
+    required this.point,
+    required this.pendingRemoval,
+    required this.onRemove,
+    required this.onUndo,
+    required this.onObservationChanged,
+  });
 
   final InterestPoint point;
   final bool pendingRemoval;
   final VoidCallback onRemove;
   final VoidCallback onUndo;
+  final ValueChanged<String> onObservationChanged;
 
   @override
   Widget build(BuildContext context) {
@@ -333,22 +356,71 @@ class _InterestRow extends StatelessWidget {
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 4),
-      child: Row(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Expanded(
-            child: Text(
-              point.name,
-              style: theme.textTheme.bodyLarge?.copyWith(
-                decoration: pendingRemoval ? TextDecoration.lineThrough : null,
-                color: pendingRemoval ? theme.colorScheme.onSurface.withValues(alpha: 0.4) : null,
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  point.name,
+                  style: theme.textTheme.bodyLarge?.copyWith(
+                    decoration: pendingRemoval ? TextDecoration.lineThrough : null,
+                    color: pendingRemoval ? theme.colorScheme.onSurface.withValues(alpha: 0.4) : null,
+                  ),
+                ),
               ),
-            ),
+              if (pendingRemoval)
+                TextButton(onPressed: onUndo, child: Text(l10n.editRouteUndoLink))
+              else
+                IconButton(onPressed: onRemove, icon: const Icon(Icons.close), tooltip: l10n.editRouteRemoveInterestTooltip),
+            ],
           ),
-          if (pendingRemoval)
-            TextButton(onPressed: onUndo, child: Text(l10n.editRouteUndoLink))
-          else
-            IconButton(onPressed: onRemove, icon: const Icon(Icons.close), tooltip: l10n.editRouteRemoveInterestTooltip),
+          if (!pendingRemoval)
+            _InterestObservationField(initialText: point.observation, onChanged: onObservationChanged),
         ],
+      ),
+    );
+  }
+}
+
+/// Edits one point's observation in place. Owns its controller so typing
+/// isn't reset when the controller rebuilds the list on every keystroke.
+class _InterestObservationField extends StatefulWidget {
+  const _InterestObservationField({required this.initialText, required this.onChanged});
+
+  final String initialText;
+  final ValueChanged<String> onChanged;
+
+  @override
+  State<_InterestObservationField> createState() => _InterestObservationFieldState();
+}
+
+class _InterestObservationFieldState extends State<_InterestObservationField> {
+  late final TextEditingController _controller = TextEditingController(text: widget.initialText);
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
+    return Padding(
+      padding: const EdgeInsets.only(top: 4, bottom: 8),
+      child: TextField(
+        controller: _controller,
+        onChanged: widget.onChanged,
+        maxLines: 2,
+        maxLength: InterestPoint.observationMaxLength,
+        decoration: InputDecoration(
+          labelText: l10n.routeCreationInterestObservationLabel,
+          border: const OutlineInputBorder(),
+          isDense: true,
+        ),
       ),
     );
   }

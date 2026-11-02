@@ -287,6 +287,10 @@
   },
   "retryButton": "Try again",
   "failedToUpdateParticipants": "Could not update participants. Please try again.",
+  "interestObservationLabel": "Note",
+  "interestObservationAddButton": "+ Add note",
+  "interestObservationFieldLabel": "Point note",
+  "failedToUpdateInterestObservation": "Could not save the note. Please try again.",
   "participantAgeYears": "{age} years old",
   "@participantAgeYears": {
     "placeholders": {

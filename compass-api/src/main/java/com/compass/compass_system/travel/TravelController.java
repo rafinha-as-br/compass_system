@@ -58,6 +58,21 @@ public class TravelController {
         }
     }
 
+    // Observation per interest point is capped (CPS-180); over the limit is a
+    // 400, not a silent cut, on every path that carries a RoutePlan.
+    private void assertObservationsWithinLimit(RoutePlan routePlan) {
+        if (routePlan == null || routePlan.getInterestPoints() == null) {
+            return;
+        }
+        for (InterestPoint point : routePlan.getInterestPoints()) {
+            String observation = point.getObservation();
+            if (observation != null && observation.length() > InterestPoint.OBSERVATION_MAX_LENGTH) {
+                throw new BusinessException("A observação de um ponto de interesse pode ter no máximo "
+                        + InterestPoint.OBSERVATION_MAX_LENGTH + " caracteres.");
+            }
+        }
+    }
+
     // ─── GET /travels ───────────────────────────────────────────────────────────
     // Returns all travels of the caller's company.
     @GetMapping
@@ -85,6 +100,7 @@ public class TravelController {
         // Company comes from the caller's token (client or agent), never from the body.
         Company company = companyScope.currentCompany();
         assertPeopleInCompany(travel, company.getId());
+        assertObservationsWithinLimit(travel.getRoutePlan());
         travel.setCompany(company);
         // A client-supplied id would make save() overwrite an existing travel (maybe another company's).
         travel.setId(null);
@@ -124,6 +140,7 @@ public class TravelController {
         if (incoming.isPrepared() && opt.get().getItinerary() == null) {
             return ResponseEntity.badRequest().build();
         }
+        assertObservationsWithinLimit(incoming.getRoutePlan());
 
         // Force the path-variable ID onto the entity so JPA knows this is an update.
         incoming.setId(id);
@@ -210,6 +227,8 @@ public class TravelController {
         if (opt.isEmpty()) {
             return ResponseEntity.notFound().build();
         }
+
+        assertObservationsWithinLimit(incoming);
 
         Travel travel = opt.get();
         boolean firstRoute = travel.getRoutePlan() == null;

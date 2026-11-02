@@ -724,6 +724,19 @@ class AppLocalizationsPt extends AppLocalizations {
       'Não foi possível atualizar os participantes. Tente novamente.';
 
   @override
+  String get interestObservationLabel => 'Observação';
+
+  @override
+  String get interestObservationAddButton => '+ Adicionar observação';
+
+  @override
+  String get interestObservationFieldLabel => 'Observação do ponto';
+
+  @override
+  String get failedToUpdateInterestObservation =>
+      'Não foi possível salvar a observação. Tente novamente.';
+
+  @override
   String participantAgeYears(String age) {
     return '$age anos';
   }

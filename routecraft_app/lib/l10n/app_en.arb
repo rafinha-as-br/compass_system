@@ -389,5 +389,7 @@
   "travelStatusTravelFinished": "Completed",
 
   "placesAutocompleteNoResults": "No places found",
-  "placesAutocompleteUnavailable": "Search unavailable — free text accepted"
+  "placesAutocompleteUnavailable": "Search unavailable — free text accepted",
+  "routeCreationInterestObservationLabel": "Point note (optional)",
+  "editRouteDiffObservationsUpdated": "point notes updated"
 }

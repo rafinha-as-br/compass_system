@@ -22,6 +22,7 @@ class AppTextField extends StatelessWidget {
     this.onFieldSubmitted,
     this.keyboardType,
     this.maxLines = 1,
+    this.maxLength,
   });
 
   final String labelText;
@@ -37,6 +38,9 @@ class AppTextField extends StatelessWidget {
   final TextInputType? keyboardType;
   final int maxLines;
 
+  /// Caps the typed or pasted text and shows a counter.
+  final int? maxLength;
+
   @override
   Widget build(BuildContext context) {
     return TextFormField(
@@ -48,6 +52,7 @@ class AppTextField extends StatelessWidget {
       onFieldSubmitted: onFieldSubmitted,
       keyboardType: keyboardType,
       maxLines: maxLines,
+      maxLength: maxLength,
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,

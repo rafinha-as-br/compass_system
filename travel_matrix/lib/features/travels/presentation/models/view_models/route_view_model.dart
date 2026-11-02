@@ -66,6 +66,23 @@ class RoutePlanViewModel{
   /// Provides the local ID for UI reference
   String get id => localId;
 
+  /// Same route with the observation of the point [pointId] replaced.
+  RoutePlanViewModel withInterestObservation(String pointId, String observation) {
+    return RoutePlanViewModel._(
+      backEndId: backEndId,
+      localId: localId,
+      startDate: startDate,
+      endDate: endDate,
+      start: start,
+      destination: destination,
+      interests: [
+        for (final point in interests) point.localId == pointId ? point.withObservation(observation) : point,
+      ],
+      startCoordinate: startCoordinate,
+      destinationCoordinate: destinationCoordinate,
+    );
+  }
+
   /// Converts [RoutePlanViewModel.startDate] to string format
   String get startString => startDate.toString();
   /// Converts [RoutePlanViewModel.startDate] to string format
@@ -95,6 +112,8 @@ class InterestPointViewModel{
   final String localId;
   final String name;
   final String description;
+  /// Free-text note about the point; empty when none
+  final String observation;
   final PlaceCoordinate? coordinate;
 
   InterestPointViewModel({
@@ -102,6 +121,7 @@ class InterestPointViewModel{
     required this.localId,
     required this.name,
     required this.description,
+    this.observation = '',
     this.coordinate,
   });
 
@@ -112,7 +132,20 @@ class InterestPointViewModel{
       localId: interestPoint.domainId,
       name: interestPoint.name,
       description: interestPoint.description,
+      observation: interestPoint.observation,
       coordinate: interestPoint.coordinate,
+    );
+  }
+
+  /// Same point carrying [observation] (blank clears it).
+  InterestPointViewModel withObservation(String observation) {
+    return InterestPointViewModel(
+      backEndId: backEndId,
+      localId: localId,
+      name: name,
+      description: description,
+      observation: observation.trim(),
+      coordinate: coordinate,
     );
   }
 
@@ -136,6 +169,7 @@ class InterestPointViewModel{
       backEndId: backEndId,
       name: name,
       description: description,
+      observation: observation,
       coordinate: coordinate,
     );
   }

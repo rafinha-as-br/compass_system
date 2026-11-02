@@ -114,6 +114,8 @@ static const String name = CommonApiFields.name;
 static const String description =
 CommonApiFields.description;
 
+static const String observation = 'observation';
+
 static const String coordinate = 'coordinate';
 }
 
