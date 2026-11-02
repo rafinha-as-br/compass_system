@@ -340,6 +340,9 @@ class _NavItem extends StatelessWidget {
 /// largura própria e usam [_defaultMenuWidth]. `crossAxisUnconstrained: false`
 /// é o que faz o painel visível ocupar a largura pedida — no padrão, o
 /// `minimumSize` só estica a caixa externa e o painel encolhe ao item mais largo.
+/// A largura vai em `fixedSize`, não em `minimumSize`/`maximumSize`: com
+/// `VisualDensity.compact` (padrão no web/desktop) o `MenuAnchor` desconta 8px
+/// do `minimumSize`, e o painel saía com 218px em vez de 226px.
 class _AccountMenu extends StatelessWidget {
   const _AccountMenu({
     required this.onGoToAccount,
@@ -370,8 +373,7 @@ class _AccountMenu extends StatelessWidget {
             side: BorderSide(color: theme.colorScheme.outlineVariant),
           ),
         ),
-        minimumSize: WidgetStatePropertyAll(Size(width, 0)),
-        maximumSize: WidgetStatePropertyAll(Size(width, double.infinity)),
+        fixedSize: WidgetStatePropertyAll(Size.fromWidth(width)),
         padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
       ),
       menuChildren: [

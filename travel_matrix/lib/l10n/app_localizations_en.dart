@@ -670,6 +670,29 @@ class AppLocalizationsEn extends AppLocalizations {
   String get participantAgeFieldLabel => 'Age';
 
   @override
+  String get participantAvatarFieldLabel => 'Character';
+
+  @override
+  String get changeParticipantAvatarTooltip => 'Change character';
+
+  @override
+  String get participantAvatarRandomHint => 'randomly picked, tap to change';
+
+  @override
+  String get participantNoteLabel => 'Note';
+
+  @override
+  String get participantNoteAddButton => '+ Add note';
+
+  @override
+  String get participantNoteFieldLabel => 'Note (free text)';
+
+  @override
+  String participantAvatarOptionSemantics(int index) {
+    return 'Character $index';
+  }
+
+  @override
   String get noParticipantsTitle => 'No participants yet';
 
   @override
@@ -740,11 +763,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get overviewParticipantsCaption => 'people on this trip';
-
-  @override
-  String overviewParticipantsMore(int count) {
-    return 'and $count more';
-  }
 
   @override
   String get overviewViewParticipantsAction => 'View participants →';

@@ -22,6 +22,7 @@ Future<GoRouter> _pumpShell(
   WidgetTester tester,
   AuthController auth, {
   Size size = const Size(1280, 800),
+  ThemeData? theme,
 }) async {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -55,6 +56,7 @@ Future<GoRouter> _pumpShell(
       ],
       child: MaterialApp.router(
         routerConfig: router,
+        theme: theme,
         localizationsDelegates: const [
           AppLocalizations.delegate,
           GlobalMaterialLocalizations.delegate,
@@ -144,6 +146,37 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(popupPanel(tester).width, 226);
+  });
+
+  // Web/desktop usa VisualDensity.compact (adaptativo); o MenuAnchor desconta 8px do minimumSize
+  // nesse caso, e o popup renderizava 218px em vez dos 226px do gatilho (CPS-187, QA no Chrome).
+  group('with VisualDensity.compact, as on web/desktop (CPS-187)', () {
+    final compact = ThemeData(visualDensity: VisualDensity.compact);
+
+    testWidgets('the sidebar popup still matches the trigger edges', (tester) async {
+      final auth = AuthController();
+      auth.debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+      await _pumpShell(tester, auth, theme: compact);
+      final row = tester.getRect(find.ancestor(of: find.text('Carlos Agent'), matching: find.byType(InkWell)).first);
+      await tester.tap(find.text('Carlos Agent'));
+      await tester.pumpAndSettle();
+
+      final panel = popupPanel(tester);
+      expect(panel.left, row.left);
+      expect(panel.right, row.right);
+    });
+
+    testWidgets('the avatar popup (rail) is still 226 wide', (tester) async {
+      final auth = AuthController();
+      auth.debugSetUserData({'id': 'agent-1', 'name': 'Carlos Agent', 'email': 'carlos@compass.com'});
+
+      await _pumpShell(tester, auth, size: const Size(800, 800), theme: compact);
+      await tester.tap(find.byTooltip('Carlos Agent'));
+      await tester.pumpAndSettle();
+
+      expect(popupPanel(tester).width, 226);
+    });
   });
 
   testWidgets('"Minha Conta" and "Configurações" navigate to /account and close the popup', (tester) async {

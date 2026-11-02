@@ -13,6 +13,8 @@ import 'package:routecraft_app/features/travels/domain/repositories/travel_repos
 import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/theme/app_theme.dart';
+import 'package:routecraft_app/shared/utils/participant_avatars.dart';
+import 'package:routecraft_app/shared/widgets/avatar_picker.dart';
 
 // PlacesAutocompleteField never hits the network in these tests — it always
 // resolves with no suggestions, so the locations step behaves as plain free
@@ -76,6 +78,37 @@ void main() {
 
     final enabledButton = tester.widget<ElevatedButton>(find.byType(ElevatedButton));
     expect(enabledButton.onPressed, isNotNull);
+  });
+
+  testWidgets('participants step: the client gets a character, the add form pre-selects one, and the avatar re-picks', (tester) async {
+    tester.view.physicalSize = const Size(1080, 3000);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.reset);
+
+    final controller = RouteCreationController(
+      travelUseCases: TravelUseCases(_FakeTravelRepository()),
+      getClientName: () async => 'Maria Silva',
+      placesApiClient: _noSuggestionsPlacesApiClient,
+      getToken: () async => 'test-token',
+    );
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pump(); // let the client auto-participant load
+    controller.editStep(4);
+    await tester.pumpAndSettle();
+
+    final client = controller.participants.single;
+    expect(isKnownParticipantAvatar(client.avatarIndex), isTrue);
+    expect(find.byType(AvatarPicker), findsOneWidget);
+    expect(find.textContaining('randomly picked, tap to change'), findsOneWidget);
+
+    await tester.tap(find.byKey(ValueKey('${client.domainId}-avatar')));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(of: find.byType(AlertDialog), matching: find.byKey(const Key('avatar_picker_option_2'))),
+    );
+    await tester.pumpAndSettle();
+
+    expect(controller.participants.single.avatarIndex, 2);
   });
 
   testWidgets('walks through all 5 steps to the review screen and back to edit', (tester) async {

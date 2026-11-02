@@ -600,6 +600,20 @@ class AppLocalizationsPt extends AppLocalizations {
   String get participantsSectionLabel => 'Participantes';
 
   @override
+  String get participantAvatarFieldLabel => 'Personagem';
+
+  @override
+  String get participantAvatarRandomHint => 'sorteado, toque para trocar';
+
+  @override
+  String participantAvatarOptionSemantics(int index) {
+    return 'Personagem $index';
+  }
+
+  @override
+  String get changeParticipantAvatarTooltip => 'Trocar personagem';
+
+  @override
   String get editRouteSubmitCta => 'Enviar alterações';
 
   @override
