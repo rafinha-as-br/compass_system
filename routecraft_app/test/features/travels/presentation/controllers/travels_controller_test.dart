@@ -131,5 +131,40 @@ void main() {
       expect(withoutTravels.hasNoResults, isFalse);
       expect(withoutTravels.isEmpty, isTrue);
     });
+
+    test('reload re-fetches without going through the loading state', () async {
+      final repository = _FakeTravelRepository()..nextResult = Result.success([_travel('Chapada', TravelStatus.travelFinished)]);
+      final controller = TravelsController(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      repository.nextResult = Result.success([
+        _travel('Chapada', TravelStatus.travelFinished),
+        _travel('Litoral Norte', TravelStatus.travelStarted),
+      ]);
+      var wasLoading = false;
+      controller.addListener(() => wasLoading = wasLoading || controller.state.isLoading);
+      await controller.reload();
+
+      expect(wasLoading, isFalse);
+      expect(controller.state.travels.map((t) => t.travelName), ['Chapada', 'Litoral Norte']);
+    });
+
+    test('a failed reload keeps the list already loaded', () async {
+      final repository = _FakeTravelRepository()..nextResult = Result.success([_travel('Chapada', TravelStatus.travelFinished)]);
+      final controller = TravelsController(
+        travelUseCases: TravelUseCases(repository),
+        getClientName: () async => 'Maria Silva',
+      );
+      await Future<void>.delayed(Duration.zero);
+
+      repository.nextResult = const Result.failure('Erro de rede');
+      await controller.reload();
+
+      expect(controller.state.isError, isFalse);
+      expect(controller.state.travels, hasLength(1));
+    });
   });
 }

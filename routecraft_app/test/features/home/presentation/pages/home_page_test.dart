@@ -15,6 +15,25 @@ import 'package:routecraft_app/shared/widgets/skeleton_block.dart';
 
 /// Fails once, then succeeds — models a transient network error recovering
 /// after the user taps retry.
+class _CountingRepository implements TravelRepository {
+  _CountingRepository(this.travels);
+
+  final List<Travel> travels;
+  var calls = 0;
+
+  @override
+  Future<Result<List<Travel>>> getTravelsForClient(String clientName) async {
+    calls++;
+    return Result.success(travels);
+  }
+
+  @override
+  Future<Result<Travel>> getTravel(String id) async => throw UnimplementedError();
+
+  @override
+  Future<Result<Travel>> createTravel(Travel travel) async => throw UnimplementedError();
+}
+
 class _FakeSuccessAfterFailureRepository implements TravelRepository {
   var _calls = 0;
 
@@ -315,4 +334,26 @@ void main() {
     expect(find.text('No trip in progress'), findsOneWidget);
     expect(find.text('Nova Rota'), findsNothing);
   });
+
+  for (final (name, travels) in [
+    ('with a trip in progress', [_travel('Litoral Norte', TravelStatus.travelStarted)]),
+    ('with no trip in progress', [_travel('Serra Gaúcha', TravelStatus.routeCreated)]),
+    ('with no travels at all', <Travel>[]),
+  ]) {
+    testWidgets('pulling down on Início $name re-fetches the travels (pull-to-refresh)', (tester) async {
+      final repository = _CountingRepository(travels);
+      final controller = HomeController(travelUseCases: TravelUseCases(repository), getClientName: () async => 'Rafaela Souza');
+      await tester.pumpWidget(_wrap(controller));
+      await tester.pumpAndSettle();
+      expect(repository.calls, 1);
+
+      await tester.fling(find.byType(CustomScrollView), const Offset(0, 400), 1000);
+      await tester.pump();
+      expect(find.byType(RefreshProgressIndicator), findsOneWidget);
+      await tester.pumpAndSettle();
+
+      expect(repository.calls, 2);
+      expect(find.byType(SkeletonBlock), findsNothing);
+    });
+  }
 }

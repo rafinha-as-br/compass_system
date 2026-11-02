@@ -44,23 +44,28 @@ class _HomeView extends StatelessWidget {
           : state.isError
               ? _HomeError(onRetry: () => context.read<HomeController>().retry())
               : SafeArea(
-                  child: Column(
-                    children: [
-                      if (state.isOffline) OfflineBanner(syncedAt: state.syncedAt!),
-                      _HomeHeader(clientName: state.clientName),
-                      Expanded(
-                        child: state.inProgress.isNotEmpty
-                            // Sorted ascending by start date (HomeController._group) — the one
-                            // that started first wins if more than one is in progress at once.
-                            ? _TravelSection(
-                                title: l10n.homeSectionInProgress,
-                                travels: [state.inProgress.first],
-                              )
-                            : state.isEmpty
-                                ? const _EmptyHome()
-                                : const _NoTripInProgress(),
-                      ),
-                    ],
+                  child: RefreshIndicator(
+                    onRefresh: context.read<HomeController>().reload,
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: [
+                        if (state.isOffline) SliverToBoxAdapter(child: OfflineBanner(syncedAt: state.syncedAt!)),
+                        SliverToBoxAdapter(child: _HomeHeader(clientName: state.clientName)),
+                        SliverFillRemaining(
+                          hasScrollBody: false,
+                          child: state.inProgress.isNotEmpty
+                              // Sorted ascending by start date (HomeController._group) — the one
+                              // that started first wins if more than one is in progress at once.
+                              ? _TravelSection(
+                                  title: l10n.homeSectionInProgress,
+                                  travels: [state.inProgress.first],
+                                )
+                              : state.isEmpty
+                                  ? const _EmptyHome()
+                                  : const _NoTripInProgress(),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
     );

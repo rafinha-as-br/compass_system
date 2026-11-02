@@ -86,6 +86,10 @@ class TravelsController extends ChangeNotifier {
   /// fetch on its own — callers must invoke this explicitly.
   Future<void> refresh() => _fetchData();
 
+  /// Pull-to-refresh: re-fetches without swapping the list for the loading
+  /// spinner, so the `RefreshIndicator` stays mounted until it completes.
+  Future<void> reload() => _fetchData(showLoading: false);
+
   /// Re-runs the fetch — the retry action on the network-error state.
   Future<void> retry() => _fetchData();
 
@@ -99,9 +103,11 @@ class TravelsController extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> _fetchData() async {
-    _state = TravelsState(isLoading: true, searchQuery: _state.searchQuery, statusFilter: _state.statusFilter);
-    notifyListeners();
+  Future<void> _fetchData({bool showLoading = true}) async {
+    if (showLoading) {
+      _state = TravelsState(isLoading: true, searchQuery: _state.searchQuery, statusFilter: _state.statusFilter);
+      notifyListeners();
+    }
 
     try {
       final clientName = await _getClientName();
@@ -122,6 +128,8 @@ class TravelsController extends ChangeNotifier {
             statusFilter: _state.statusFilter,
           );
         case Failure<List<Travel>>():
+          // A failed pull-to-refresh keeps the list already on screen.
+          if (!showLoading && _state.travels.isNotEmpty) return;
           _state = TravelsState(
             isLoading: false,
             isError: true,
