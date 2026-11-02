@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:go_router/go_router.dart';
 import 'package:mocktail/mocktail.dart';
 import 'package:provider/provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:travel_matrix/app/app_injector.dart';
 import 'package:travel_matrix/app/global_controllers/auth_controller.dart';
+import 'package:travel_matrix/features/travels/domain/entities/itinerary.dart';
 import 'package:travel_matrix/features/travels/domain/entities/route.dart';
 import 'package:travel_matrix/features/travels/domain/entities/travel.dart';
 import 'package:travel_matrix/features/travels/domain/repository/route_repository.dart';
@@ -21,12 +23,14 @@ class _MockTravelRepository extends Mock implements TravelRepository {}
 
 class _MockRouteRepository extends Mock implements RouteRepository {}
 
-Travel _travel(String id) => Travel(
+Travel _travel(String id, {bool withItinerary = false, bool prepared = false}) => Travel(
       domainId: id,
       backEndId: id,
       clientName: 'Maria Silva',
       travelName: 'Litoral Norte',
-      travelStatus: TravelStatus.routeCreated,
+      travelStatus: withItinerary ? TravelStatus.itineraryCreated : TravelStatus.routeCreated,
+      prepared: prepared,
+      itinerary: withItinerary ? Itinerary(domainId: 'it-$id', backEndId: 'it-$id', agentName: 'Ana', itinerarySteps: []) : null,
       routePlan: RoutePlan(
         domainId: 'route-$id',
         backEndId: 'route-$id',
@@ -150,5 +154,77 @@ void main() {
 
     expect(find.text('Unable to load travels right now. Please try again later.'), findsOneWidget);
     expect(find.textContaining('ClientException'), findsNothing);
+  });
+
+  testWidgets('chip says "Route Only" until the travel is prepared, then "Itinerary Ready"', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    var prepared = false;
+    when(() => travelRepository.getAllTravels())
+        .thenAnswer((_) async => Result.success([_travel('1', withItinerary: true, prepared: prepared)]));
+    final controller = TravelsController(
+      travelUseCases: CrudTravelUseCases(travelRepository),
+      routeUseCases: CrudRoute(routeRepository),
+    );
+
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpAndSettle();
+    expect(find.text('Route Only'), findsOneWidget);
+    expect(find.text('Itinerary Ready'), findsNothing);
+
+    prepared = true;
+    await controller.fetchTravels();
+    await tester.pumpAndSettle();
+    expect(find.text('Itinerary Ready'), findsOneWidget);
+  });
+
+  testWidgets('refetches the list when the user lands back on it from another route', (tester) async {
+    tester.view.physicalSize = const Size(1280, 900);
+    tester.view.devicePixelRatio = 1.0;
+    addTearDown(tester.view.resetPhysicalSize);
+    addTearDown(tester.view.resetDevicePixelRatio);
+
+    when(() => travelRepository.getAllTravels()).thenAnswer((_) async => Result.success([_travel('1')]));
+    final controller = TravelsController(
+      travelUseCases: CrudTravelUseCases(travelRepository),
+      routeUseCases: CrudRoute(routeRepository),
+    );
+    final router = GoRouter(
+      initialLocation: '/travels',
+      routes: [
+        GoRoute(
+          path: '/travels',
+          builder: (context, state) => Scaffold(body: TravelsDashboardPage(controller: controller)),
+          routes: [GoRoute(path: ':id', builder: (context, state) => const Scaffold(body: Text('view')))],
+        ),
+      ],
+    );
+
+    await tester.pumpWidget(MultiProvider(
+      providers: [ChangeNotifierProvider(create: (_) => AuthController())],
+      child: MaterialApp.router(
+        routerConfig: router,
+        localizationsDelegates: const [
+          AppLocalizations.delegate,
+          GlobalMaterialLocalizations.delegate,
+          GlobalWidgetsLocalizations.delegate,
+          GlobalCupertinoLocalizations.delegate,
+        ],
+        supportedLocales: AppLocalizations.supportedLocales,
+      ),
+    ));
+    await tester.pumpAndSettle();
+    verify(() => travelRepository.getAllTravels()).called(1);
+
+    router.go('/travels/1');
+    await tester.pumpAndSettle();
+    verifyNever(() => travelRepository.getAllTravels());
+
+    router.go('/travels');
+    await tester.pumpAndSettle();
+    verify(() => travelRepository.getAllTravels()).called(1);
   });
 }
