@@ -17,6 +17,8 @@ class ItineraryEditorController extends ChangeNotifier {
     required this.interestPoints,
     required List<ItineraryStepViewModel>? steps,
     required AppLocalizations l10n,
+    required this.tripStartDate,
+    required this.tripEndDate,
   }) : _l10n = l10n {
     // Null verificator to activate the first and last steps creation
     if (steps != null) {
@@ -29,6 +31,10 @@ class ItineraryEditorController extends ChangeNotifier {
 
   /// Localizations used to build default step titles/descriptions.
   final AppLocalizations _l10n;
+
+  /// Trip period: start/finish steps are born with it, and new steps never go past [tripEndDate].
+  final DateTime tripStartDate;
+  final DateTime tripEndDate;
 
   /// Public interests points list
   final List<InterestPointViewModel> interestPoints;
@@ -109,15 +115,44 @@ class ItineraryEditorController extends ChangeNotifier {
       position: StepPosition.start,
       title: _l10n.newStepDefaultTitle(1),
       description: _l10n.newStepDefaultDescription,
+      startDate: tripStartDate,
+      finishDate: tripStartDate,
     );
     final lastStep = ItineraryStepViewModel.newPlaceHolder(
       position: StepPosition.finish,
       title: _l10n.newStepDefaultTitle(2),
       description: _l10n.newStepDefaultDescription,
+      startDate: tripEndDate,
+      finishDate: tripEndDate,
     );
     addStep(newStep: firstStep);
     addStep(newStep: lastStep);
   }
+
+  /// Adds a placeholder middle step right before the finish step.
+  /// It starts when the previous step in the list finishes and lasts one day,
+  /// never going past [tripEndDate].
+  void addNewStep() {
+    final finishIndex = _stepsList.indexWhere(
+      (e) => e.position == StepPosition.finish,
+    );
+    final previous = _stepsList[
+        (finishIndex == -1 ? _stepsList.length : finishIndex) - 1];
+
+    final start = _capAtTripEnd(previous.finishDate);
+    addStep(
+      newStep: ItineraryStepViewModel.newPlaceHolder(
+        position: StepPosition.middle,
+        title: _l10n.newStepDefaultTitle(_stepsList.length + 1),
+        description: _l10n.newStepDefaultDescription,
+        startDate: start,
+        finishDate: _capAtTripEnd(start.add(const Duration(days: 1))),
+      ),
+    );
+  }
+
+  DateTime _capAtTripEnd(DateTime date) =>
+      date.isAfter(tripEndDate) ? tripEndDate : date;
 
   /// Add a new step on the Steps list, guarantees the first and last step are pinned to 0 and last index respectively
   void addStep({required ItineraryStepViewModel newStep}) {

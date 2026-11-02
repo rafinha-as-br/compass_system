@@ -91,21 +91,21 @@ abstract class ItineraryStepViewModel{
   }
 
   /// Creates a new [PlaceHolderStepViewModel] on local UI.
-  /// Guarantees that title, description, startDate, and finishDate are not empty.
+  /// Guarantees that title and description are not empty.
   factory ItineraryStepViewModel.newPlaceHolder({
     required StepPosition position,
     required String title,
     required String description,
+    required DateTime startDate,
+    required DateTime finishDate,
   }) {
     return PlaceHolderStepViewModel._(
         backEndId: null,
         localId: const Uuid().v4(),
         title: title,
         description: description,
-        startDate: DateTime.now(),
-        finishDate: DateTime.now().add(
-          const Duration(days: 1),
-        ),
+        startDate: startDate,
+        finishDate: finishDate,
         problems: null,
         position: position,
         icon: Icons.edit_note);

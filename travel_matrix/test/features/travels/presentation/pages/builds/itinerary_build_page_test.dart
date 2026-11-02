@@ -42,6 +42,8 @@ void main() {
               travelName: 'Lisbon 2025',
               steps: null,
               interestsPoints: const [],
+              tripStartDate: DateTime(2025, 10, 1),
+              tripEndDate: DateTime(2025, 10, 10),
             ),
           ),
         ),

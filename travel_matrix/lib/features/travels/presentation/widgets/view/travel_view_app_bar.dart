@@ -316,6 +316,8 @@ class _TravelActionsMenu extends StatelessWidget {
         'itineraryBuildModel': ItineraryBuildModel(
           travelName: travel.travelTitle,
           interestsPoints: travel.route.interests,
+          tripStartDate: travel.route.startDate,
+          tripEndDate: travel.route.endDate,
           steps: itineraryStepsBuildModel,
           hasExistingItinerary: travel.itinerary != null,
         ),

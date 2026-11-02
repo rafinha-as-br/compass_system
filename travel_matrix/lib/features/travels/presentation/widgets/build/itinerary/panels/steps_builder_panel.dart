@@ -26,7 +26,7 @@ class StepsBuilderPanel extends StatelessWidget {
     required this.selectedIndex,
     required this.goToPreviousStep,
     required this.goToNextStep,
-    required this.addStep,
+    required this.addNewStep,
     required this.updateStep,
     required this.removeStep,
   });
@@ -42,7 +42,7 @@ class StepsBuilderPanel extends StatelessWidget {
   /// Next step callback method [_StepNavigator]
   final void Function() goToNextStep;
   /// Add step callback method for [_StepNavigator]
-  final void Function({required ItineraryStepViewModel newStep}) addStep;
+  final void Function() addNewStep;
   /// Update step callback method for [_StepFormRender]
   final void Function(int index, ItineraryStepViewModel updatedStep) updateStep;
   /// Remove step callback method for [_StepFormRender]
@@ -55,7 +55,7 @@ class StepsBuilderPanel extends StatelessWidget {
         _StepNavigator(
           goToPreviousStep: goToPreviousStep,
           goToNextStep: goToNextStep,
-          addStep: addStep,
+          addNewStep: addNewStep,
           step: steps.stepsList[selectedIndex],
           selectedIndex: selectedIndex,
         ),
@@ -79,7 +79,7 @@ class _StepNavigator extends StatelessWidget {
   const _StepNavigator({
     required this.goToPreviousStep,
     required this.goToNextStep,
-    required this.addStep,
+    required this.addNewStep,
     required this.step,
     required this.selectedIndex,
   });
@@ -89,7 +89,7 @@ class _StepNavigator extends StatelessWidget {
   /// Next step method
   final void Function() goToNextStep;
   /// Add step method
-  final void Function({required ItineraryStepViewModel newStep}) addStep;
+  final void Function() addNewStep;
 
   /// Step for render the navigation
   final ItineraryStepViewModel step;
@@ -138,16 +138,7 @@ class _StepNavigator extends StatelessWidget {
         /// Next step or add step navigator button
         isLastStep ?
           IconButton(
-            onPressed: (){
-              // add a placeholder step, guarantees that the title is not empty
-              addStep(
-                newStep: ItineraryStepViewModel.newPlaceHolder(
-                  position:  StepPosition.middle,
-                  title: l10n.newStepDefaultTitle(selectedIndex + 2),
-                  description: l10n.newStepDefaultDescription,
-                )
-              );
-            },
+            onPressed: addNewStep,
             icon: const Icon(Icons.add),
             tooltip: l10n.addStep,
             color: Theme.of(context).colorScheme.secondary,
@@ -211,6 +202,8 @@ class _StepFormRender extends StatelessWidget {
         position: position,
         title: l10n.newStepDefaultTitle(selectedIndex + 1),
         description: l10n.newStepDefaultDescription,
+        startDate: startDate,
+        finishDate: finishDate,
       );
     } else if (newType == StopStepViewModel) {
       newStep = ItineraryStepViewModel.newStop(
@@ -230,8 +223,8 @@ class _StepFormRender extends StatelessWidget {
           position: position,
           placeName: l10n.defaultPlaceNameValue,
           address: l10n.defaultPlaceAddressValue,
-          checkIn: DateTime.now(),
-          checkOut: DateTime.now().add(const Duration(days: 1)),
+          checkIn: startDate,
+          checkOut: finishDate,
       );
     } else if (newType == TravelSegmentStepViewModel) {
       final defaultTransport = TransportViewModel.newPlaceHolder();

@@ -11,10 +11,16 @@ class ItineraryBuildModel {
   final List<InterestPointViewModel> interestsPoints;
   final bool hasExistingItinerary;
 
+  /// Trip period, used as the date source for the steps' default dates.
+  final DateTime tripStartDate;
+  final DateTime tripEndDate;
+
   ItineraryBuildModel({
     required this.travelName,
     required this.steps,
     required this.interestsPoints,
+    required this.tripStartDate,
+    required this.tripEndDate,
     this.itineraryId,
     this.hasExistingItinerary = false,
   });

@@ -78,6 +78,8 @@ class ItineraryBuildPage extends StatelessWidget {
                 : null,
             interestPoints: itineraryBuildModel.interestsPoints,
             l10n: AppLocalizations.of(context)!,
+            tripStartDate: itineraryBuildModel.tripStartDate,
+            tripEndDate: itineraryBuildModel.tripEndDate,
           ),
         ),
 
@@ -250,7 +252,7 @@ class _ItineraryBuildView extends StatelessWidget {
               selectedIndex: selectedIndex,
               goToPreviousStep: editor.goToPreviousStep,
               goToNextStep: editor.goToNextStep,
-              addStep: editor.addStep,
+              addNewStep: editor.addNewStep,
               updateStep: editor.updateStep,
               removeStep: editor.deleteStep,
             ),
@@ -262,7 +264,7 @@ class _ItineraryBuildView extends StatelessWidget {
             steps: steps,
             selectedIndex: selectedIndex,
             onSelectStep: editor.selectStep,
-            addStep: editor.addStep,
+            addNewStep: editor.addNewStep,
             onReorder: (oldIndex, newIndex) {
               final success = editor.reorderSteps(oldIndex, newIndex);
               if (!success) {
