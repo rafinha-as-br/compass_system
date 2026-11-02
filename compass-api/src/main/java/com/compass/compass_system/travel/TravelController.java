@@ -15,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -23,6 +24,9 @@ import java.util.Optional;
 @RequestMapping("/travels")
 @CrossOrigin(origins = "*")
 public class TravelController {
+
+    private static final String STATUS_STARTED = "travel_started";
+    private static final String STATUS_FINISHED = "travel_finished";
 
     @Autowired
     private TravelRepository travelRepository;
@@ -88,6 +92,8 @@ public class TravelController {
         travel.setCompany(company);
         // A client-supplied id would make save() overwrite an existing travel (maybe another company's).
         travel.setId(null);
+        // The finish date is only ever recorded by POST .../finish.
+        travel.setFinishedAt(null);
         Travel saved = travelRepository.save(travel);
 
         eventPublisher.publishEvent(new NotificationEvent(
@@ -141,8 +147,76 @@ public class TravelController {
         // one full-replace path that isn't isolated to its own sub-resource.
         incoming.setObservations(opt.get().getObservations());
 
+        // Same reasoning for finishedAt: it belongs to POST .../finish alone.
+        incoming.setFinishedAt(opt.get().getFinishedAt());
+
         Travel saved = travelRepository.save(incoming);
         return ResponseEntity.ok(saved);
+    }
+
+    // ─── POST /travels/{travelId}/start ────────────────────────────────────────
+    // "Iniciar viagem": itinerary_created → travel_started (CPS-170). Allowed
+    // for client and agent alike; the company scope in findOwned isolates
+    // tenants. Only a prepared (published itinerary) travel that hasn't
+    // started or finished can start, and a client can have just one travel
+    // in progress at a time. Reads (GET) never change state.
+    @Transactional
+    @PostMapping("/{travelId}/start")
+    public ResponseEntity<Travel> startTravel(@PathVariable String travelId) {
+        Optional<Travel> opt = findOwned(travelId);
+        if (opt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Travel travel = opt.get();
+        if (STATUS_STARTED.equals(travel.getTravelStatus())) {
+            throw new BusinessException("A viagem já foi iniciada.");
+        }
+        if (STATUS_FINISHED.equals(travel.getTravelStatus())) {
+            throw new BusinessException("A viagem já foi finalizada.");
+        }
+        if (!travel.isPrepared()) {
+            throw new BusinessException("A viagem ainda não está pronta para ser iniciada.");
+        }
+        if (clientHasTravelInProgress(travel)) {
+            throw new BusinessException(
+                    "Já existe uma viagem em andamento para este cliente. Finalize-a antes de iniciar outra.");
+        }
+
+        travel.setTravelStatus(STATUS_STARTED);
+        return ResponseEntity.ok(travelRepository.save(travel));
+    }
+
+    // ─── POST /travels/{travelId}/finish ───────────────────────────────────────
+    // "Finalizar viagem": travel_started → travel_finished, recording the
+    // finish date (CPS-170). Only a travel in progress can be finished.
+    @Transactional
+    @PostMapping("/{travelId}/finish")
+    public ResponseEntity<Travel> finishTravel(@PathVariable String travelId) {
+        Optional<Travel> opt = findOwned(travelId);
+        if (opt.isEmpty()) {
+            return ResponseEntity.notFound().build();
+        }
+
+        Travel travel = opt.get();
+        if (!STATUS_STARTED.equals(travel.getTravelStatus())) {
+            throw new BusinessException("Só é possível finalizar uma viagem em andamento.");
+        }
+
+        travel.setTravelStatus(STATUS_FINISHED);
+        travel.setFinishedAt(Instant.now());
+        return ResponseEntity.ok(travelRepository.save(travel));
+    }
+
+    // Travels created before clientId existed only carry the client's name,
+    // so that's the fallback key for them.
+    private boolean clientHasTravelInProgress(Travel travel) {
+        Long companyId = travel.getCompany().getId();
+        return travel.getClientId() != null
+                ? travelRepository.existsByCompany_IdAndClientIdAndTravelStatus(
+                        companyId, travel.getClientId(), STATUS_STARTED)
+                : travelRepository.existsByCompany_IdAndClientNameAndTravelStatus(
+                        companyId, travel.getClientName(), STATUS_STARTED);
     }
 
     // ─── DELETE /travels/{id} ──────────────────────────────────────────────────

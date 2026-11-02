@@ -4,6 +4,7 @@ import com.compass.compass_system.company.Company;
 import com.compass.compass_system.itinerary.Itinerary;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
+import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -48,6 +49,12 @@ public class Travel {
     // "edit observations" endpoint.
     @Column(length = 2000)
     private String observations;
+
+    // Moment the travel went to "travel_finished". Only POST .../finish sets
+    // it; create and the full-replace PUT carry it over untouched so a caller
+    // can't fabricate or wipe the date. Nullable: no backfill for travels
+    // that never finished.
+    private Instant finishedAt;
 
     @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "route_plan_id")
@@ -95,6 +102,9 @@ public class Travel {
 
     public boolean isPrepared() { return prepared; }
     public void setPrepared(boolean prepared) { this.prepared = prepared; }
+
+    public Instant getFinishedAt() { return finishedAt; }
+    public void setFinishedAt(Instant finishedAt) { this.finishedAt = finishedAt; }
 
     public String getObservations() { return observations; }
     public void setObservations(String observations) { this.observations = observations; }
