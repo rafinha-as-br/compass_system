@@ -1296,4 +1296,72 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get agentCreatedFirstLoginNote =>
       'The agent will be asked to change this password on first sign-in.';
+
+  @override
+  String get timelineProblemConflictTitle => 'Date conflict';
+
+  @override
+  String timelineProblemConflictDescription(
+    String firstStep,
+    String firstDate,
+    String secondStep,
+    String secondDate,
+  ) {
+    return 'Dates overlap between the end of \"$firstStep\" ($firstDate) and the start of \"$secondStep\" ($secondDate).';
+  }
+
+  @override
+  String get timelineProblemEmptyGapTitle => 'Gap between steps';
+
+  @override
+  String timelineProblemEmptyGapDescription(
+    String firstStep,
+    String firstDate,
+    String secondStep,
+    String secondDate,
+  ) {
+    return 'There is a large gap between the end of \"$firstStep\" ($firstDate) and the start of \"$secondStep\" ($secondDate).';
+  }
+
+  @override
+  String get timelineProblemChronologicalOrderTitle => 'Steps out of order';
+
+  @override
+  String timelineProblemChronologicalOrderDescription(
+    String firstStep,
+    String secondStep,
+  ) {
+    return 'The dates of \"$firstStep\" and \"$secondStep\" do not follow the order of the steps. Reorder the steps or adjust their dates.';
+  }
+
+  @override
+  String get timelineProblemInvalidDateTitle => 'Invalid dates';
+
+  @override
+  String timelineProblemInvalidDateDescription(String step) {
+    return 'The start date of \"$step\" is after its end date. Adjust the dates.';
+  }
+
+  @override
+  String get timelineProblemOutsideStepPeriodTitle =>
+      'Date outside the step period';
+
+  @override
+  String timelineProblemFlightOutsideStepPeriodDescription(
+    String flightDate,
+    String stepStart,
+    String stepEnd,
+  ) {
+    return 'The flight date ($flightDate) is outside the step period ($stepStart to $stepEnd). Adjust the flight date or the step period.';
+  }
+
+  @override
+  String timelineProblemContentOutsideStepPeriodDescription(
+    String contentStart,
+    String contentEnd,
+    String stepStart,
+    String stepEnd,
+  ) {
+    return 'The dates of this step\'s details ($contentStart to $contentEnd) are outside the step period ($stepStart to $stepEnd). Adjust the dates or the step period.';
+  }
 }

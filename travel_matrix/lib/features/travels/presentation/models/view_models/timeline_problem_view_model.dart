@@ -1,8 +1,9 @@
-
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:travel_matrix/features/travels/domain/usecases/timeline_analyzer.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/itinerary_steps_view_models.dart';
-import 'package:intl/intl.dart';
+import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
+import 'package:travel_matrix/l10n/app_localizations.dart';
 
 /// TimelineProblem view class, used to represent [TimelineProblem]
 class TimelineProblemViewModel{
@@ -25,48 +26,62 @@ class TimelineProblemViewModel{
     return Colors.amber.shade700;
   }
 
-  /// Mapper method from [TimelineProblem] to [TimelineProblemViewModel]
-  factory TimelineProblemViewModel.fromTimelineProblem(TimelineProblem problem, ItineraryStepViewModel step1, ItineraryStepViewModel step2){
-    final title = _typeToTitleString(problem.type);
-    final description = _typeToDescriptionString(problem.type, step1, step2);
-    return TimelineProblemViewModel(
-      title: title,
-      description: description,
-      type: problem.type,
-    );
-  }
+  /// Mapper method from [TimelineProblem] to [TimelineProblemViewModel],
+  /// the texts are localized with [l10n] and name the cause and the dates involved.
+  factory TimelineProblemViewModel.fromTimelineProblem(
+    TimelineProblem problem,
+    ItineraryStepViewModel step1,
+    ItineraryStepViewModel step2,
+    AppLocalizations l10n,
+  ){
+    final shortDate = DateFormat(l10n.localeName.startsWith('pt') ? 'dd/MM' : 'MM/dd').format;
+    final fullDate = DateFormat('dd/MM/yyyy HH:mm').format;
 
-}
-
-
-
-String _typeToTitleString(TimelineProblemType type){
-  switch(type){
-    case TimelineProblemType.conflict:
-      return 'Conflict';
-    case TimelineProblemType.emptyGap:
-      return 'Empty Gap';
-    case TimelineProblemType.invalidChronologicalOrder:
-      return 'Invalid Chronological Order';
+    switch(problem.type){
+      case TimelineProblemType.conflict:
+        return TimelineProblemViewModel(
+          type: problem.type,
+          title: l10n.timelineProblemConflictTitle,
+          description: l10n.timelineProblemConflictDescription(
+            step1.title, fullDate(step1.finishDate), step2.title, fullDate(step2.startDate),
+          ),
+        );
+      case TimelineProblemType.emptyGap:
+        return TimelineProblemViewModel(
+          type: problem.type,
+          title: l10n.timelineProblemEmptyGapTitle,
+          description: l10n.timelineProblemEmptyGapDescription(
+            step1.title, fullDate(step1.finishDate), step2.title, fullDate(step2.startDate),
+          ),
+        );
+      case TimelineProblemType.invalidChronologicalOrder:
+        return TimelineProblemViewModel(
+          type: problem.type,
+          title: l10n.timelineProblemChronologicalOrderTitle,
+          description: l10n.timelineProblemChronologicalOrderDescription(step1.title, step2.title),
+        );
       case TimelineProblemType.invalidDate:
-      return 'Invalid Date';
+        return TimelineProblemViewModel(
+          type: problem.type,
+          title: l10n.timelineProblemInvalidDateTitle,
+          description: l10n.timelineProblemInvalidDateDescription(step1.title),
+        );
+      case TimelineProblemType.outsideStepPeriod:
+        final inner = step1.buildInternalTimeline()![1];
+        final isFlight = step1 is TravelSegmentStepViewModel && step1.transport is AirplaneViewModel;
+        return TimelineProblemViewModel(
+          type: problem.type,
+          title: l10n.timelineProblemOutsideStepPeriodTitle,
+          description: isFlight
+              ? l10n.timelineProblemFlightOutsideStepPeriodDescription(
+                  shortDate(inner.startDate), shortDate(step1.startDate), shortDate(step1.finishDate),
+                )
+              : l10n.timelineProblemContentOutsideStepPeriodDescription(
+                  shortDate(inner.startDate), shortDate(inner.finishDate),
+                  shortDate(step1.startDate), shortDate(step1.finishDate),
+                ),
+        );
+    }
   }
-}
 
-String _typeToDescriptionString(TimelineProblemType type, ItineraryStepViewModel step1, ItineraryStepViewModel step2){
-  switch(type){
-    case TimelineProblemType.conflict:
-      return 'Date conflict between ${_formatDate(step1.finishDate)} from "${step1.title}" and ${_formatDate(step2.startDate)} from "${step2.title}"';
-    case TimelineProblemType.emptyGap:
-      return 'Big empty Gap between ${_formatDate(step1.finishDate)} from "${step1.title}" and ${_formatDate(step2.startDate)} from "${step2.title}"';
-    case TimelineProblemType.invalidChronologicalOrder:
-      return 'Invalid Chronological Order between "${step1.title}" and "${step2.title}"';
-    case TimelineProblemType.invalidDate:
-      return 'Invalid Date on "${step1.title}"';
-  }
-}
-
-
-String _formatDate(DateTime date){
-  return DateFormat('dd/MM/yyyy HH:mm').format(date);
 }

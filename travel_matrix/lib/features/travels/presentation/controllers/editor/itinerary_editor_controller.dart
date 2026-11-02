@@ -286,9 +286,18 @@ class ItineraryEditorController extends ChangeNotifier {
 
     // making the steps analysis
     for (var step in _stepsList) {
-      final stepNodes = step.buildInternalTimeline();
+      // a step finishing before it starts is already reported by the itinerary analysis
+      final stepNodes = step.startDate.isAfter(step.finishDate)
+          ? null
+          : step.buildInternalTimeline();
       if (stepNodes != null) {
-        final stepAnalysis = timelineAnalyzer(stepNodes);
+        var stepAnalysis = timelineAnalyzer(stepNodes);
+        // a date outside the step period is explained by its own problem,
+        // which replaces the generic chronological-order one it also triggers
+        if (!stepAnalysis.any((p) => p.type == TimelineProblemType.invalidDate)) {
+          final outsidePeriod = stepPeriodAnalyzer(stepNodes);
+          if (outsidePeriod.isNotEmpty) stepAnalysis = outsidePeriod;
+        }
         timelineProblems.addAll(stepAnalysis);
       }
     }
@@ -314,8 +323,12 @@ class ItineraryEditorController extends ChangeNotifier {
             problem,
             step1,
             step2,
+            _l10n,
           );
-          problemsViewModel.add(problemViewModel);
+          // the itinerary and the step analyses can both report the same cause
+          if (!problemsViewModel.any((p) => p.description == problemViewModel.description)) {
+            problemsViewModel.add(problemViewModel);
+          }
         }
       }
       // assign back to the list (using the empty list to clear previous problems)

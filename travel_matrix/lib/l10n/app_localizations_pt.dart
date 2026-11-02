@@ -1310,4 +1310,72 @@ class AppLocalizationsPt extends AppLocalizations {
   @override
   String get agentCreatedFirstLoginNote =>
       'O agente trocará esta senha no primeiro acesso.';
+
+  @override
+  String get timelineProblemConflictTitle => 'Conflito de datas';
+
+  @override
+  String timelineProblemConflictDescription(
+    String firstStep,
+    String firstDate,
+    String secondStep,
+    String secondDate,
+  ) {
+    return 'As datas se sobrepõem entre o fim de \"$firstStep\" ($firstDate) e o início de \"$secondStep\" ($secondDate).';
+  }
+
+  @override
+  String get timelineProblemEmptyGapTitle => 'Lacuna entre steps';
+
+  @override
+  String timelineProblemEmptyGapDescription(
+    String firstStep,
+    String firstDate,
+    String secondStep,
+    String secondDate,
+  ) {
+    return 'Há uma lacuna grande entre o fim de \"$firstStep\" ($firstDate) e o início de \"$secondStep\" ($secondDate).';
+  }
+
+  @override
+  String get timelineProblemChronologicalOrderTitle => 'Steps fora de ordem';
+
+  @override
+  String timelineProblemChronologicalOrderDescription(
+    String firstStep,
+    String secondStep,
+  ) {
+    return 'As datas de \"$firstStep\" e \"$secondStep\" não seguem a ordem dos steps. Reordene os steps ou ajuste as datas.';
+  }
+
+  @override
+  String get timelineProblemInvalidDateTitle => 'Datas inválidas';
+
+  @override
+  String timelineProblemInvalidDateDescription(String step) {
+    return 'A data de início de \"$step\" é posterior à data de fim. Ajuste as datas.';
+  }
+
+  @override
+  String get timelineProblemOutsideStepPeriodTitle =>
+      'Data fora do período do step';
+
+  @override
+  String timelineProblemFlightOutsideStepPeriodDescription(
+    String flightDate,
+    String stepStart,
+    String stepEnd,
+  ) {
+    return 'A data do voo ($flightDate) está fora do período do step ($stepStart a $stepEnd). Ajuste a data do voo ou o período do step.';
+  }
+
+  @override
+  String timelineProblemContentOutsideStepPeriodDescription(
+    String contentStart,
+    String contentEnd,
+    String stepStart,
+    String stepEnd,
+  ) {
+    return 'As datas dos detalhes deste step ($contentStart a $contentEnd) estão fora do período do step ($stepStart a $stepEnd). Ajuste as datas ou o período do step.';
+  }
 }

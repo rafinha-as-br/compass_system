@@ -89,6 +89,30 @@ List<TimelineProblem> timelineAnalyzer(List<TimelineNode> nodes){
   return problems;
 }
 
+/// Finds the nodes of a step's internal timeline (everything between the first
+/// and last node, which are the step's own start and finish) that fall outside
+/// the step period. Limits are inclusive and only the day is compared.
+List<TimelineProblem> stepPeriodAnalyzer(List<TimelineNode> nodes){
+  if(nodes.length < 3){
+    return [];
+  }
+
+  DateTime day(DateTime d) => DateTime(d.year, d.month, d.day);
+
+  final periodStart = day(nodes.first.startDate);
+  final periodEnd = day(nodes.last.finishDate);
+
+  return [
+    for(final node in nodes.sublist(1, nodes.length - 1))
+      if(day(node.startDate).isBefore(periodStart) || day(node.finishDate).isAfter(periodEnd))
+        TimelineProblem(
+          nodeId1: node.domainId,
+          nodeId2: node.domainId,
+          type: TimelineProblemType.outsideStepPeriod,
+        ),
+  ];
+}
+
 /// Represents a problem on the timeline.
 ///
 /// Node 1 and 2 represent the entities involved in the problem, having
@@ -157,7 +181,9 @@ enum TimelineProblemType{
   /// The sorted list is different than the steps list
   invalidChronologicalOrder,
   /// Invalid date
-  invalidDate
+  invalidDate,
+  /// A date inside a step (e.g. the flight date) is outside the step period
+  outsideStepPeriod
 }
 
 
