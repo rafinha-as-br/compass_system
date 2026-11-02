@@ -84,9 +84,15 @@ class HomeController extends ChangeNotifier {
   /// fetch on its own — callers must invoke this explicitly.
   Future<void> refresh() => _fetchData();
 
-  Future<void> _fetchData() async {
-    _state = const HomeState(isLoading: true);
-    notifyListeners();
+  /// Pull-to-refresh: re-fetches without swapping the screen for the loading
+  /// skeleton, so the `RefreshIndicator` stays mounted until it completes.
+  Future<void> reload() => _fetchData(showLoading: false);
+
+  Future<void> _fetchData({bool showLoading = true}) async {
+    if (showLoading) {
+      _state = const HomeState(isLoading: true);
+      notifyListeners();
+    }
 
     try {
       final clientName = await _getClientName();

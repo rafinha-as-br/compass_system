@@ -7,6 +7,7 @@ import 'package:routecraft_app/features/travels/presentation/controllers/travels
 import 'package:routecraft_app/l10n/app_localizations.dart';
 import 'package:routecraft_app/shared/utils/travel_status_mapping.dart';
 import 'package:routecraft_app/shared/widgets/empty_state_view.dart';
+import 'package:routecraft_app/shared/widgets/pull_to_refresh.dart';
 import 'package:routecraft_app/shared/widgets/travel_card.dart';
 
 class TravelsPage extends StatelessWidget {
@@ -94,12 +95,15 @@ class _EmptyTravels extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return EmptyStateView(
-      icon: Icons.auto_awesome_outlined,
-      title: l10n.noTravelsYet,
-      message: l10n.homeEmptyMessage,
-      ctaLabel: l10n.homeEmptyCta,
-      onCtaPressed: () => _pushAndRefresh(context, AppRoutes.travelsCreateRoute),
+    return PullToRefresh(
+      onRefresh: context.read<TravelsController>().reload,
+      child: EmptyStateView(
+        icon: Icons.auto_awesome_outlined,
+        title: l10n.noTravelsYet,
+        message: l10n.homeEmptyMessage,
+        ctaLabel: l10n.homeEmptyCta,
+        onCtaPressed: () => _pushAndRefresh(context, AppRoutes.travelsCreateRoute),
+      ),
     );
   }
 }
@@ -136,30 +140,37 @@ class _TravelsListView extends StatelessWidget {
         const SizedBox(height: 8),
         Expanded(
           child: state.hasNoResults
-              ? EmptyStateView(
-                  icon: Icons.search_off,
-                  title: l10n.noTravelsYet,
-                  message: l10n.travelsNoResultsMessage,
+              ? PullToRefresh(
+                  onRefresh: controller.reload,
+                  child: EmptyStateView(
+                    icon: Icons.search_off,
+                    title: l10n.noTravelsYet,
+                    message: l10n.travelsNoResultsMessage,
+                  ),
                 )
-              : ListView.builder(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
-                  itemCount: filtered.length,
-                  itemBuilder: (context, index) {
-                    final travel = filtered[index];
-                    return Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: TravelCard(
-                        travelName: travel.travelName,
-                        route: travelRouteText(travel),
-                        period: travelPeriodText(context, travel),
-                        status: travelStatusChipVariant(travel.travelStatus),
-                        onTap: () => context.go(
-                          '${AppRoutes.homeFollowTravel}?${AppRoutes.travelIdQuery(travel.backEndId!)}',
-                          extra: travel,
+              : RefreshIndicator(
+                  onRefresh: controller.reload,
+                  child: ListView.builder(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    padding: const EdgeInsets.fromLTRB(16, 0, 16, 96),
+                    itemCount: filtered.length,
+                    itemBuilder: (context, index) {
+                      final travel = filtered[index];
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: TravelCard(
+                          travelName: travel.travelName,
+                          route: travelRouteText(travel),
+                          period: travelPeriodText(context, travel),
+                          status: travelStatusChipVariant(travel.travelStatus),
+                          onTap: () => context.go(
+                            '${AppRoutes.homeFollowTravel}?${AppRoutes.travelIdQuery(travel.backEndId!)}',
+                            extra: travel,
+                          ),
                         ),
-                      ),
-                    );
-                  },
+                      );
+                    },
+                  ),
                 ),
         ),
       ],

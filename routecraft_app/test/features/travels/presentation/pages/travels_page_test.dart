@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:routecraft_app/core/entities/result.dart';
 import 'package:routecraft_app/features/travels/domain/entities/route.dart';
 import 'package:routecraft_app/features/travels/domain/entities/travel.dart';
+import 'package:routecraft_app/features/travels/domain/repositories/travel_repository.dart';
+import 'package:routecraft_app/features/travels/domain/usecases/travel_usecases.dart';
 import 'package:routecraft_app/features/travels/presentation/controllers/travels_controller.dart';
 import 'package:routecraft_app/features/travels/presentation/pages/travels_page.dart';
 import 'package:routecraft_app/l10n/app_localizations.dart';
@@ -37,6 +40,25 @@ Travel _travel(String name, TravelStatus status, {DateTime? startDate}) => Trave
         interestsList: const [],
       ),
     );
+
+class _CountingRepository implements TravelRepository {
+  _CountingRepository(this.travels);
+
+  final List<Travel> travels;
+  var calls = 0;
+
+  @override
+  Future<Result<List<Travel>>> getTravelsForClient(String clientName) async {
+    calls++;
+    return Result.success(travels);
+  }
+
+  @override
+  Future<Result<Travel>> getTravel(String id) async => throw UnimplementedError();
+
+  @override
+  Future<Result<Travel>> createTravel(Travel travel) async => throw UnimplementedError();
+}
 
 void main() {
   testWidgets('shows a loading indicator while fetching', (tester) async {
@@ -119,5 +141,33 @@ void main() {
     await tester.pump();
 
     expect(find.text('No travels match your search.'), findsOneWidget);
+  });
+
+  testWidgets('pulling the list down re-fetches the travels (pull-to-refresh)', (tester) async {
+    final repository = _CountingRepository([_travel('Litoral Norte', TravelStatus.travelStarted)]);
+    final controller = TravelsController(travelUseCases: TravelUseCases(repository), getClientName: () async => 'Maria Silva');
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpAndSettle();
+    expect(repository.calls, 1);
+
+    await tester.fling(find.text('Litoral Norte'), const Offset(0, 400), 1000);
+    await tester.pump();
+    expect(find.byType(RefreshProgressIndicator), findsOneWidget);
+    await tester.pumpAndSettle();
+
+    expect(repository.calls, 2);
+    expect(find.text('Litoral Norte'), findsOneWidget);
+  });
+
+  testWidgets('pull-to-refresh also works on the empty state', (tester) async {
+    final repository = _CountingRepository(const []);
+    final controller = TravelsController(travelUseCases: TravelUseCases(repository), getClientName: () async => 'Maria Silva');
+    await tester.pumpWidget(_wrap(controller));
+    await tester.pumpAndSettle();
+
+    await tester.fling(find.text('No travels yet.'), const Offset(0, 400), 1000);
+    await tester.pumpAndSettle();
+
+    expect(repository.calls, 2);
   });
 }
