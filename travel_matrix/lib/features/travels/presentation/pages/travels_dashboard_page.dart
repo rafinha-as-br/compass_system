@@ -41,6 +41,34 @@ class _TravelsDashboardViewState extends State<_TravelsDashboardView> {
   String _searchQuery = '';
   _TravelFilter _filter = _TravelFilter.all;
 
+  GoRouter? _router;
+  bool _wasOnList = true;
+
+  /// The travel view, the route/itinerary editors and "Prepare travel" mutate
+  /// data through other [TravelsController] instances (or none), and this page
+  /// stays mounted underneath them — so the list is refetched whenever the
+  /// user lands back on it, instead of showing the snapshot from the last load.
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    final router = GoRouter.maybeOf(context);
+    if (router == _router) return;
+    _router?.routerDelegate.removeListener(_onRouteChanged);
+    _router = router?..routerDelegate.addListener(_onRouteChanged);
+  }
+
+  @override
+  void dispose() {
+    _router?.routerDelegate.removeListener(_onRouteChanged);
+    super.dispose();
+  }
+
+  void _onRouteChanged() {
+    final onList = _router!.routerDelegate.currentConfiguration.uri.path == AppRoutes.travels;
+    if (onList && !_wasOnList) context.read<TravelsController>().fetchTravels();
+    _wasOnList = onList;
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = context.watch<TravelsController>();
@@ -168,8 +196,8 @@ class _TravelsDashboardViewState extends State<_TravelsDashboardView> {
 
       final matchesFilter = switch (_filter) {
         _TravelFilter.all => true,
-        _TravelFilter.routeOnly => travel.itinerary == null,
-        _TravelFilter.itineraryReady => travel.itinerary != null,
+        _TravelFilter.routeOnly => !_isItineraryReady(travel),
+        _TravelFilter.itineraryReady => _isItineraryReady(travel),
       };
 
       return matchesSearch && matchesFilter;
@@ -237,6 +265,11 @@ class _TravelsTable extends StatelessWidget {
   }
 }
 
+/// "Itinerary ready" only once the agent confirmed "Prepare travel" — same
+/// rule as [TravelViewModel.status] (CPS-166), so the list never says
+/// "ready" while the travel's own Overview still says "Not Ready".
+bool _isItineraryReady(TravelViewModel travel) => travel.itinerary != null && travel.prepared;
+
 class _TravelStatusChip extends StatelessWidget {
   final TravelViewModel travel;
   final AppLocalizations l10n;
@@ -247,7 +280,7 @@ class _TravelStatusChip extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final semantic = theme.semanticColors;
-    final hasItinerary = travel.itinerary != null;
+    final hasItinerary = _isItineraryReady(travel);
     final color = hasItinerary ? semantic.success : semantic.warning;
 
     return Container(
