@@ -8,6 +8,8 @@ public interface TravelRepository extends JpaRepository<Travel, String> {
     List<Travel> findByCompany_Id(Long companyId);
     List<Travel> findByClientNameAndCompany_Id(String clientName, Long companyId);
     Optional<Travel> findByIdAndCompany_Id(String id, Long companyId);
+    boolean existsByCompany_IdAndClientIdAndTravelStatus(Long companyId, Long clientId, String travelStatus);
+    boolean existsByCompany_IdAndClientNameAndTravelStatus(Long companyId, String clientName, String travelStatus);
     long countByCompany_Id(Long companyId);
     long countByCompany_IdAndItineraryIsNotNull(Long companyId);
 }
