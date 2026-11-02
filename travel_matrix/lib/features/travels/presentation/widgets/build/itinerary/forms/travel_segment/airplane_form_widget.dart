@@ -1,13 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
-import 'package:travel_matrix/core/services/places_suggestions_service.dart';
 import 'package:travel_matrix/features/travels/presentation/models/view_models/transports_view_model.dart';
 import 'package:travel_matrix/features/travels/presentation/widgets/build/itinerary/forms/field_state.dart';
 import 'package:travel_matrix/l10n/app_localizations.dart';
 import 'package:travel_matrix/shared/models/place_suggestion.dart';
-import 'package:travel_matrix/shared/widgets/form_error_message.dart';
-import 'package:travel_matrix/shared/widgets/places_autocomplete_field.dart';
 
 import '../../../../../../../../shared/widgets/text_fields.dart';
 
@@ -17,16 +14,12 @@ class AirplaneForm extends StatefulWidget {
     super.key,
     required this.airplaneViewModel,
     required this.onChanged,
-    this.fetchSuggestions = fetchPlaceSuggestions,
   });
 
   final AirplaneViewModel airplaneViewModel;
 
   /// Called ONLY when form is valid
   final ValueChanged<AirplaneViewModel> onChanged;
-
-  /// Overridable in tests — defaults to the real network-backed lookup.
-  final Future<List<PlaceSuggestion>> Function(String query) fetchSuggestions;
 
   @override
   State<AirplaneForm> createState() => _AirplaneFormState();
@@ -38,6 +31,8 @@ class _AirplaneFormState extends State<AirplaneForm> {
   late final TextEditingController _flightCompanyCtrl;
   late final TextEditingController _flightDateCtrl;
   late final TextEditingController _departureGateCtrl;
+  late final TextEditingController _departureAirportCtrl;
+  late final TextEditingController _arrivalAirportCtrl;
 
   late AirplaneFormState _formState;
 
@@ -59,6 +54,14 @@ class _AirplaneFormState extends State<AirplaneForm> {
 
     _departureGateCtrl = TextEditingController(
       text: widget.airplaneViewModel.departureGate,
+    );
+
+    _departureAirportCtrl = TextEditingController(
+      text: widget.airplaneViewModel.departureAirport,
+    );
+
+    _arrivalAirportCtrl = TextEditingController(
+      text: widget.airplaneViewModel.arrivalAirport,
     );
 
     _formState = AirplaneFormState(
@@ -91,6 +94,8 @@ class _AirplaneFormState extends State<AirplaneForm> {
     _flightCompanyCtrl.dispose();
     _flightDateCtrl.dispose();
     _departureGateCtrl.dispose();
+    _departureAirportCtrl.dispose();
+    _arrivalAirportCtrl.dispose();
 
     super.dispose();
   }
@@ -159,38 +164,24 @@ class _AirplaneFormState extends State<AirplaneForm> {
             children: [
 
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PlacesAutocompleteField(
-                      labelText: l10n.departureAirportLabel,
-                      initialText: widget.airplaneViewModel.departureAirport,
-                      initialCoordinate: widget.airplaneViewModel.departureAirportCoordinate,
-                      fetchSuggestions: widget.fetchSuggestions,
-                      onChanged: _onDepartureAirportChanged,
-                    ),
-                    if (_showError(_formState.departureAirport) != null)
-                      FormErrorMessage(message: _showError(_formState.departureAirport)!),
-                  ],
+                child: CustomFormField.text(
+                  label: l10n.departureAirportLabel,
+                  enabled: true,
+                  controller: _departureAirportCtrl,
+                  errorText: _showError(_formState.departureAirport),
+                  onChanged: _onDepartureAirportChanged,
                 ),
               ),
 
               const SizedBox(width: 12),
 
               Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    PlacesAutocompleteField(
-                      labelText: l10n.arrivalAirportLabel,
-                      initialText: widget.airplaneViewModel.arrivalAirport,
-                      initialCoordinate: widget.airplaneViewModel.arrivalAirportCoordinate,
-                      fetchSuggestions: widget.fetchSuggestions,
-                      onChanged: _onArrivalAirportChanged,
-                    ),
-                    if (_showError(_formState.arrivalAirport) != null)
-                      FormErrorMessage(message: _showError(_formState.arrivalAirport)!),
-                  ],
+                child: CustomFormField.text(
+                  label: l10n.arrivalAirportLabel,
+                  enabled: true,
+                  controller: _arrivalAirportCtrl,
+                  errorText: _showError(_formState.arrivalAirport),
+                  onChanged: _onArrivalAirportChanged,
                 ),
               ),
             ],
@@ -258,40 +249,38 @@ class _AirplaneFormState extends State<AirplaneForm> {
     _emitIfValid();
   }
 
-  void _onDepartureAirportChanged(PlaceAutocompleteResult result) {
-    final error = result.text.trim().isEmpty
+  void _onDepartureAirportChanged(String value) {
+    final error = value.trim().isEmpty
         ? AppLocalizations.of(context)!.departureAirportRequiredValidation
         : null;
 
     setState(() {
       _formState = _formState.copyWith(
         departureAirport: _formState.departureAirport.copyWith(
-          value: result.text,
+          value: value,
           error: error,
           isTouched: true,
         ),
-        departureAirportCoordinate: result.coordinate,
-        clearDepartureAirportCoordinate: result.coordinate == null,
+        clearDepartureAirportCoordinate: true,
       );
     });
 
     _emitIfValid();
   }
 
-  void _onArrivalAirportChanged(PlaceAutocompleteResult result) {
-    final error = result.text.trim().isEmpty
+  void _onArrivalAirportChanged(String value) {
+    final error = value.trim().isEmpty
         ? AppLocalizations.of(context)!.arrivalAirportRequiredValidation
         : null;
 
     setState(() {
       _formState = _formState.copyWith(
         arrivalAirport: _formState.arrivalAirport.copyWith(
-          value: result.text,
+          value: value,
           error: error,
           isTouched: true,
         ),
-        arrivalAirportCoordinate: result.coordinate,
-        clearArrivalAirportCoordinate: result.coordinate == null,
+        clearArrivalAirportCoordinate: true,
       );
     });
 
