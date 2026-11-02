@@ -57,11 +57,11 @@ void main() {
 
     await tester.pumpWidget(_wrap(controller));
 
-    expect(find.textContaining('(EN)'), findsOneWidget);
+    expect(find.textContaining('(PT)'), findsOneWidget);
 
-    await tester.tap(find.textContaining('(EN)'));
+    await tester.tap(find.textContaining('(PT)'));
     await tester.pump();
 
-    expect(find.textContaining('(PT)'), findsOneWidget);
+    expect(find.textContaining('(EN)'), findsOneWidget);
   });
 }
