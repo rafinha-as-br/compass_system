@@ -233,7 +233,7 @@ class _TravelActionsMenu extends StatelessWidget {
     ];
 
     final bottomActions = <_MenuAction>[
-      if (travel.status == TravelStatusViewModel.notReady)
+      if (travel.status == TravelStatusViewModel.notReady || travel.itineraryDraftPending)
         _MenuAction(
           icon: Icons.rocket_launch_outlined,
           label: l10n.prepareTravelButton,

@@ -47,6 +47,7 @@ static const String events = 'events';
 static const String observations = 'observations';
 
 static const String prepared = 'prepared';
+static const String itineraryDraftPending = 'itineraryDraftPending';
 }
 
 /// ===========================================================

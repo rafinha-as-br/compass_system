@@ -60,6 +60,10 @@ class Travel {
   /// automatically as soon as an itinerary exists, while [prepared] only
   /// flips via that explicit confirmation (CPS-166).
   bool prepared;
+  /// The itinerary was edited after it was published: the client keeps seeing
+  /// the published version until "Preparar viagem" is confirmed again. Set by
+  /// the server, never by the app.
+  final bool itineraryDraftPending;
   /// Route plan for the travel
   final RoutePlan routePlan;
   /// Itinerary for the travel
@@ -84,6 +88,7 @@ class Travel {
     required this.participantsList,
     required this.travelStatus,
     this.prepared = false,
+    this.itineraryDraftPending = false,
     this.itinerary,
     this.eventsLog,
     this.observations,

@@ -9,6 +9,9 @@ import com.compass.compass_system.notification.NotificationRecipientType;
 import com.compass.compass_system.notification.NotificationType;
 import com.compass.compass_system.repositories.AgentUserRepository;
 import com.compass.compass_system.repositories.ClientUserRepository;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +42,9 @@ public class TravelController {
     @Autowired
     private ClientUserRepository clientRepository;
 
+    @Autowired
+    private ObjectMapper objectMapper;
+
     // Viagem de outra empresa responde como inexistente (404), nunca 403, para
     // não revelar que o id existe.
     private Optional<Travel> findOwned(String id) {
@@ -58,20 +64,62 @@ public class TravelController {
         }
     }
 
+    // O agente recebe a viagem inteira (rascunho + publicado). O cliente só vê
+    // o itinerário depois de "Preparar viagem" e sempre na versão publicada,
+    // no mesmo campo `itinerary` (o RouteCraft não muda de contrato); antes
+    // disso a API omite o itinerário e a viagem ainda consta como "route_created"
+    // (CPS-191). Viagem preparada antes desta mudança não tem cópia publicada:
+    // o rascunho vale como publicado.
+    private Object viewFor(Travel travel) {
+        if (companyScope.isCurrentAgent()) {
+            return travel;
+        }
+        ObjectNode node = objectMapper.valueToTree(travel);
+        Itinerary visible = !travel.isPrepared() ? null
+                : travel.getPublishedItinerary() != null ? travel.getPublishedItinerary() : travel.getItinerary();
+        node.set("itinerary", visible == null ? node.nullNode() : objectMapper.valueToTree(visible));
+        node.remove("publishedItinerary");
+        node.remove("itineraryDraftPending");
+        if (!travel.isPrepared() && "itinerary_created".equals(travel.getTravelStatus())) {
+            node.put("travelStatus", "route_created");
+        }
+        return node;
+    }
+
+    // Copia o itinerário sem ids: cada passo/transporte/etc. ganha id novo ao
+    // persistir, então a cópia publicada nunca divide linhas com o rascunho.
+    private Itinerary copyOf(Itinerary itinerary) {
+        JsonNode tree = objectMapper.valueToTree(itinerary);
+        stripIds(tree);
+        try {
+            return objectMapper.treeToValue(tree, Itinerary.class);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new IllegalStateException("Não foi possível copiar o itinerário para publicação.", e);
+        }
+    }
+
+    private static void stripIds(JsonNode node) {
+        if (node.isObject()) {
+            ((ObjectNode) node).remove("id");
+        }
+        node.forEach(TravelController::stripIds);
+    }
+
     // ─── GET /travels ───────────────────────────────────────────────────────────
     // Returns all travels of the caller's company.
     @GetMapping
-    public ResponseEntity<List<Travel>> getAllTravels() {
-        List<Travel> travels = travelRepository.findByCompany_Id(companyScope.currentCompanyId());
+    public ResponseEntity<List<Object>> getAllTravels() {
+        List<Object> travels = travelRepository.findByCompany_Id(companyScope.currentCompanyId())
+                .stream().map(this::viewFor).toList();
         return ResponseEntity.ok(travels);
     }
 
     // ─── GET /travels/client/{clientName} ───────────────────────────────────────
     // Returns all travels for a specific client, within the caller's company.
     @GetMapping("/client/{clientName}")
-    public ResponseEntity<List<Travel>> getTravelsByClient(@PathVariable String clientName) {
-        List<Travel> travels = travelRepository.findByClientNameAndCompany_Id(
-                clientName, companyScope.currentCompanyId());
+    public ResponseEntity<List<Object>> getTravelsByClient(@PathVariable String clientName) {
+        List<Object> travels = travelRepository.findByClientNameAndCompany_Id(
+                clientName, companyScope.currentCompanyId()).stream().map(this::viewFor).toList();
         return ResponseEntity.ok(travels);
     }
 
@@ -103,14 +151,18 @@ public class TravelController {
     // ─── GET /travels/{id} ─────────────────────────────────────────────────────
     // Returns the full nested Travel by ID.
     @GetMapping("/{id}")
-    public ResponseEntity<Travel> getTravel(@PathVariable String id) {
-        Optional<Travel> opt = findOwned(id);
-        return opt.map(ResponseEntity::ok)
+    public ResponseEntity<Object> getTravel(@PathVariable String id) {
+        return findOwned(id).map(t -> ResponseEntity.ok(viewFor(t)))
                   .orElse(ResponseEntity.notFound().build());
     }
 
     // ─── PUT /travels/{id} ─────────────────────────────────────────────────────
     // Full update: replaces all nested data. Preserves existing IDs when provided.
+    // "Preparar viagem" (prepared = true) is the only thing that publishes the
+    // itinerary: the first confirmation, or one made while an edit of an
+    // already published itinerary is still a pending draft (CPS-191).
+    // @Transactional so the notification is committed with the publication.
+    @Transactional
     @PutMapping("/{id}")
     public ResponseEntity<Travel> updateTravel(@PathVariable String id, @RequestBody Travel incoming) {
         Optional<Travel> opt = findOwned(id);
@@ -141,7 +193,34 @@ public class TravelController {
         // one full-replace path that isn't isolated to its own sub-resource.
         incoming.setObservations(opt.get().getObservations());
 
+        // Only the agent confirms "Preparar viagem"; a client token cannot flip
+        // prepared (which would publish, and expose, the draft).
+        if (!companyScope.isCurrentAgent()) {
+            incoming.setPrepared(opt.get().isPrepared());
+        }
+
+        // The published copy and the pending-draft flag belong to the server.
+        boolean firstPublish = !opt.get().isPrepared();
+        boolean publish = incoming.isPrepared() && (firstPublish || opt.get().isItineraryDraftPending());
+        incoming.setPublishedItinerary(opt.get().getPublishedItinerary());
+        incoming.setItineraryDraftPending(opt.get().isItineraryDraftPending());
+
         Travel saved = travelRepository.save(incoming);
+
+        if (publish && saved.getItinerary() != null) {
+            saved.setPublishedItinerary(copyOf(saved.getItinerary()));
+            saved.setItineraryDraftPending(false);
+            saved = travelRepository.save(saved);
+
+            eventPublisher.publishEvent(new NotificationEvent(
+                    NotificationRecipientType.CLIENT,
+                    saved.getClientId(),
+                    firstPublish ? NotificationType.ITINERARY_PUBLISHED : NotificationType.ITINERARY_STEP_CHANGED,
+                    saved.getId(),
+                    firstPublish
+                            ? "O itinerário da sua viagem \"" + saved.getTravelName() + "\" foi publicado."
+                            : "O itinerário da sua viagem \"" + saved.getTravelName() + "\" foi atualizado."));
+        }
         return ResponseEntity.ok(saved);
     }
 
@@ -158,10 +237,12 @@ public class TravelController {
     }
 
     // ─── PUT /travels/{travelId}/itinerary ─────────────────────────────────────
-    // Upsert: creates or fully replaces the Itinerary on a Travel.
+    // Upsert: creates or fully replaces the *draft* Itinerary on a Travel. Saving
+    // never publishes or notifies the client (CPS-191): that only happens at
+    // "Preparar viagem" (PUT /travels/{id} with prepared = true). Editing an
+    // itinerary that was already published leaves the published copy untouched
+    // and flags the draft as pending, so the agent can republish it.
     // Transitions travelStatus to "itinerary_created" when creating for the first time.
-    // @Transactional so the notification is committed with the same change that
-    // originated it (CPS-145) — never one without the other.
     @Transactional
     @PutMapping("/{travelId}/itinerary")
     public ResponseEntity<Itinerary> upsertItinerary(
@@ -174,27 +255,19 @@ public class TravelController {
         }
 
         Travel travel = opt.get();
-        boolean firstPublish = travel.getItinerary() == null;
 
         // Transition status the first time an itinerary is set.
-        if (firstPublish) {
+        if (travel.getItinerary() == null) {
             travel.setTravelStatus("itinerary_created");
         }
+        if (travel.isPrepared()) {
+            travel.setItineraryDraftPending(true);
+        }
 
-        // Fully replace the itinerary (orphanRemoval handles deleting the old one).
+        // Fully replace the draft (orphanRemoval handles deleting the old one).
         travel.setItinerary(incoming);
 
         Travel saved = travelRepository.save(travel);
-
-        eventPublisher.publishEvent(new NotificationEvent(
-                NotificationRecipientType.CLIENT,
-                saved.getClientId(),
-                firstPublish ? NotificationType.ITINERARY_PUBLISHED : NotificationType.ITINERARY_STEP_CHANGED,
-                saved.getId(),
-                firstPublish
-                        ? "O itinerário da sua viagem \"" + saved.getTravelName() + "\" foi publicado."
-                        : "O itinerário da sua viagem \"" + saved.getTravelName() + "\" foi atualizado."));
-
         return ResponseEntity.ok(saved.getItinerary());
     }
 

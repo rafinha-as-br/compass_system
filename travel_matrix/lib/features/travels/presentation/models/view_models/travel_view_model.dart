@@ -132,6 +132,10 @@ class TravelViewModel{
   /// [Travel.prepared]. Carried through so [toDomain] never drops it.
   final bool prepared;
 
+  /// Edits made after the itinerary was published, not yet republished — see
+  /// [Travel.itineraryDraftPending]. "Preparar viagem" stays available for them.
+  final bool itineraryDraftPending;
+
   /// Display status: [travelStatus] alone stops being enough to mean
   /// "ready" once itinerary creation started auto-advancing it — the trip
   /// only shows as Ready once the agent explicitly confirms "Preparar
@@ -156,6 +160,7 @@ class TravelViewModel{
     this.itinerary,
     this.observations,
     this.prepared = false,
+    this.itineraryDraftPending = false,
   });
 
   /// Factory constructor from domain model
@@ -172,6 +177,7 @@ class TravelViewModel{
       itinerary: travel.itinerary == null ? null : ItineraryViewModel.fromDomain(travel.itinerary!),
       observations: travel.observations,
       prepared: travel.prepared,
+      itineraryDraftPending: travel.itineraryDraftPending,
     );
   }
 
@@ -186,6 +192,7 @@ class TravelViewModel{
       participantsList: participants.map((x) => x.toDomain()).toList(),
       travelStatus: travelStatus,
       prepared: prepared,
+      itineraryDraftPending: itineraryDraftPending,
       itinerary: itinerary?.toDomain(),
       eventsLog: events?.map((x) => x.toDomain()).toList(),
       observations: observations,
@@ -223,6 +230,7 @@ class TravelViewModel{
       itinerary: itinerary,
       observations: observations,
       prepared: prepared,
+      itineraryDraftPending: itineraryDraftPending,
     );
   }
 

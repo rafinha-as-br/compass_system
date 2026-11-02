@@ -55,6 +55,12 @@ public class CompanyScope {
                 .orElseThrow(() -> new ForbiddenException("Agente não encontrado."));
     }
 
+    /** Quem chama é agente (o cliente usa o mesmo token de outro tipo). */
+    public boolean isCurrentAgent() {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        return auth != null && isAgent(auth);
+    }
+
     private static boolean isAgent(Authentication auth) {
         return auth.getAuthorities().stream().anyMatch(a -> "ROLE_AGENTE".equals(a.getAuthority()));
     }
