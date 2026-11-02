@@ -262,7 +262,6 @@ class _ItineraryBuildView extends StatelessWidget {
             steps: steps,
             selectedIndex: selectedIndex,
             onSelectStep: editor.selectStep,
-            addStep: editor.addStep,
             onReorder: (oldIndex, newIndex) {
               final success = editor.reorderSteps(oldIndex, newIndex);
               if (!success) {
